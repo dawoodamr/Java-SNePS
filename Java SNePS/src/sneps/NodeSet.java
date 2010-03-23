@@ -9,7 +9,7 @@ import java.util.LinkedList;
  */
 public class NodeSet
 {
-	 
+	
 	/**
 	 * The list of Nodes that the NodeSet contains.
 	 */
@@ -44,7 +44,8 @@ public class NodeSet
 	 */
 	public void addNode(Node node)
 	{
-		this.nodes.add(node);
+		if(! this.nodes.contains(node))
+			this.nodes.add(node);
 	}
 	
 	/**
