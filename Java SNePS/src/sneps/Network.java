@@ -176,7 +176,7 @@ public class Network
 	/**
 	 * @param name the name of the relation that we want to remove
 	 */
-	public void unDefineRelation(String name)
+	public void undefineRelation(String name)
 	{
 		Relation r = relations.get(name);
 		
@@ -218,11 +218,28 @@ public class Network
 	/**
 	 * @param id the id of the case frame that we want to remove
 	 */
-	public void unDefineCaseFrame(String id)
+	public void undefineCaseFrame(String id)
 	{
 		caseFrames.remove(id);
 	}
 
+	/**
+	 * @param relation the relation that we need to define the path for
+	 * @param path the path that we need to define
+	 */
+	public void definePath(Relation relation,Path path)
+	{
+		relation.setPath(path);
+	}
+	
+	/**
+	 * @param relation the relation that we need to undefine its path
+	 */
+	public void undefinePath(Relation relation)
+	{
+		relation.setPath(null);
+	}
+	
 	/**
 	 * @param node the node that we want to remove from the network
 	 */
@@ -325,6 +342,129 @@ public class Network
 		}
 		else
 			return createMolNode(array,caseFrame);
+	}
+	
+	/**
+	 * @param array the array that contains pairs of paths and node sets
+	 * @return the node set of nodes that we can start following those paths in the array
+	 * from, in order to reach at least one node at each node set in all entries of the 
+	 * array 
+	 */
+	public NodeSet find(Object[][] array)
+	{
+		return findIntersection(array,0);
+	}
+	
+	/**
+	 * @param array the array that contains pairs of paths and node sets
+	 * @return the node set of non-variable nodes that we can start following those paths 
+	 * in the array from, in order to reach at least one node at each node set in all
+	 * entries of the array 
+	 */
+	public NodeSet findConstant(Object[][] array)
+	{
+		NodeSet result = new NodeSet();
+		NodeSet nodeSet = find(array);
+		LinkedList<Node> nodes = nodeSet.getNodes();
+		for(int i=0;i<nodes.size();i++)
+		{
+			if(! nodes.get(i).getClass().getSimpleName().equals("VariableNode"))
+				result.addNode(nodes.get(i));
+		}
+		return result;
+	}
+	
+	/**
+	 * @param array the array that contains pairs of paths and node sets
+	 * @return the node set of base nodes that we can start following those paths 
+	 * in the array from, in order to reach at least one node at each node set in all
+	 * entries of the array 
+	 */
+	public NodeSet findBase(Object[][] array)
+	{
+		NodeSet result = new NodeSet();
+		NodeSet nodeSet = find(array);
+		LinkedList<Node> nodes = nodeSet.getNodes();
+		for(int i=0;i<nodes.size();i++)
+		{
+			if(nodes.get(i).getClass().getSimpleName().equals("BaseNode"))
+				result.addNode(nodes.get(i));
+		}
+		return result;
+	}
+	
+	/**
+	 * @param array the array that contains pairs of paths and node sets
+	 * @return the node set of variable nodes that we can start following those paths 
+	 * in the array from, in order to reach at least one node at each node set in all
+	 * entries of the array 
+	 */
+	public NodeSet findVariable(Object[][] array)
+	{
+		NodeSet result = new NodeSet();
+		NodeSet nodeSet = find(array);
+		LinkedList<Node> nodes = nodeSet.getNodes();
+		for(int i=0;i<nodes.size();i++)
+		{
+			if(nodes.get(i).getClass().getSimpleName().equals("VariableNode"))
+				result.addNode(nodes.get(i));
+		}
+		return result;
+	}
+	
+	/**
+	 * @param array the array that contains pairs of paths and node sets
+	 * @return the node set of pattern nodes that we can start following those paths 
+	 * in the array from, in order to reach at least one node at each node set in all
+	 * entries of the array 
+	 */
+	public NodeSet findPattern(Object[][] array)
+	{
+		NodeSet result = new NodeSet();
+		NodeSet nodeSet = find(array);
+		LinkedList<Node> nodes = nodeSet.getNodes();
+		for(int i=0;i<nodes.size();i++)
+		{
+			if(nodes.get(i).getClass().getSimpleName().equals("PatternNode"))
+				result.addNode(nodes.get(i));
+		}
+		return result;
+	}
+	
+	/**
+	 * @param path the path that can be followed to get to one of the nodes specified
+	 * @param nodeSet the nodes that can be reached by following the path
+	 * @return a node set of nodes that we can start following the path from in order to
+	 * get to one of the nodes in the specified node set
+	 */
+	@SuppressWarnings("unchecked")
+	public NodeSet findUnion(Path path,NodeSet nodeSet)
+	{
+		LinkedList<Node> nodeList = (LinkedList<Node>) nodeSet.getNodes().clone();
+		if(nodeList.isEmpty())
+			return new NodeSet();
+		
+		Node node = nodeList.removeFirst();
+		NodeSet ns = new NodeSet(nodeList);
+		
+		return Union(path.followConverse(node),findUnion(path,ns));
+	}
+	
+	/**
+	 * @param array the array that contains pairs of paths and node sets
+	 * @param index the index of the array at which we should start traversing it
+	 * @return the node set of nodes that we can start following those paths in the array
+	 * from, in order to reach at least one node of node sets at each path-nodeset pair. 
+	 */
+	public NodeSet findIntersection(Object[][] array,int index)
+	{
+		if(index == array.length)
+			return new NodeSet();
+		
+		Path path = (Path) array[index][0];
+		NodeSet nodeSet = (NodeSet) array[index][1];
+		
+		return intersection(findUnion(path,nodeSet),findIntersection(array,++index));
 	}
 	
 	/**
@@ -645,7 +785,55 @@ public class Network
 		}
 	}
 	
+	/**
+	 * this method gets the union of two node sets
+	 * 
+	 * @param ns1 the first node set
+	 * @param ns2 the second node set
+	 * @return the union of the two node sets
+	 */
+	private NodeSet Union(NodeSet ns1,NodeSet ns2)
+	{
+		NodeSet result = new NodeSet();
+		result.getNodes().addAll(ns1.getNodes());
+		addWithNoRepeation(ns2,result);
+		return result;
+	}
 	
+	/**
+	 * this method gets the intersection between two node sets
+	 * 
+	 * @param ns1 the first node set
+	 * @param ns2 the second node set
+	 * @return the intersection nodes of those two node sets
+	 */
+	private NodeSet intersection(NodeSet ns1,NodeSet ns2)
+	{
+		NodeSet result = new NodeSet();
+		LinkedList<Node> n1 = ns1.getNodes();
+		LinkedList<Node> n2 = ns2.getNodes();
+		for(int i=0;i<n1.size();i++)
+		{
+			if(n2.contains(n1.get(i)))
+				result.addNode(n1.get(i));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * @param source the node set containing nodes we want to add to the other node set
+	 * @param destination the node set containing nodes we want to add the nodes to
+	 */
+	private void addWithNoRepeation(NodeSet source,NodeSet destination)
+	{
+		for(int i=0;i<source.getNodes().size();i++)
+		{
+			Node n = source.getNodes().get(i);
+			if(! destination.getNodes().contains(n))
+				destination.getNodes().add(n);
+		}
+	}
 	
 	public static void main(String [] args)
 	{
@@ -671,8 +859,6 @@ public class Network
 		o[4][1] = new BaseNode("ahm");
 		Node m = new ClosedNode("A",null);
 		System.out.println(m.getClass().getSuperclass().getSimpleName());
-		Network n = new Network();
-		Object[][] oo = n.turnIntoRelNodeSet(o);
 		/*for(int i=0;i<oo.length;i++)
 		{
 			System.out.println(oo.length);

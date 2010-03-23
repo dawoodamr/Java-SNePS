@@ -37,6 +37,11 @@ public class Relation
 	private int limit;
 	
 	/**
+	 * this is the path that is defined for this relation
+	 */
+	private Path path;
+	
+	/**
 	 * @param name the name of the Relation which is unique
 	 * @param type the semantic type of the node that the Relation can point to
 	 * @param adjust the adjustability of the Relation "reduce", "expand", or "none"
@@ -48,6 +53,7 @@ public class Relation
 		this.type = type;
 		this.adjust = adjust;
 		this.limit = limit;
+		this.path = null;
 	}
 
 	/**
@@ -82,6 +88,22 @@ public class Relation
 		return limit;
 	}
 	
+	/**
+	 * @return the path that is defined for this relation
+	 */
+	public Path getPath()
+	{
+		return path;
+	}
+
+	/**
+	 * @param path the path that we need to define for this relation
+	 */
+	public void setPath(Path path)
+	{
+		this.path = path;
+	}
+
 	/**
 	 * This method is used to determine whether the specified relation is a quantifier or not
 	 * 
