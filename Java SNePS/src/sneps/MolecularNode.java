@@ -1,4 +1,4 @@
-package SNePS1.NetworkManagementSystem;
+package sneps;
 
 /**
  * A MolecularNode is a Node that has a CableSet, therefore it has outgoing arcs and child 

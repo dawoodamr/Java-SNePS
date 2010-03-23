@@ -1,4 +1,4 @@
-package SNePS1.NetworkManagementSystem;
+package sneps;
 
 /**
  * The super class of all semantic classes of Nodes.

@@ -1,4 +1,4 @@
-package SNePS1.NetworkManagementSystem;
+package sneps;
 
 /**
  * A cable is a pair of two things: a Relation and a NodeSet.It describes the arcs 

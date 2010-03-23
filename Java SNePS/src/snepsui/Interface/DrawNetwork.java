@@ -35,16 +35,16 @@ import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.functors.MapTransformer;
 import org.apache.commons.collections15.map.LazyMap;
 
+import sneps.CustomException;
+import sneps.Network;
+import sneps.Node;
+import sneps.Relation;
 import snepsui.Commands.cmdCaseFrame;
 import snepsui.Commands.cmdDefine;
 import snepsui.Commands.cmdFind;
 import snepsui.Commands.cmdUndefine;
 import snepsui.Commands.cmdUndefineCaseFrame;
 
-import SNePS1.NetworkManagementSystem.CustomException;
-import SNePS1.NetworkManagementSystem.Network;
-import SNePS1.NetworkManagementSystem.Node;
-import SNePS1.NetworkManagementSystem.Relation;
 
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedOrderedSparseMultigraph;

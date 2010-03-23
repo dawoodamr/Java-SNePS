@@ -1,4 +1,4 @@
-package SNePS1.NetworkManagementSystem;
+package sneps;
 
 /**
  * A ClosedNode is a MolecularNode that does not dominate any free variables, that is 

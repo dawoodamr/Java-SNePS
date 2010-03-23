@@ -24,7 +24,8 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
-import SNePS1.NetworkManagementSystem.Network;
+import sneps.Network;
+
 
 
 

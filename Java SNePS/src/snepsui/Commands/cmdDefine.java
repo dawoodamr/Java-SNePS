@@ -22,9 +22,10 @@ import javax.swing.JTextField;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import SNePS1.NetworkManagementSystem.CustomException;
-import SNePS1.NetworkManagementSystem.Network;
-import SNePS1.NetworkManagementSystem.Relation;
+import sneps.CustomException;
+import sneps.Network;
+import sneps.Relation;
+
 
 
 

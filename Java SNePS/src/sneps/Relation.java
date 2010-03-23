@@ -1,4 +1,4 @@
-package SNePS1.NetworkManagementSystem;
+package sneps;
 
 /**
  * A Relation is a four-tuple name, type, adjust and limit.A Relation represents the 

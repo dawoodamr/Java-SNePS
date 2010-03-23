@@ -26,10 +26,11 @@ import javax.swing.table.DefaultTableModel;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import SNePS1.NetworkManagementSystem.CaseFrame;
-import SNePS1.NetworkManagementSystem.CustomException;
-import SNePS1.NetworkManagementSystem.Network;
-import SNePS1.NetworkManagementSystem.Relation;
+import sneps.CaseFrame;
+import sneps.CustomException;
+import sneps.Network;
+import sneps.Relation;
+
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo

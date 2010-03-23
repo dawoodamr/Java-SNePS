@@ -19,8 +19,9 @@ import javax.swing.JScrollPane;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import SNePS1.NetworkManagementSystem.CaseFrame;
-import SNePS1.NetworkManagementSystem.Network;
+import sneps.CaseFrame;
+import sneps.Network;
+
 
 
 

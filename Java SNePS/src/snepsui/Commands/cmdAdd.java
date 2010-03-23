@@ -25,11 +25,12 @@ import javax.swing.JTextField;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import SNePS1.NetworkManagementSystem.CaseFrame;
-import SNePS1.NetworkManagementSystem.CustomException;
-import SNePS1.NetworkManagementSystem.Network;
-import SNePS1.NetworkManagementSystem.Node;
-import SNePS1.NetworkManagementSystem.Relation;
+import sneps.CaseFrame;
+import sneps.CustomException;
+import sneps.Network;
+import sneps.Node;
+import sneps.Relation;
+
 
 
 

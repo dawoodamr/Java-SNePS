@@ -2,7 +2,8 @@ package snepsui.Commands;
 
 import java.awt.Dimension;
 
-import SNePS1.NetworkManagementSystem.Network;
+import sneps.Network;
+
 
 
 public class cmdAndOr extends javax.swing.JPanel {

@@ -12,6 +12,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import sneps.Network;
 import snepsui.Commands.cmdActPlan;
 import snepsui.Commands.cmdActivate;
 import snepsui.Commands.cmdAdd;
@@ -67,7 +68,6 @@ import snepsui.Commands.cmdWhenDo;
 import snepsui.Commands.cmdWheneverDo;
 
 
-import SNePS1.NetworkManagementSystem.Network;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo

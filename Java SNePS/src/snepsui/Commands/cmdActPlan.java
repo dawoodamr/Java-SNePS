@@ -20,7 +20,8 @@ import javax.swing.ListModel;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import SNePS1.NetworkManagementSystem.Network;
+import sneps.Network;
+
 
 
 /**

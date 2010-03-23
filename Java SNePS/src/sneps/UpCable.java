@@ -1,4 +1,4 @@
-package SNePS1.NetworkManagementSystem;
+package sneps;
 
 /**
  * An UpCable is a cable that contains the information needed for a node about its parents 

@@ -1,4 +1,4 @@
-package SNePS1.NetworkManagementSystem;
+package sneps;
 
 /**
  * The Node is the main unit used in building the graph of the knowledge base.

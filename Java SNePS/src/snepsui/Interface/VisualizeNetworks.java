@@ -2,7 +2,8 @@ package snepsui.Interface;
 
 import java.awt.Dimension;
 
-import SNePS1.NetworkManagementSystem.Network;
+import sneps.Network;
+
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;

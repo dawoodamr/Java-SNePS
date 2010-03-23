@@ -1,4 +1,4 @@
-package SNePS1.NetworkManagementSystem;
+package sneps;
 
 /**
  * A BaseNode is a Node that has no outgoing arcs and is not a VariableNode.

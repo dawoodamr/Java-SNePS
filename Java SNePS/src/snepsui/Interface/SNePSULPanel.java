@@ -6,7 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import SNePS1.NetworkManagementSystem.Network;
+import sneps.Network;
+
 
 
 /**

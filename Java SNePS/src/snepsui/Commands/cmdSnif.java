@@ -18,7 +18,8 @@ import javax.swing.JTextField;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import SNePS1.NetworkManagementSystem.Network;
+import sneps.Network;
+
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI

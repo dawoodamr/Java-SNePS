@@ -1,4 +1,4 @@
-package SNePS1.NetworkManagementSystem;
+package sneps;
 
 /**
  * A VariableNode is a Node that has no outgoing arcs - but has incoming arcs probably - 
