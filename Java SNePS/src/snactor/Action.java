@@ -24,8 +24,12 @@ public abstract class Action extends Entity
 	
 	public void Perform(Act node)
 	{
-		
-		
+		parameters = node.getObjects();
+	
+		for(int i=0;i<parameters.size();i++)
+		{
+			System.out.println(parameters.get(i));
+		}
 		
 	}
 	

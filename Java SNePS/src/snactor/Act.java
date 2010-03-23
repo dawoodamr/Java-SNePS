@@ -15,9 +15,9 @@ public class Act extends Entity
 		
 	}
 	
-	public Node getAction(MolecularNode node)
+	public Node getAction()
 	{
-		CableSet theCables = node.getCableSet();
+		CableSet theCables = ((MolecularNode) getNode()).getCableSet();
 		
 		Cable a = theCables.getCable("action");
 			
@@ -28,9 +28,9 @@ public class Act extends Entity
 		return theAction;
 	}
 	
-	public Node getMainObject(MolecularNode node)
+	public Node getMainObject()
 	{
-		CableSet theCables = node.getCableSet();
+		CableSet theCables = ((MolecularNode) getNode()).getCableSet();
 		
 		Cable b = theCables.getCable("object");
 		
@@ -40,6 +40,11 @@ public class Act extends Entity
 		
 		return MainObject;
 		
+	}
+	
+	public LinkedList<Node> getObjects()
+	{
+		return getObjects(getMainObject());
 	}
 	
 	public LinkedList<Node> getObjects(Node mainNode)
