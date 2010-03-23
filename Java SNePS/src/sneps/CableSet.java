@@ -7,7 +7,7 @@ import java.util.LinkedList;
  * cable set.So we can say that a Node is a Cable set.once a cable is created it can never 
  * be changed.
  * 
- * @author Amr Khaled Dawood
+ * @author Amr Khaled Dawood 
  */
 public class CableSet
 {

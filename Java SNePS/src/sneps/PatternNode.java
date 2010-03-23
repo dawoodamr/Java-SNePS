@@ -13,7 +13,7 @@ import java.util.LinkedList;
  */
 public class PatternNode extends MolecularNode
 {
-	
+	 
 	/**
 	 * A list of VariableNodes that are dominated by this PatternNode and are not quantified
 	 */

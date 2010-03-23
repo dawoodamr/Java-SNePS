@@ -3,7 +3,7 @@ package sneps;
 /**
  * The super class of all semantic classes of Nodes.
  * 
- * @author Amr Khaled Dawood
+ * @author Amr Khaled Dawood 
  */
 public class Entity
 {

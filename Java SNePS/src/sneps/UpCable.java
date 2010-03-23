@@ -7,7 +7,7 @@ package sneps;
  * @author Amr Khaled Dawood
  */
 public class UpCable
-{
+{ 
 	
 	/**
 	 * the Relation that labels the arcs represented by this UpCable.

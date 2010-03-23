@@ -9,7 +9,7 @@ package sneps;
  */
 public abstract class MolecularNode extends Node
 {
-	
+	 
 	/**
 	 * A CableSet that contains Cables going out of this MolecularNode.
 	 */

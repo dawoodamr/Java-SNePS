@@ -6,7 +6,7 @@ package sneps;
  * its root then these VariableNodes must be quantified using quantifier in this subtree.
  * A quantifier is a relation whose name is a quantifier(forall,..etc).
  * 
- * @author Amr Khaled Dawood
+ * @author Amr Khaled Dawood 
  */
 public class ClosedNode extends MolecularNode
 {

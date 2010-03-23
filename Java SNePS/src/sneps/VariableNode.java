@@ -11,7 +11,7 @@ public class VariableNode extends Node
 {
 	
 	/**
-	 * this constructor creates a new VariableNode with a new empty UpCableSet and
+	 *  this constructor creates a new VariableNode with a new empty UpCableSet and
 	 * a new instance of the semantic class
 	 * 
 	 * @param identifier the name of the VariableNode

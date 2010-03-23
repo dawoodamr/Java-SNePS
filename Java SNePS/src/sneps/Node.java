@@ -10,7 +10,7 @@ package sneps;
  * @author Amr Khaled Dawood
  */
 public abstract class Node
-{
+{ 
 	
 	/**
 	 * the identifier - name - of the node.No two nodes in the network have the same name.

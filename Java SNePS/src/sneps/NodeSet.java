@@ -9,7 +9,7 @@ import java.util.LinkedList;
  */
 public class NodeSet
 {
-	
+	 
 	/**
 	 * The list of Nodes that the NodeSet contains.
 	 */

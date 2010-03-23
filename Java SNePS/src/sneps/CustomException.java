@@ -3,7 +3,7 @@ package sneps;
 /**
  * A special type of Exception class.
  * 
- * @author Amr Khaled Dawood
+ * @author Amr Khaled Dawood 
  */
 public class CustomException extends Exception
 {

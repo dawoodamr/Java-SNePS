@@ -4,7 +4,7 @@ package sneps;
  * A cable is a pair of two things: a Relation and a NodeSet.It describes the arcs 
  * going from a Node to some Nodes - that are in the NodeSet - with the same Relation.
  * Once a Cable is created it can never be changed.
- * @author Amr Khaled Dawood
+ * @author Amr Khaled Dawood 
  */
 public class Cable
 {

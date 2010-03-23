@@ -8,7 +8,7 @@ import java.util.LinkedList;
  * Relations in a knowledge base but they might have the same semantic class.
  * Once a case frame is created it can never be changed.
  * 
- * @author Amr Khaled Dawood
+ * @author Amr Khaled Dawood 
  */
 public class CaseFrame
 {
