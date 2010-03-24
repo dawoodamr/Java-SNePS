@@ -49,6 +49,14 @@ public class NodeSet
 	}
 	
 	/**
+	 * @param node the node that we want to remove
+	 */
+	public void removeNode(Node node)
+	{
+		this.nodes.remove(node);
+	}
+	
+	/**
 	 * @param nodeName the name of the node we want to remove
 	 */
 	public void removeNode(String nodeName)
