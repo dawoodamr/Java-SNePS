@@ -12,62 +12,9 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import snepsui.Commands.*;
+
 import sneps.Network;
-import snepsui.Commands.cmdActPlan;
-import snepsui.Commands.cmdActivate;
-import snepsui.Commands.cmdAdd;
-import snepsui.Commands.cmdAddToContext;
-import snepsui.Commands.cmdAndEntailment;
-import snepsui.Commands.cmdAssert;
-import snepsui.Commands.cmdBelieve;
-import snepsui.Commands.cmdBuild;
-import snepsui.Commands.cmdCaseFrame;
-import snepsui.Commands.cmdDeduce;
-import snepsui.Commands.cmdDeduceFalse;
-import snepsui.Commands.cmdDeduceTrue;
-import snepsui.Commands.cmdDeduceWH;
-import snepsui.Commands.cmdDeduceWHNOT;
-import snepsui.Commands.cmdDefine;
-import snepsui.Commands.cmdDefinePath;
-import snepsui.Commands.cmdDefinePrimaction;
-import snepsui.Commands.cmdDescribe;
-import snepsui.Commands.cmdDescribeContext;
-import snepsui.Commands.cmdDisbelieve;
-import snepsui.Commands.cmdDoAll;
-import snepsui.Commands.cmdDoOne;
-import snepsui.Commands.cmdDump;
-import snepsui.Commands.cmdEVTrace;
-import snepsui.Commands.cmdErase;
-import snepsui.Commands.cmdFind;
-import snepsui.Commands.cmdFindAssert;
-import snepsui.Commands.cmdFindBase;
-import snepsui.Commands.cmdFindConstant;
-import snepsui.Commands.cmdFindPattern;
-import snepsui.Commands.cmdFindVariable;
-import snepsui.Commands.cmdFullDescribe;
-import snepsui.Commands.cmdINTrace;
-import snepsui.Commands.cmdIfDo;
-import snepsui.Commands.cmdListContextNames;
-import snepsui.Commands.cmdListHypotheses;
-import snepsui.Commands.cmdListNodes;
-import snepsui.Commands.cmdMultiPrintRegs;
-import snepsui.Commands.cmdNumericalEntailment;
-import snepsui.Commands.cmdOrEntailment;
-import snepsui.Commands.cmdPerform;
-import snepsui.Commands.cmdRemoveFromContext;
-import snepsui.Commands.cmdSetContext;
-import snepsui.Commands.cmdSetDefaultContext;
-import snepsui.Commands.cmdSilentErase;
-import snepsui.Commands.cmdUNEVTrace;
-import snepsui.Commands.cmdUNINTrace;
-import snepsui.Commands.cmdUndefine;
-import snepsui.Commands.cmdUndefineCaseFrame;
-import snepsui.Commands.cmdUndefinePath;
-import snepsui.Commands.cmdUniversalQunatifier;
-import snepsui.Commands.cmdWhenDo;
-import snepsui.Commands.cmdWheneverDo;
-
-
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -207,7 +154,6 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 			dcbm.addElement("assert");
 			dcbm.addElement("add");
-			dcbm.addElement("build");
 			dcbm.addElement("activate");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
@@ -219,7 +165,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("silent-erase");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdErase());
+			commandsPanel.add(new cmdErase(network));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Displaying Information")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -369,21 +315,17 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdAdd(network));
 		}
-		else if(commandsComboBox.getSelectedItem().equals("build")) {
-			commandsPanel.removeAll();
-			commandsPanel.add(new cmdBuild(network));
-		}
 		else if(commandsComboBox.getSelectedItem().equals("activate")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdActivate(network));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("erase")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdErase());
+			commandsPanel.add(new cmdErase(network));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("silent-erase")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdSilentErase());
+			commandsPanel.add(new cmdSilentErase(network));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("define-path")) {
 			commandsPanel.removeAll();
@@ -586,7 +528,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void eraseMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdErase());
+		commandsPanel.add(new cmdErase(network));
 		commandsComboBox.setSelectedItem("erase");
 		commandMenusComboBox.setSelectedItem("Deleting Information");
 		this.repaint();
@@ -595,7 +537,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void silentEraseMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdSilentErase());
+		commandsPanel.add(new cmdSilentErase(network));
 		commandsComboBox.setSelectedItem("silent-erase");
 		commandMenusComboBox.setSelectedItem("Deleting Information");
 		this.repaint();
@@ -634,15 +576,6 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		commandsPanel.add(new cmdUndefine(network));
 		commandsComboBox.setSelectedItem("undefine");
 		commandMenusComboBox.setSelectedItem("Relations");
-		this.repaint();
-		this.validate();
-	}
-
-	public void buildMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdBuild(network));
-		commandsComboBox.setSelectedItem("build");
-		commandMenusComboBox.setSelectedItem("Building Networks");
 		this.repaint();
 		this.validate();
 	}

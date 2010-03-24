@@ -4,15 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -35,22 +34,18 @@ import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.functors.MapTransformer;
 import org.apache.commons.collections15.map.LazyMap;
 
-import sneps.CustomException;
-import sneps.Network;
-import sneps.Node;
-import sneps.Relation;
 import snepsui.Commands.cmdCaseFrame;
 import snepsui.Commands.cmdDefine;
-import snepsui.Commands.cmdFind;
 import snepsui.Commands.cmdUndefine;
 import snepsui.Commands.cmdUndefineCaseFrame;
-
-
+import sneps.CaseFrame;
+import sneps.CustomException;
+import sneps.Network;
+import sneps.Relation;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedOrderedSparseMultigraph;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.annotations.AnnotationControls;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.EditingModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
@@ -332,29 +327,55 @@ public class DrawNetwork extends javax.swing.JPanel {
     	
 		public String create() {
 			String relation = "";
-			String str = "";
-			int counter = 0;
+			String caseframe = "";
+			String relationStr = "";
+			String caseframeStr = "";
+			int caseframeCounter = 0;
+			int relationCounter = 0;
 			Icon icon = new ImageIcon();
 			
-			Hashtable<String, Relation> relations = network.getRelations();
-			Object [] possibilities = new Object[relations.size()]; 
-			Set<String> set = relations.keySet();
+			Hashtable<String, CaseFrame> caseframes = network.getCaseFrames();
+			Object [] caseframePossibilities = new Object[caseframes.size()]; 
+			Set<String> caseframeSet = caseframes.keySet();
 
-		    Iterator<String> itr = set.iterator();
-		    while (itr.hasNext()) {
-		      str = itr.next();
-		      possibilities[counter] = relations.get(str).getName();
-		      counter++;
+		    Iterator<String> caseframeItr = caseframeSet.iterator();
+		    while (caseframeItr.hasNext()) {
+		    	caseframeStr = caseframeItr.next();
+		    	caseframePossibilities[caseframeCounter] = caseframes.get(caseframeStr).getId();
+		    	caseframeCounter++;
 		    }
 			
+			caseframe = (String) JOptionPane.showInputDialog(
+						getRootPane(),
+						"Choose the Node you want to create:",
+						"Create a Node",
+						JOptionPane.OK_OPTION,
+						icon,
+						caseframePossibilities,
+						caseframePossibilities[0]);
+			
+			LinkedList<Relation> relations = new LinkedList<Relation>();
+			try {
+				relations = network.getCaseFrame(caseframe).getRelations();
+			} catch (CustomException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Object [] relationsPossibilities = new Object[relations.size()]; 
+
+		    for (Relation item : relations) {
+		      relationsPossibilities[relationCounter] = item.getName();
+		      relationCounter++;
+		    }
+		    
 			relation = (String)JOptionPane.showInputDialog(
 			getRootPane(),
 			"Choose the Node you want to create:",
 			"Create a Node",
 			JOptionPane.OK_OPTION,
 			icon,
-			possibilities,
-			possibilities[0]);
+			relationsPossibilities,
+			relationsPossibilities[0]);
 			return relation;
 		}
     }
@@ -366,9 +387,22 @@ public class DrawNetwork extends javax.swing.JPanel {
 	public static void main(String[] args) {
     	Network network = new Network();
     	try {
+
 			network.defineRelation("Relation 1", "entity", "none", 1);
 			network.defineRelation("Relation 2", "entity", "none", 1);
 			network.defineRelation("Relation 3", "entity", "none", 1);
+			
+			LinkedList<Relation> list1 = new LinkedList<Relation>();
+			list1.add(network.getRelation("Relation 1"));
+			list1.add(network.getRelation("Relation 2"));
+			list1.add(network.getRelation("Relation 3"));
+			
+			LinkedList<Relation> list2 = new LinkedList<Relation>();
+			list2.add(network.getRelation("Relation 1"));
+			list2.add(network.getRelation("Relation 2"));
+			
+			network.defineCaseFrame("entity", list1);
+			network.defineCaseFrame("entity", list2);
 		} catch (CustomException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

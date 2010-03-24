@@ -26,9 +26,6 @@ import org.jdesktop.application.SingleFrameApplication;
 
 import sneps.Network;
 
-
-
-
 /**
 * This code was edited or generated using CloudGarden's Jigloo
 * SWT/Swing GUI Builder, which is free for non-commercial
@@ -85,7 +82,6 @@ public class SNePSInterface extends SingleFrameApplication {
     private JMenuItem evTraceMenuItem;
     private JMenu jMenu15;
     private JMenuItem numericalQuantifierMenuItem;
-    private JMenuItem skolemFunctionMenuItem;
     private JMenuItem universalQuantifierMenuItem;
     private JMenu jMenu14;
     private JMenuItem threshMenuItem;
@@ -138,7 +134,6 @@ public class SNePSInterface extends SingleFrameApplication {
     private JMenu jMenu7;
     private JMenuItem activateMenuItem;
     private JMenuItem addMenuItem;
-    private JMenuItem buildMenuItem;
     private JMenuItem assertMenuItem;
     private JMenu jMenu6;
     private JMenuItem undefineMenuItem;
@@ -534,16 +529,6 @@ public class SNePSInterface extends SingleFrameApplication {
         			});
         		}
         		{
-        			buildMenuItem = new JMenuItem();
-        			jMenu6.add(buildMenuItem);
-        			buildMenuItem.setName("buildMenuItem");
-        			buildMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					buildMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
         			addMenuItem = new JMenuItem();
         			jMenu6.add(addMenuItem);
         			addMenuItem.setName("addMenuItem");
@@ -904,16 +889,6 @@ public class SNePSInterface extends SingleFrameApplication {
         			});
         		}
         		{
-        			skolemFunctionMenuItem = new JMenuItem();
-        			jMenu14.add(skolemFunctionMenuItem);
-        			skolemFunctionMenuItem.setName("skolemFunctionMenuItem");
-        			skolemFunctionMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					skolemFunctionMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
         			numericalQuantifierMenuItem = new JMenuItem();
         			jMenu14.add(numericalQuantifierMenuItem);
         			numericalQuantifierMenuItem.setName("numericalQuantifierMenuItem");
@@ -1253,10 +1228,6 @@ public class SNePSInterface extends SingleFrameApplication {
     	sNePSULPanel1.menuDrivenCommands.undefineMenuButton();
     }
     
-    private void buildMenuItemActionPerformed(ActionEvent evt) {
-    	sNePSULPanel1.menuDrivenCommands.buildMenuButton();
-    }
-    
     private void addMenuItemActionPerformed(ActionEvent evt) {
     	sNePSULPanel1.menuDrivenCommands.addMenuButton();
     }
@@ -1388,11 +1359,6 @@ public class SNePSInterface extends SingleFrameApplication {
     private void universalQuantifierMenuItemActionPerformed(ActionEvent evt) {
     	System.out.println("universalQuantifierMenuItem.actionPerformed, event="+evt);
     	//TODO add your code for universalQuantifierMenuItem.actionPerformed
-    }
-    
-    private void skolemFunctionMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("skolemFunctionMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for skolemFunctionMenuItem.actionPerformed
     }
     
     private void numericalQuantifierMenuItemActionPerformed(ActionEvent evt) {
