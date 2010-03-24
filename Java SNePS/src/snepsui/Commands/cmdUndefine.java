@@ -8,20 +8,23 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.ActionMap;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import sneps.CaseFrame;
 import sneps.Network;
 import sneps.Relation;
-
 
 
 
@@ -153,7 +156,15 @@ public class cmdUndefine extends javax.swing.JPanel {
 	}
 	
 	private void doneButtonMouseClicked(MouseEvent evt) {
-		//Add the undefineRelation() method when it's implemented 
-		relationsList.removeAll();
+		for (int i = 0; i < listModel.size(); i++) {
+			network.undefineRelation(listModel.get(i).toString());
+		}
+		
+		JOptionPane.showMessageDialog(this,
+		"The Relations have been successfully undefined");
+		
+		listModel.removeAllElements();
+		this.repaint();
+		this.validate();
 	}
 }

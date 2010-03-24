@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.LinkedList;
 
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
@@ -24,7 +25,7 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.Network;
-
+import sneps.Node;
 
 
 /**
@@ -63,7 +64,8 @@ public class cmdFind extends javax.swing.JPanel {
 	private JComboBox pathComboBox;
 	private JButton buildButton;
 	private Network network;
-
+	private LinkedList<Node> nodes;
+	
 	@Action
     public void add() {
     	
@@ -203,8 +205,8 @@ public class cmdFind extends javax.swing.JPanel {
 			{
 				ComboBoxModel pathComboBoxModel = 
 					new DefaultComboBoxModel(
-							new String[] { "converse", "compose", "kstar", "kplus", "or", "and", "not",
-									"relative-complement", "irreflexive-restrict", "exception", "domain-restrict", "range-restrict" });
+							new String[] { "converse", "compose", "kstar", "kplus", "or", "and", "forward unitpath", "backward unitpath", 
+									"relative-complement", "irreflexive-restrict", "domain-restrict", "range-restrict" });
 				pathComboBox = new JComboBox();
 				this.add(pathComboBox);
 				pathComboBox.setModel(pathComboBoxModel);
@@ -275,5 +277,13 @@ public class cmdFind extends javax.swing.JPanel {
 		frame.getContentPane().add(new cmdBuild(network));
 		frame.pack();
 		frame.setVisible(true);
+	}
+
+	public void setNodes(LinkedList<Node> nodes) {
+		this.nodes = nodes;
+	}
+
+	public LinkedList<Node> getNodes() {
+		return nodes;
 	}
 }

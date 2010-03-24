@@ -3,17 +3,26 @@ package snepsui.Commands;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.ActionMap;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
+
+import sneps.CustomException;
+import sneps.Network;
+import sneps.Node;
 
 
 /**
@@ -29,15 +38,16 @@ import org.jdesktop.application.Application;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class cmdSilentErase extends javax.swing.JPanel {
-	private JLabel silentEraseLabel;
-	private JTextField nodesetTextField;
+	private JLabel eraseLabel;
 	private JButton addButton;
 	private JList nodesetList;
 	private JButton doneButton;
-	private DefaultListModel listModel;
+	private DefaultListModel nodesetModel;
 	private JScrollPane jScrollPane1;
+	private JComboBox nodesetComboBox;
 	private JLabel nodesetLabel;
 	private JButton infoButton;
+	private Network network;
 	
 	@Action
     public void add() {
@@ -53,8 +63,9 @@ public class cmdSilentErase extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdSilentErase() {
+	public cmdSilentErase(Network network) {
 		super();
+		this.network = network;
 		initGUI();
 	}
 	
@@ -63,15 +74,10 @@ public class cmdSilentErase extends javax.swing.JPanel {
 			setPreferredSize(new Dimension(690, 225));
 			this.setLayout(null);
 			{
-				silentEraseLabel = new JLabel();
-				this.add(silentEraseLabel);
-				silentEraseLabel.setName("silentEraseLabel");
-				silentEraseLabel.setBounds(164, 35, 79, 15);
-			}
-			{
-				nodesetTextField = new JTextField();
-				this.add(nodesetTextField);
-				nodesetTextField.setBounds(255, 32, 192, 22);
+				eraseLabel = new JLabel();
+				this.add(eraseLabel);
+				eraseLabel.setName("eraseLabel");
+				eraseLabel.setBounds(184, 35, 59, 15);
 			}
 			{
 				addButton = new JButton();
@@ -82,8 +88,8 @@ public class cmdSilentErase extends javax.swing.JPanel {
 				addButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent evt) {
-						listModel.addElement(nodesetTextField.getText());
-						nodesetTextField.setText("");
+						nodesetModel.addElement(nodesetComboBox.getSelectedItem().toString());
+						nodesetComboBox.setSelectedIndex(0);
 						validate();
 					}
 				});
@@ -93,17 +99,22 @@ public class cmdSilentErase extends javax.swing.JPanel {
 				this.add(doneButton);
 				doneButton.setBounds(315, 181, 77, 29);
 				doneButton.setName("doneButton");
+				doneButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						doneButtonMouseClicked(evt);
+					}
+				});
 			}
 			{
 				jScrollPane1 = new JScrollPane();
 				this.add(jScrollPane1);
-				jScrollPane1.setBounds(258, 66, 190, 103);
+				jScrollPane1.setBounds(255, 66, 192, 103);
 				{
-					listModel = new DefaultListModel();
+					nodesetModel = new DefaultListModel();
 					nodesetList = new JList();
 					jScrollPane1.setViewportView(nodesetList);
-					nodesetList.setModel(listModel);
-					nodesetList.setBounds(86, 110, 187, 100);
+					nodesetList.setModel(nodesetModel);
+					nodesetList.setBounds(410, 75, 187, 100);
 				}
 			}
 			{
@@ -120,9 +131,41 @@ public class cmdSilentErase extends javax.swing.JPanel {
 				nodesetLabel.setBounds(255, 12, 80, 15);
 				nodesetLabel.setName("nodesetLabel");
 			}
+			{
+				DefaultComboBoxModel nodesetComboBoxModel = new DefaultComboBoxModel();
+				
+				String str = "";
+				Hashtable<String, Node> nodes = network.getNodes();
+				Set<String> set = nodes.keySet();
+
+			    Iterator<String> itr = set.iterator();
+			    while (itr.hasNext()) {
+			      str = itr.next();
+			      nodesetComboBoxModel.addElement(nodes.get(str).getIdentifier()) ;
+			    }
+				nodesetComboBox = new JComboBox();
+				this.add(nodesetComboBox);
+				nodesetComboBox.setModel(nodesetComboBoxModel);
+				nodesetComboBox.setBounds(255, 31, 193, 22);
+			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void doneButtonMouseClicked(MouseEvent evt) {
+		for (int i = 0; i < nodesetModel.size(); i++) {
+			try {
+				Node node = network.getNode(nodesetModel.get(i).toString());
+				network.removeNode(node);
+			} catch (CustomException e) {
+				JOptionPane.showMessageDialog(this,
+		    			  "The node " + nodesetModel.get(i).toString() + " doesn't exist",
+		    			  "Error",
+		    			  JOptionPane.ERROR_MESSAGE);
+				e.printStackTrace();
+			}
 		}
 	}
 }

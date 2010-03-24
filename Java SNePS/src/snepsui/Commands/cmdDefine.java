@@ -28,7 +28,6 @@ import sneps.Relation;
 
 
 
-
 /**
 * This code was edited or generated using CloudGarden's Jigloo
 * SWT/Swing GUI Builder, which is free for non-commercial
@@ -233,7 +232,7 @@ public class cmdDefine extends javax.swing.JPanel {
 	}
 
 	private void addButtonMouseClicked(MouseEvent evt) {
-		//Relation
+		/*Relation*/
 		String relation = relationTextField.getText();
 		
 		//Check if relation name is not empty
@@ -278,7 +277,7 @@ public class cmdDefine extends javax.swing.JPanel {
 	    	}
 	    }
 	    
-	    //Limit
+	    /*Limit*/
 	    String limitString = limitTextField.getText();
 	    int limit = -1;
 	    //Check for a non-empty field
@@ -308,9 +307,6 @@ public class cmdDefine extends javax.swing.JPanel {
 	    			  JOptionPane.ERROR_MESSAGE);
 	    	return;
 	    }
-	    
-	    //Check for limit consistency
-	    //Know the limit of each semantic type
 		
 		relationModel.addElement(relation);
 		typeModel.addElement(typeComboBox.getSelectedItem().toString());

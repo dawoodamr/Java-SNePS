@@ -31,7 +31,6 @@ import sneps.Network;
 import sneps.Relation;
 
 
-
 /**
 * This code was edited or generated using CloudGarden's Jigloo
 * SWT/Swing GUI Builder, which is free for non-commercial
@@ -251,11 +250,19 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 	}
 	
 	private void addButtonMouseClicked(MouseEvent evt) {
-		semanticClassModel.addElement(semanticClassComboBox.getSelectedItem().toString());
-		semanticClassComboBox.setSelectedIndex(0);
-		relationsModel.addElement(relationSetTextField.getText());
-		relationsComboBox.setSelectedIndex(0);
-		relationSetTextField.setText("");
-		validate();
+		//Check for a non-empty relation field 
+		if(relationSetTextField.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this,
+					"Please specify the relations included in the case frame, the relation field cannot be empty",
+					"Warning",
+					JOptionPane.WARNING_MESSAGE);
+		} else {
+			semanticClassModel.addElement(semanticClassComboBox.getSelectedItem().toString());
+			semanticClassComboBox.setSelectedIndex(0);
+			relationsModel.addElement(relationSetTextField.getText());
+			relationsComboBox.setSelectedIndex(0);
+			relationSetTextField.setText("");
+			validate();
+		}
 	}
 }

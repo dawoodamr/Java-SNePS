@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import sneps.Network;
 
 
-
 public class cmdAndOr extends javax.swing.JPanel {
 	private Network network;
 
