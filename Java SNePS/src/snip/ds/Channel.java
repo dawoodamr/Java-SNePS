@@ -122,4 +122,13 @@ public class Channel
 	{
 		valve =false;
 	}
+	
+	/**
+	 * Sends the report r over this channel (not final)
+	 * @param r report
+	 */
+	public void send(Report r)
+	{
+		
+	}
 }

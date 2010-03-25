@@ -42,4 +42,58 @@ public class Process
 		return reps;
 	}
 	
+	/**
+	 * Return the list of all sent reports
+	 * @return ReportSet
+	 */
+	public ReportSet getSentReports()
+	{
+		return knownInstsnces;
+	}
+	
+	/**
+	 * Add a report to the sent reports list
+	 * @param r report
+	 */
+	public void addToSent(Report r)
+	{
+		knownInstsnces.putIn(r);
+	}
+	
+	/**
+	 * Returns the list of out going channels
+	 * @return ChannelsSet
+	 */
+	public ChannelsSet getOutGoing()
+	{
+		return outGoing;
+	}
+	
+	/**
+	 * Return the node this process is associated to
+	 * @return Node
+	 */
+	public Node getNode()
+	{
+		return node;
+	}
+	
+	/**
+	 * Sends the report r over the channel c
+	 * @param r report
+	 * @param c channel
+	 */
+	public void send(Report r,Channel c)
+	{
+		Report rSent=new Report(r.getSubstitutions(),r.getSupport(),
+				r.getSign(),this.getNode(),null,r.getContext());
+		Report rCheck=new Report(r.getSubstitutions(),r.getSupport(),r.getSign()
+				,this.getNode(),c.getDestination().getNode(),r.getContext());
+		if(!this.getSentReports().isMember(rCheck))
+		{
+			c.send(rSent);
+			addToSent(rCheck);
+		}
+		
+	}
 }

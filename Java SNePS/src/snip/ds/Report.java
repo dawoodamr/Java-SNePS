@@ -29,7 +29,8 @@ public class Report
 	 * @param node node
 	 * @param context context
 	 */
-	public Report(Substitutions substitution,Object support,boolean sign,Node signature,Node node,Object context )
+	public Report(Substitutions substitution,Object support,boolean sign,
+			Node signature,Node node,Object context )
 	{
 		s=substitution;
 		sup=support;
@@ -151,4 +152,5 @@ public class Report
 			return false;
 		return true;
 	}
+
 }

@@ -138,4 +138,23 @@ public class ReportSet
     		rs.get(i).addBinding(m);
     	}
     }
+    
+    /**
+	 * Returns the number of reports in the reports list
+	 * @return integer
+	 */
+	public int cardinality()
+	{
+		return rs.size();
+	}
+	
+	/**
+	 * return the report number x in the reports list
+	 * @param x the report number
+	 * @return Report
+	 */
+	public Report getReport(int x)
+	{
+		return rs.get(x);
+	}
 }

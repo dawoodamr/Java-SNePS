@@ -28,4 +28,13 @@ public class Destination
 	{
 		return d.node==this.node;//------------node-------------
 	}
+	
+	/**
+	 * Returns the node this destination is pointing to
+	 * @return
+	 */
+	public Node getNode()
+	{
+		return node;
+	}
 }

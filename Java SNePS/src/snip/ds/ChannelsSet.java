@@ -112,4 +112,14 @@ public class ChannelsSet
 	{
 		return ch.size();
 	}
+	
+	/**
+	 * Return the channel number x in the channels list
+	 * @param x channel number
+	 * @return
+	 */
+	public Channel getChannel(int x)
+	{
+		return ch.get(x);
+	}
 }
