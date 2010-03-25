@@ -11,7 +11,7 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 	Graph<Number,Number> graph;
     AbstractLayout<Number,Number> layout;
     VisualizationViewer<Number,Number> vv;
-    private Network network;
+    //private Network network;
 	
 	public VisualizeNetworks() {
 		super();

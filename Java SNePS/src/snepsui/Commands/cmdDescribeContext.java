@@ -6,7 +6,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;

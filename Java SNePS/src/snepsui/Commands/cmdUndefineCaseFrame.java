@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.ActionMap;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -17,14 +16,12 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.CaseFrame;
 import sneps.Network;
-import sneps.Relation;
 
 
 
