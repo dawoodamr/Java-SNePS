@@ -7,23 +7,25 @@
  */
 package match.ds;
 
+import sneps.Node;
+
 public class Binding 
 {
-	private Object mn;
-	private Object mv;
+	private Node mn;
+	private Node mv;
 	/**
 	 *Creates new binding from mvar and mnode
 	 *@param mnode
 	 *@param mvar
 	 */
-    public Binding(Object mvar,Object mnode) 
+    public Binding(Node mvar,Node mnode) 
     {
     	mn=mnode;
     	mv=mvar;
     }
     
     /**
-	 *returns the mvar of the mbind
+	 *returns the mvar of the binding
 	 *@return mv
 	 */
     public Object getMv() 
@@ -31,7 +33,7 @@ public class Binding
     	return mv;
     }
     /**
-	 *returns the mnode of the mbind
+	 *returns the mnode of the binding
 	 *@return mn
 	 */
     public Object getMn() 
@@ -55,7 +57,7 @@ public class Binding
 	 *Set the value of the mvar of the binding with m
 	 *@param m the new mvar
 	 */
-    public void setMv(Object m) 
+    public void setMv(Node m) 
     {
     	mv=m;
     }
@@ -63,7 +65,7 @@ public class Binding
 	 *Set the value of the mnode of the binding with m
 	 *@param m the new mnode
 	 */
-    public void setMn(Object m) 
+    public void setMn(Node m) 
     {
     	mn=m;
     }
