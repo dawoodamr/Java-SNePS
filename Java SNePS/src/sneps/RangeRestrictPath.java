@@ -65,7 +65,7 @@ public class RangeRestrictPath extends Path
 		NodeSet ns = p.followConverse(node);
 		for(int i=0;i<ns.getNodes().size();i++)
 		{
-			NodeSet temp = q.followConverse(ns.getNodes().get(i));
+			NodeSet temp = q.follow(ns.getNodes().get(i));
 			if(temp.getNodes().contains(this.node))
 				result.addNode(ns.getNodes().get(i));
 		}

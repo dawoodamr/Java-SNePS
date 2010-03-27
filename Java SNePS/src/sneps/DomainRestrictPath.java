@@ -56,7 +56,7 @@ public class DomainRestrictPath extends Path
 	public NodeSet followConverse(Node node)
 	{
 		NodeSet result = new NodeSet();
-		NodeSet ns = q.followConverse(node);
+		NodeSet ns = q.follow(node);
 		if(ns.getNodes().contains(this.node))
 			result = p.followConverse(node);
 		return result;
