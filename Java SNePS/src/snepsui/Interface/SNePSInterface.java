@@ -114,7 +114,6 @@ public class SNePSInterface extends SingleFrameApplication {
     private JMenuItem jMenuItem33;
     private JMenuItem asteriskMenuItem;
     private JMenu jMenu11;
-    private JMenuItem listContextNamesMenuItem;
     private JMenuItem listHypothesesMenuItem;
     private JMenuItem describeContextMenuItem;
     private JMenuItem removeFromContextMenuItem;
@@ -635,16 +634,6 @@ public class SNePSInterface extends SingleFrameApplication {
         			listHypothesesMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
         					listHypothesesMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			listContextNamesMenuItem = new JMenuItem();
-        			jMenu9.add(listContextNamesMenuItem);
-        			listContextNamesMenuItem.setName("listContextNamesMenuItem");
-        			listContextNamesMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					listContextNamesMenuItemActionPerformed(evt);
         				}
         			});
         		}
@@ -1270,10 +1259,6 @@ public class SNePSInterface extends SingleFrameApplication {
     
     private void listHypothesesMenuItemActionPerformed(ActionEvent evt) {
     	sNePSULPanel1.menuDrivenCommands.listHypothesesMenuButton();
-    }
-    
-    private void listContextNamesMenuItemActionPerformed(ActionEvent evt) {
-    	sNePSULPanel1.menuDrivenCommands.listContextNamesMenuButton();
     }
     
     private void listNodesMenuItemActionPerformed(ActionEvent evt) {

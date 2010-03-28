@@ -355,10 +355,6 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDescribeContext(network));
 		}
-		else if(commandsComboBox.getSelectedItem().equals("list-hypotheses")) {
-			commandsPanel.removeAll();
-			commandsPanel.add(new cmdListHypotheses());
-		}
 		else if(commandsComboBox.getSelectedItem().equals("dump")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDump(network));
@@ -654,17 +650,8 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void listHypothesesMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdListHypotheses());
+		commandsPanel.add(new cmdListHypotheses(network));
 		commandsComboBox.setSelectedItem("list-hypothese");
-		commandMenusComboBox.setSelectedItem("Contexts");
-		this.repaint();
-		this.validate();
-	}
-
-	public void listContextNamesMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdListContextNames());
-		commandsComboBox.setSelectedItem("list-context-names");
 		commandMenusComboBox.setSelectedItem("Contexts");
 		this.repaint();
 		this.validate();
