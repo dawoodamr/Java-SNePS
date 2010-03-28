@@ -5,6 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.ActionMap;
 import javax.swing.ComboBoxModel;
@@ -15,6 +18,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
@@ -22,6 +26,7 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.Network;
+import sneps.Relation;
 
 
 
@@ -42,7 +47,6 @@ public class cmdDefinePath extends javax.swing.JPanel {
 	private JLabel pathLabel;
 	private JLabel relationLabel;
 	private JTextField pathTextField;
-	private JTextField relationTextField;
 	private JComboBox pathComboBox;
 	private JList pathList;
 	private JList relationList;
@@ -50,6 +54,7 @@ public class cmdDefinePath extends javax.swing.JPanel {
 	private DefaultListModel pathModel;
 	private JScrollPane jScrollPane1;
 	private JScrollPane jScrollPane2;
+	private JComboBox relationComboBox;
 	private JButton addButton;
 	private JButton doneButton;
 	private JButton pathButton;
@@ -80,11 +85,6 @@ public class cmdDefinePath extends javax.swing.JPanel {
 		try {
 			setPreferredSize(new Dimension(690, 225));
 			this.setLayout(null);
-			this.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent evt) {
-					thisMouseClicked(evt);
-				}
-			});
 			{
 				definePathLabel = new JLabel();
 				this.add(definePathLabel);
@@ -102,6 +102,11 @@ public class cmdDefinePath extends javax.swing.JPanel {
 				addButton.setBounds(583, 27, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
+				addButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						addButtonMouseClicked(evt);
+					}
+				});
 			}
 			{
 				doneButton = new JButton();
@@ -120,11 +125,6 @@ public class cmdDefinePath extends javax.swing.JPanel {
 					pathList.setModel(pathModel);
 					pathList.setBounds(410, 168, 187, 100);
 				}
-			}
-			{
-				relationTextField = new JTextField();
-				this.add(relationTextField);
-				relationTextField.setBounds(101, 25, 189, 22);
 			}
 			{
 				relationLabel = new JLabel();
@@ -161,8 +161,9 @@ public class cmdDefinePath extends javax.swing.JPanel {
 			{
 				ComboBoxModel pathComboBoxModel = 
 					new DefaultComboBoxModel(
-							new String[] { "converse", "compose", "kstar", "kplus", "or", "and", "not",
-									"relative-complement", "irreflexive-restrict", "exception", "domain-restrict", "range-restrict" });
+							new String[] { "unitpath", "unitpath-", "converse", "compose", "kstar", "kplus", "or", "and", "not",
+									"relative-complement", "irreflexive-restrict", "exception", "domain-restrict", 
+									"range-restrict" });
 				pathComboBox = new JComboBox();
 				this.add(pathComboBox);
 				pathComboBox.setModel(pathComboBoxModel);
@@ -173,11 +174,33 @@ public class cmdDefinePath extends javax.swing.JPanel {
 				this.add(pathButton);
 				pathButton.setBounds(610, 25, 40, 22);
 				pathButton.setName("pathButton");
+				pathButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						pathButtonMouseClicked(evt);
+					}
+				});
 				pathButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						pathButtonActionPerformed(evt);
 					}
 				});
+			}
+			{
+				DefaultComboBoxModel relationsComboBoxModel = new DefaultComboBoxModel();
+				String str = "";
+				Hashtable<String, Relation> relations = network.getRelations();
+				Set<String> set = relations.keySet();
+
+			    Iterator<String> itr = set.iterator();
+			    while (itr.hasNext()) {
+			      str = itr.next();
+			      relationsComboBoxModel.addElement(relations.get(str).getName()) ;
+			    }
+			    
+				relationComboBox = new JComboBox();
+				this.add(relationComboBox);
+				relationComboBox.setModel(relationsComboBoxModel);
+				relationComboBox.setBounds(101, 24, 189, 22);
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {
@@ -185,19 +208,27 @@ public class cmdDefinePath extends javax.swing.JPanel {
 		}
 	}
 	
-	private void thisMouseClicked(MouseEvent evt) {
-		relationModel.addElement(relationTextField.getText());
+	private void pathButtonActionPerformed(ActionEvent evt) {
+		JFrame frame = new JFrame("Path");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.getContentPane().add(new cmdPath(network));
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
+	private void addButtonMouseClicked(MouseEvent evt) {
+		relationModel.addElement(relationComboBox.getSelectedItem().toString());
 		pathModel.addElement(pathComboBox.getSelectedItem().toString() + pathTextField.getText());
-		relationTextField.setText("");
+		relationComboBox.setSelectedIndex(0);
 		pathComboBox.setSelectedIndex(0);
 		pathTextField.setText("");
 	}
 	
-	private void pathButtonActionPerformed(ActionEvent evt) {
-		JFrame frame = new JFrame("Path");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().add(new cmdPath());
-		frame.pack();
-		frame.setVisible(true);
+	private void pathButtonMouseClicked(MouseEvent evt) {
+		cmdPath pathPanel = new cmdPath(network);
+		
+	    int result = JOptionPane.showConfirmDialog(  
+	    	    this, pathPanel, "title", JOptionPane.PLAIN_MESSAGE
+	    	);
 	}
 }

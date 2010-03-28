@@ -15,12 +15,15 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
+
+import sneps.Network;
 
 
 /**
@@ -47,6 +50,7 @@ public class cmdPath extends javax.swing.JPanel {
 	private JComboBox pathComboBox;
 	private JButton infoButton;
 	private JLabel pathLabel;
+	private Network network;
 
 	@Action
     public void add() {
@@ -62,8 +66,9 @@ public class cmdPath extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdPath() {
+	public cmdPath(Network network) {
 		super();
+		this.network = network;
 		initGUI();
 	}
 	
@@ -154,11 +159,11 @@ public class cmdPath extends javax.swing.JPanel {
 	}
 	
 	private void pathButtonActionPerformed(ActionEvent evt) {
-		JFrame frame = new JFrame("Path");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().add(new cmdPath());
-		frame.pack();
-		frame.setVisible(true);
+		cmdPath pathPanel = new cmdPath(network);
+		
+	    int result = JOptionPane.showConfirmDialog(  
+	    	    this, pathPanel, "title", JOptionPane.PLAIN_MESSAGE
+	    	);
 	}
 	
 	private void addButtonMouseClicked(MouseEvent evt) {
@@ -166,5 +171,4 @@ public class cmdPath extends javax.swing.JPanel {
 		pathComboBox.setSelectedIndex(0);
 		pathTextField.setText("");
 	}
-
 }

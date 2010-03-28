@@ -16,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -257,11 +258,11 @@ public class cmdFindBase extends javax.swing.JPanel {
 	}
 	
 	private void pathButtonActionPerformed(ActionEvent evt) {
-		JFrame frame = new JFrame("Path");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().add(new cmdPath());
-		frame.pack();
-		frame.setVisible(true);
+		cmdPath pathPanel = new cmdPath(network);
+		
+	    int result = JOptionPane.showConfirmDialog(  
+	    	    this, pathPanel, "title", JOptionPane.PLAIN_MESSAGE
+	    	);
 	}
 	
 	private void buildButtonActionPerformed(ActionEvent evt) {

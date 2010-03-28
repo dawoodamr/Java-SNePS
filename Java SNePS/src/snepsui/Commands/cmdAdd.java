@@ -67,6 +67,7 @@ public class cmdAdd extends javax.swing.JPanel {
 	public cmdAdd(Network network) {
 		super();
 		this.network = network;
+		nodes = new LinkedList<Node>();
 		initGUI();
 	}
 
@@ -347,8 +348,8 @@ public class cmdAdd extends javax.swing.JPanel {
 	}
 	
 	private void doneButtonMouseClicked(MouseEvent evt) {
-		int nodeCounter = 0;
-		Object[][] cableset = new Object[100][2];
+		LinkedList<Relation> relationlist = new LinkedList<Relation>();
+		LinkedList<Node> nodelist = new LinkedList<Node>();
 		
 		try {
 			for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
@@ -367,8 +368,8 @@ public class cmdAdd extends javax.swing.JPanel {
 						
 						System.out.println("Relation Name: " + relation.getName());
 						System.out.println("Node Name: " + node.getIdentifier());
-						cableset[nodeCounter][0] = relation;
-						cableset[nodeCounter][1] = node;
+						relationlist.add(relation);
+						nodelist.add(node);
 						
 					} catch (CustomException e) {
 						JOptionPane.showMessageDialog(this,
@@ -381,6 +382,13 @@ public class cmdAdd extends javax.swing.JPanel {
 			}
 			
 			try {
+				Object[][] cableset = new Object[relationlist.size()][2];
+				
+				for(int i = 0; i < relationlist.size(); i++) {
+					cableset[i][0] = relationlist.get(i);
+					cableset[i][1] = nodelist.get(i);
+				}
+				
 				CaseFrame caseframe = network.getCaseFrame(caseframeComboBox.getSelectedItem().toString());
 				System.out.println("Case Frame: " + caseframe.getId());
 				Node node = network.build(cableset, caseframe);
