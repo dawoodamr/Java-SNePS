@@ -31,14 +31,10 @@ import javax.swing.JToggleButton;
 import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.functors.ConstantTransformer;
 
-import sneps.Cable;
-import sneps.CableSet;
 import sneps.CaseFrame;
 import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
-import sneps.NodeSet;
-import sneps.PatternNode;
 import sneps.Relation;
 import sneps.UpCableSet;
 import edu.uci.ics.jung.algorithms.layout.BalloonLayout;
@@ -61,6 +57,7 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.layout.LayoutTransition;
+import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 import edu.uci.ics.jung.visualization.transform.LensSupport;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableTransformerDecorator;
@@ -82,7 +79,7 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 			return new DirectedSparseMultigraph<String,String>();
 		}
 	};
-
+	
 	Factory<Tree<String,String>> treeFactory =
 		new Factory<Tree<String,String>> () {
 
@@ -92,9 +89,9 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 	};
 
 	Factory<String> edgeFactory = new Factory<String>() {
-		int i=0;
+		int i = 0;
 		public String create() {
-			return "B"+i++;
+			return "" + i++;
 		}};
     
     Factory<String> vertexFactory = new Factory<String>() {
@@ -110,9 +107,10 @@ public class VisualizeNetworks extends javax.swing.JPanel {
     
     VisualizationServer.Paintable rings;
     
-    String root;
+    //String root;
     
     TreeLayout<String, String> layout;
+    
     
     BalloonLayout<String,String> radialLayout;
     /**
@@ -141,10 +139,11 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 	        vv =  new VisualizationViewer<String,String>(layout, new Dimension(600,600));
 	        vv.setBackground(Color.white);
 	        vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
-	        vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
+	        vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
 	        // add a listener for ToolTips
-	        vv.setVertexToolTipTransformer(new ToStringLabeller());
+	        vv.setVertexToolTipTransformer(new ToStringLabeller<String>());
 	        vv.getRenderContext().setArrowFillPaintTransformer(new ConstantTransformer(Color.lightGray));
+	        vv.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 	        rings = new Rings(radialLayout);
 	        
 	        //Container content = getContentPane();
@@ -279,9 +278,9 @@ class Rings implements VisualizationServer.Paintable {
 	    Iterator<String> itr1 = set.iterator();
 	    while (itr1.hasNext()) {
 	    	nodeString = itr1.next();
-	    	Node node = nodes.get(nodeString);
-	    	String nodeName = node.getIdentifier();
-	    	System.out.println(node.getIdentifier());
+	    	Node node1 = nodes.get(nodeString);
+	    	String nodeName = node1.getIdentifier();
+	    	System.out.println(node1.getIdentifier());
 	    	System.out.println(nodeName);
 	    	graph.addVertex(nodeName);
 	    }
@@ -296,10 +295,10 @@ class Rings implements VisualizationServer.Paintable {
 	    		Relation relation = upCableSet.getUpCables().get(i).getRelation();
 		    	LinkedList<Node> nodeset = upCableSet.getUpCables().get(i).getNodeSet().getNodes();
 		    	for(Node item : nodeset) {
-		    		graph.addEdge(relation.getName(),node.getIdentifier(),item.getIdentifier());
-		    		System.out.println(relation.getName());
-		    		System.out.println(node.getIdentifier());
-		    		System.out.println(item.getIdentifier());
+		    		graph.addEdge(edgeFactory.create(),item.getIdentifier(),node.getIdentifier());
+		    		System.out.println("Relation Name: " + relation.getName());
+		    		System.out.println("Node Name: " + node.getIdentifier());
+		    		System.out.println("Upcable Node: "+ item.getIdentifier());
 		    	}
 	    	}
 	    }
@@ -313,36 +312,60 @@ class Rings implements VisualizationServer.Paintable {
         
         Network network = new Network();
         try {
-        	setOfRelations.add(network.defineRelation("a", "entity", "none", 0));
-        	setOfRelations.add(network.defineRelation("b", "entity", "none", 0));
-        	setOfRelations.add(network.defineRelation("c", "entity", "none", 0));
+        	//Define the relations
+        	Relation rr1 = network.defineRelation("member","entity","reduce",0);
+        	Relation rr2 = network.defineRelation("class","entity","reduce",0);
         	
-			CaseFrame caseframe = network.defineCaseFrame("entity", setOfRelations);
-			
-			network.build("node 1");
-			network.build("node 2");
-			network.build("node 3");
-			network.build("node 4");
-			network.build("node 5");
-			network.build("node 6");
-			network.build("node 7");
-			
-			LinkedList<Node> nodes1 = new LinkedList<Node>();
-			nodes1.add(network.getNode("node 2"));
-			nodes1.add(network.getNode("node 3"));
-			Cable cable1 = new Cable(network.getRelation("a"), new NodeSet(nodes1));
-			
-			LinkedList<Node> nodes2 = new LinkedList<Node>();
-			nodes1.add(network.getNode("node 4"));
-			nodes1.add(network.getNode("node 5"));
-			Cable cable2 = new Cable(network.getRelation("a"), new NodeSet(nodes2));
-			
-			LinkedList<Cable> Cables = new LinkedList<Cable>();
-			Cables.add(cable1);
-			Cables.add(cable2);
-			
-			CableSet cableset = new CableSet(Cables, caseframe);
-			Node node = new PatternNode("new", cableset);
+        	//Define the caseframe
+        	LinkedList<Relation> relations1 = new LinkedList<Relation>();
+        	relations1.add(rr1);
+        	relations1.add(rr2);
+        	CaseFrame caseframe = network.defineCaseFrame("entity", relations1);
+        	
+        	//(assert member (Clyde, Dumbo) class elephant)
+        	Node node = network.build("Clyde");
+        	Node node1 = network.build("Dumbo");
+        	Node node2 = network.build("elephant");
+        	
+        	Object[][] o1 = new Object[3][2];
+        	o1[0][0] = rr1;
+        	o1[0][1] = node;
+        	o1[1][0] = rr1;
+        	o1[1][1] = node1;
+        	o1[2][0] = rr2;
+        	o1[2][1] = node2;
+        	
+        	Node res1 = network.build(o1,caseframe);
+        	System.out.println("Created Node: " + res1.getIdentifier());
+        	System.out.println("Network Nodes: " + network.getNodes().get(res1.getIdentifier()).getIdentifier());
+        	
+        	//(assert member Tweety class canary)
+        	Node node3 = network.build("Tweety");
+        	Node node4 = network.build("canary");
+        	
+        	Object[][] o2 = new Object[2][2];
+        	o2[0][0] = rr1;
+        	o2[0][1] = node3;
+        	o2[1][0] = rr2;
+        	o2[1][1] = node4;
+        	
+        	Node res2 = network.build(o2,caseframe);
+        	System.out.println("Created Node: " + res2.getIdentifier());
+        	System.out.println("Network Nodes: " + network.getNodes().get(res2.getIdentifier()).getIdentifier());
+        	
+        	//(assert member Opus class bird)
+        	Node node5 = network.build("Opus");
+        	Node node6 = network.build("bird");
+        	
+        	Object[][] o3 = new Object[2][2];
+        	o3[0][0] = rr1;
+        	o3[0][1] = node5;
+        	o3[1][0] = rr2;
+        	o3[1][1] = node6;
+        	
+        	Node res3 = network.build(o3,caseframe);
+        	System.out.println("Created Node: " + res3.getIdentifier());
+        	System.out.println("Network Nodes: " + network.getNodes().get(res3.getIdentifier()).getIdentifier());
 			
 		} catch (CustomException e) {
 			e.printStackTrace();

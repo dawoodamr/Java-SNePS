@@ -333,7 +333,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		}
 		else if(commandsComboBox.getSelectedItem().equals("undefine-path")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdUndefinePath());
+			commandsPanel.add(new cmdUndefinePath(network));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("add-to-context")) {
 			commandsPanel.removeAll();
@@ -600,7 +600,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void undefinePathMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdUndefinePath());
+		commandsPanel.add(new cmdUndefinePath(network));
 		commandsComboBox.setSelectedItem("undefine-path");
 		commandMenusComboBox.setSelectedItem("Path-Based Inference");
 		this.repaint();
