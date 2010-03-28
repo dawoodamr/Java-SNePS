@@ -6,14 +6,19 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
+
+import sneps.Network;
+
 
 
 /**
@@ -29,14 +34,13 @@ import org.jdesktop.application.Application;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class cmdListHypotheses extends javax.swing.JPanel {
-	private JLabel listHypothesesLabel;
+	private JLabel listHypotheseLabel;
+	private JComboBox contextNameComboBox;
 	private JLabel contextNameLabel;
-	private JTextField contextNameTextField;
-	private JRadioButton contextNameRadioButton2;
-	private JRadioButton contextNameRadioButton1;
 	private ButtonGroup group;
-	private JButton doneButton;
 	private JButton infoButton;
+	private JButton doneButton;
+	private Network network;
 
 	@Action
     public void add() {
@@ -52,8 +56,9 @@ public class cmdListHypotheses extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdListHypotheses() {
+	public cmdListHypotheses(Network network) {
 		super();
+		this.network = network;
 		initGUI();
 	}
 	
@@ -62,16 +67,10 @@ public class cmdListHypotheses extends javax.swing.JPanel {
 			setPreferredSize(new Dimension(690, 225));
 			this.setLayout(null);
 			{
-				listHypothesesLabel = new JLabel();
-				this.add(listHypothesesLabel);
-				listHypothesesLabel.setName("listHypothesesLabel");
-				listHypothesesLabel.setBounds(192, 59, 106, 15);
-			}
-			{
-				contextNameTextField = new JTextField();
-				this.add(contextNameTextField);
-				contextNameTextField.setBounds(351, 85, 184, 22);
-				contextNameTextField.setEditable(false);
+				listHypotheseLabel = new JLabel();
+				this.add(listHypotheseLabel);
+				listHypotheseLabel.setName("listHypotheseLabel");
+				listHypotheseLabel.setBounds(169, 92, 128, 15);
 			}
 			{
 				doneButton = new JButton();
@@ -82,7 +81,7 @@ public class cmdListHypotheses extends javax.swing.JPanel {
 			{
 				contextNameLabel = new JLabel();
 				this.add(contextNameLabel);
-				contextNameLabel.setBounds(326, 32, 97, 15);
+				contextNameLabel.setBounds(304, 58, 97, 15);
 				contextNameLabel.setName("contextNameLabel");
 			}
 			{
@@ -94,41 +93,18 @@ public class cmdListHypotheses extends javax.swing.JPanel {
 				infoButton.setToolTipText("info");
 			}
 			{
-				contextNameRadioButton1 = new JRadioButton();
-				this.add(contextNameRadioButton1);
-				contextNameRadioButton1.setBounds(326, 57, 97, 19);
-				contextNameRadioButton1.setName("contextNameRadioButton1");
-				contextNameRadioButton1.setSelected(true);
-			}
-			{
-				contextNameRadioButton2 = new JRadioButton();
-				this.add(contextNameRadioButton2);
-				contextNameRadioButton2.setBounds(326, 90, 25, 17);
+				ComboBoxModel contextNameComboBoxModel = new DefaultComboBoxModel();
+				contextNameComboBox = new JComboBox();
+				this.add(contextNameComboBox);
+				contextNameComboBox.setModel(contextNameComboBoxModel);
+				contextNameComboBox.setBounds(304, 85, 200, 22);
 			}
 			{
 				group = new ButtonGroup();
-				group.add(contextNameRadioButton1);
-				group.add(contextNameRadioButton2);
-				contextNameRadioButton2.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent evt) {
-						contextNameRadioButton2MouseClicked(evt);
-					}
-				});
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	private void contextNameRadioButton2MouseClicked(MouseEvent evt) {
-		if(contextNameRadioButton2.isSelected()) {
-			contextNameTextField.setEditable(true);
-		}
-		else {
-			contextNameTextField.setEditable(false);
-		}
-	}
-
 }

@@ -42,14 +42,12 @@ import sneps.Node;
  */
 public class cmdAddToContext extends javax.swing.JPanel {
 	private JLabel addToContextLabel;
-	private JTextField contextNameTextField;
 	private JButton addButton;
 	private JButton doneButton;
 	private DefaultListModel nodesetListModel;
 	private JScrollPane jScrollPane2;
+	private JComboBox contextNameComboBox;
 	private JComboBox nodesetComboBox;
-	private JRadioButton contextNameRadioButton2;
-	private JRadioButton contextNameRadioButton1;
 	private JButton infoButton;
 	private JList nodesetList;
 	private JLabel contextNameLabel;
@@ -99,18 +97,12 @@ public class cmdAddToContext extends javax.swing.JPanel {
 				addToContextLabel = new JLabel();
 				this.add(addToContextLabel);
 				addToContextLabel.setName("addToContextLabel");
-				addToContextLabel.setBounds(35, 27, 108, 15);
-			}
-			{
-				contextNameTextField = new JTextField();
-				this.add(contextNameTextField);
-				contextNameTextField.setBounds(513, 59, 153, 22);
-				contextNameTextField.setEditable(false);
+				addToContextLabel.setBounds(19, 27, 108, 15);
 			}
 			{
 				addButton = new JButton();
 				this.add(addButton);
-				addButton.setBounds(375, 26, 16, 18);
+				addButton.setBounds(369, 26, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
 				addButton.addMouseListener(new MouseAdapter() {
@@ -131,12 +123,12 @@ public class cmdAddToContext extends javax.swing.JPanel {
 			{
 				nodesetTextField = new JTextField();
 				this.add(nodesetTextField);
-				nodesetTextField.setBounds(260, 24, 103, 22);
+				nodesetTextField.setBounds(241, 24, 117, 22);
 			}
 			{
 				nodesetLabel = new JLabel();
 				this.add(nodesetLabel);
-				nodesetLabel.setBounds(155, 4, 61, 15);
+				nodesetLabel.setBounds(127, 4, 61, 15);
 				nodesetLabel.setName("nodesetLabel");
 			}
 			{
@@ -148,13 +140,13 @@ public class cmdAddToContext extends javax.swing.JPanel {
 			{
 				jScrollPane2 = new JScrollPane();
 				this.add(jScrollPane2);
-				jScrollPane2.setBounds(155, 62, 208, 103);
+				jScrollPane2.setBounds(130, 57, 228, 105);
 				{
 					nodesetListModel = new DefaultListModel();
 					nodesetList = new JList();
 					jScrollPane2.setViewportView(nodesetList);
 					nodesetList.setModel(nodesetListModel);
-					nodesetList.setBounds(83, 113, 205, 100);
+					nodesetList.setBounds(463, 79, 205, 100);
 				}
 			}
 			{
@@ -166,32 +158,12 @@ public class cmdAddToContext extends javax.swing.JPanel {
 				infoButton.setToolTipText("info");
 			}
 			{
-				contextNameRadioButton1 = new JRadioButton();
-				this.add(contextNameRadioButton1);
-				contextNameRadioButton1.setBounds(483, 25, 97, 19);
-				contextNameRadioButton1.setName("contextNameRadioButton1");
-				contextNameRadioButton1.setSelected(true);
-			}
-			{
-				contextNameRadioButton2 = new JRadioButton();
-				this.add(contextNameRadioButton2);
-				contextNameRadioButton2.setBounds(483, 66, 25, 17);
-			}
-			{
 				group = new ButtonGroup();
-				group.add(contextNameRadioButton1);
-				group.add(contextNameRadioButton2);
-				contextNameRadioButton2.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent evt) {
-						contextNameRadioButton2MouseClicked(evt);
-					}
-				});
 			}
 			{
 				buildButton = new JButton();
 				this.add(buildButton);
-				buildButton.setBounds(396, 25, 18, 20);
+				buildButton.setBounds(390, 25, 18, 20);
 				buildButton.setAction(getAppActionMap().get("build"));
 				buildButton.setFocusable(false);
 				buildButton.setToolTipText("build");
@@ -204,7 +176,7 @@ public class cmdAddToContext extends javax.swing.JPanel {
 			{
 				assertButton = new JButton();
 				this.add(assertButton);
-				assertButton.setBounds(419, 25, 18, 20);
+				assertButton.setBounds(413, 25, 18, 20);
 				assertButton.setAction(getAppActionMap().get("assertAction"));
 				assertButton.setFocusable(false);
 				assertButton.setToolTipText("assert");
@@ -217,7 +189,7 @@ public class cmdAddToContext extends javax.swing.JPanel {
 			{
 				findButton = new JButton();
 				this.add(findButton);
-				findButton.setBounds(442, 25, 18, 20);
+				findButton.setBounds(436, 25, 18, 20);
 				findButton.setAction(getAppActionMap().get("find"));
 				findButton.setFocusable(false);
 				findButton.setToolTipText("assert");
@@ -243,20 +215,19 @@ public class cmdAddToContext extends javax.swing.JPanel {
 				nodesetComboBox = new JComboBox();
 				this.add(nodesetComboBox);
 				nodesetComboBox.setModel(nodesetComboBoxModel);
-				nodesetComboBox.setBounds(155, 23, 99, 22);
+				nodesetComboBox.setBounds(127, 23, 108, 22);
+			}
+			{
+				ComboBoxModel contextNameComboBoxModel = new DefaultComboBoxModel();
+				contextNameComboBox = new JComboBox();
+				this.add(contextNameComboBox);
+				contextNameComboBox.setModel(contextNameComboBoxModel);
+				contextNameComboBox.setBounds(483, 25, 170, 22);
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	private void contextNameRadioButton2MouseClicked(MouseEvent evt) {
-		if (contextNameRadioButton2.isSelected()) {
-			contextNameTextField.setEditable(true);
-		} else {
-			contextNameTextField.setEditable(false);
 		}
 	}
 	

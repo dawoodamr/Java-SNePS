@@ -8,14 +8,18 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
@@ -38,35 +42,43 @@ import sneps.Network;
 public class cmdSetContext extends javax.swing.JPanel {
 	private JLabel setContextLabel;
 	private JLabel symbolLabel;
-	private JLabel nodesetLabel;
 	private JTextField symbolTextField;
+	private JButton doneButton;
+	private JRadioButton symbolRadioButton2;
+	private JScrollPane jScrollPane1;
+	private JLabel nodesetLabel;
+	private JComboBox nodesetComboBox;
+	private JList nodesetList;
 	private JTextField nodesetTextField;
 	private JButton addButton;
-	private JButton doneButton;
-	private JList nodesetList;
-	private DefaultListModel nodesetModel;
-	private JScrollPane jScrollPane2;
-	private JRadioButton symbolRadioButton2;
+	private JButton buildButton;
+	private JButton assertButton;
+	private JButton findButton;
 	private JRadioButton symbolRadioButton1;
 	private ButtonGroup group;
 	private JButton infoButton;
-	private JButton buildButton;
 	private Network network;
+	private DefaultListModel nodesetListModel;
 
 	@Action
     public void add() {
-    	
     }
 	
 	@Action
     public void build() {
-    	
     }
 	
 	@Action
     public void info() {
-    	
     }
+	
+	@Action
+	public void find() {
+	}
+	
+	@Action
+	public void assertAction() {
+	}
 	
 	private ActionMap getAppActionMap() {
         return Application.getInstance().getContext().getActionMap(this);
@@ -86,28 +98,13 @@ public class cmdSetContext extends javax.swing.JPanel {
 				setContextLabel = new JLabel();
 				this.add(setContextLabel);
 				setContextLabel.setName("setContextLabel");
-				setContextLabel.setBounds(64, 28, 76, 15);
+				setContextLabel.setBounds(6, 31, 82, 15);
 			}
 			{
 				symbolTextField = new JTextField();
 				this.add(symbolTextField);
-				symbolTextField.setBounds(450, 54, 184, 22);
+				symbolTextField.setBounds(479, 52, 163, 22);
 				symbolTextField.setEditable(false);
-			}
-			{
-				addButton = new JButton();
-				this.add(addButton);
-				addButton.setBounds(352, 27, 16, 18);
-				addButton.setAction(getAppActionMap().get("add"));
-				addButton.setFocusable(false);
-				addButton.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent evt) {
-						nodesetModel.addElement(nodesetTextField.getText());
-						nodesetTextField.setText("");
-						validate();
-					}
-				});
 			}
 			{
 				doneButton = new JButton();
@@ -116,32 +113,10 @@ public class cmdSetContext extends javax.swing.JPanel {
 				doneButton.setName("doneButton");
 			}
 			{
-				nodesetTextField = new JTextField();
-				this.add(nodesetTextField);
-				nodesetTextField.setBounds(152, 25, 189, 22);
-			}
-			{
-				nodesetLabel = new JLabel();
-				this.add(nodesetLabel);
-				nodesetLabel.setBounds(152, 4, 61, 15);
-				nodesetLabel.setName("nodesetLabel");
-			}
-			{
 				symbolLabel = new JLabel();
 				this.add(symbolLabel);
-				symbolLabel.setBounds(421, 4, 97, 15);
+				symbolLabel.setBounds(455, 4, 97, 15);
 				symbolLabel.setName("symbolLabel");
-			}
-			{
-				jScrollPane2 = new JScrollPane();
-				this.add(jScrollPane2);
-				jScrollPane2.setBounds(152, 59, 189, 103);
-				{
-					nodesetModel = new DefaultListModel();
-					nodesetList = new JList();
-					jScrollPane2.setViewportView(nodesetList);
-					nodesetList.setModel(nodesetModel);
-				}
 			}
 			{
 				infoButton = new JButton();
@@ -154,36 +129,103 @@ public class cmdSetContext extends javax.swing.JPanel {
 			{
 				symbolRadioButton1 = new JRadioButton();
 				this.add(symbolRadioButton1);
-				symbolRadioButton1.setBounds(421, 26, 97, 19);
+				symbolRadioButton1.setBounds(455, 26, 97, 19);
 				symbolRadioButton1.setName("symbolRadioButton1");
 				symbolRadioButton1.setSelected(true);
 			}
 			{
 				symbolRadioButton2 = new JRadioButton();
 				this.add(symbolRadioButton2);
-				symbolRadioButton2.setBounds(420, 61, 25, 17);
+				symbolRadioButton2.setBounds(455, 59, 25, 17);
 			}
 			{
 				group = new ButtonGroup();
 				group.add(symbolRadioButton1);
 				group.add(symbolRadioButton2);
+				{
+					findButton = new JButton();
+					this.add(findButton);
+					findButton.setAction(getAppActionMap().get("find"));
+					findButton.setBounds(398, 26, 18, 20);
+					findButton.setName("findButton");
+					findButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							findButtonActionPerformed(evt);
+						}
+					});
+				}
+				{
+					assertButton = new JButton();
+					this.add(assertButton);
+					assertButton.setAction(getAppActionMap().get("assertAction"));
+					assertButton.setBounds(375, 26, 18, 20);
+					assertButton.setName("assertButton");
+					assertButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							assertButtonActionPerformed(evt);
+						}
+					});
+				}
+				{
+					buildButton = new JButton();
+					this.add(buildButton);
+					buildButton.setAction(getAppActionMap().get("build"));
+					buildButton.setBounds(352, 26, 18, 20);
+					buildButton.setName("buildButton");
+					buildButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							buildButtonActionPerformed(evt);
+						}
+					});
+				}
+				{
+					addButton = new JButton();
+					this.add(addButton);
+					addButton.setAction(getAppActionMap().get("add"));
+					addButton.setBounds(331, 27, 16, 18);
+					addButton.setName("addButton");
+					addButton.addMouseListener(new MouseAdapter() {
+						public void mouseClicked(MouseEvent evt) {
+							nodesetListModel.addElement(nodesetTextField.getText());
+							nodesetTextField.setText("");
+							validate();
+						}
+					});
+				}
+				{
+					nodesetTextField = new JTextField();
+					this.add(nodesetTextField);
+					nodesetTextField.setBounds(202, 25, 117, 22);
+				}
+				{
+					ComboBoxModel nodesetComboBoxModel = new DefaultComboBoxModel();
+					nodesetComboBox = new JComboBox();
+					this.add(nodesetComboBox);
+					nodesetComboBox.setModel(nodesetComboBoxModel);
+					nodesetComboBox.setBounds(88, 24, 108, 22);
+				}
+				{
+					nodesetLabel = new JLabel();
+					this.add(nodesetLabel);
+					nodesetLabel.setName("nodesetLabel");
+					nodesetLabel.setBounds(88, 4, 61, 15);
+				}
+				{
+					jScrollPane1 = new JScrollPane();
+					this.add(jScrollPane1);
+					jScrollPane1.setBounds(88, 52, 231, 111);
+					{
+						nodesetListModel = new DefaultListModel();
+						nodesetList = new JList();
+						jScrollPane1.setViewportView(nodesetList);
+						nodesetList.setModel(nodesetListModel);
+						nodesetList.setBounds(387, 123, 225, 102);
+					}
+				}
 				symbolRadioButton2.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent evt) {
 						symbolRadioButton2MouseClicked(evt);
-					}
-				});
-			}
-			{
-				buildButton = new JButton();
-				this.add(buildButton);
-				buildButton.setBounds(379, 26, 18, 20);
-				buildButton.setAction(getAppActionMap().get("build"));
-				buildButton.setFocusable(false);
-				buildButton.setToolTipText("build");
-				buildButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						buildButtonActionPerformed(evt);
 					}
 				});
 			}
@@ -206,6 +248,22 @@ public class cmdSetContext extends javax.swing.JPanel {
 		JFrame frame = new JFrame("Build");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().add(new cmdBuild(network));
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
+	private void assertButtonActionPerformed(ActionEvent evt) {
+		JFrame frame = new JFrame("Assert");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.getContentPane().add(new cmdAssert(network));
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
+	private void findButtonActionPerformed(ActionEvent evt) {
+		JFrame frame = new JFrame("Find");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.getContentPane().add(new cmdFind(network));
 		frame.pack();
 		frame.setVisible(true);
 	}

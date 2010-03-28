@@ -19,7 +19,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
@@ -42,20 +41,17 @@ import sneps.Node;
  */
 public class cmdRemoveFromContext extends javax.swing.JPanel {
 	private JLabel removeFromContextLabel;
-	private JTextField contextNameTextField;
 	private JButton addButton;
 	private JButton doneButton;
 	private DefaultListModel nodesetListModel;
 	private JScrollPane jScrollPane2;
+	private JComboBox contextComboBox;
 	private JComboBox nodesetComboBox;
-	private JRadioButton contextNameRadioButton2;
-	private JRadioButton contextNameRadioButton1;
 	private JButton infoButton;
 	private JList nodesetList;
 	private JLabel contextNameLabel;
 	private JLabel nodesetLabel;
 	private JTextField nodesetTextField;
-	private ButtonGroup group;
 	private JButton buildButton;
 	private Network network;
 	private JButton assertButton;
@@ -99,18 +95,12 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 				removeFromContextLabel = new JLabel();
 				this.add(removeFromContextLabel);
 				removeFromContextLabel.setName("removeFromContextLabel");
-				removeFromContextLabel.setBounds(6, 27, 144, 15);
-			}
-			{
-				contextNameTextField = new JTextField();
-				this.add(contextNameTextField);
-				contextNameTextField.setBounds(513, 59, 153, 22);
-				contextNameTextField.setEditable(false);
+				removeFromContextLabel.setBounds(7, 27, 142, 15);
 			}
 			{
 				addButton = new JButton();
 				this.add(addButton);
-				addButton.setBounds(375, 26, 16, 18);
+				addButton.setBounds(569, 27, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
 				addButton.addMouseListener(new MouseAdapter() {
@@ -131,30 +121,30 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 			{
 				nodesetTextField = new JTextField();
 				this.add(nodesetTextField);
-				nodesetTextField.setBounds(260, 24, 103, 22);
+				nodesetTextField.setBounds(435, 23, 122, 22);
 			}
 			{
 				nodesetLabel = new JLabel();
 				this.add(nodesetLabel);
-				nodesetLabel.setBounds(155, 4, 61, 15);
+				nodesetLabel.setBounds(314, 4, 61, 15);
 				nodesetLabel.setName("nodesetLabel");
 			}
 			{
 				contextNameLabel = new JLabel();
 				this.add(contextNameLabel);
-				contextNameLabel.setBounds(483, 4, 97, 15);
+				contextNameLabel.setBounds(149, 4, 97, 15);
 				contextNameLabel.setName("contextNameLabel");
 			}
 			{
 				jScrollPane2 = new JScrollPane();
 				this.add(jScrollPane2);
-				jScrollPane2.setBounds(155, 62, 208, 103);
+				jScrollPane2.setBounds(314, 57, 243, 103);
 				{
 					nodesetListModel = new DefaultListModel();
 					nodesetList = new JList();
 					jScrollPane2.setViewportView(nodesetList);
 					nodesetList.setModel(nodesetListModel);
-					nodesetList.setBounds(83, 113, 205, 100);
+					nodesetList.setBounds(12, 185, 205, 100);
 				}
 			}
 			{
@@ -166,32 +156,12 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 				infoButton.setToolTipText("info");
 			}
 			{
-				contextNameRadioButton1 = new JRadioButton();
-				this.add(contextNameRadioButton1);
-				contextNameRadioButton1.setBounds(483, 25, 97, 19);
-				contextNameRadioButton1.setName("contextNameRadioButton1");
-				contextNameRadioButton1.setSelected(true);
-			}
-			{
-				contextNameRadioButton2 = new JRadioButton();
-				this.add(contextNameRadioButton2);
-				contextNameRadioButton2.setBounds(483, 66, 25, 17);
-			}
-			{
-				group = new ButtonGroup();
-				group.add(contextNameRadioButton1);
-				group.add(contextNameRadioButton2);
-				contextNameRadioButton2.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent evt) {
-						contextNameRadioButton2MouseClicked(evt);
-					}
-				});
+				new ButtonGroup();
 			}
 			{
 				buildButton = new JButton();
 				this.add(buildButton);
-				buildButton.setBounds(396, 25, 18, 20);
+				buildButton.setBounds(590, 25, 18, 20);
 				buildButton.setAction(getAppActionMap().get("build"));
 				buildButton.setFocusable(false);
 				buildButton.setToolTipText("build");
@@ -204,7 +174,7 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 			{
 				assertButton = new JButton();
 				this.add(assertButton);
-				assertButton.setBounds(419, 25, 18, 20);
+				assertButton.setBounds(613, 25, 18, 20);
 				assertButton.setAction(getAppActionMap().get("assertAction"));
 				assertButton.setFocusable(false);
 				assertButton.setToolTipText("assert");
@@ -217,7 +187,7 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 			{
 				findButton = new JButton();
 				this.add(findButton);
-				findButton.setBounds(442, 25, 18, 20);
+				findButton.setBounds(636, 25, 18, 20);
 				findButton.setAction(getAppActionMap().get("find"));
 				findButton.setFocusable(false);
 				findButton.setToolTipText("assert");
@@ -243,20 +213,20 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 				nodesetComboBox = new JComboBox();
 				this.add(nodesetComboBox);
 				nodesetComboBox.setModel(nodesetComboBoxModel);
-				nodesetComboBox.setBounds(155, 23, 99, 22);
+				nodesetComboBox.setBounds(314, 23, 115, 22);
+			}
+			{
+				ComboBoxModel contextComboBoxModel = 
+					new DefaultComboBoxModel();
+				contextComboBox = new JComboBox();
+				this.add(contextComboBox);
+				contextComboBox.setModel(contextComboBoxModel);
+				contextComboBox.setBounds(149, 23, 148, 22);
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	private void contextNameRadioButton2MouseClicked(MouseEvent evt) {
-		if (contextNameRadioButton2.isSelected()) {
-			contextNameTextField.setEditable(true);
-		} else {
-			contextNameTextField.setEditable(false);
 		}
 	}
 	

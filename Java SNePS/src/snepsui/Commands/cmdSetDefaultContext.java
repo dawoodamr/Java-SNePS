@@ -57,12 +57,12 @@ public class cmdSetDefaultContext extends javax.swing.JPanel {
 				setDefaultContextNameLabel = new JLabel();
 				this.add(setDefaultContextNameLabel);
 				setDefaultContextNameLabel.setName("setDefaultContextNameLabel");
-				setDefaultContextNameLabel.setBounds(165, 99, 129, 15);
+				setDefaultContextNameLabel.setBounds(165, 92, 129, 15);
 			}
 			{
 				contextNameTextField = new JTextField();
 				this.add(contextNameTextField);
-				contextNameTextField.setBounds(306, 96, 184, 22);
+				contextNameTextField.setBounds(306, 89, 184, 22);
 			}
 			{
 				doneButton = new JButton();
@@ -73,7 +73,7 @@ public class cmdSetDefaultContext extends javax.swing.JPanel {
 			{
 				contextNameLabel = new JLabel();
 				this.add(contextNameLabel);
-				contextNameLabel.setBounds(306, 69, 97, 15);
+				contextNameLabel.setBounds(306, 68, 97, 15);
 				contextNameLabel.setName("contextNameLabel");
 			}
 			{
