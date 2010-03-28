@@ -106,7 +106,7 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 			{
 				caseFrameLabel = new JLabel();
 				this.add(caseFrameLabel);
-				caseFrameLabel.setBounds(64, 54, 93, 15);
+				caseFrameLabel.setBounds(32, 54, 125, 15);
 				caseFrameLabel.setName("caseFrameLabel");
 			}
 			{

@@ -233,13 +233,7 @@ public class cmdAssert extends javax.swing.JPanel {
 		    	}
 				
 			} else if (options.getSelectedItem().toString().equals("build")) {
-//				JTextField text = new JTextField();
-//				text.setVisible(false);
-				
-//				JOptionPane pane = new JOptionPane(new cmdBuild(network), JOptionPane.PLAIN_MESSAGE);
-//				JDialog dialog = pane.createDialog(null, "Build");
-//				dialog.setResizable(true);
-//			    dialog.setVisible(true);
+
 			    cmdBuild build = new cmdBuild(network);
 				
 			    int result = JOptionPane.showConfirmDialog(  
@@ -261,15 +255,7 @@ public class cmdAssert extends javax.swing.JPanel {
 				    }
 			    }
 			    
-//				JDialog dialog = new JDialog();
-//				dialog.getContentPane().add(new cmdBuild(network));
-//				dialog.setPreferredSize(new Dimension(690, 225));
-//				dialog.setVisible(true);
 			} else if (options.getSelectedItem().toString().equals("assert")) {
-//				JDialog dialog = new JDialog();
-//				dialog.getContentPane().add(new cmdAssert(network));
-//				dialog.setPreferredSize(new Dimension(690, 225));
-//				dialog.setVisible(true);
 				
 				cmdAssert assertPanel = new cmdAssert(network);
 				
@@ -293,10 +279,6 @@ public class cmdAssert extends javax.swing.JPanel {
 			    }
 			    
 			} else if (options.getSelectedItem().toString().equals("find")) {
-//				JDialog dialog = new JDialog();
-//				dialog.getContentPane().add(new cmdFind(network));
-//				dialog.setPreferredSize(new Dimension(690, 225));
-//				dialog.setVisible(true);
 				
 				cmdFind assertPanel = new cmdFind(network);
 				
@@ -310,6 +292,7 @@ public class cmdAssert extends javax.swing.JPanel {
 				    	System.out.println(item.getIdentifier());
 				    	
 				    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
+				    	System.out.println(currentNodesetValue);
 				    	
 				    	if(currentNodesetValue.isEmpty()) {
 				    		relationNodesetTableModel.setValueAt(item.getIdentifier(), rowNumber, 1);
@@ -350,38 +333,41 @@ public class cmdAssert extends javax.swing.JPanel {
 		int nodeCounter = 0;
 		Object[][] cableset = new Object[100][2];
 		
-		for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
-			Vector< Object> currentDataVector = (Vector<Object>) relationNodesetTableModel.getDataVector().elementAt(i);
-			String relation = currentDataVector.get(0).toString();
-			String [] nodesetArray = currentDataVector.get(1).toString().split(",");
-			
-			for (int j = 0; j < nodesetArray.length; j++) {
-				try {
-					Node node = network.build(nodesetArray[j]);
-					if (node != null) {
+		try {
+			for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
+				Vector< Object> currentDataVector = (Vector<Object>) relationNodesetTableModel.getDataVector().elementAt(i);
+				Relation relation = network.getRelation(currentDataVector.get(0).toString());
+				
+				String [] nodesetArray = currentDataVector.get(1).toString().split(",");
+				
+				for (int j = 0; j < nodesetArray.length; j++) {
+					try {
+						Node node = network.build(nodesetArray[j]);
+						if (node != null) {
+							JOptionPane.showMessageDialog(this,
+							"The node " + node.getIdentifier() + "was created successfully");
+						}
+						
+						System.out.println("Relation Name: " + relation.getName());
+						System.out.println("Node Name: " + node.getIdentifier());
+						cableset[nodeCounter][0] = relation;
+						cableset[nodeCounter][1] = node;
+						
+					} catch (CustomException e) {
 						JOptionPane.showMessageDialog(this,
-						"The node " + node.getIdentifier() + "was created successfully");
+				    			  "The node " + nodesetArray[j].toString() + "already exits",
+				    			  "Error",
+				    			  JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
 					}
-//					LinkedList<Object> cable = new LinkedList<Object>();
-//					cable.add(relation);
-//					cable.add(node);
-//					cableset.add(cable);
-					cableset[nodeCounter][0] = relation;
-					cableset[nodeCounter][1] = node;
-					nodeCounter++;
-				} catch (CustomException e) {
-					JOptionPane.showMessageDialog(this,
-			    			  "The node " + nodesetArray[j].toString() + "already exits",
-			    			  "Error",
-			    			  JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
 				}
 			}
 			
 			try {
 				CaseFrame caseframe = network.getCaseFrame(caseframeComboBox.getSelectedItem().toString());
-				
+				System.out.println("Case Frame: " + caseframe.getId());
 				Node node = network.build(cableset, caseframe);
+				System.out.println("Created Node: "+ node.getIdentifier());
 				nodes.add(node);
 			} catch (CustomException e) {
 				JOptionPane.showMessageDialog(this,
@@ -390,6 +376,8 @@ public class cmdAssert extends javax.swing.JPanel {
 		    			  JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

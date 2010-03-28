@@ -75,7 +75,7 @@ public class cmdUndefineCaseFrame extends javax.swing.JPanel {
 				undefineLabel = new JLabel();
 				this.add(undefineLabel);
 				undefineLabel.setName("undefineLabel");
-				undefineLabel.setBounds(184, 35, 59, 15);
+				undefineLabel.setBounds(97, 35, 146, 15);
 			}
 			{
 				addButton = new JButton();
