@@ -335,11 +335,7 @@ public class Network
 		if(! isSemanticallyConsistent(array))
 			throw new CustomException("relations are not consistent with target nodes");
 		if(isToBePattern(array))
-		{
-			PatternNode patternNode = createPatNode(array,caseFrame);
-			patternNode.getFreeVariables().addAll(getFreeVars(array));
-			return patternNode;
-		}
+			return createPatNode(array,caseFrame);
 		else
 			return createMolNode(array,caseFrame);
 	}
@@ -483,23 +479,23 @@ public class Network
 			Relation r = (Relation) array[i][0];
 			Node node = (Node) array[i][1];
 			if(node.getClass().getSimpleName().equals("VariableNode") && 
-					!r.isQuantifier())
+					! r.isQuantifier())
 				return true;
 			if(node.getClass().getSimpleName().equals("PatternNode"))
 			{
 				PatternNode patternNode = (PatternNode) node;
 				LinkedList<VariableNode> varNodes = patternNode.getFreeVariables();
-				for(int j=0;j<array.length;i++)
+				for(int j=0;j<array.length;j++)
 				{
 					Relation re = (Relation) array[j][0];
 					Node no = (Node) array[j][1];
 					if(varNodes.contains(no) && !re.isQuantifier())
-						return true;
+						{
+						return true;}	
 				}
 				
 			}
 		}
-		
 		return false;
 	}
 
@@ -623,44 +619,6 @@ public class Network
 		}
 		
 		return result;
-	}
-	
-	/**
-	 * @param array an array of size n*2. each row consists of a Relation and a Node that
-	 * is pointed to by an arc labeled by this relation
-	 * @return a list of free variables dominated by the node that have such relations and nodes
-	 * in its cable set.
-	 */
-	public LinkedList<VariableNode> getFreeVars(Object[][] array)
-	{
-		LinkedList<VariableNode> freeVars = new LinkedList<VariableNode>();
-		for(int i=0;i<array.length;i++)
-		{
-			Node n = (Node) array[i][1];
-			Relation r = (Relation) array[i][0];
-			if(n.getClass().getSimpleName().equals("VariableNode") && 
-					! r.isQuantifier())
-				freeVars.add((VariableNode) n);
-			if(n.getClass().getSimpleName().equals("PatternNode"))
-			{
-				PatternNode patNode = (PatternNode) n;
-				LinkedList<VariableNode> inheritedFreeVars = new LinkedList<VariableNode>();
-				inheritedFreeVars.addAll(patNode.getFreeVariables());
-				for(int j=0;j<patNode.getFreeVariables().size();j++)
-				{
-					for(int k=0;k<array.length;k++)
-					{
-						Relation tempRel = (Relation) array[k][0];
-						VariableNode var = patNode.getFreeVariables().get(j);
-						if(array[k][1].equals(var) && tempRel.isQuantifier())
-								inheritedFreeVars.remove(var);
-					}
-				}
-				freeVars.addAll(inheritedFreeVars);
-			}
-		}
-		
-		return freeVars;
 	}
 	
 	/**
@@ -835,19 +793,15 @@ public class Network
 		}
 	}
 	
-	public static void main(String [] args)
+	public static void main(String [] args) throws CustomException
 	{
 		Relation r1 = new Relation("member","entity","reduce",0);
 		Relation r2 = new Relation("class","entity","reduce",0);
-		Relation r3 = new Relation("object","entity","reduce",0);
-		Relation r4 = new Relation("ability","entity","reduce",0);
 		LinkedList<Relation> l = new LinkedList<Relation>();
 		l.add(r1);
 		l.add(r2);
-		l.add(r3);
-		l.add(r4);
-		Object[][] o = new Object[5][2];
-		o[0][0] = r1;
+		Object[][] o = new Object[2][2];
+		/*o[0][0] = r1;
 		o[1][0] = r1;
 		o[2][0] = r1;
 		o[3][0] = r2;
@@ -855,10 +809,25 @@ public class Network
 		o[0][1] = new BaseNode("amr");
 		o[1][1] = new BaseNode("moh");
 		o[2][1] = new BaseNode("zay");
-		o[3][1] = new BaseNode("osa");
-		o[4][1] = new BaseNode("ahm");
-		Node m = new ClosedNode("A",null);
-		System.out.println(m.getClass().getSuperclass().getSimpleName());
+		o[0][1] = new BaseNode("amr");
+		o[1][1] = new BaseNode("human");*/
+		Network n = new Network();
+		Node node = n.build("amr");
+		Node node1 = n.buildVariableNode("human");
+		Relation rr1 = n.defineRelation("member","entity","reduce",0);
+		Relation rr2 = n.defineRelation("class","entity","reduce",0);
+		o[0][0] = rr1;
+		o[1][0] = rr2;
+		o[0][1] = node;
+		o[1][1] = node1;
+		CaseFrame caseFrame = new CaseFrame("entity",l);
+		Node res1 = n.build(o,caseFrame);
+		o[0][1] = res1;
+		Node res = n.build(o,caseFrame);
+		System.out.println(res.getIdentifier());
+		System.out.println(n.getNodes().get(res.getIdentifier()).getIdentifier());
+		System.out.println(((PatternNode) res1).getFreeVariables().size());
+		
 		/*for(int i=0;i<oo.length;i++)
 		{
 			System.out.println(oo.length);
@@ -870,7 +839,7 @@ public class Network
 				System.out.println(r.getName()+ " " +node.getIdentifier());
 			}
 		}*/
-		LinkedList<Relation> r = new LinkedList<Relation>();
+		/*LinkedList<Relation> r = new LinkedList<Relation>();
 		r.add(r1);
 		r.add(r1);
 		r.add(r1);
@@ -878,7 +847,7 @@ public class Network
 		for(int i=0;i<r.size();i++)
 		{
 			System.out.println(r.get(i).getName());
-		}
+		}*/
 	}
 	
 }
