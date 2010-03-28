@@ -65,9 +65,7 @@ public class SNeBR extends javax.swing.JPanel {
 				jTextArea1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Contradiction"));
 			}
 			{
-				ListModel jList1Model = 
-					new DefaultComboBoxModel(
-							new String[] { "Item One", "Item Two" });
+				ListModel jList1Model = new DefaultComboBoxModel();
 				jList1 = new JList();
 				this.add(jList1);
 				jList1.setModel(jList1Model);

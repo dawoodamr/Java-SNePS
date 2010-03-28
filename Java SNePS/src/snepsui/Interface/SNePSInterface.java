@@ -1444,6 +1444,7 @@ public class SNePSInterface extends SingleFrameApplication {
     private void newButtonActionPerformed(ActionEvent evt) {
     	Network network = new Network();
     	sNePSULPanel1.menuDrivenCommands.setNetwork(network);
+    	sNePSULPanel1.visualizeNetworks.setNetwork(network);
     }
     
     private void jTabbedPane1MouseClicked(MouseEvent evt) {

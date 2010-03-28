@@ -26,21 +26,11 @@ public class SNePSULPanel extends javax.swing.JPanel {
 	public MenuDrivenCommands menuDrivenCommands;
 	public VisualizeNetworks visualizeNetworks;
 	private DrawNetwork drawNetworks;
-
-	/**
-	* Auto-generated main method to display this 
-	* JPanel inside a new JFrame.
-	*/
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		frame.getContentPane().add(new SNePSULPanel());
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-	}
+	private Network network;
 	
 	public SNePSULPanel() {
 		super();
+		this.network = network;
 		initGUI();
 	}
 	
@@ -57,13 +47,12 @@ public class SNePSULPanel extends javax.swing.JPanel {
 					menuDrivenCommands.setPreferredSize(new java.awt.Dimension(766, 220));
 				}
 				{
-					Network network = new Network();
 					drawNetworks = new DrawNetwork(network);
 					jTabbedPane1.addTab("Draw Network", null, drawNetworks, null);
 					drawNetworks.setPreferredSize(new java.awt.Dimension(613, 274));
 				}
 				{
-					visualizeNetworks = new VisualizeNetworks();
+					visualizeNetworks = new VisualizeNetworks(network);
 					jTabbedPane1.addTab("View Network", null, visualizeNetworks, null);
 					visualizeNetworks.setPreferredSize(new java.awt.Dimension(759, 346));
 				}
