@@ -1,5 +1,7 @@
 package sneps;
 
+import java.io.Serializable;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
@@ -9,9 +11,10 @@ import java.util.LinkedList;
  * 
  * @author Amr Khaled Dawood
  */
-public class Network
+@SuppressWarnings("serial")
+public class Network implements Serializable
 {
-	
+
 	/**
 	 * the hash table containing nodes of the network indexed by the names.
 	 */
@@ -181,14 +184,11 @@ public class Network
 		Relation r = relations.get(name);
 		
 		// removing case frames that contain this relation
-		for(int i=0;i<caseFrames.size();i++)
+		for (Enumeration<CaseFrame> e = caseFrames.elements(); e.hasMoreElements();)
 		{
-			while(caseFrames.elements().hasMoreElements())
-			{
-				CaseFrame caseFrame = caseFrames.elements().nextElement();
-				if(caseFrame.getRelations().contains(r))
-					caseFrames.remove(caseFrame.getId());
-			}
+			CaseFrame caseFrame = e.nextElement();
+			if(caseFrame.getRelations().contains(r))
+				caseFrames.remove(caseFrame.getId());
 		}
 
 		// removing the relation
@@ -205,8 +205,7 @@ public class Network
 	public CaseFrame defineCaseFrame(String semanticType,
 			LinkedList<Relation> relationSet)throws CustomException
 	{
-		CaseFrame caseFrame = new CaseFrame(semanticType,relationSet);
-		String relString = caseFrame.getId();
+		String relString = new CaseFrame(semanticType,relationSet).getId();
 		if(caseFrames.containsKey(relString))
 			throw new CustomException("the case frame already exists");
 		else
@@ -434,7 +433,7 @@ public class Network
 	 * get to one of the nodes in the specified node set
 	 */
 	@SuppressWarnings("unchecked")
-	public NodeSet findUnion(Path path,NodeSet nodeSet)
+	private NodeSet findUnion(Path path,NodeSet nodeSet)
 	{
 		LinkedList<Node> nodeList = (LinkedList<Node>) nodeSet.getNodes().clone();
 		if(nodeList.isEmpty())
@@ -452,7 +451,7 @@ public class Network
 	 * @return the node set of nodes that we can start following those paths in the array
 	 * from, in order to reach at least one node of node sets at each path-nodeset pair. 
 	 */
-	public NodeSet findIntersection(Object[][] array,int index)
+	private NodeSet findIntersection(Object[][] array,int index)
 	{
 		if(index == array.length)
 			return new NodeSet();
@@ -472,7 +471,7 @@ public class Network
 	 * @return true if the molecular node that have this cable set of relations and nodes
 	 * should be a pattern node and false if not
 	 */
-	public boolean isToBePattern(Object[][] array)
+	private boolean isToBePattern(Object[][] array)
 	{
 		for(int i=0;i<array.length;i++)
 		{
@@ -506,7 +505,7 @@ public class Network
 	 * in this molecular node
 	 * @return the node that was just created
 	 */
-	public ClosedNode createMolNode(Object[][] array,CaseFrame caseFrame)
+	private ClosedNode createMolNode(Object[][] array,CaseFrame caseFrame)
 	{
 		// creating the node
 		Object[][] relNodeSet = turnIntoRelNodeSet(array);
@@ -544,7 +543,7 @@ public class Network
 	 * of this node
 	 * @return the node that was just created
 	 */
-	public PatternNode createPatNode(Object[][] array,CaseFrame caseFrame)
+	private PatternNode createPatNode(Object[][] array,CaseFrame caseFrame)
 	{
 		// creating the node
 		Object[][] relNodeSet = turnIntoRelNodeSet(array);
@@ -580,7 +579,7 @@ public class Network
 	 * @return an n*2 array of Objects each row consists of two things, a Relation and 
 	 * a NodeSet that contains nodes that are pointed to by arcs labeled with this relation.
 	 */
-	public Object[][] turnIntoRelNodeSet(Object[][] array)
+	private Object[][] turnIntoRelNodeSet(Object[][] array)
 	{
 		int relCount = 0;
 		boolean exists = false;
@@ -628,7 +627,7 @@ public class Network
 	 * @param array an n*2 array of Relations and Nodes
 	 * @return true if the Relations can point to these nodes and false if not
 	 */
-	public boolean isSemanticallyConsistent(Object[][] array)
+	private boolean isSemanticallyConsistent(Object[][] array)
 	{
 		
 		
@@ -638,7 +637,7 @@ public class Network
 	/**
 	 * @return a String representing the closed node name that we can create with it
 	 */
-	public String getNextMolName()
+	private String getNextMolName()
 	{
 		molCounter++;
 		String molName = "M";
@@ -658,7 +657,7 @@ public class Network
 	/**
 	 * @return a String representing the pattern node name that we can create with it
 	 */
-	public String getNextPatName()
+	private String getNextPatName()
 	{
 		patCounter++;
 		String patName = "P";
@@ -684,7 +683,7 @@ public class Network
 	 * @return the suffix of the identifier after the 'm' if it is similar to
 	 * a closed node name but if it is not it returns -1
 	 */
-	public int isMolName(String identifier)
+	private int isMolName(String identifier)
 	{
 		if(identifier.length()==1)
 			return -1;
@@ -707,7 +706,7 @@ public class Network
 	 * @return the suffix of the identifier after the 'p' if it is similar to
 	 * a pattern node name but if it is not it returns -1
 	 */
-	public int isPatName(String identifier)
+	private int isPatName(String identifier)
 	{
 		if(identifier.length()==1)
 			return -1;
@@ -725,7 +724,7 @@ public class Network
 	 * @param c a char that we need to know if it is a number from '0' to '9' or not
 	 * @return true if this char is a number and false if not
 	 */
-	public boolean isInt(char c)
+	private boolean isInt(char c)
 	{
 		switch(c)
 		{
@@ -793,13 +792,10 @@ public class Network
 		}
 	}
 	
-	public static void main(String [] args) throws CustomException
+	public static void main(String [] args) throws Exception
 	{
-		Relation r1 = new Relation("member","entity","reduce",0);
-		Relation r2 = new Relation("class","entity","reduce",0);
-		LinkedList<Relation> l = new LinkedList<Relation>();
-		l.add(r1);
-		l.add(r2);
+//		Relation r1 = new Relation("member","entity","reduce",0);
+//		Relation r2 = new Relation("class","entity","reduce",0);
 		Object[][] o = new Object[2][2];
 		/*o[0][0] = r1;
 		o[1][0] = r1;
@@ -816,17 +812,30 @@ public class Network
 		Node node1 = n.buildVariableNode("human");
 		Relation rr1 = n.defineRelation("member","entity","reduce",0);
 		Relation rr2 = n.defineRelation("class","entity","reduce",0);
+		LinkedList<Relation> l = new LinkedList<Relation>();
+		l.add(rr1);
+		l.add(rr2);
 		o[0][0] = rr1;
 		o[1][0] = rr2;
 		o[0][1] = node;
 		o[1][1] = node1;
 		CaseFrame caseFrame = new CaseFrame("entity",l);
+		n.defineCaseFrame(caseFrame.getSemanticClass(),caseFrame.getRelations());
 		Node res1 = n.build(o,caseFrame);
 		o[0][1] = res1;
-		Node res = n.build(o,caseFrame);
-		System.out.println(res.getIdentifier());
+	//	Node res = n.build(o,caseFrame);
+		/*System.out.println(res.getIdentifier());
 		System.out.println(n.getNodes().get(res.getIdentifier()).getIdentifier());
-		System.out.println(((PatternNode) res1).getFreeVariables().size());
+		System.out.println(((PatternNode) res1).getFreeVariables().size());*/
+		for(Enumeration<Relation> e = n.relations.elements();e.hasMoreElements();)
+			System.out.println("r:" +e.nextElement().getName());
+		for(Enumeration<CaseFrame> e = n.caseFrames.elements();e.hasMoreElements();)
+			System.out.println(e.nextElement().getId());
+		n.undefineRelation("member");
+		for(Enumeration<Relation> e = n.relations.elements();e.hasMoreElements();)
+			System.out.println("r:" +e.nextElement().getName());
+		for(Enumeration<CaseFrame> e = n.caseFrames.elements();e.hasMoreElements();)
+			System.out.println(e.nextElement().getId());
 		
 		/*for(int i=0;i<oo.length;i++)
 		{
