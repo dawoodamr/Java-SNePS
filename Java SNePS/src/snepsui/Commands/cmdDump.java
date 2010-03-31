@@ -5,15 +5,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
@@ -21,60 +26,67 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.Network;
+import sneps.Node;
 
 
 /**
-* This code was edited or generated using CloudGarden's Jigloo
-* SWT/Swing GUI Builder, which is free for non-commercial
-* use. If Jigloo is being used commercially (ie, by a corporation,
-* company or business for any purpose whatever) then you
-* should purchase a license for each developer using Jigloo.
-* Please visit www.cloudgarden.com for details.
-* Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
-* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
-* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
-*/
+ * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
+ * Builder, which is free for non-commercial use. If Jigloo is being used
+ * commercially (ie, by a corporation, company or business for any purpose
+ * whatever) then you should purchase a license for each developer using Jigloo.
+ * Please visit www.cloudgarden.com for details. Use of Jigloo implies
+ * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
+ * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
+ * ANY CORPORATE OR COMMERCIAL PURPOSE.
+ */
 public class cmdDump extends javax.swing.JPanel {
 	private JLabel dumpLabel;
-	private JTextField contextNameTextField;
 	private JButton addButton;
 	private JButton doneButton;
-	private DefaultListModel nodesetModel;
+	private DefaultListModel nodesetListModel;
 	private JScrollPane jScrollPane2;
-	private JRadioButton contextNameRadioButton2;
-	private JRadioButton contextNameRadioButton1;
+	private JComboBox contextComboBox;
+	private JComboBox nodesetComboBox;
 	private JButton infoButton;
 	private JList nodesetList;
 	private JLabel contextNameLabel;
 	private JLabel nodesetLabel;
 	private JTextField nodesetTextField;
-	private ButtonGroup group;
 	private JButton buildButton;
 	private Network network;
+	private JButton assertButton;
+	private JButton findButton;
 
-	@Action
-    public void add() {
-    }
-	
-	@Action
-    public void build() {
-    }
-	
-	@Action
-    public void info() {	
-    }
-	
-	private ActionMap getAppActionMap() {
-        return Application.getInstance().getContext().getActionMap(this);
-    }
-	
 	public cmdDump(Network network) {
 		super();
 		this.network = network;
 		initGUI();
 	}
 	
+	@Action
+	public void add() {
+	}
+	
+	@Action
+	public void build() {
+	}
+
+	@Action
+	public void info() {
+	}
+	
+	@Action
+	public void find() {
+	}
+	
+	@Action
+	public void assertAction() {
+	}
+
+	private ActionMap getAppActionMap() {
+		return Application.getInstance().getContext().getActionMap(this);
+	}
+
 	private void initGUI() {
 		try {
 			setPreferredSize(new Dimension(690, 225));
@@ -83,24 +95,18 @@ public class cmdDump extends javax.swing.JPanel {
 				dumpLabel = new JLabel();
 				this.add(dumpLabel);
 				dumpLabel.setName("dumpLabel");
-				dumpLabel.setBounds(50, 28, 58, 15);
-			}
-			{
-				contextNameTextField = new JTextField();
-				this.add(contextNameTextField);
-				contextNameTextField.setBounds(415, 54, 184, 22);
-				contextNameTextField.setEditable(false);
+				dumpLabel.setBounds(83, 27, 54, 15);
 			}
 			{
 				addButton = new JButton();
 				this.add(addButton);
-				addButton.setBounds(314, 27, 16, 18);
+				addButton.setBounds(569, 27, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
 				addButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent evt) {
-						nodesetModel.addElement(nodesetTextField.getText());
+						nodesetListModel.addElement(nodesetTextField.getText());
 						nodesetTextField.setText("");
 						validate();
 					}
@@ -115,30 +121,30 @@ public class cmdDump extends javax.swing.JPanel {
 			{
 				nodesetTextField = new JTextField();
 				this.add(nodesetTextField);
-				nodesetTextField.setBounds(108, 25, 189, 22);
+				nodesetTextField.setBounds(435, 23, 122, 22);
 			}
 			{
 				nodesetLabel = new JLabel();
 				this.add(nodesetLabel);
-				nodesetLabel.setBounds(108, 4, 61, 15);
+				nodesetLabel.setBounds(314, 4, 61, 15);
 				nodesetLabel.setName("nodesetLabel");
 			}
 			{
 				contextNameLabel = new JLabel();
 				this.add(contextNameLabel);
-				contextNameLabel.setBounds(391, 4, 97, 15);
+				contextNameLabel.setBounds(149, 4, 97, 15);
 				contextNameLabel.setName("contextNameLabel");
 			}
 			{
 				jScrollPane2 = new JScrollPane();
 				this.add(jScrollPane2);
-				jScrollPane2.setBounds(108, 58, 189, 103);
+				jScrollPane2.setBounds(314, 57, 243, 103);
 				{
-					nodesetModel = new DefaultListModel();
+					nodesetListModel = new DefaultListModel();
 					nodesetList = new JList();
 					jScrollPane2.setViewportView(nodesetList);
-					nodesetList.setModel(nodesetModel);
-					nodesetList.setBounds(116, 138, 186, 100);
+					nodesetList.setModel(nodesetListModel);
+					nodesetList.setBounds(12, 185, 205, 100);
 				}
 			}
 			{
@@ -150,32 +156,12 @@ public class cmdDump extends javax.swing.JPanel {
 				infoButton.setToolTipText("info");
 			}
 			{
-				contextNameRadioButton1 = new JRadioButton();
-				this.add(contextNameRadioButton1);
-				contextNameRadioButton1.setBounds(391, 26, 97, 19);
-				contextNameRadioButton1.setName("contextNameRadioButton1");
-				contextNameRadioButton1.setSelected(true);
-			}
-			{
-				contextNameRadioButton2 = new JRadioButton();
-				this.add(contextNameRadioButton2);
-				contextNameRadioButton2.setBounds(390, 59, 25, 17);
-			}
-			{
-				group = new ButtonGroup();
-				group.add(contextNameRadioButton1);
-				group.add(contextNameRadioButton2);
-				contextNameRadioButton2.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent evt) {
-						contextNameRadioButton2MouseClicked(evt);
-					}
-				});
+				new ButtonGroup();
 			}
 			{
 				buildButton = new JButton();
 				this.add(buildButton);
-				buildButton.setBounds(341, 26, 18, 20);
+				buildButton.setBounds(590, 25, 18, 20);
 				buildButton.setAction(getAppActionMap().get("build"));
 				buildButton.setFocusable(false);
 				buildButton.setToolTipText("build");
@@ -185,25 +171,86 @@ public class cmdDump extends javax.swing.JPanel {
 					}
 				});
 			}
-			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
+			{
+				assertButton = new JButton();
+				this.add(assertButton);
+				assertButton.setBounds(613, 25, 18, 20);
+				assertButton.setAction(getAppActionMap().get("assertAction"));
+				assertButton.setFocusable(false);
+				assertButton.setToolTipText("assert");
+				assertButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						assertButtonActionPerformed(evt);
+					}
+				});
+			}
+			{
+				findButton = new JButton();
+				this.add(findButton);
+				findButton.setBounds(636, 25, 18, 20);
+				findButton.setAction(getAppActionMap().get("find"));
+				findButton.setFocusable(false);
+				findButton.setToolTipText("assert");
+				findButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						findButtonActionPerformed(evt);
+					}
+				});
+			}
+			{
+				DefaultComboBoxModel nodesetComboBoxModel = new DefaultComboBoxModel();
+				
+				String str = "";
+				Hashtable<String, Node> nodes = network.getNodes();
+				Set<String> set = nodes.keySet();
+
+			    Iterator<String> itr = set.iterator();
+			    while (itr.hasNext()) {
+			      str = itr.next();
+			      nodesetComboBoxModel.addElement(nodes.get(str).getIdentifier()) ;
+			    }
+			    
+				nodesetComboBox = new JComboBox();
+				this.add(nodesetComboBox);
+				nodesetComboBox.setModel(nodesetComboBoxModel);
+				nodesetComboBox.setBounds(314, 23, 115, 22);
+			}
+			{
+				ComboBoxModel contextComboBoxModel = 
+					new DefaultComboBoxModel();
+				contextComboBox = new JComboBox();
+				this.add(contextComboBox);
+				contextComboBox.setModel(contextComboBoxModel);
+				contextComboBox.setBounds(149, 23, 148, 22);
+			}
+			Application.getInstance().getContext().getResourceMap(getClass())
+					.injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	private void contextNameRadioButton2MouseClicked(MouseEvent evt) {
-		if(contextNameRadioButton2.isSelected()) {
-			contextNameTextField.setEditable(true);
-		}
-		else {
-			contextNameTextField.setEditable(false);
-		}
-	}
-	
 	private void buildButtonActionPerformed(ActionEvent evt) {
+
 		JFrame frame = new JFrame("Build");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.getContentPane().add(new cmdBuild(network));
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
+	private void assertButtonActionPerformed(ActionEvent evt) {
+		JFrame frame = new JFrame("Assert");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.getContentPane().add(new cmdAssert(network));
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
+	private void findButtonActionPerformed(ActionEvent evt) {
+		JFrame frame = new JFrame("Find");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.getContentPane().add(new cmdFind(network));
 		frame.pack();
 		frame.setVisible(true);
 	}

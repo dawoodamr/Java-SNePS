@@ -227,10 +227,12 @@ public class cmdAdd extends javax.swing.JPanel {
 //				System.out.println(currentDataVector.get(2));
 //				currentDataVector.set(1, nodeName);
 				
-				if(relationNodesetTableModel.getValueAt(rowNumber, 1).toString().isEmpty()) {
+				String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
+				
+				if(currentNodesetValue.isEmpty()) {
 					relationNodesetTableModel.setValueAt(nodeName, rowNumber, 1);
 		    	} else {
-		    		relationNodesetTableModel.setValueAt(", " + nodeName, rowNumber, 1);
+		    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + nodeName, rowNumber, 1);
 		    	}
 				
 			} else if (options.getSelectedItem().toString().equals("build")) {
