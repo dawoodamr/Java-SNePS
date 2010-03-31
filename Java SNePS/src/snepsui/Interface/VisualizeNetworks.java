@@ -315,12 +315,19 @@ class Rings implements VisualizationServer.Paintable {
         	//Define the relations
         	Relation rr1 = network.defineRelation("member","entity","reduce",0);
         	Relation rr2 = network.defineRelation("class","entity","reduce",0);
+        	Relation rr3 = network.defineRelation("object","entity","reduce",0);
+        	Relation rr4 = network.defineRelation("isa","entity","reduce",0);
         	
         	//Define the caseframe
         	LinkedList<Relation> relations1 = new LinkedList<Relation>();
         	relations1.add(rr1);
         	relations1.add(rr2);
-        	CaseFrame caseframe = network.defineCaseFrame("entity", relations1);
+        	CaseFrame caseframe1 = network.defineCaseFrame("entity", relations1);
+        	
+        	LinkedList<Relation> relations2 = new LinkedList<Relation>();
+        	relations1.add(rr3);
+        	relations1.add(rr4);
+        	CaseFrame caseframe2 = network.defineCaseFrame("entity", relations2);
         	
         	//(assert member (Clyde, Dumbo) class elephant)
         	Node node = network.build("Clyde");
@@ -335,7 +342,7 @@ class Rings implements VisualizationServer.Paintable {
         	o1[2][0] = rr2;
         	o1[2][1] = node2;
         	
-        	Node res1 = network.build(o1,caseframe);
+        	Node res1 = network.build(o1,caseframe1);
         	System.out.println("Created Node: " + res1.getIdentifier());
         	System.out.println("Network Nodes: " + network.getNodes().get(res1.getIdentifier()).getIdentifier());
         	
@@ -349,7 +356,7 @@ class Rings implements VisualizationServer.Paintable {
         	o2[1][0] = rr2;
         	o2[1][1] = node4;
         	
-        	Node res2 = network.build(o2,caseframe);
+        	Node res2 = network.build(o2,caseframe1);
         	System.out.println("Created Node: " + res2.getIdentifier());
         	System.out.println("Network Nodes: " + network.getNodes().get(res2.getIdentifier()).getIdentifier());
         	
@@ -363,9 +370,25 @@ class Rings implements VisualizationServer.Paintable {
         	o3[1][0] = rr2;
         	o3[1][1] = node6;
         	
-        	Node res3 = network.build(o3,caseframe);
+        	Node res3 = network.build(o3,caseframe1);
         	System.out.println("Created Node: " + res3.getIdentifier());
         	System.out.println("Network Nodes: " + network.getNodes().get(res3.getIdentifier()).getIdentifier());
+        	
+//        	//(assert object elephant isa animal)
+//       
+//    		Node node7 = network.build("elephant");
+//        	Node node8 = network.build("animal");
+//        	
+//        	
+//        	Object[][] o4 = new Object[2][2];
+//        	o4[0][0] = rr3;
+//        	o4[0][1] = node7;
+//        	o4[1][0] = rr4;
+//        	o4[1][1] = node8;
+//        	
+//        	Node res4 = network.build(o4,caseframe2);
+//        	System.out.println("Created Node: " + res4.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res4.getIdentifier()).getIdentifier());
 			
 		} catch (CustomException e) {
 			e.printStackTrace();

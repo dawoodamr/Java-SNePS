@@ -355,6 +355,10 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDescribeContext(network));
 		}
+		else if(commandsComboBox.getSelectedItem().equals("list-hypotheses")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdListHypotheses(network));
+		}
 		else if(commandsComboBox.getSelectedItem().equals("dump")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDump(network));
