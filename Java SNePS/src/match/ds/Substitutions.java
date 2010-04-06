@@ -342,4 +342,14 @@ public class Substitutions
 		return true;
 	}
 	
+	/**
+	 * Return the Binding number x in the substitutions list
+	 * @param x binding number
+	 * @return Binding
+	 */
+	public Binding getBinding(int x)
+	{
+		return sub.get(x);
+	}
+	
 }
