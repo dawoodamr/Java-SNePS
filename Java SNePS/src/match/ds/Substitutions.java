@@ -113,7 +113,7 @@ public class Substitutions
 	 *@param mv mvar
 	 *@return binding or null
 	 */
-    public Binding getMbindByMv(Object mv) 
+    public Binding getBindingByMv(Object mv) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
@@ -131,7 +131,7 @@ public class Substitutions
 	 *@param mn mnode
 	 *@return binding or null
 	 */
-    public Binding getMbindByMn(Object mn) 
+    public Binding getBindingByMn(Object mn) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
@@ -234,7 +234,7 @@ public class Substitutions
     	Substitutions s=new Substitutions();
     	for(int i=0;i<ns.length;i++)
     	{
-    		Binding x=getMbindByMv(ns[i]);
+    		Binding x=getBindingByMv(ns[i]);
     		if(x!=null)
     		s.putIn(x);
     	}
@@ -300,7 +300,7 @@ public class Substitutions
 	 */
 	public Object value(Object n)//----------node------------
 	{
-		Binding b = getMbindByMv(n);
+		Binding b = getBindingByMv(n);
 		if(b==null)
 			return n;
 		return b.getMn();
@@ -334,11 +334,12 @@ public class Substitutions
 	{
 		for(int i=0;i<this.sub.size();i++)
 		{
-			Binding m1=s.getMbindByMn(this.sub.get(i).getMn());
-			Binding m2=s.getMbindByMv(this.sub.get(i).getMv());
+			Binding m1=s.getBindingByMn(this.sub.get(i).getMn());
+			Binding m2=s.getBindingByMv(this.sub.get(i).getMv());
 			if(!this.sub.get(i).isEqual(m1)||!this.sub.get(i).isEqual(m2))
 				return false;
 		}
 		return true;
 	}
+	
 }
