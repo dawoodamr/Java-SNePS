@@ -87,13 +87,8 @@ public class Process
 	{
 		Report rSent=new Report(r.getSubstitutions(),r.getSupport(),
 				r.getSign(),this.getNode(),null,r.getContext());
-		Report rCheck=new Report(r.getSubstitutions(),r.getSupport(),r.getSign()
-				,this.getNode(),c.getDestination().getNode(),r.getContext());
-		if(!this.getSentReports().isMember(rCheck))
-		{
 			c.send(rSent);
-			addToSent(rCheck);
-		}
+			addToSent(r);
 		
 	}
 }
