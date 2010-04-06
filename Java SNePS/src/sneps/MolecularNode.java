@@ -9,7 +9,7 @@ package sneps;
  */
 public abstract class MolecularNode extends Node
 {
-	 
+	
 	/**
 	 * A CableSet that contains Cables going out of this MolecularNode.
 	 */
@@ -21,7 +21,7 @@ public abstract class MolecularNode extends Node
 	 */
 	public MolecularNode(String identifier,CableSet cableSet)
 	{
-		super(identifier,new UpCableSet(),new Entity());
+		super(identifier);
 		this.cableSet = cableSet;
 	}
 

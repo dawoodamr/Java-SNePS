@@ -32,11 +32,11 @@ public abstract class Node
 	 * @param upCableSet the UpCableSet that contains information about the parents of this Node
 	 * @param entity the instance of the semantic class that this Node belongs to
 	 */
-	public Node(String identifier,UpCableSet upCableSet,Entity entity)
+	public Node(String identifier)
 	{
 		this.identifier = identifier;
-		this.upCableSet = upCableSet;
-		this.entity = entity;
+		this.upCableSet = new UpCableSet();
+		this.entity = new Entity();
 		this.entity.setNode(this);
 	}
 
