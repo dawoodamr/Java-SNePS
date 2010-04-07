@@ -1,0 +1,10 @@
+AndEntailment (reserved)
+AndOr (reserved)
+NumericalEntailment(reserved)
+OrEntailment (reserved)
+Thresh (reserved)
+Act (reserved)
+Action (reserved)
+Entity
+Proposition
+Individual
