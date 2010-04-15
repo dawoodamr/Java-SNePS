@@ -2,6 +2,9 @@ package snebr;
 
 
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -21,20 +24,20 @@ public  class Support {
 	/**
 	 * Set contain hypothesis used in derivation of proposition if proposition is hypothesis origin set equal proposition itself
 	 */
-	private Set<Proposition> originSet;
+	private PropositionSet originSet;
 	/**
 	 *  set of set of Proposition which is inconsistence with this Proposition 
 	 */
 	
-	private Set<Set<Proposition>> RestrictionSet ;
+	private Set<PropositionSet> RestrictionSet ;
 	/**
 	 *  check consistency of Proposition
 	 */
 	
 
 
-	public Support(String supporttype, Set<Proposition> originSet,
-			Set<Set<Proposition>> restrictionSet) {
+	public Support(String supporttype, PropositionSet originSet,
+			Set<PropositionSet> restrictionSet) {
 		super();
 		Supporttype = supporttype;
 		this.originSet =  originSet;	
@@ -42,9 +45,12 @@ public  class Support {
 	
 	}
 	
+
 	
 	public Support() {
 		// TODO Auto-generated constructor stub
+		this.originSet = new PropositionSet();
+		this .RestrictionSet	 = new HashSet<PropositionSet>();
 	}
 
 	public String getSupporttype() {
@@ -55,45 +61,96 @@ public  class Support {
 		Supporttype = supporttype;
 	}
 
-	public Set<Proposition> getOrginSet() {
+	public PropositionSet getOrginSet() {
 		return originSet;	
 	}
 	
-	public void addToOrginSet(Proposition Proposition)
+	public void addToOriginSet(Proposition Proposition)
 	{
-		this.originSet.add(Proposition);
+		this.originSet.addProposition(Proposition);
 	}
 	
 	public boolean RemoveFromOrginSet(Proposition Proposition)
 	{
-		for (Iterator iterator = this.originSet.iterator(); iterator.hasNext();) {
-			Proposition type = (Proposition) iterator.next();
-			if(type.equals(Proposition)){
-				originSet.remove(Proposition);
-				return true;
-			}
-			
-		}
-		return false; 
+	  return originSet.removeProposition(Proposition);
 	}
 
-	public void setoriginSet(Set<Proposition> originSet) {
+	public void setoriginSet(PropositionSet originSet) {
 		this.originSet = originSet;
 	}
 	
-
-	public Set<Set<Proposition>> getRestrictionSet() {
+	public Set<PropositionSet> getRestrictionSet() {
 		return RestrictionSet;
 	}
-
-	public void setRestrictionSet(Set<Set<Proposition>> restrictionSet) {
+     
+	public void setRestrictionSet(Set<PropositionSet> restrictionSet) {
 		RestrictionSet = restrictionSet;
 	}
-   public void addToRestrictionSet(Set<Proposition> restrictionSet )
+
+	public void addToRestrictionSet(PropositionSet restrictionSet )
    { 
 	   this.RestrictionSet.add(restrictionSet);
 	   
    }
+ 
+	public int getRestrictionSetsSize()
+  {
+		return RestrictionSet.size();
+  }
+	public void setHyp(Proposition proposition)
+	{
+		Supporttype = "hyp";
+		originSet.addProposition(proposition);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+   public void printSupportTag(){
+	   System.out.print(this.Supporttype);
+   }
+   public void printOriginSet()
+   { System.out.print("{");
+   
+	 originSet.print();
+	 System.out.print("}"); 	 	
+	 
+	 
+   }
+   public void printRestrictionSets()
+   {
+      System.out.print("{");
+      int i = 1;
+	   for (Iterator iterator = this.RestrictionSet.iterator(); iterator.hasNext();) {
+		PropositionSet type = (PropositionSet) iterator.next();
+			type.print();	
+			if(i==this.getRestrictionSetsSize())
+			 System.out.print(" ");
+			else
+				System.out.print(",");
+			i++;
+		}
+		
+	   System.out.print("}");
+	}
+	 
+   public void printSupport()
+   
+   {
+	   System.out.print("{");
+	   this.printSupportTag();
+	   System.out.print(",");
+	   this.printOriginSet();
+	   System.out.print(",");
+	   this.printRestrictionSets();
+	   System.out.print("}");
+	
+   }
+   }
 
 	
-}
