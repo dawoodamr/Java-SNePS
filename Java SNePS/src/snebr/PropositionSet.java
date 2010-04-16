@@ -3,6 +3,7 @@
  */
 package snebr;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,9 +13,9 @@ import java.util.Set;
  * @author Abdelrahman Elamin
  *
  */
-public class PropositionSet {
-private Set<Proposition>  propositionSet;
-public PropositionSet(Set<Proposition> propositionSet) {
+public class PropositionSet implements Cloneable {
+private HashSet<Proposition>  propositionSet;
+public PropositionSet(HashSet<Proposition> propositionSet) {
 	super();
 	this.propositionSet = propositionSet;
 }
@@ -25,7 +26,7 @@ public PropositionSet() {
 public Set<Proposition> getPropositionSet() {
 	return propositionSet;
 }
-public void setPropositionSet(Set<Proposition> propositionSet) {
+public void setPropositionSet(HashSet<Proposition> propositionSet) {
 	this.propositionSet = propositionSet;
 }
 public void addProposition(Proposition newProposition)
@@ -52,8 +53,14 @@ public void print()
 		out[i] = type.getNode().getIdentifier();
 		i++;
 		
-	}
+	} 
 	System.out.print(Arrays.toString(out));
+}
+public Object clone() throws CloneNotSupportedException
+{
+	PropositionSet copy = (PropositionSet) super.clone();
+	copy.propositionSet = (HashSet<Proposition>) propositionSet.clone();
+	return copy;
 }
  
 }

@@ -19,10 +19,10 @@ import sneps.Relation;
  *
  *@author Abdelrahman Elamin
  */
-public class Context {
+public class Context implements Cloneable {
 private PropositionSet hypSet ;
-private Set<PropositionSet> RestricitonSet ;
-private Set<String> names;
+private HashSet<PropositionSet> RestricitonSet ;
+private HashSet<String> names;
 
 
 public Context()
@@ -33,19 +33,34 @@ public Context()
  
 }
 
-public Set<PropositionSet> getRestricitonSet() {
+
+public Context(PropositionSet hypSet, HashSet<String> names) {
+	super();
+	this.hypSet = hypSet;
+	this.names = names;
+}
+public Context(PropositionSet hypSet, String name) {
+	super();
+	this.hypSet = hypSet;
+	this.names = new HashSet<String>();
+	names.add(name);
+}
+
+
+
+public HashSet<PropositionSet> getRestricitonSet() {
 	return RestricitonSet;
 }
 
-public void setRestricitonSet(Set<PropositionSet> restricitonSet) {
+public void setRestricitonSet(HashSet<PropositionSet> restricitonSet) {
 	RestricitonSet = restricitonSet;
 }
 
-public Set<String> getNames() {
+public HashSet<String> getNames() {
 	return names;
 }
 
-public void setNames(Set<String> names) {
+public void setNames(HashSet<String> names) {
 	this.names = names;
 }
  
@@ -56,10 +71,10 @@ public PropositionSet getHypSet() {
 public void setHypSet(PropositionSet hypSet) {
 	this.hypSet = hypSet;
 }
-public Set<String> getIdentifier() {
+public HashSet<String> getIdentifier() {
 	return names;
 }
-public void setIdentifier(Set<String> names) {
+public void setIdentifier(HashSet<String> names) {
 	this.names = names;
 }
 
@@ -89,9 +104,15 @@ public void print()
 	System.out.print("}");
 	
 	
-	
-	
-	
+		
+}
+public Object clone() throws CloneNotSupportedException
+{
+	Context copy = (Context) super.clone();
+	copy.hypSet =  (PropositionSet) hypSet.clone();
+	copy.names = (HashSet<String>) names.clone();
+	copy.RestricitonSet = (HashSet<PropositionSet>) RestricitonSet.clone();
+	return copy;
 }
 
 

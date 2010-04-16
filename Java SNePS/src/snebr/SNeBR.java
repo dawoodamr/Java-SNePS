@@ -17,21 +17,25 @@ public class SNeBR {
 		return context;
 	}
 	
-	public  void assertProposition(Proposition proposition,String name)
+	public  void assertProposition(Proposition proposition,String name) throws CloneNotSupportedException
 	{
-		 Context context  =  contextSet.getContext(name);
-		 context.print();
-		
-		 Context newContext = new Context();
-	    	newContext.setHypSet(contextSet.getContext(name).getHypSet());
-		    newContext.addName(name);
-		   
-		  if (context!=null)
+		 Context context  =   contextSet.getContext(name);
+		 
+		 if (context!=null)
 		  { 
+			 //context.print();
+	  Context newContext =  new Context((PropositionSet)context.getHypSet().clone(),name);
+	 
+		 // (Context) context.clone();
+//	  Context copy = (Context) context.;
+//	    newContext.setHypSet(copy.getHypSet());
+//	    newContext.addName(name);
+		   
+		 
 			  proposition.makeItHyp();
-			  contextSet.removeContext(context);
+	
 			   context.RemoveName(name);
-			  contextSet.addContext(context);
+			 // contextSet.addContext(context);
 			   newContext.addToContext(proposition);  
 			   contextSet.addContext(newContext);
 		  }
