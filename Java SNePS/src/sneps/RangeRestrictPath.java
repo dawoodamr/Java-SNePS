@@ -73,4 +73,28 @@ public class RangeRestrictPath extends Path
 		return result;
 	}
 
+	/**
+	 * @return the Path p
+	 */
+	public Path getP()
+	{
+		return p;
+	}
+
+	/**
+	 * @return q which is the restriction Path
+	 */
+	public Path getQ()
+	{
+		return q;
+	}
+
+	/**
+	 * @return the node that restricts the destination
+	 */
+	public Node getNode()
+	{
+		return node;
+	}
+
 }

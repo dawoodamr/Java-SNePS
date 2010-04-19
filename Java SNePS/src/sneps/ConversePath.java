@@ -22,6 +22,14 @@ public class ConversePath extends Path
 		this.path = path;
 	}
 
+	/**
+	 * @return the Path that we need to get its converse
+	 */
+	public Path getPath()
+	{
+		return path;
+	}
+
 	/* (non-Javadoc)
 	 * @see sneps.Path#follow(sneps.Node)
 	 */

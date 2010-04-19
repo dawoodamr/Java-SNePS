@@ -55,4 +55,20 @@ public class RelativeComplementPath extends Path
 		return ns1;
 	}
 
+	/**
+	 * @return p which is the first Path
+	 */
+	public Path getP()
+	{
+		return p;
+	}
+
+	/**
+	 * @return q which is the second Path
+	 */
+	public Path getQ()
+	{
+		return q;
+	}
+
 }

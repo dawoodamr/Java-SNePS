@@ -36,6 +36,30 @@ public class DomainRestrictPath extends Path
 		this.p = p;
 	}
 
+	/**
+	 * @return the restriction Path
+	 */
+	public Path getQ()
+	{
+		return q;
+	}
+
+	/**
+	 * @return the node that restricts the destination for the Path q
+	 */
+	public Node getNode()
+	{
+		return node;
+	}
+
+	/**
+	 * @return the path that should be followed
+	 */
+	public Path getP()
+	{
+		return p;
+	}
+
 	/* (non-Javadoc)
 	 * @see sneps.Path#follow(sneps.Node)
 	 */

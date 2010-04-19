@@ -21,6 +21,14 @@ public class IrreflexiveRestrictPath extends Path
 		this.path = path;
 	}
 
+	/**
+	 * @return the path that leads to nodes other than the one that it starts at
+	 */
+	public Path getPath()
+	{
+		return path;
+	}
+
 	/* (non-Javadoc)
 	 * @see sneps.Path#follow(sneps.Node)
 	 */

@@ -6,7 +6,7 @@ import java.util.LinkedList;
  * an AndPath is a path that contains a list of paths. an AndPath may lead us to a node 
  * if and only if all the paths it contains will lead us to that node
  * 
- * @author Amr Khaled Dawood 
+ * @author Amr Khaled Dawood
  */
 public class AndPath extends Path
 {
@@ -22,6 +22,14 @@ public class AndPath extends Path
 	public AndPath(LinkedList<Path> paths)
 	{
 		this.paths = paths;
+	}
+
+	/**
+	 * @return the list of Paths that are used to create this AndPath
+	 */
+	public LinkedList<Path> getPaths()
+	{
+		return paths;
 	}
 
 	/* (non-Javadoc)

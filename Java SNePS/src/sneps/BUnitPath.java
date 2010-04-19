@@ -12,13 +12,21 @@ public class BUnitPath extends Path
 	 * the name of the relation that identifies this path
 	 */
 	private String relationName;
-	
+
 	/**
 	 * @param relationName the name of the relation that specifies this path
 	 */
 	public BUnitPath(String relationName)
 	{
 		this.relationName = relationName;
+	}
+	
+	/**
+	 * @return the name of the relation that this BUnitPath is defined for
+	 */
+	public String getRelationName()
+	{
+		return relationName;
 	}
 
 	/* (non-Javadoc)

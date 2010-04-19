@@ -23,6 +23,14 @@ public class ComposePath extends Path
 		this.paths = paths;
 	}
 
+	/**
+	 * @return the list of Paths that are composed together
+	 */
+	public LinkedList<Path> getPaths()
+	{
+		return paths;
+	}
+
 	/* (non-Javadoc)
 	 * @see ds.Path#follow(ds.Node)
 	 */

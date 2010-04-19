@@ -24,6 +24,14 @@ public class KPlusPath extends Path
 		this.path = path;
 	}
 
+	/**
+	 * @return the path that is composed with itself to get this KPlusPath
+	 */
+	public Path getPath()
+	{
+		return path;
+	}
+
 	/* (non-Javadoc)
 	 * @see sneps.Path#follow(sneps.Node)
 	 */

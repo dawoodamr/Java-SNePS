@@ -24,6 +24,14 @@ public class OrPath extends Path
 		this.paths = paths;
 	}
 
+	/**
+	 * @return the list of Path that are used to create this OrPath
+	 */
+	public LinkedList<Path> getPaths()
+	{
+		return paths;
+	}
+
 	/* (non-Javadoc)
 	 * @see sneps.Path#follow(sneps.Node)
 	 */

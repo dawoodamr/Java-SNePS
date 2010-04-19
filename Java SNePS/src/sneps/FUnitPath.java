@@ -21,6 +21,14 @@ public class FUnitPath extends Path
 		this.relationName = relationName;
 	}
 
+	/**
+	 * @return the name of the relation that this FUnitPath is defined for
+	 */
+	public String getRelationName()
+	{
+		return relationName;
+	}
+
 	/* (non-Javadoc)
 	 * @see ds.Path#follow(ds.Node)
 	 */
