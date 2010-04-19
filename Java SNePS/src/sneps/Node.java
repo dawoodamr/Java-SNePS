@@ -13,6 +13,16 @@ public abstract class Node
 {
 	
 	/**
+	 * the counter used for counting the nodes created
+	 */
+	private static int count = 0;
+	
+	/**
+	 * the id is like an index of the node
+	 */
+	private int id;
+	
+	/**
 	 * the identifier - name - of the node.No two nodes in the network have the same name.
 	 */
 	private String identifier;
@@ -38,6 +48,16 @@ public abstract class Node
 		this.upCableSet = new UpCableSet();
 		this.entity = new Entity();
 		this.entity.setNode(this);
+		this.id = count;
+		count++;		
+	}
+
+	/**
+	 * @return the id of the node that uniquely identifies it
+	 */
+	public int getId()
+	{
+		return id;
 	}
 
 	/**
