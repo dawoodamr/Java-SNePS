@@ -1,33 +1,38 @@
 /**
- * @(#)AndEntailment.java
+ * @(#)NumericalEntailment.java
  *
  *
  * @author Mohamed Karam Gabr
- * @version 1.00 2010/3/24
+ * @version 1.00 2010/3/26
  */
+
 package snip.fns;
 
 import snip.ds.ChannelsSet;
 import snip.ds.Process;
 import snip.ds.ReportSet;
 
-public class AndEntailment
+public class NumericalEntailment
 {
 	Process p;
 	int reportCounter;
+	int thresh;
 	
 	/**
-	 * Creating the andentailment process and give it the process p having needed data
+	 * Creating the numericalentailment process and give it the process p having 
+	 * needed data and integer i is the number of true arguments have to be true
+	 * to prove consequents
 	 * @param p process
 	 */
-	public AndEntailment(Process p)
+	public NumericalEntailment(Process p,int i)
 	{
 		this.p=p;
+		thresh=i;
 		reportCounter=0;
 	}
 	
 	/**
-	 * Run the andentailment test
+	 * Run the numericalentailment test 
 	 */
 	public void run()
 	{
@@ -37,16 +42,15 @@ public class AndEntailment
 			//Check if they all have the same vars (is-all-pat-same-vars)
 			ReportSet rs=p.getReportSet();
 			ChannelsSet cs=p.getOutGoing();
-			boolean allTrue=true;
-			for(int i=0;i<rs.cardinality();i++)
+			int posrep=0;
+			for(int i=0;i<reportCounter;i++)
 			{
-				if(rs.getReport(i).isNegative())
+				if(rs.getReport(i).isPositive())
 				{
-					allTrue=false;
-					break;
+					posrep++;
 				}
 			}
-			if(allTrue)
+			if(posrep==thresh)
 			{
 				//combine reports from rs and send over cs page 15 16
 			}
@@ -56,6 +60,4 @@ public class AndEntailment
 			}
 		}
 	}
-	
-	
 }

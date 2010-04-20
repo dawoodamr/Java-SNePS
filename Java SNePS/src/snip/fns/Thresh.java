@@ -1,33 +1,42 @@
 /**
- * @(#)AndEntailment.java
+ * @(#)Thresh.java
  *
  *
  * @author Mohamed Karam Gabr
- * @version 1.00 2010/3/24
+ * @version 1.00 2010/3/26
  */
+
 package snip.fns;
 
 import snip.ds.ChannelsSet;
 import snip.ds.Process;
 import snip.ds.ReportSet;
 
-public class AndEntailment
+public class Thresh
 {
 	Process p;
+	int min;
+	int max;
 	int reportCounter;
 	
 	/**
-	 * Creating the andentailment process and give it the process p having needed data
+	 * Creating the Thresh process and give it the process p having needed data 
+	 * and integer threshmax and threshmin are the pounds of the number of the true 
+	 * arguments(less then min or more than max should be true)
 	 * @param p process
+	 * @param threshmax max thresh
+	 * @param threshmin min thresh
 	 */
-	public AndEntailment(Process p)
+	public Thresh(Process p,int threshmax,int threshmin)
 	{
 		this.p=p;
+		max=threshmax;
+		min=threshmin;
 		reportCounter=0;
 	}
 	
 	/**
-	 * Run the andentailment test
+	 * Run the thresh test 
 	 */
 	public void run()
 	{
@@ -37,16 +46,15 @@ public class AndEntailment
 			//Check if they all have the same vars (is-all-pat-same-vars)
 			ReportSet rs=p.getReportSet();
 			ChannelsSet cs=p.getOutGoing();
-			boolean allTrue=true;
-			for(int i=0;i<rs.cardinality();i++)
+			int posrep=0;
+			for(int i=0;i<reportCounter;i++)
 			{
-				if(rs.getReport(i).isNegative())
+				if(rs.getReport(i).isPositive())
 				{
-					allTrue=false;
-					break;
+					posrep++;
 				}
 			}
-			if(allTrue)
+			if(posrep<min||posrep>max)
 			{
 				//combine reports from rs and send over cs page 15 16
 			}
@@ -56,6 +64,5 @@ public class AndEntailment
 			}
 		}
 	}
-	
 	
 }
