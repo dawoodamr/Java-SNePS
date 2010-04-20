@@ -8,7 +8,7 @@ import java.util.LinkedList;
  * Relations in a knowledge base but they might have the same semantic class.
  * Once a case frame is created it can never be changed.
  * 
- * @author Amr Khaled Dawood 
+ * @author Amr Khaled Dawood
  */
 public class CaseFrame
 {
@@ -121,47 +121,53 @@ public class CaseFrame
 	{
 		LinkedList<Relation> relations = new LinkedList<Relation>();
 		relations.addAll(r);
-		String result = "";
+		Relation [] result = new Relation[relations.size()];
 		for(int i=0;i<relations.size();i++)
 		{
-			result += relations.get(i).getName();
-			if(i < relations.size()-1)
-				result += ",";
+			result[i] = relations.get(i);
 		}
 		
-		result = quickSortLexicographically(result.split(","));
+		result = quickSortLexicographically(result);
+		LinkedList<Relation> list = new LinkedList<Relation>();
+		for(int i=0;i<result.length;i++)
+		{
+			list.add(result[i]);
+		}
+		this.relations.clear();
+		this.relations.addAll(list);
 		
-		return result;
+		String id = "";
+		for(int i=0;i<result.length;i++)
+		{
+			id += result[i].getName();
+			if(i < result.length-1)
+				id += ",";
+		}
+		
+		return id;
 	}
 	
 	/**
 	 * This method sorts the items in the String array in lexicographic order and puts them
 	 * after sorting in a String separated by commas
-	 * @param s an array of string that we want to sort in lexicographic order
-	 * @return a String resulted from concatenating all items of the array after being sorted
+	 * @param r an array of Relations that we want to sort in lexicographic order by their
+	 * names
+	 * @return a sorted array of the Relations given in the parameter
 	 */
-	private String quickSortLexicographically(String[] s)
+	private Relation[] quickSortLexicographically(Relation[] r)
 	{
-		String [] string = s;
-		quickSort(string,0,string.length-1);
+		Relation [] relation = r;
+		quickSort(relation,0,relation.length-1);
 		
-		String result = "";
-		for(int i=0;i<string.length;i++)
-		{
-			result += string[i];
-			if(i < string.length-1)
-				result += ",";
-		}
-		
-		return result;
+		return relation;
 	}
 	
 	/**
-	 * @param arr the array of Strings to be sorted by quick sort algorithm
+	 * @param arr the array of Relations to be sorted by quick sort algorithm
 	 * @param left the starting position of the items we want to sort
 	 * @param right the ending position of the items we want to sort
 	 */
-	private void quickSort(String arr[],int left,int right)
+	private void quickSort(Relation arr[],int left,int right)
 	{
 	      int index = partition(arr,left,right);
 	      if (left < index - 1)
@@ -171,22 +177,22 @@ public class CaseFrame
 	}
 	
 	/**
-	 * @param arr an array of Strings that we need to get the pivot for
+	 * @param arr an array of Relations that we need to get the pivot for
 	 * @param left the start position of the sorting
 	 * @param right the end position of the sorting
 	 * @return an int representing the pivot index in the array
 	 */
-	private int partition(String arr[],int left,int right)
+	private int partition(Relation arr[],int left,int right)
 	{
 	      int i = left,j = right;
-	      String tmp;
-	      String pivot = arr[(left + right) / 2];
+	      Relation tmp;
+	      String pivot = arr[(left + right) / 2].getName();
 	     
 	      while(i <= j)
 	      {
-	            while(arr[i].compareTo(pivot) < 0)
+	            while(arr[i].getName().compareTo(pivot) < 0)
 	            	i++;
-	            while(arr[j].compareTo(pivot) > 0)
+	            while(arr[j].getName().compareTo(pivot) > 0)
 	            	j--;
 	            if(i <= j)
 	            {
