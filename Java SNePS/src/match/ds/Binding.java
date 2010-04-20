@@ -8,65 +8,68 @@
 package match.ds;
 
 import sneps.Node;
+import sneps.VariableNode;
+
+
 
 public class Binding 
 {
-	private Node mn;
-	private Node mv;
+	private Node node;
+	private VariableNode variable;
 	/**
-	 *Creates new binding from mvar and mnode
-	 *@param mnode
-	 *@param mvar
+	 *Creates new binding from variable and node
+	 *@param node
+	 *@param variablear
 	 */
-    public Binding(Node mvar,Node mnode) 
+    public Binding(VariableNode variable,Node node) 
     {
-    	mn=mnode;
-    	mv=mvar;
+    	this.node=node;
+    	this.variable=variable;
     }
     
     /**
-	 *returns the mvar of the binding
-	 *@return mv
+	 *returns the variable of the binding
+	 *@return variable
 	 */
-    public Object getMv() 
+    public Object getVariable() 
     {
-    	return mv;
+    	return variable;
     }
     /**
-	 *returns the mnode of the binding
-	 *@return mn
+	 *returns the node of the binding
+	 *@return node
 	 */
-    public Object getMn() 
+    public Object getNode() 
     {
-    	return mn;
+    	return node;
     }
     
     /**
-	 *Check if mb is equal to this binding
-	 *@param mb binding
+	 *Check if binding is equal to this binding
+	 *@param binding Binding
 	 *@return true if equal false otherwise
 	 */
-    public boolean isEqual(Binding mb) 
+    public boolean isEqual(Binding binding) 
     {
-    	if(this.getMn() == mb.getMn() && this.getMv() == mb.getMv())//------node-----
+    	if(this.getNode() == binding.getNode() && this.getVariable() == binding.getVariable())//------node-----
     		return true;
     			return false;
     }
     
     /**
-	 *Set the value of the mvar of the binding with m
-	 *@param m the new mvar
+	 *Set the value of the variable of the binding with m
+	 *@param m the new variable
 	 */
-    public void setMv(Node m) 
+    public void setvariable(VariableNode m) 
     {
-    	mv=m;
+    	variable=m;
     }
     /**
-	 *Set the value of the mnode of the binding with m
-	 *@param m the new mnode
+	 *Set the value of the node of the binding with m
+	 *@param m the new node
 	 */
-    public void setMn(Node m) 
+    public void setNode(Node m) 
     {
-    	mn=m;
+    	node=m;
     }
 }

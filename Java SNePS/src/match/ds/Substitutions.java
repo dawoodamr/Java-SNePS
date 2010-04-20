@@ -40,9 +40,9 @@ public class Substitutions
     }
     
     /**
-	 *Update the value of a buinding with the new mnode
+	 *Update the value of a binding with the new node
 	 *@param mb the binding
-	 *@param mn the new mnode
+	 *@param mn the new node
 	 */
     public void update(Binding mb , Node mn) 
     {
@@ -50,7 +50,7 @@ public class Substitutions
     	{
     		if(mb.isEqual(sub.get(i)))
     		{
-    			sub.get(i).setMn(mn);
+    			sub.get(i).setNode(mn);
     		}
     	}
     }
@@ -64,7 +64,7 @@ public class Substitutions
     {
     	for(int i=0;i<sub.size();i++)
     	{
-    		if(sub.get(i).getMv()==mv)//---------node-----------
+    		if(sub.get(i).getVariable()==mv)//---------node-----------
     		{
     			return true;
     		}
@@ -81,7 +81,7 @@ public class Substitutions
     {
     	for(int i=0;i<sub.size();i++)
     	{
-    		if(sub.get(i).getMn()==mn)//---------node-----------
+    		if(sub.get(i).getNode()==mn)//---------node-----------
     		{
     			return true;
     		}
@@ -99,9 +99,9 @@ public class Substitutions
     {
     	for(int i=0;i<sub.size();i++)
     	{
-    		if(sub.get(i).getMn()==mn)
+    		if(sub.get(i).getNode()==mn)
     		{
-    			return sub.get(i).getMv();
+    			return sub.get(i).getVariable();
     		}
     	}
     	return null;
@@ -117,7 +117,7 @@ public class Substitutions
     {
     	for(int i=0;i<sub.size();i++)
     	{
-    		if(sub.get(i).getMv()==mv)//---------node-----------
+    		if(sub.get(i).getVariable()==mv)//---------node-----------
     		{
     			return sub.get(i);
     		}
@@ -135,7 +135,7 @@ public class Substitutions
     {
     	for(int i=0;i<sub.size();i++)
     	{
-    		if(sub.get(i).getMn()==mn)//---------node-----------
+    		if(sub.get(i).getNode()==mn)//---------node-----------
     		{
     			return sub.get(i);
     		}
@@ -251,9 +251,9 @@ public class Substitutions
     {
     	for(int i=0;i<sub.size();i++)
     	{
-    		if(sub.get(i).getMv()==mv)//---------node-----------
+    		if(sub.get(i).getVariable()==mv)//---------node-----------
     		{
-    			return sub.get(i).getMn();
+    			return sub.get(i).getNode();
     		}
     	}
     	return null;
@@ -303,7 +303,7 @@ public class Substitutions
 		Binding b = getBindingByMv(n);
 		if(b==null)
 			return n;
-		return b.getMn();
+		return b.getNode();
 	}
 	
 	/**
@@ -334,8 +334,8 @@ public class Substitutions
 	{
 		for(int i=0;i<this.sub.size();i++)
 		{
-			Binding m1=s.getBindingByMn(this.sub.get(i).getMn());
-			Binding m2=s.getBindingByMv(this.sub.get(i).getMv());
+			Binding m1=s.getBindingByMn(this.sub.get(i).getNode());
+			Binding m2=s.getBindingByMv(this.sub.get(i).getVariable());
 			if(!this.sub.get(i).isEqual(m1)||!this.sub.get(i).isEqual(m2))
 				return false;
 		}
@@ -351,5 +351,6 @@ public class Substitutions
 	{
 		return sub.get(x);
 	}
+	
 	
 }
