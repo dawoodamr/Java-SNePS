@@ -79,7 +79,7 @@ public class DrawNetwork extends javax.swing.JPanel {
      * the visual component and renderer for the graph
      */
     VisualizationViewer<String, String> vv;
-    
+    private SNePSInterface frame;
     Network network;
     
     String instructions =
@@ -136,7 +136,7 @@ public class DrawNetwork extends javax.swing.JPanel {
      * create an instance of a simple graph with popup controls to
      * create a graph.
      */
-    public DrawNetwork(final Network network) {
+    public DrawNetwork(Network network) {
         this.network = network;
     	this.setPreferredSize(new Dimension(850, 800));
         // create a simple graph for the demo
@@ -207,11 +207,11 @@ public class DrawNetwork extends javax.swing.JPanel {
             	JFrame frame = new JFrame("Case Frames");
         		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 if (caseframeComboBox.getSelectedItem().toString().equals("define-caseframe")) {
-            		frame.getContentPane().add(new cmdCaseFrame(network));
+            		//frame.getContentPane().add(new cmdCaseFrame(network,));
             		frame.pack();
             		frame.setVisible(true);
                 } else if (caseframeComboBox.getSelectedItem().toString().equals("undefine-caseframe")) {
-                	frame.getContentPane().add(new cmdUndefineCaseFrame(network));
+                	//frame.getContentPane().add(new cmdUndefineCaseFrame(network));
             		frame.pack();
             		frame.setVisible(true);
                 }
@@ -228,11 +228,11 @@ public class DrawNetwork extends javax.swing.JPanel {
             	JFrame frame = new JFrame("Case Frames");
         		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 if (relationsComboBox.getSelectedItem().toString().equals("define")) {
-            		frame.getContentPane().add(new cmdDefine(network));
+            		//frame.getContentPane().add(new cmdDefine(network));
             		frame.pack();
             		frame.setVisible(true);
                 } else if (relationsComboBox.getSelectedItem().toString().equals("undefine")) {
-                	frame.getContentPane().add(new cmdUndefine(network));
+                	//frame.getContentPane().add(new cmdUndefine(network));
             		frame.pack();
             		frame.setVisible(true);
                 }
@@ -328,7 +328,6 @@ public class DrawNetwork extends javax.swing.JPanel {
 		public String create() {
 			String relation = "";
 			String caseframe = "";
-			String relationStr = "";
 			String caseframeStr = "";
 			int caseframeCounter = 0;
 			int relationCounter = 0;
@@ -358,7 +357,6 @@ public class DrawNetwork extends javax.swing.JPanel {
 			try {
 				relations = network.getCaseFrame(caseframe).getRelations();
 			} catch (CustomException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			Object [] relationsPossibilities = new Object[relations.size()]; 
@@ -388,23 +386,29 @@ public class DrawNetwork extends javax.swing.JPanel {
     	Network network = new Network();
     	try {
 
-			network.defineRelation("Relation 1", "entity", "none", 1);
-			network.defineRelation("Relation 2", "entity", "none", 1);
-			network.defineRelation("Relation 3", "entity", "none", 1);
-			
-			LinkedList<Relation> list1 = new LinkedList<Relation>();
-			list1.add(network.getRelation("Relation 1"));
-			list1.add(network.getRelation("Relation 2"));
-			list1.add(network.getRelation("Relation 3"));
-			
-			LinkedList<Relation> list2 = new LinkedList<Relation>();
-			list2.add(network.getRelation("Relation 1"));
-			list2.add(network.getRelation("Relation 2"));
-			
-			network.defineCaseFrame("entity", list1);
-			network.defineCaseFrame("entity", list2);
+        	//Define the Relations
+        	Relation rr1 = network.defineRelation("member","entity","reduce",0);
+        	Relation rr2 = network.defineRelation("class","entity","reduce",0);
+        	Relation rr3 = network.defineRelation("object","entity","reduce",0);
+        	Relation rr4 = network.defineRelation("isa","entity","reduce",0);
+        	Relation rr5 = network.defineRelation("has","entity","reduce",0);
+        	
+        	//Define the Case Frames
+        	LinkedList<Relation> relations1 = new LinkedList<Relation>();
+        	relations1.add(rr1);
+        	relations1.add(rr2);
+        	CaseFrame caseframe1 = network.defineCaseFrame("entity", relations1);
+        	
+        	LinkedList<Relation> relations2 = new LinkedList<Relation>();
+        	relations2.add(rr3);
+        	relations2.add(rr4);
+        	CaseFrame caseframe2 = network.defineCaseFrame("entity", relations2);
+        	
+        	LinkedList<Relation> relations3 = new LinkedList<Relation>();
+        	relations3.add(rr3);
+        	relations3.add(rr5);
+        	CaseFrame caseframe3 = network.defineCaseFrame("entity", relations3);
 		} catch (CustomException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
     

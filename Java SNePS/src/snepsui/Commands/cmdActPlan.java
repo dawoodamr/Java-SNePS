@@ -21,6 +21,7 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.Network;
+import snepsui.Interface.SNePSInterface;
 
 
 /**
@@ -55,9 +56,11 @@ public class cmdActPlan extends javax.swing.JPanel {
 	private JButton assertButton;
 	private JButton findButton;
 	private JButton buildButton;
+	private SNePSInterface frame;
 
-	public cmdActPlan(Network network) {
+	public cmdActPlan(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
 		this.network = network;
 		initGUI();
 	}
@@ -242,26 +245,26 @@ public class cmdActPlan extends javax.swing.JPanel {
 	
 	private void buildButtonActionPerformed(ActionEvent evt) {
 
-		JFrame frame = new JFrame("Build");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().add(new cmdBuild(network));
-		frame.pack();
-		frame.setVisible(true);
+		JFrame popupFrame = new JFrame("Build");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popupFrame.getContentPane().add(new cmdBuild(network, frame));
+		popupFrame.pack();
+		popupFrame.setVisible(true);
 	}
 	
 	private void assertButtonActionPerformed(ActionEvent evt) {
-		JFrame frame = new JFrame("Assert");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().add(new cmdAssert(network));
-		frame.pack();
-		frame.setVisible(true);
+		JFrame popupFrame = new JFrame("Assert");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popupFrame.getContentPane().add(new cmdAssert(network, frame));
+		popupFrame.pack();
+		popupFrame.setVisible(true);
 	}
 	
 	private void findButtonActionPerformed(ActionEvent evt) {
-		JFrame frame = new JFrame("Find");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().add(new cmdFind(network));
-		frame.pack();
-		frame.setVisible(true);
+		JFrame popupFrame = new JFrame("Find");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popupFrame.getContentPane().add(new cmdFind(network, frame));
+		popupFrame.pack();
+		popupFrame.setVisible(true);
 	}
 }

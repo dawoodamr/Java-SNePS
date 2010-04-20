@@ -29,6 +29,7 @@ import sneps.CaseFrame;
 import sneps.CustomException;
 import sneps.Network;
 import sneps.Relation;
+import snepsui.Interface.SNePSInterface;
 
 
 /**
@@ -60,6 +61,7 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 	private DefaultListModel semanticClassModel;
 	private DefaultListModel relationsModel;
 	private Network network;
+	private SNePSInterface frame;
 
 	@Action
 	public void info() {
@@ -73,8 +75,9 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 		return Application.getInstance().getContext().getActionMap(this);
 	}
 	
-	public cmdCaseFrame(Network network) {
+	public cmdCaseFrame(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
 		this.network = network;
 		initGUI();
 	}
@@ -84,8 +87,7 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 			setPreferredSize(new Dimension(690, 225));
 			this.setLayout(null);
 			{
-				ComboBoxModel relationComboBoxModel = new DefaultComboBoxModel(new String [] {"entity",
-						"proposition", "act", "individual", "simple proposition", "generic proposition", "rule"});
+				ComboBoxModel relationComboBoxModel = new DefaultComboBoxModel(new String [] {"Entity","Proposition","Individual"});
 				semanticClassComboBox = new JComboBox();
 				this.add(semanticClassComboBox);
 				semanticClassComboBox.setModel(relationComboBoxModel);
@@ -210,6 +212,23 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 		this.network = network;
 	}
 	
+	private void addButtonMouseClicked(MouseEvent evt) {
+		//Check for a non-empty relation field 
+		if(relationSetTextField.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this,
+					"Please specify the relations included in the case frame, the relation field cannot be empty",
+					"Warning",
+					JOptionPane.WARNING_MESSAGE);
+		} else {
+			semanticClassModel.addElement(semanticClassComboBox.getSelectedItem().toString());
+			semanticClassComboBox.setSelectedIndex(0);
+			relationsModel.addElement(relationSetTextField.getText());
+			relationsComboBox.setSelectedIndex(0);
+			relationSetTextField.setText("");
+			validate();
+		}
+	}
+	
 	private void doneButtonMouseClicked(MouseEvent evt) {
 		for (int i = 0; i<semanticClassModel.size(); i++) {
 			LinkedList<Relation> relationList = new LinkedList<Relation>();
@@ -247,22 +266,9 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 		
 		semanticClassModel.removeAllElements();
 		relationsModel.removeAllElements();
-	}
-	
-	private void addButtonMouseClicked(MouseEvent evt) {
-		//Check for a non-empty relation field 
-		if(relationSetTextField.getText().isEmpty()) {
-			JOptionPane.showMessageDialog(this,
-					"Please specify the relations included in the case frame, the relation field cannot be empty",
-					"Warning",
-					JOptionPane.WARNING_MESSAGE);
-		} else {
-			semanticClassModel.addElement(semanticClassComboBox.getSelectedItem().toString());
-			semanticClassComboBox.setSelectedIndex(0);
-			relationsModel.addElement(relationSetTextField.getText());
-			relationsComboBox.setSelectedIndex(0);
-			relationSetTextField.setText("");
-			validate();
-		}
+		
+		frame.getNodesTreePanel1().addTreeInfo();
+		frame.getNodesTreePanel1().validate();
+		frame.getNodesTreePanel1().repaint();
 	}
 }

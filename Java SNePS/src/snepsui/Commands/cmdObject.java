@@ -19,6 +19,7 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.Network;
+import snepsui.Interface.SNePSInterface;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
@@ -49,6 +50,7 @@ public class cmdObject extends javax.swing.JPanel {
 	private JTextField relationTextField;
 	private JButton buildButton;
 	private Network network;
+	private SNePSInterface frame;
 
 	@Action
 	public void add() {
@@ -66,8 +68,9 @@ public class cmdObject extends javax.swing.JPanel {
 		return Application.getInstance().getContext().getActionMap(this);
 	}
 
-	public cmdObject(Network network) {
+	public cmdObject(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
 		this.network = network;
 		initGUI();
 	}
@@ -192,10 +195,10 @@ public class cmdObject extends javax.swing.JPanel {
 	}
 	
 	private void buildButtonActionPerformed(ActionEvent evt) {
-		JFrame frame = new JFrame("Build");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().add(new cmdBuild(network));
-		frame.pack();
-		frame.setVisible(true);
+		JFrame popupFrame = new JFrame("Build");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popupFrame.getContentPane().add(new cmdBuild(network, frame));
+		popupFrame.pack();
+		popupFrame.setVisible(true);
 	}
 }

@@ -22,6 +22,7 @@ import org.jdesktop.application.Application;
 
 import sneps.CaseFrame;
 import sneps.Network;
+import snepsui.Interface.SNePSInterface;
 
 
 
@@ -48,6 +49,7 @@ public class cmdUndefineCaseFrame extends javax.swing.JPanel {
 	private JButton addButton;
 	private JButton infoButton;
 	private Network network;
+	private SNePSInterface frame;
 	
 	@Action
     public void add() {
@@ -61,8 +63,9 @@ public class cmdUndefineCaseFrame extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdUndefineCaseFrame(Network network) {
+	public cmdUndefineCaseFrame(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
 		this.network = network;
 		initGUI();
 	}
@@ -163,5 +166,9 @@ public class cmdUndefineCaseFrame extends javax.swing.JPanel {
 		listModel.removeAllElements();
 		this.repaint();
 		this.validate();
+		
+		frame.getNodesTreePanel1().addTreeInfo();
+		frame.getMainFrame().validate();
+		frame.getMainFrame().repaint();
 	}
 }

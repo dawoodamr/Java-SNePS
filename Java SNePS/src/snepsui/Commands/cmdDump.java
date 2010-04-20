@@ -1,5 +1,6 @@
 package snepsui.Commands;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,6 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.ActionMap;
@@ -19,14 +21,21 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import sneps.Cable;
+import sneps.CustomException;
+import sneps.MolecularNode;
 import sneps.Network;
 import sneps.Node;
+import sneps.NodeSet;
+import sneps.UpCable;
+import snepsui.Interface.SNePSInterface;
 
 
 /**
@@ -51,15 +60,17 @@ public class cmdDump extends javax.swing.JPanel {
 	private JList nodesetList;
 	private JLabel contextNameLabel;
 	private JLabel nodesetLabel;
-	private JTextField nodesetTextField;
 	private JButton buildButton;
 	private Network network;
 	private JButton assertButton;
 	private JButton findButton;
+	private SNePSInterface frame;
+	private String newLine = "\n";
 
-	public cmdDump(Network network) {
+	public cmdDump(Network network, SNePSInterface frame) {
 		super();
 		this.network = network;
+		this.frame = frame;
 		initGUI();
 	}
 	
@@ -100,15 +111,22 @@ public class cmdDump extends javax.swing.JPanel {
 			{
 				addButton = new JButton();
 				this.add(addButton);
-				addButton.setBounds(569, 27, 16, 18);
+				addButton.setBounds(528, 26, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
 				addButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent evt) {
-						nodesetListModel.addElement(nodesetTextField.getText());
-						nodesetTextField.setText("");
-						validate();
+						if(!nodesetListModel.contains(nodesetComboBox.getSelectedItem().toString())) {
+							nodesetListModel.addElement(nodesetComboBox.getSelectedItem().toString());
+							nodesetComboBox.setSelectedIndex(0);
+							validate();
+						} else {
+							JOptionPane.showMessageDialog(getRootPane(),
+					    			  "The node already exists in node set",
+					    			  "Warning",
+					    			  JOptionPane.WARNING_MESSAGE);
+						}
 					}
 				});
 			}
@@ -117,11 +135,11 @@ public class cmdDump extends javax.swing.JPanel {
 				this.add(doneButton);
 				doneButton.setBounds(314, 185, 77, 29);
 				doneButton.setName("doneButton");
-			}
-			{
-				nodesetTextField = new JTextField();
-				this.add(nodesetTextField);
-				nodesetTextField.setBounds(435, 23, 122, 22);
+				doneButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						doneButtonMouseClicked(evt);
+					}
+				});
 			}
 			{
 				nodesetLabel = new JLabel();
@@ -138,13 +156,13 @@ public class cmdDump extends javax.swing.JPanel {
 			{
 				jScrollPane2 = new JScrollPane();
 				this.add(jScrollPane2);
-				jScrollPane2.setBounds(314, 57, 243, 103);
+				jScrollPane2.setBounds(314, 57, 202, 103);
 				{
 					nodesetListModel = new DefaultListModel();
 					nodesetList = new JList();
 					jScrollPane2.setViewportView(nodesetList);
 					nodesetList.setModel(nodesetListModel);
-					nodesetList.setBounds(12, 185, 205, 100);
+					nodesetList.setBounds(75, 96, 199, 100);
 				}
 			}
 			{
@@ -161,7 +179,7 @@ public class cmdDump extends javax.swing.JPanel {
 			{
 				buildButton = new JButton();
 				this.add(buildButton);
-				buildButton.setBounds(590, 25, 18, 20);
+				buildButton.setBounds(549, 25, 18, 20);
 				buildButton.setAction(getAppActionMap().get("build"));
 				buildButton.setFocusable(false);
 				buildButton.setToolTipText("build");
@@ -174,7 +192,7 @@ public class cmdDump extends javax.swing.JPanel {
 			{
 				assertButton = new JButton();
 				this.add(assertButton);
-				assertButton.setBounds(613, 25, 18, 20);
+				assertButton.setBounds(575, 25, 18, 20);
 				assertButton.setAction(getAppActionMap().get("assertAction"));
 				assertButton.setFocusable(false);
 				assertButton.setToolTipText("assert");
@@ -187,7 +205,7 @@ public class cmdDump extends javax.swing.JPanel {
 			{
 				findButton = new JButton();
 				this.add(findButton);
-				findButton.setBounds(636, 25, 18, 20);
+				findButton.setBounds(598, 25, 18, 20);
 				findButton.setAction(getAppActionMap().get("find"));
 				findButton.setFocusable(false);
 				findButton.setToolTipText("assert");
@@ -213,7 +231,7 @@ public class cmdDump extends javax.swing.JPanel {
 				nodesetComboBox = new JComboBox();
 				this.add(nodesetComboBox);
 				nodesetComboBox.setModel(nodesetComboBoxModel);
-				nodesetComboBox.setBounds(314, 23, 115, 22);
+				nodesetComboBox.setBounds(314, 23, 202, 22);
 			}
 			{
 				ComboBoxModel contextComboBoxModel = 
@@ -232,26 +250,73 @@ public class cmdDump extends javax.swing.JPanel {
 	
 	private void buildButtonActionPerformed(ActionEvent evt) {
 
-		JFrame frame = new JFrame("Build");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().add(new cmdBuild(network));
-		frame.pack();
-		frame.setVisible(true);
+		JFrame popupFrame = new JFrame("Build");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popupFrame.getContentPane().add(new cmdBuild(network, frame));
+		popupFrame.pack();
+		popupFrame.setVisible(true);
 	}
 	
 	private void assertButtonActionPerformed(ActionEvent evt) {
-		JFrame frame = new JFrame("Assert");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().add(new cmdAssert(network));
-		frame.pack();
-		frame.setVisible(true);
+		JFrame popupFrame = new JFrame("Assert");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popupFrame.getContentPane().add(new cmdAssert(network, frame));
+		popupFrame.pack();
+		popupFrame.setVisible(true);
 	}
 	
 	private void findButtonActionPerformed(ActionEvent evt) {
-		JFrame frame = new JFrame("Find");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().add(new cmdFind(network));
-		frame.pack();
-		frame.setVisible(true);
+		JFrame popupFrame = new JFrame("Find");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popupFrame.getContentPane().add(new cmdFind(network, frame));
+		popupFrame.pack();
+		popupFrame.setVisible(true);
+	}
+	
+	private void doneButtonMouseClicked(MouseEvent evt) {
+		try {
+			for(int i = 0; i < nodesetListModel.size(); i++) {
+				Node node = network.getNode(nodesetListModel.getElementAt(i).toString());
+				
+				//Print out node name
+				frame.getOutputPanel1().writeToTextArea(node.getIdentifier() + newLine, Color.YELLOW);
+				
+				//Print out semantic class
+				node.getEntity();
+				
+				//Print out cable
+				if(node instanceof MolecularNode) {
+					MolecularNode molNode = (MolecularNode) network.getNode(nodesetListModel.getElementAt(i).toString());
+					LinkedList<Cable> cables = molNode.getCableSet().getCables();
+					if(!cables.isEmpty()) {
+						frame.getOutputPanel1().writeToTextArea("Cable Set (Nodes pointing from " + node.getIdentifier() + "):" + newLine);
+						for(Cable item1 : cables) {
+							item1.getRelation();
+							LinkedList<Node> nodes = item1.getNodeSet().getNodes();
+							
+							for(Node item2 : nodes) {
+								frame.getOutputPanel1().writeToTextArea(item2.getIdentifier() + newLine);
+							}
+						}
+					}
+				}
+				
+				//Print out up cable
+				LinkedList<UpCable> nodeUpCables = node.getUpCableSet().getUpCables();
+				if(!nodeUpCables.isEmpty()) {
+					frame.getOutputPanel1().writeToTextArea("Up Cable Set (Nodes pointing to " + node.getIdentifier() + ")" + newLine);
+					for(UpCable item3 : nodeUpCables) {
+						item3.getRelation();
+						LinkedList<Node> nodes = item3.getNodeSet().getNodes();
+						
+						for(Node item4 : nodes) {
+							frame.getOutputPanel1().writeToTextArea(item4.getIdentifier() + newLine);
+						}
+					}
+				}
+				frame.getOutputPanel1().writeToTextArea(newLine);
+			}
+		} catch (CustomException e) {
+		}
 	}
 }

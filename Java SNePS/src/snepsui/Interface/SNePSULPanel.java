@@ -22,15 +22,16 @@ import sneps.Network;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class SNePSULPanel extends javax.swing.JPanel {
-	public JTabbedPane jTabbedPane1;
-	public MenuDrivenCommands menuDrivenCommands;
-	public VisualizeNetworks visualizeNetworks;
+	private JTabbedPane jTabbedPane1;
+	private MenuDrivenCommands menuDrivenCommands;
+	private VisualizeNetworks visualizeNetworks;
 	private DrawNetwork drawNetworks;
 	private Network network;
+	private SNePSInterface frame;
 	
-	public SNePSULPanel() {
+	public SNePSULPanel(SNePSInterface frame) {
 		super();
-		this.network = network;
+		this.frame = frame;
 		initGUI();
 	}
 	
@@ -42,7 +43,7 @@ public class SNePSULPanel extends javax.swing.JPanel {
 				this.add(jTabbedPane1);
 				jTabbedPane1.setPreferredSize(new java.awt.Dimension(794, 358));
 				{
-					menuDrivenCommands = new MenuDrivenCommands();
+					menuDrivenCommands = new MenuDrivenCommands(frame);
 					jTabbedPane1.addTab("Commands", null, menuDrivenCommands, null);
 					menuDrivenCommands.setPreferredSize(new java.awt.Dimension(766, 220));
 				}
@@ -52,7 +53,7 @@ public class SNePSULPanel extends javax.swing.JPanel {
 					drawNetworks.setPreferredSize(new java.awt.Dimension(613, 274));
 				}
 				{
-					visualizeNetworks = new VisualizeNetworks(network);
+					visualizeNetworks = new VisualizeNetworks();
 					jTabbedPane1.addTab("View Network", null, visualizeNetworks, null);
 					visualizeNetworks.setPreferredSize(new java.awt.Dimension(759, 346));
 				}
@@ -62,4 +63,27 @@ public class SNePSULPanel extends javax.swing.JPanel {
 		}
 	}
 
+	public JTabbedPane getjTabbedPane1() {
+		return jTabbedPane1;
+	}
+
+	public MenuDrivenCommands getMenuDrivenCommands() {
+		return menuDrivenCommands;
+	}
+	
+	public VisualizeNetworks getVisualizeNetworks() {
+		return visualizeNetworks;
+	}
+
+	public DrawNetwork getDrawNetworks() {
+		return drawNetworks;
+	}
+
+	public Network getNetwork() {
+		return network;
+	}
+
+	public void setNetwork(Network network) {
+		this.network = network;
+	}
 }

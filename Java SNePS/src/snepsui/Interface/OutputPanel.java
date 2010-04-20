@@ -1,6 +1,8 @@
 package snepsui.Interface;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import javax.swing.JScrollPane;
 
 import javax.swing.JTextArea;
 
@@ -17,6 +19,7 @@ import javax.swing.JTextArea;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class OutputPanel extends javax.swing.JPanel {
+	private JScrollPane jScrollPane1;
 	private JTextArea jTextArea1;
 
 	public OutputPanel() {
@@ -28,12 +31,31 @@ public class OutputPanel extends javax.swing.JPanel {
 		try {
 			setPreferredSize(new Dimension(524, 235));
 			{
-				jTextArea1 = new JTextArea();
-				this.add(jTextArea1);
-				jTextArea1.setPreferredSize(new java.awt.Dimension(347, 187));
+				jScrollPane1 = new JScrollPane();
+				this.add(jScrollPane1);
+				jScrollPane1.setPreferredSize(new java.awt.Dimension(347, 187));
+				{
+					jTextArea1 = new JTextArea();
+					jTextArea1.setEditable(false);
+					jScrollPane1.setViewportView(jTextArea1);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void writeToTextArea(String text) {
+		jTextArea1.setSelectedTextColor(Color.BLACK);
+		jTextArea1.append(text);
+		this.validate();
+		this.repaint();
+	}
+	
+	public void writeToTextArea(String text, Color color) {
+		jTextArea1.setSelectedTextColor(color);
+		jTextArea1.append(text);
+		this.validate();
+		this.repaint();
 	}
 }

@@ -32,6 +32,7 @@ import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
 import sneps.Relation;
+import snepsui.Interface.SNePSInterface;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -63,9 +64,11 @@ public class cmdAssert extends javax.swing.JPanel {
 	private JTextField relationTextField;
 	private JTextField nodesetTextField;
 	private LinkedList<Node> nodes;
-
-	public cmdAssert(Network network) {
+	private SNePSInterface frame;
+	
+	public cmdAssert(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
 		this.network = network;
 		nodes = new LinkedList<Node>();
 		initGUI();
@@ -237,7 +240,7 @@ public class cmdAssert extends javax.swing.JPanel {
 				
 			} else if (options.getSelectedItem().toString().equals("build")) {
 
-			    cmdBuild build = new cmdBuild(network);
+			    cmdBuild build = new cmdBuild(network, frame);
 				
 			    int result = JOptionPane.showConfirmDialog(  
 			    	    this, build, "title", JOptionPane.PLAIN_MESSAGE
@@ -260,7 +263,7 @@ public class cmdAssert extends javax.swing.JPanel {
 			    
 			} else if (options.getSelectedItem().toString().equals("assert")) {
 				
-				cmdAssert assertPanel = new cmdAssert(network);
+				cmdAssert assertPanel = new cmdAssert(network, frame);
 				
 			    int result = JOptionPane.showConfirmDialog(  
 			    	    this, assertPanel, "title", JOptionPane.PLAIN_MESSAGE
@@ -283,7 +286,7 @@ public class cmdAssert extends javax.swing.JPanel {
 			    
 			} else if (options.getSelectedItem().toString().equals("find")) {
 				
-				cmdFind assertPanel = new cmdFind(network);
+				cmdFind assertPanel = new cmdFind(network, frame);
 				
 			    int result = JOptionPane.showConfirmDialog(  
 			    	    this, assertPanel, "title", JOptionPane.PLAIN_MESSAGE
@@ -389,6 +392,10 @@ public class cmdAssert extends javax.swing.JPanel {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		frame.getNodesTreePanel1().addTreeInfo();
+		frame.getMainFrame().validate();
+		frame.getMainFrame().repaint();
 	}
 	
 	public LinkedList<Node> getNodes() {

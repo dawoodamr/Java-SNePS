@@ -38,7 +38,7 @@ import sneps.Node;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class cmdSilentErase extends javax.swing.JPanel {
-	private JLabel eraseLabel;
+	private JLabel silentEraseLabel;
 	private JButton addButton;
 	private JList nodesetList;
 	private JButton doneButton;
@@ -74,10 +74,10 @@ public class cmdSilentErase extends javax.swing.JPanel {
 			setPreferredSize(new Dimension(690, 225));
 			this.setLayout(null);
 			{
-				eraseLabel = new JLabel();
-				this.add(eraseLabel);
-				eraseLabel.setName("eraseLabel");
-				eraseLabel.setBounds(184, 35, 59, 15);
+				silentEraseLabel = new JLabel();
+				this.add(silentEraseLabel);
+				silentEraseLabel.setName("silentEraseLabel");
+				silentEraseLabel.setBounds(153, 35, 90, 15);
 			}
 			{
 				addButton = new JButton();
@@ -86,11 +86,8 @@ public class cmdSilentErase extends javax.swing.JPanel {
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
 				addButton.addMouseListener(new MouseAdapter() {
-					@Override
 					public void mouseClicked(MouseEvent evt) {
-						nodesetModel.addElement(nodesetComboBox.getSelectedItem().toString());
-						nodesetComboBox.setSelectedIndex(0);
-						validate();
+						addButtonMouseClicked(evt);
 					}
 				});
 			}
@@ -166,6 +163,28 @@ public class cmdSilentErase extends javax.swing.JPanel {
 		    			  JOptionPane.ERROR_MESSAGE);
 				e.printStackTrace();
 			}
+		}
+		getRootPane().getContentPane().add(new cmdErase(network));
+		this.repaint();
+		this.validate();
+	}
+	
+	private void addButtonMouseClicked(MouseEvent evt) {
+		try {
+			Node node = network.getNode(nodesetComboBox.getSelectedItem().toString());
+			if(node.getUpCableSet().getUpCables().isEmpty()) {
+				nodesetModel.addElement(nodesetComboBox.getSelectedItem().toString());
+				nodesetComboBox.setSelectedIndex(0);
+				validate();
+			} else {
+				JOptionPane.showMessageDialog(this,
+		    			  "The node " + node.getIdentifier() + " cannot be deleted because it is connected to other nodes",
+		    			  "Error",
+		    			  JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (CustomException e) {
+			e.getMessage();
+			e.printStackTrace();
 		}
 	}
 }

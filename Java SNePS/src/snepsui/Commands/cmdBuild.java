@@ -33,6 +33,7 @@ import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
 import sneps.Relation;
+import snepsui.Interface.SNePSInterface;
 
 
 
@@ -62,6 +63,7 @@ public class cmdBuild extends javax.swing.JPanel {
 	private DefaultTableModel relationNodesetTableModel;
 	private JComboBox options;
 	private JTextField relationTextField;
+	private SNePSInterface frame;
 
 	@Action
 	public void info() {
@@ -71,9 +73,10 @@ public class cmdBuild extends javax.swing.JPanel {
 		return Application.getInstance().getContext().getActionMap(this);
 	}
 
-	public cmdBuild(Network network) {
+	public cmdBuild(Network network, SNePSInterface frame) {
 		super();
 		nodes = new LinkedList<Node>();
+		this.frame = frame;
 		this.network = network;
 		initGUI();
 	}
@@ -217,7 +220,7 @@ public class cmdBuild extends javax.swing.JPanel {
 //				JDialog dialog = pane.createDialog(null, "Build");
 //				dialog.setResizable(true);
 //			    dialog.setVisible(true);
-			    cmdBuild build = new cmdBuild(network);
+			    cmdBuild build = new cmdBuild(network, frame);
 				
 			    int result = JOptionPane.showConfirmDialog(  
 			    	    this, build, "title", JOptionPane.PLAIN_MESSAGE
@@ -248,7 +251,7 @@ public class cmdBuild extends javax.swing.JPanel {
 //				dialog.setPreferredSize(new Dimension(690, 225));
 //				dialog.setVisible(true);
 				
-				cmdAssert assertPanel = new cmdAssert(network);
+				cmdAssert assertPanel = new cmdAssert(network, frame);
 				
 			    int result = JOptionPane.showConfirmDialog(  
 			    	    this, assertPanel, "title", JOptionPane.PLAIN_MESSAGE
@@ -275,7 +278,7 @@ public class cmdBuild extends javax.swing.JPanel {
 //				dialog.setPreferredSize(new Dimension(690, 225));
 //				dialog.setVisible(true);
 				
-				cmdFind assertPanel = new cmdFind(network);
+				cmdFind assertPanel = new cmdFind(network, frame);
 				
 			    int result = JOptionPane.showConfirmDialog(  
 			    	    this, assertPanel, "title", JOptionPane.PLAIN_MESSAGE
@@ -376,6 +379,10 @@ public class cmdBuild extends javax.swing.JPanel {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		frame.getNodesTreePanel1().addTreeInfo();
+		frame.getMainFrame().validate();
+		frame.getMainFrame().repaint();
 	}
 	
 	public LinkedList<Node> getNodes() {

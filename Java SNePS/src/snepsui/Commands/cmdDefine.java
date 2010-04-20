@@ -25,6 +25,7 @@ import org.jdesktop.application.Application;
 import sneps.CustomException;
 import sneps.Network;
 import sneps.Relation;
+import snepsui.Interface.SNePSInterface;
 
 
 
@@ -68,6 +69,7 @@ public class cmdDefine extends javax.swing.JPanel {
 	private Network network;
 	private ComboBoxModel typeComboBoxModel;
 	private ComboBoxModel adjustComboBoxModel;
+	private SNePSInterface frame;
 
 	@Action
     public void add() {
@@ -81,8 +83,9 @@ public class cmdDefine extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdDefine(Network network) {
+	public cmdDefine(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
 		this.network = network;
 		initGUI();
 	}
@@ -153,7 +156,8 @@ public class cmdDefine extends javax.swing.JPanel {
 				realtionsLabel.setName("realtionsLabel");
 			}
 			{
-				typeComboBoxModel = new DefaultComboBoxModel(new String [] {"entity", "proposition", "rule", "non rule", "act" , "individual"});
+				typeComboBoxModel = new DefaultComboBoxModel(new String [] {"Entity","Proposition","Individual","AndEntailment",
+						"AndOr","NumericalEntailment","OrEntailment","Thresh","Act","Action"});
 				typeComboBox = new JComboBox();
 				this.add(typeComboBox);
 				typeComboBox.setModel(typeComboBoxModel);
@@ -349,5 +353,9 @@ public class cmdDefine extends javax.swing.JPanel {
 	    			  JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		}
+		
+		frame.getNodesTreePanel1().addTreeInfo();
+		frame.getNodesTreePanel1().validate();
+		frame.getNodesTreePanel1().repaint();
 	}
 }

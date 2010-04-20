@@ -34,6 +34,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	private JPanel commandsPanel;
 	private DefaultComboBoxModel jComboBox1Model;
 	private Network network;
+	private SNePSInterface frame;
 
 	public Network getNetwork() {
 		return network;
@@ -43,9 +44,10 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.network = network;
 	}
 
-	public MenuDrivenCommands() {
+	public MenuDrivenCommands(SNePSInterface frame) {
 		super();
 		this.network = null;
+		this.frame = frame;
 		initGUI();
 	}
 	
@@ -115,7 +117,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("undefine");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDefine(network));
+			commandsPanel.add(new cmdDefine(network, frame));
 		} 
 		else if(commandMenusComboBox.getSelectedItem().equals("Case Frames")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -123,7 +125,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("undefine-caseframe");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdCaseFrame(network));
+			commandsPanel.add(new cmdCaseFrame(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Reduction Inference")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -148,7 +150,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("list-hypotheses");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdSetContext(network));
+			commandsPanel.add(new cmdSetContext(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Building Networks")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -157,7 +159,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("activate");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdAssert(network));
+			commandsPanel.add(new cmdAssert(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Deleting Information")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -174,6 +176,8 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("full-describe");
 			dcbm.addElement("surface");
 			commandsComboBox.setModel(dcbm);
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdDump(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Retrieving Information")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -190,7 +194,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("deducewhnot");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdFind(network));
+			commandsPanel.add(new cmdFind(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Connectives")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -201,7 +205,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("Thresh");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdAndEntailment(network));
+			commandsPanel.add(new cmdAndEntailment(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Quantifiers")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -231,7 +235,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("{<if, p>,<do, a>}");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdPerform(network));
+			commandsPanel.add(new cmdPerform(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Primitive Acts")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -245,7 +249,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("{<plan, p>,<act, a>}");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdActPlan(network));
+			commandsPanel.add(new cmdActPlan(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Goals")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -293,31 +297,31 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	private void commandsComboBoxItemStateChanged(ItemEvent evt) {
 		if(commandsComboBox.getSelectedItem().equals("define")) {	
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDefine(network));
+			commandsPanel.add(new cmdDefine(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("undefine")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdUndefine(network));
+			commandsPanel.add(new cmdUndefine(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("define-caseframe")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdCaseFrame(network));
+			commandsPanel.add(new cmdCaseFrame(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("undefine-caseframe")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdUndefineCaseFrame(network));
+			commandsPanel.add(new cmdUndefineCaseFrame(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("assert")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdAssert(network));
+			commandsPanel.add(new cmdAssert(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("add")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdAdd(network));
+			commandsPanel.add(new cmdAdd(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("activate")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdActivate(network));
+			commandsPanel.add(new cmdActivate(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("erase")) {
 			commandsPanel.removeAll();
@@ -337,11 +341,11 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		}
 		else if(commandsComboBox.getSelectedItem().equals("add-to-context")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdAddToContext(network));
+			commandsPanel.add(new cmdAddToContext(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("set-context")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdSetContext(network));
+			commandsPanel.add(new cmdSetContext(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("set-default-context")) {
 			commandsPanel.removeAll();
@@ -349,7 +353,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		}
 		else if(commandsComboBox.getSelectedItem().equals("remove-from-context")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdRemoveFromContext(network));
+			commandsPanel.add(new cmdRemoveFromContext(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("describe-context")) {
 			commandsPanel.removeAll();
@@ -361,39 +365,39 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		}
 		else if(commandsComboBox.getSelectedItem().equals("dump")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDump(network));
+			commandsPanel.add(new cmdDump(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("describe")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDescribe(network));
+			commandsPanel.add(new cmdDescribe(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("full-describe")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDescribe(network));
+			commandsPanel.add(new cmdDescribe(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("find")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdFind(network));
+			commandsPanel.add(new cmdFind(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("findassert")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdFindAssert(network));
+			commandsPanel.add(new cmdFindAssert(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("findconstant")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdFindConstant(network));
+			commandsPanel.add(new cmdFindConstant(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("findbase")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdFindBase(network));
+			commandsPanel.add(new cmdFindBase(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("findvariable")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdFindVariable(network));
+			commandsPanel.add(new cmdFindVariable(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("findpattern")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdFindPattern(network));
+			commandsPanel.add(new cmdFindPattern(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("ev-trace")) {
 			commandsPanel.removeAll();
@@ -417,59 +421,59 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		}
 		else if(commandsComboBox.getSelectedItem().equals("deduce")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDeduce(network));
+			commandsPanel.add(new cmdDeduce(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("deducetrue")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDeduceTrue(network));
+			commandsPanel.add(new cmdDeduceTrue(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("deducefalse")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDeduceFalse(network));
+			commandsPanel.add(new cmdDeduceFalse(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("deducewh")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDeduceWH(network));
+			commandsPanel.add(new cmdDeduceWH(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("deducewhnot")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDeduceWHNOT(network));
+			commandsPanel.add(new cmdDeduceWHNOT(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("{<whenever, p>,<do, a>}")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdWheneverDo(network));
+			commandsPanel.add(new cmdWheneverDo(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("{<when, p>,<do, a>}")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdWhenDo(network));
+			commandsPanel.add(new cmdWhenDo(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("{<if, p>,<do, a>}")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdIfDo(network));
+			commandsPanel.add(new cmdIfDo(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("believe")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdBelieve(network));
+			commandsPanel.add(new cmdBelieve(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("disbelieve")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDisbelieve(network));
+			commandsPanel.add(new cmdDisbelieve(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("do-all")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDoAll(network));
+			commandsPanel.add(new cmdDoAll(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("do-one")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDoOne());
+			commandsPanel.add(new cmdDoOne(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("do-one")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDoOne());
+			commandsPanel.add(new cmdDoOne(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("{<plan, p>,<act, a>}")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDoOne());
+			commandsPanel.add(new cmdDoOne(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("list-nodes")) {
 			commandsPanel.removeAll();
@@ -481,15 +485,15 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		}
 		else if(commandsComboBox.getSelectedItem().equals("And-Entailment")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdAndEntailment(network));
+			commandsPanel.add(new cmdAndEntailment(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("Or-Entailment")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdOrEntailment(network));
+			commandsPanel.add(new cmdOrEntailment(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("Numerical Entailment")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdNumericalEntailment(network));
+			commandsPanel.add(new cmdNumericalEntailment(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("define-primaction")) {
 			commandsPanel.removeAll();
@@ -501,7 +505,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	
 	public void assertMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdAssert(network));
+		commandsPanel.add(new cmdAssert(network, frame));
 		commandsComboBox.setSelectedItem("assert");
 		commandMenusComboBox.setSelectedItem("Building Networks");
 		this.repaint();
@@ -510,7 +514,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	
 	public void defineMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdDefine(network));
+		commandsPanel.add(new cmdDefine(network, frame));
 		commandsComboBox.setSelectedItem("define");
 		commandMenusComboBox.setSelectedItem("Relations");
 		this.repaint();
@@ -519,7 +523,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	
 	public void findMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdFind(network));
+		commandsPanel.add(new cmdFind(network, frame));
 		commandsComboBox.setSelectedItem("find");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
 		this.repaint();
@@ -546,7 +550,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void dumpMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdDump(network));
+		commandsPanel.add(new cmdDump(network, frame));
 		commandsComboBox.setSelectedItem("dump");
 		commandMenusComboBox.setSelectedItem("Displaying Information");
 		this.repaint();
@@ -555,7 +559,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void describeMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdDescribe(network));
+		commandsPanel.add(new cmdDescribe(network, frame));
 		commandsComboBox.setSelectedItem("describe");
 		commandMenusComboBox.setSelectedItem("Displaying Information");
 		this.repaint();
@@ -564,7 +568,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void fullDescribeMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdFullDescribe(network));
+		commandsPanel.add(new cmdFullDescribe(network, frame));
 		commandsComboBox.setSelectedItem("full-describe");
 		commandMenusComboBox.setSelectedItem("Displaying Information");
 		this.repaint();
@@ -573,7 +577,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void undefineMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdUndefine(network));
+		commandsPanel.add(new cmdUndefine(network, frame));
 		commandsComboBox.setSelectedItem("undefine");
 		commandMenusComboBox.setSelectedItem("Relations");
 		this.repaint();
@@ -582,7 +586,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void addMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdAdd(network));
+		commandsPanel.add(new cmdAdd(network, frame));
 		commandsComboBox.setSelectedItem("add");
 		commandMenusComboBox.setSelectedItem("Building Networks");
 		this.repaint();
@@ -591,7 +595,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void activateMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdActivate(network));
+		commandsPanel.add(new cmdActivate(network, frame));
 		commandsComboBox.setSelectedItem("activate");
 		commandMenusComboBox.setSelectedItem("Building Networks");
 		this.repaint();
@@ -609,7 +613,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void setContextMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdSetContext(network));
+		commandsPanel.add(new cmdSetContext(network, frame));
 		commandsComboBox.setSelectedItem("set-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
 		this.repaint();
@@ -627,7 +631,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void addToContextMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdAddToContext(network));
+		commandsPanel.add(new cmdAddToContext(network, frame));
 		commandsComboBox.setSelectedItem("set-to-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
 		this.repaint();
@@ -636,7 +640,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void removeFromContextMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdRemoveFromContext(network));
+		commandsPanel.add(new cmdRemoveFromContext(network, frame));
 		commandsComboBox.setSelectedItem("remove-from-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
 		this.repaint();
@@ -663,7 +667,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	
 	public void defineCaseFrameMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdCaseFrame(network));
+		commandsPanel.add(new cmdCaseFrame(network, frame));
 		commandsComboBox.setSelectedItem("define-caseframe");
 		commandMenusComboBox.setSelectedItem("Case Frames");
 		this.repaint();
@@ -672,7 +676,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	
 	public void undefineCaseFrameMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdUndefineCaseFrame(network));
+		commandsPanel.add(new cmdUndefineCaseFrame(network, frame));
 		commandsComboBox.setSelectedItem("undefine-caseframe");
 		commandMenusComboBox.setSelectedItem("Case Frames");
 		this.repaint();
