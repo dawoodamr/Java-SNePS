@@ -113,11 +113,31 @@ public Object clone() throws CloneNotSupportedException
 	copy.names = (HashSet<String>) names.clone();
 	copy.RestricitonSet = (HashSet<PropositionSet>) RestricitonSet.clone();
 	return copy;
+
 }
-
-
-
-
+public void clear()
+{
+	hypSet.clear();
+	RestricitonSet.clear();	
+}
+public void clearNames()
+{
+	names.clear();
+}
+public boolean equals(Object context)
+{
+	if(this==context)
+		return true;
+	if(context==null)
+		return false;
+	if(this.getClass()!=context.getClass())
+		return false;
+	if(!this.hypSet.equals(((Context)context).getHypSet()))
+	return false;
+	
+	return true;
+	
+}
 }
 
 
