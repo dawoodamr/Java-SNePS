@@ -331,8 +331,8 @@ public class Network implements Serializable
 	 */
 	public Node build(Object[][] array,CaseFrame caseFrame)throws CustomException
 	{
-		if(! isSemanticallyConsistent(array))
-			throw new CustomException("relations are not consistent with target nodes");
+		if(exists(array))
+			throw new CustomException("cable set already exists");
 		if(isToBePattern(array))
 			return createPatNode(array,caseFrame);
 		else
@@ -460,6 +460,42 @@ public class Network implements Serializable
 		NodeSet nodeSet = (NodeSet) array[index][1];
 		
 		return intersection(findUnion(path,nodeSet),findIntersection(array,++index));
+	}
+	
+	/**
+	 * this method checks whether a CableSet was build before in the notwork or not
+	 * 
+	 * @param array a 2D array of relations and nodes that we want to check it it represents
+	 * a cable set that already exists in the network
+	 * @return true if the CableSet exists and false otherwise
+	 */
+	private boolean exists(Object[][] array)
+	{
+		NodeSet result = new NodeSet();
+		Node node = (Node) array[0][1];
+		UpCableSet upCableSet = node.getUpCableSet();
+		Relation relation = (Relation) array[0][0];
+		if(! upCableSet.contains(relation))
+			return false;
+		UpCable upCable = upCableSet.getUpCable(relation);
+		NodeSet ns = upCable.getNodeSet();
+		result.getNodes().addAll(ns.getNodes());
+		
+		for(int i=1;i<array.length;i++)
+		{
+			node = (Node) array[i][1];
+			upCableSet = node.getUpCableSet();
+			relation = (Relation) array[i][0];
+			if(! upCableSet.contains(relation))
+				return false;
+			upCable = upCableSet.getUpCable(relation);
+			ns = upCable.getNodeSet();
+			result = intersection(result,ns);
+		}
+		
+		if(result.getNodes().size() == 1)
+			return true;
+		return false;
 	}
 	
 	/**
@@ -618,20 +654,6 @@ public class Network implements Serializable
 		}
 		
 		return result;
-	}
-	
-	/**
-	 * This method is used for making sure that each relation in the array can point 
-	 * to the corresponding node -from the point of view of the semantic type-
-	 * 
-	 * @param array an n*2 array of Relations and Nodes
-	 * @return true if the Relations can point to these nodes and false if not
-	 */
-	private boolean isSemanticallyConsistent(Object[][] array)
-	{
-		
-		
-		return true;
 	}
 	
 	/**
@@ -827,7 +849,7 @@ public class Network implements Serializable
 		/*System.out.println(res.getIdentifier());
 		System.out.println(n.getNodes().get(res.getIdentifier()).getIdentifier());
 		System.out.println(((PatternNode) res1).getFreeVariables().size());*/
-		for(Enumeration<Relation> e = n.relations.elements();e.hasMoreElements();)
+		/*for(Enumeration<Relation> e = n.relations.elements();e.hasMoreElements();)
 			System.out.println("r:" +e.nextElement().getName());
 		for(Enumeration<CaseFrame> e = n.caseFrames.elements();e.hasMoreElements();)
 			System.out.println(e.nextElement().getId());
@@ -836,7 +858,7 @@ public class Network implements Serializable
 			System.out.println("r:" +e.nextElement().getName());
 		for(Enumeration<CaseFrame> e = n.caseFrames.elements();e.hasMoreElements();)
 			System.out.println(e.nextElement().getId());
-		
+		*/
 		/*for(int i=0;i<oo.length;i++)
 		{
 			System.out.println(oo.length);
