@@ -1,0 +1,243 @@
+package snactor;
+
+import java.util.LinkedList;
+
+import sneps.*;
+
+public class Act extends Entity
+{
+	
+	private  LinkedList<Node> arrangedObjects;
+	
+	private Node theAction;
+	
+	private String Agenda;
+	
+	private String Priority;
+	
+	public Act(MolecularNode node)
+	{
+		setNode(node);
+		this.setAgenda(Agenda);
+		this.setPriority(Priority);
+		this.arrangedObjects = new LinkedList<Node>();
+		getAction();
+		getObjects(getMainObject());
+		
+	}
+	
+	public void getAction()
+	{
+		
+		CableSet theCables = (((MolecularNode) getNode()).getCableSet());
+		
+		Cable a = theCables.getCable("action");
+			
+		NodeSet nodes = a.getNodeSet();
+		
+		setTheAction(nodes.getNodes().getFirst());
+		
+		
+	}
+	
+	private Node getMainObject()
+	{
+		MolecularNode m = (MolecularNode) getNode();
+		
+		if(m.getCableSet().contains("actObject"))
+		{
+		Node MainObject = m.getCableSet().getCable("actObject").getNodeSet().getNodes().getFirst();
+		return MainObject;
+		}
+		else
+		{
+		return null;
+		}
+
+	}
+	
+	public void getObjects(Node mainNode)
+	
+	{
+		if(mainNode.getClass().getSimpleName().equals("BaseNode"))
+		{
+			addNode(mainNode);
+	//		System.out.println(mainNode.getIdentifier());
+	//		System.out.println(arrangedObjects.getLast().getIdentifier());
+		}
+		else
+		{
+		MolecularNode m2 = (MolecularNode) mainNode;
+		
+		if(m2.getCableSet().contains("object1")&&m2.getCableSet().contains("object2"))
+		{	
+	//		System.out.println(m2.getCableSet().getCable("object1").getNodeSet().getNodes().getFirst().getIdentifier());
+	//		System.out.println(m2.getCableSet().getCable("object2").getNodeSet().getNodes().getFirst().getIdentifier());
+		//	arrangedObjects.add(m2.getCableSet().getCable("object1").getNodeSet().getNodes().getFirst());
+			addNode(m2.getCableSet().getCable("object1").getNodeSet().getNodes().getFirst());
+		//	System.out.println(	arrangedObjects.add(m2.getCableSet().getCable("object1").getNodeSet().getNodes().getFirst()));
+	//		System.out.println(arrangedObjects.getLast().getIdentifier());
+	
+			getObjects(m2.getCableSet().getCable("object2").getNodeSet().getNodes().getFirst());
+		}
+		else
+		{
+			//System.out.println("a7a");
+			addNode(mainNode);
+
+		}
+		}
+		
+	
+		
+	}
+	
+	public void performAction()
+	{
+		((Action) theAction.getEntity()).Perform();
+	}
+
+	public void setTheAction(Node theAction) {
+		this.theAction = theAction;
+	
+	}
+	
+	public void addNode(Node e)
+	{
+		this.arrangedObjects.add(e);
+	}
+	
+	
+	public LinkedList<Node> getArrangedObjects() {
+		return arrangedObjects;
+	}
+
+	public void setArrangedObjects(LinkedList<Node> arrangedObjects) {
+		this.arrangedObjects = arrangedObjects;
+	}
+
+	public Node getTheAction() {
+		return theAction;
+	}
+
+	public void setAgenda(String agenda) {
+		Agenda = agenda;
+	}
+
+	public String getAgenda() {
+		return Agenda;
+	}
+
+	public void setPriority(String priority) {
+		Priority = priority;
+	}
+
+	public String getPriority() {
+		return Priority;
+	}
+	public static void main(String[] args) throws CustomException
+	{
+		Condition test = new Condition();
+		
+		Network m = new Network();
+		
+		Relation r1 = m.defineRelation("action", "single", null, 1);
+		Relation r2 = m.defineRelation("actObject", "single", null, 0);
+		Relation r3 = m.defineRelation("object1", "single", null, 1);
+		Relation r4 = m.defineRelation("object2", "single", null, 0);
+		
+		
+		LinkedList<Relation> l = new LinkedList<Relation>();
+		l.add(r1);
+		l.add(r2);
+		
+		CaseFrame cf1 = m.defineCaseFrame("act", l);
+		
+		LinkedList<Relation> l2 = new LinkedList<Relation>();
+		l2.add(r3);
+		l2.add(r4);
+		
+		CaseFrame cf2 = m.defineCaseFrame("object", l2);
+		
+		Object[][] o5 = new Object[2][2];
+		
+		o5[0][0] = r3;
+		o5[1][0] = r4;
+		Node bn9 = m.build("3");
+		Node bn8 = m.build("4");
+		o5[0][1] = bn9;
+		o5[1][1] = bn8;
+
+		Node n5 = m.build(o5, cf2);
+		
+		Object[][] o4 = new Object[2][2];
+		
+		o4[0][0] = r1;
+		o4[1][0] = r2;
+		Node bn7 = m.build("SNACTION");
+	//	Node bn8 = m.build("MainSN");
+		o4[0][1] = bn7;
+		o4[1][1] = n5;
+
+		Node n4 = m.build(o4, cf1);
+		
+		Object[][] o3 = new Object[2][2];
+		
+		o3[0][0] = r3;
+		o3[1][0] = r4;
+		Node bn5 = m.build("SecondObject");
+	//	Node bn6 = m.build("ThirdObject");
+		o3[0][1] = bn5;
+		o3[1][1] = n4;
+		
+		
+		SNSEQUENCE aa2  = new SNSEQUENCE(n4);
+		n4.setEntity(aa2);
+		
+		Action aa3  = new Action(bn5);
+		bn5.setEntity(aa3);
+		
+	
+		
+		Node n3 = m.build(o3, cf2);
+		
+		Object[][] o2 = new Object[2][2];
+		
+		o2[0][0] = r3;
+		o2[1][0] = r4;
+		Node bn3 = m.build("FirstObject");
+		//Node bn4 = m.build("SecondObject");
+		o2[0][1] = bn3;
+		o2[1][1] = n3;
+		
+		Action aa1  = new Action(bn3);
+		bn3.setEntity(aa1);
+		
+		Node n2 = m.build(o2, cf2);
+	
+		
+		Object[][] o = new Object[2][2];
+		
+		o[0][0] = r1;
+		o[1][0] = r2;
+		Node bn1 = m.build("DoAll");
+		
+	//	Node bn2 = m.build("theMainObject");
+		o[0][1] = bn1;
+		o[1][1] = n2;
+		DoAll aa  = new DoAll(bn1);
+		bn1.setEntity(aa);
+		
+		Node n1 = m.build(o, cf1);
+			
+		Act a = new Act((MolecularNode) n1);
+		n1.setEntity(a);
+		for(int i=0;i<a.arrangedObjects.size();i++)
+		{
+			System.out.println(a.arrangedObjects.get(i).getIdentifier());
+		}
+		aa.Perform();
+	//	System.out.println(test.testConditions("cond"));
+	}
+	
+}
