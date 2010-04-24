@@ -2,9 +2,6 @@ package snepsui.Commands;
 
 import java.awt.Dimension;
 
-import javax.swing.WindowConstants;
-import javax.swing.JFrame;
-
 public class cmdWithSome extends javax.swing.JPanel {
 
 	public cmdWithSome() {

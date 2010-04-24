@@ -15,7 +15,6 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
-import javax.swing.table.DefaultTableModel;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;

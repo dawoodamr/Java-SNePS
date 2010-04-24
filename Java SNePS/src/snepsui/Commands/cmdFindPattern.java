@@ -261,11 +261,11 @@ public class cmdFindPattern extends javax.swing.JPanel {
 	}
 	
 	private void pathButtonActionPerformed(ActionEvent evt) {
-		cmdPath pathPanel = new cmdPath(network);
-		
-	    int result = JOptionPane.showConfirmDialog(  
-	    	    this, pathPanel, "title", JOptionPane.PLAIN_MESSAGE
-	    	);
+//		cmdPath pathPanel = new cmdPath(network, frame);
+//		
+//	    int result = JOptionPane.showConfirmDialog(  
+//	    	    this, pathPanel, "title", JOptionPane.PLAIN_MESSAGE
+//	    	);
 	}
 	
 	private void buildButtonActionPerformed(ActionEvent evt) {

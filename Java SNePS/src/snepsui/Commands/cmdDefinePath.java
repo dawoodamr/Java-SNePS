@@ -1,12 +1,13 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -35,7 +36,6 @@ import sneps.BUnitPath;
 import sneps.ComposePath;
 import sneps.ConversePath;
 import sneps.CustomException;
-import sneps.DomainRestrictPath;
 import sneps.FUnitPath;
 import sneps.IrreflexiveRestrictPath;
 import sneps.KPlusPath;
@@ -43,9 +43,9 @@ import sneps.KStarPath;
 import sneps.Network;
 import sneps.OrPath;
 import sneps.Path;
-import sneps.RangeRestrictPath;
 import sneps.Relation;
 import sneps.RelativeComplementPath;
+import snepsui.Interface.SNePSInterface;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -79,6 +79,7 @@ public class cmdDefinePath extends javax.swing.JPanel {
 	private Network network;
 	private LinkedList<Path> listModelPaths;
 	private LinkedList<Path> paths;
+	private SNePSInterface frame;
 	
 	@Action
     public void add() {}
@@ -90,10 +91,11 @@ public class cmdDefinePath extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdDefinePath(Network network) {
+	public cmdDefinePath(Network network, SNePSInterface frame) {
 		super();
 		listModelPaths = new LinkedList<Path>();
 		paths = new LinkedList<Path>();
+		this.frame = frame;
 		this.network = network;
 		initGUI();
 	}
@@ -186,9 +188,11 @@ public class cmdDefinePath extends javax.swing.JPanel {
 				this.add(pathComboBox);
 				pathComboBox.setModel(pathComboBoxModel);
 				pathComboBox.setBounds(307, 30, 115, 22);
-				pathComboBox.addItemListener(new ItemListener() {
-					public void itemStateChanged(ItemEvent evt) {
-						pathComboBoxItemStateChanged(evt);
+				pathComboBox.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						pathComboBoxActionPerformed(e);
 					}
 				});
 			}
@@ -197,11 +201,6 @@ public class cmdDefinePath extends javax.swing.JPanel {
 				this.add(pathButton);
 				pathButton.setBounds(593, 31, 40, 22);
 				pathButton.setName("pathButton");
-				pathButton.addMouseListener(new MouseAdapter() {
-					public void mouseClicked(MouseEvent evt) {
-						pathButtonMouseClicked(evt);
-					}
-				});
 				pathButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						pathButtonActionPerformed(evt);
@@ -248,12 +247,34 @@ public class cmdDefinePath extends javax.swing.JPanel {
 	}
 	
 	private void pathButtonActionPerformed(ActionEvent evt) {
-		JFrame frame = new JFrame("Path");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		cmdPath pathPanel = new cmdPath(network);
-		frame.getContentPane().add(pathPanel);
-		frame.pack();
-		frame.setVisible(true);
+		JFrame popupFrame = new JFrame("Path");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		final cmdPath pathPanel = new cmdPath(network, frame, popupFrame);
+		popupFrame.getContentPane().add(pathPanel);
+		popupFrame.pack();
+		popupFrame.setVisible(true);
+		Point point = frame.getsNePSULPanel1().getMenuDrivenCommands().cascadePosition();
+		popupFrame.setLocation(point);
+		doneButton.setEnabled(false);
+		popupFrame.addWindowListener(new WindowAdapter() {
+			
+			@Override
+			public void windowClosed(WindowEvent e) {
+				for(Path path :pathPanel.getPaths()) {
+					paths.add(path);
+					
+					String currentPath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(path);
+					if(pathTextField.getText().isEmpty()) {
+						pathTextField.setText(currentPath);
+					} else {
+						String previousPath = pathTextField.getText();
+						pathTextField.setText(previousPath + ", " + currentPath);
+					}
+				}
+				frame.getsNePSULPanel1().getMenuDrivenCommands().cascadeBack();
+				doneButton.setEnabled(true);
+			}
+		});
 	}
 	
 	private void addButtonMouseClicked(MouseEvent evt) {
@@ -297,19 +318,17 @@ public class cmdDefinePath extends javax.swing.JPanel {
 			}
 			
 			//Add the path to the List
+			String completePath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(listModelPaths.getLast());
+			pathModel.addElement(completePath);
 			
+			//Delete previous paths
+			for(int i = 0; i < paths.size(); i++) {
+				paths.remove(i);
+			}
 			
 		} catch (CustomException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private void pathButtonMouseClicked(MouseEvent evt) {
-		cmdPath pathPanel = new cmdPath(network);
-		
-	    int result = JOptionPane.showConfirmDialog(  
-	    	    this, pathPanel, "title", JOptionPane.PLAIN_MESSAGE
-	    	);
 	}
 	
 	private void doneButtonMouseClicked(MouseEvent evt) {
@@ -324,7 +343,7 @@ public class cmdDefinePath extends javax.swing.JPanel {
 		}
 	}
 	
-	private void pathComboBoxItemStateChanged(ItemEvent evt) {
+	private void pathComboBoxActionPerformed(ActionEvent evt) {
 		if(pathComboBox.getSelectedItem().toString().equals("unitpath") || 
 				pathComboBox.getSelectedItem().toString().equals("unitpath-")) {
 			
@@ -357,6 +376,13 @@ public class cmdDefinePath extends javax.swing.JPanel {
 				try {
 					Path path = new FUnitPath(network.getRelation(relation).getName());
 					paths.add(path);
+					
+					if(pathTextField.getText().isEmpty()) {
+						pathTextField.setText(relation);
+					} else {
+						String previousPath = pathTextField.getText();
+						pathTextField.setText(previousPath + ", " + relation);
+					}
 				} catch (CustomException e) {
 					e.printStackTrace();
 				}
@@ -364,6 +390,13 @@ public class cmdDefinePath extends javax.swing.JPanel {
 				try {
 					Path path = new BUnitPath(network.getRelation(relation).getName());
 					paths.add(path);
+					
+					if(pathTextField.getText().isEmpty()) {
+						pathTextField.setText(relation + "-");
+					} else {
+						String previousPath = pathTextField.getText();
+						pathTextField.setText(previousPath + ", " + relation + "-");
+					}
 				} catch (CustomException e) {
 					e.printStackTrace();
 				}

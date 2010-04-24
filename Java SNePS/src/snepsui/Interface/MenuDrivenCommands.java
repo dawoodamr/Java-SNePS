@@ -1,10 +1,12 @@
 package snepsui.Interface;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -14,7 +16,24 @@ import javax.swing.JPanel;
 
 import snepsui.Commands.*;
 
+import sneps.AndPath;
+import sneps.BUnitPath;
+import sneps.Cable;
+import sneps.ComposePath;
+import sneps.ConversePath;
+import sneps.DomainRestrictPath;
+import sneps.FUnitPath;
+import sneps.IrreflexiveRestrictPath;
+import sneps.KPlusPath;
+import sneps.KStarPath;
+import sneps.MolecularNode;
 import sneps.Network;
+import sneps.Node;
+import sneps.OrPath;
+import sneps.Path;
+import sneps.RangeRestrictPath;
+import sneps.RelativeComplementPath;
+import sneps.UpCable;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -35,6 +54,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	private DefaultComboBoxModel jComboBox1Model;
 	private Network network;
 	private SNePSInterface frame;
+	private String newLine = "\n";
+	private String endLine = "----------------------------------------" + "\n";
+	private Point point;
 
 	public Network getNetwork() {
 		return network;
@@ -48,6 +70,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		super();
 		this.network = null;
 		this.frame = frame;
+		this.point = new Point(10, 10);
 		initGUI();
 	}
 	
@@ -138,7 +161,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("undefine-path");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDefinePath(network));
+			commandsPanel.add(new cmdDefinePath(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Contexts")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -240,6 +263,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		else if(commandMenusComboBox.getSelectedItem().equals("Primitive Acts")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 			dcbm.addElement("define-primaction");
+			dcbm.addElement("do-all");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDefinePrimaction(network));
@@ -333,11 +357,11 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		}
 		else if(commandsComboBox.getSelectedItem().equals("define-path")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDefinePath(network));
+			commandsPanel.add(new cmdDefinePath(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("undefine-path")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdUndefinePath(network));
+			commandsPanel.add(new cmdUndefinePath(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("add-to-context")) {
 			commandsPanel.removeAll();
@@ -462,10 +486,6 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		else if(commandsComboBox.getSelectedItem().equals("do-all")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDoAll(network, frame));
-		}
-		else if(commandsComboBox.getSelectedItem().equals("do-one")) {
-			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDoOne(network, frame));
 		}
 		else if(commandsComboBox.getSelectedItem().equals("do-one")) {
 			commandsPanel.removeAll();
@@ -604,7 +624,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 
 	public void undefinePathMenuButton() {
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdUndefinePath(network));
+		commandsPanel.add(new cmdUndefinePath(network, frame));
 		commandsComboBox.setSelectedItem("undefine-path");
 		commandMenusComboBox.setSelectedItem("Path-Based Inference");
 		this.repaint();
@@ -681,5 +701,155 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		commandMenusComboBox.setSelectedItem("Case Frames");
 		this.repaint();
 		this.validate();
+	}
+	
+	/**
+	 * Displays all the information of a node
+	 * @param node the node that its information will be displayed
+	 */
+	public void nodeInfo(Node node) {
+		LinkedList<Node> connectedNodes = new LinkedList<Node>();
+		
+		/*Print out node name*/
+		frame.getOutputPanel1().writeToTextArea("Node Name: " + node.getIdentifier() + newLine);
+		
+		/*Print out semantic class*/
+		node.getEntity();
+		
+		/*Print out cable*/
+		if(node instanceof MolecularNode) {
+			MolecularNode molNode = (MolecularNode) node;
+			LinkedList<Cable> cables = molNode.getCableSet().getCables();
+			
+			if(!cables.isEmpty()) {
+				frame.getOutputPanel1().writeToTextArea("Cable Set (Nodes pointing from " + node.getIdentifier() + "):" + newLine);
+				for(Cable item1 : cables) {
+					item1.getRelation();
+					LinkedList<Node> nodes = item1.getNodeSet().getNodes();
+					
+					for(Node item2 : nodes) {
+						frame.getOutputPanel1().writeToTextArea(item2.getIdentifier() + newLine);
+						connectedNodes.add(item2);
+					}
+				}
+			}
+		}
+		
+		/*Print out up cable*/
+		LinkedList<UpCable> nodeUpCables = node.getUpCableSet().getUpCables();
+		
+		if(!nodeUpCables.isEmpty()) {
+			frame.getOutputPanel1().writeToTextArea("Up Cable Set (Nodes pointing to " + node.getIdentifier() + "): " + newLine);
+			for(UpCable item3 : nodeUpCables) {
+				item3.getRelation();
+				LinkedList<Node> nodes = item3.getNodeSet().getNodes();
+				
+				for(Node item4 : nodes) {
+					frame.getOutputPanel1().writeToTextArea(item4.getIdentifier() + newLine);
+					connectedNodes.add(item4);
+				}
+			}
+		}
+		
+		frame.getOutputPanel1().writeToTextArea(endLine);
+		frame.getNodesResult().addNodes(connectedNodes);
+	}
+	
+	/**
+	 * Converts a SNePS path to a string for display purposes 
+	 * @param path the path to be converted to a string
+	 * @return the created path string
+	 */
+	public String createPath(Path path) {
+		/*And*/
+		if(path instanceof AndPath) {
+			AndPath currentPath = (AndPath) path;
+			LinkedList<Path> paths = currentPath.getPaths();
+			String pathString = "(and ";
+			
+			for (int i = 0; i < paths.size(); i++) {
+				pathString += createPath(paths.get(i));
+			}
+			
+			pathString += ")";
+			return pathString;
+		/*Compose*/	
+		} else if (path instanceof ComposePath) {
+			ComposePath currentPath = (ComposePath) path;
+			LinkedList<Path> paths = currentPath.getPaths();
+			String pathString = "(compose ";
+			
+			for (int i = 0; i < paths.size(); i++) {
+				pathString += createPath(paths.get(i));
+			}
+			
+			pathString += ")";
+			return pathString;
+		/*Converse*/
+		} else if (path instanceof ConversePath) {
+			ConversePath currentPath = (ConversePath) path;
+			return "(converse " + createPath(currentPath.getPath()) + ")";
+		/*DomainRestrict*/
+		} else if (path instanceof DomainRestrictPath) {
+			DomainRestrictPath currentPath = (DomainRestrictPath) path;
+			return "(domain-restrict (" + createPath(currentPath.getQ()) + currentPath.getNode().getIdentifier() 
+				+ ")" + createPath(currentPath.getP()) + ")";
+		/*IrreflexiveRestrict*/
+		} else if (path instanceof IrreflexiveRestrictPath) {
+			IrreflexiveRestrictPath currentPath = (IrreflexiveRestrictPath) path;
+			return "(irreflexive-restrict " + createPath(currentPath.getPath()) + ")";
+		/*KPlus*/
+		} else if (path instanceof KPlusPath) {
+			KPlusPath currentPath = (KPlusPath) path;
+			return "(kplus " + createPath(currentPath.getPath()) + ")";
+		/*KStar*/
+		} else if (path instanceof KStarPath) {
+			KStarPath currentPath = (KStarPath) path;
+			return "(kstar " + createPath(currentPath.getPath()) + ")";
+		/*Or*/
+		} else if (path instanceof OrPath) {
+			OrPath currentPath = (OrPath) path;
+			LinkedList<Path> paths = currentPath.getPaths();
+			String pathString = "(or ";
+			
+			for (int i = 0; i < paths.size(); i++) {
+				pathString += createPath(paths.get(i));
+			}
+			
+			pathString += ")";
+			return pathString;
+		/*RangeRestrict*/
+		} else if (path instanceof RangeRestrictPath) {
+			RangeRestrictPath currentPath = (RangeRestrictPath) path;
+			return "(range-restrict " + createPath(currentPath.getP()) + "(" + createPath(currentPath.getQ()) 
+				+ currentPath.getNode().getIdentifier() + "))";
+		/*RelativeComplement*/
+		} else if (path instanceof RelativeComplementPath) {
+			RelativeComplementPath currentPath = (RelativeComplementPath) path;
+			return "(relative-complement " + createPath(currentPath.getP()) + createPath(currentPath.getQ()) + ")";
+		/*FUnitPath*/	
+		} else if (path instanceof FUnitPath) {
+			FUnitPath currentPath = (FUnitPath) path;
+			return currentPath.getRelationName();
+		/*BUnitPath*/
+		} else if (path instanceof BUnitPath) {
+			BUnitPath currentPath = (BUnitPath) path;
+			return currentPath.getRelationName();
+		} else {
+			return "";
+		}
+	}
+	
+	public Point cascadePosition() {
+		double x = point.getX() + 5;
+		double y = point.getY() + 10;
+		point.setLocation(x, y);
+		return point;
+	}
+	
+	public void cascadeBack() {
+		double x = point.getX() - 5;
+		double y = point.getY() - 10;
+		point.setLocation(x, y);
 	}
 }

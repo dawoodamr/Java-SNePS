@@ -2,9 +2,7 @@ package snepsui.Interface;
 
 import java.awt.Dimension;
 
-import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
 
 import sneps.Network;
 
@@ -35,27 +33,24 @@ public class SNePSULPanel extends javax.swing.JPanel {
 		initGUI();
 	}
 	
-	private void initGUI() {
+	public void initGUI() {
 		try {
-			setPreferredSize(new Dimension(400, 300));
+			removeAll();
 			{
 				jTabbedPane1 = new JTabbedPane();
 				this.add(jTabbedPane1);
-				jTabbedPane1.setPreferredSize(new java.awt.Dimension(794, 358));
+				jTabbedPane1.setPreferredSize(new Dimension(794, 358));
 				{
 					menuDrivenCommands = new MenuDrivenCommands(frame);
 					jTabbedPane1.addTab("Commands", null, menuDrivenCommands, null);
-					menuDrivenCommands.setPreferredSize(new java.awt.Dimension(766, 220));
 				}
 				{
-					drawNetworks = new DrawNetwork(network);
+					drawNetworks = new DrawNetwork(frame);
 					jTabbedPane1.addTab("Draw Network", null, drawNetworks, null);
-					drawNetworks.setPreferredSize(new java.awt.Dimension(613, 274));
 				}
 				{
 					visualizeNetworks = new VisualizeNetworks();
 					jTabbedPane1.addTab("View Network", null, visualizeNetworks, null);
-					visualizeNetworks.setPreferredSize(new java.awt.Dimension(759, 346));
 				}
 			}
 		} catch (Exception e) {

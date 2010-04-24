@@ -5,7 +5,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.ActionMap;
@@ -20,22 +19,11 @@ import javax.swing.JScrollPane;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import sneps.AndPath;
-import sneps.BUnitPath;
-import sneps.ComposePath;
-import sneps.ConversePath;
 import sneps.CustomException;
-import sneps.DomainRestrictPath;
-import sneps.FUnitPath;
-import sneps.IrreflexiveRestrictPath;
-import sneps.KPlusPath;
-import sneps.KStarPath;
 import sneps.Network;
-import sneps.OrPath;
 import sneps.Path;
-import sneps.RangeRestrictPath;
 import sneps.Relation;
-import sneps.RelativeComplementPath;
+import snepsui.Interface.SNePSInterface;
 
 
 /**
@@ -63,6 +51,7 @@ public class cmdUndefinePath extends javax.swing.JPanel {
 	private JButton infoButton;
 	private Network network;
 	private DefaultListModel pathsListModel;
+	private SNePSInterface frame;
 	
 	@Action
     public void add() {
@@ -78,8 +67,9 @@ public class cmdUndefinePath extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdUndefinePath(Network network) {
+	public cmdUndefinePath(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
 		this.network = network;
 		initGUI();
 	}
@@ -155,7 +145,7 @@ public class cmdUndefinePath extends javax.swing.JPanel {
 			      Path path = relations.get(str).getPath();
 			      if(path != null) {
 			    	  pathsComboBoxModel.addElement(relations.get(str).getName() + ": " 
-			    			  + createPath(relations.get(str).getPath()));
+			    			  + frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(path));
 			      }
 			    }
 				
@@ -168,35 +158,6 @@ public class cmdUndefinePath extends javax.swing.JPanel {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private String createPath(Path path) {
-		if(path instanceof AndPath) {
-			AndPath currentPath = (AndPath) path;
-		} else if (path instanceof ComposePath) {
-			ComposePath currentPath = (ComposePath) path;
-		} else if (path instanceof ConversePath) {
-			ConversePath currentPath = (ConversePath) path;
-		} else if (path instanceof DomainRestrictPath) {
-			DomainRestrictPath currentPath = (DomainRestrictPath) path;
-		} else if (path instanceof IrreflexiveRestrictPath) {
-			IrreflexiveRestrictPath currentPath = (IrreflexiveRestrictPath) path;
-		} else if (path instanceof KPlusPath) {
-			KPlusPath currentPath = (KPlusPath) path;
-		} else if (path instanceof KStarPath) {
-			KStarPath currentPath = (KStarPath) path;
-		} else if (path instanceof OrPath) {
-			OrPath currentPath = (OrPath) path;
-		} else if (path instanceof RangeRestrictPath) {
-			RangeRestrictPath currentPath = (RangeRestrictPath) path;
-		} else if (path instanceof RelativeComplementPath) {
-			RelativeComplementPath currentPath = (RelativeComplementPath) path;
-		} else if (path instanceof FUnitPath) {
-			FUnitPath currentPath = (FUnitPath) path;
-		} else if (path instanceof BUnitPath) {
-			BUnitPath currentPath = (BUnitPath) path;
-		}
-		return "";
 	}
 	
 	private void addButtonMouseClicked(MouseEvent evt) {

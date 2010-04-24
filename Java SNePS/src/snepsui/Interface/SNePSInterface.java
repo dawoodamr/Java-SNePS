@@ -7,12 +7,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.LinkedList;
 
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -54,7 +56,7 @@ public class SNePSInterface extends SingleFrameApplication {
     private SNeBR sNeBR1;
     private SNePSULPanel sNePSULPanel1;
 	private TracingPanel tracingPanel1;
-    private NodesTreePanel nodesTreePanel1;
+	private NodesTreePanel nodesTreePanel1;
 	private OutputPanel outputPanel1;
 	private JMenuBar menuBar;
     private JMenu jMenu1;
@@ -176,6 +178,7 @@ public class SNePSInterface extends SingleFrameApplication {
     private JButton resetnetButton;
     private JButton showNetworkButton;
     private JToolBar toolBar;
+    private ResultNodes nodesResult;
 
     @Action
     public void open() {
@@ -234,7 +237,7 @@ public class SNePSInterface extends SingleFrameApplication {
                 {
                 	nodesTreePanel1 = new NodesTreePanel(this);
                 	contentPanel.add(nodesTreePanel1, "West");
-                	nodesTreePanel1.setBounds(6, 0, 144, 606);
+                	nodesTreePanel1.setBounds(6, 0, 144, 373);
                 	nodesTreePanel1.setBorder(new LineBorder(new java.awt.Color(0,0,0), 1, false));
                 }
                 {
@@ -254,6 +257,12 @@ public class SNePSInterface extends SingleFrameApplication {
                 	contentPanel.add(outputPanel1);
                 	outputPanel1.setBounds(162, 379, 376, 227);
                 	outputPanel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Information"));
+                }
+                {
+                	nodesResult = new ResultNodes(this);
+                	contentPanel.add(nodesResult);
+                	nodesResult.setBounds(6, 379, 144, 227);
+                	nodesResult.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Resulting Node Set"));
                 }
                 {
                 	sNePSULPanel1 = new SNePSULPanel(this);
@@ -313,6 +322,11 @@ public class SNePSInterface extends SingleFrameApplication {
                     		}
                     	});
                     	saveButton.setFocusable(false);
+                    	saveButton.addMouseListener(new MouseAdapter() {
+                    		public void mouseClicked(MouseEvent evt) {
+                    			saveButtonMouseClicked(evt);
+                    		}
+                    	});
                     }
                     {
                     	findButton = new JButton();
@@ -1434,9 +1448,38 @@ public class SNePSInterface extends SingleFrameApplication {
     	//TODO add your code for planActMenuItem.actionPerformed
     }
     
+    /**
+     * Creates a new session
+     * @param evt the event that was fired
+     */
     private void newButtonActionPerformed(ActionEvent evt) {
     	Network network = new Network();
     	try {
+    		
+    		//Acting
+    		Relation r1 = network.defineRelation("action", "single", null, 1);
+    		Relation r2 = network.defineRelation("actObject", "single", null, 0);
+    		Relation r3 = network.defineRelation("object1", "single", null, 1);
+    		Relation r4 = network.defineRelation("object2", "single", null, 0);
+    		Relation r5 = network.defineRelation("condition", "single", null, 1);
+    		Relation r6 = network.defineRelation("then", "single", null, 0);
+    			
+    		LinkedList<Relation> l = new LinkedList<Relation>();
+    		l.add(r1);
+    		l.add(r2);
+    		
+    		CaseFrame cf1 = network.defineCaseFrame("act", l);
+    		
+    		LinkedList<Relation> l2 = new LinkedList<Relation>();
+    		l2.add(r3);
+    		l2.add(r4);
+    		
+    		CaseFrame cf2 = network.defineCaseFrame("object", l2);
+    		
+    		LinkedList<Relation> l3 = new LinkedList<Relation>();
+    		l2.add(r5);
+    		l2.add(r6);
+    		
     		//Define the Relations
         	Relation rr1 = network.defineRelation("member","entity","reduce",0);
         	Relation rr2 = network.defineRelation("class","entity","reduce",0);
@@ -1631,59 +1674,123 @@ public class SNePSInterface extends SingleFrameApplication {
     	}
     	sNePSULPanel1.getMenuDrivenCommands().setNetwork(network);
     	sNePSULPanel1.getVisualizeNetworks().setNetwork(network);
+    	sNePSULPanel1.getDrawNetworks().setNetwork(network);
     	nodesTreePanel1.setNetwork(network);
     	nodesTreePanel1.addTreeInfo();
+    	nodesResult.setNetwork(network);
     	this.getMainFrame().validate();
     	this.getMainFrame().repaint();
     }
     
+    /**
+     * Adjusts the interface depending on the chosen tab
+     * @param evt the event that was fired
+     */
     private void jTabbedPane1MouseClicked(MouseEvent evt) {
     	Dimension dimension = new Dimension(815, 600);
     	
     	if (sNePSULPanel1.getjTabbedPane1().getSelectedIndex() == 1) {
     		outputPanel1.setVisible(false);
     		tracingPanel1.setVisible(false);
-    		sNePSULPanel1.setSize(dimension);
-    		sNePSULPanel1.getjTabbedPane1().setSize(dimension);
-    		getMainFrame().validate();
-    		getMainFrame().repaint();
+    		
+    		sNePSULPanel1.setBounds(156, 1, 815, 600);
+    		sNePSULPanel1.getjTabbedPane1().setPreferredSize(dimension);
+    		sNePSULPanel1.getjTabbedPane1().getComponent(1).setPreferredSize(dimension);
+    		
+    		sNePSULPanel1.getjTabbedPane1().getComponent(1).validate();
+    		sNePSULPanel1.getjTabbedPane1().getComponent(1).repaint();
+    		
     	} else if (sNePSULPanel1.getjTabbedPane1().getSelectedIndex() == 0) {
     		outputPanel1.setVisible(true);
     		tracingPanel1.setVisible(true);
-    		sNePSULPanel1.setSize(815, 366);
-    		sNePSULPanel1.getjTabbedPane1().setSize(815, 366);
-    		getMainFrame().validate();
-    		getMainFrame().repaint();
+    		
+    		sNePSULPanel1.setBounds(156, 1, 815, 366);
+    		sNePSULPanel1.getjTabbedPane1().setPreferredSize(new Dimension(815, 366));
+    		sNePSULPanel1.getjTabbedPane1().getComponent(0).setPreferredSize(new Dimension(815, 366));
+    		
+    		sNePSULPanel1.getjTabbedPane1().getComponent(0).validate();
+    		sNePSULPanel1.getjTabbedPane1().getComponent(0).repaint();
+    		
     	} else if (sNePSULPanel1.getjTabbedPane1().getSelectedIndex() == 2) {
     		outputPanel1.setVisible(false);
     		tracingPanel1.setVisible(false);
-    		sNePSULPanel1.setSize(dimension);
-    		sNePSULPanel1.getjTabbedPane1().setSize(dimension);
-    		sNePSULPanel1.getjTabbedPane1().setSize(dimension);
+    		
+    		sNePSULPanel1.setBounds(156, 1, 815, 600);
+    		sNePSULPanel1.getjTabbedPane1().setPreferredSize(dimension);
+    		sNePSULPanel1.getjTabbedPane1().getComponent(0).setPreferredSize(dimension);
+    		
     		((VisualizeNetworks)sNePSULPanel1.getjTabbedPane1().getComponent(2)).initGUI();
+    		
     		sNePSULPanel1.getjTabbedPane1().getComponent(2).validate();
     		sNePSULPanel1.getjTabbedPane1().getComponent(2).repaint();
-    		getMainFrame().validate();
-    		getMainFrame().repaint();
     	}
+
+    	sNePSULPanel1.getjTabbedPane1().validate();
+		sNePSULPanel1.getjTabbedPane1().repaint();
+		
+		sNePSULPanel1.validate();
+		sNePSULPanel1.repaint();
     	
     	this.getMainFrame().validate();
 		this.getMainFrame().repaint();
     }
     
+    /**
+     * This method saves the drawn network or the visualized network depending on the tab that is selected
+     * @param evt the event that was fired
+     */
+    private void saveButtonMouseClicked(MouseEvent evt) {
+		if(sNePSULPanel1.getjTabbedPane1().getSelectedIndex() == 1) {
+			JFileChooser chooser  = new JFileChooser();
+	        int option = chooser.showSaveDialog(sNePSULPanel1.getDrawNetworks());
+	        if(option == JFileChooser.APPROVE_OPTION) {
+	            File file = chooser.getSelectedFile();
+	            sNePSULPanel1.getDrawNetworks().writeJPEGImage(file);
+	        }
+		} else if (sNePSULPanel1.getjTabbedPane1().getSelectedIndex() == 2) {
+			JFileChooser chooser  = new JFileChooser();
+	        int option = chooser.showSaveDialog(sNePSULPanel1.getVisualizeNetworks());
+	        if(option == JFileChooser.APPROVE_OPTION) {
+	            File file = chooser.getSelectedFile();
+	            sNePSULPanel1.getVisualizeNetworks().writeJPEGImage(file);
+	        }
+		}
+	}
+    
+    /**
+     * @return the panel that includes the tabs with the commands, drawing network and visualizing network panels
+     */
     public SNePSULPanel getsNePSULPanel1() {
 		return sNePSULPanel1;
 	}
-
+    
+    /**
+     * @return the panel that any output is displayed in
+     */
 	public OutputPanel getOutputPanel1() {
 		return outputPanel1;
 	}
 	
+	/**
+	 * @return the panel that includes the tree with all the network information such as all the nodes, relations 
+	 * and case frames in the network
+	 */
 	public NodesTreePanel getNodesTreePanel1() {
 		return nodesTreePanel1;
 	}
     
-    public static void main(String[] args) {
+	/**
+	 * @return the panels that includes a list of all the nodes that resulted from an output
+	 */
+    public ResultNodes getNodesResult() {
+		return nodesResult;
+	}
+    
+    public TracingPanel getTracingPanel1() {
+		return tracingPanel1;
+	}
+
+	public static void main(String[] args) {
         launch(SNePSInterface.class, args);
     }
 }

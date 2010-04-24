@@ -267,7 +267,7 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 		semanticClassModel.removeAllElements();
 		relationsModel.removeAllElements();
 		
-		frame.getNodesTreePanel1().addTreeInfo();
+		frame.getNodesTreePanel1().initGUI();
 		frame.getNodesTreePanel1().validate();
 		frame.getNodesTreePanel1().repaint();
 	}

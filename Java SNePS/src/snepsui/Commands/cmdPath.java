@@ -1,15 +1,13 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,7 +36,6 @@ import sneps.BUnitPath;
 import sneps.ComposePath;
 import sneps.ConversePath;
 import sneps.CustomException;
-import sneps.DomainRestrictPath;
 import sneps.FUnitPath;
 import sneps.IrreflexiveRestrictPath;
 import sneps.KPlusPath;
@@ -46,9 +43,9 @@ import sneps.KStarPath;
 import sneps.Network;
 import sneps.OrPath;
 import sneps.Path;
-import sneps.RangeRestrictPath;
 import sneps.Relation;
 import sneps.RelativeComplementPath;
+import snepsui.Interface.SNePSInterface;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -67,7 +64,6 @@ public class cmdPath extends javax.swing.JPanel {
 	private JLabel relationLabel;
 	private JComboBox pathComboBox;
 	private JList pathList;
-	private DefaultListModel relationModel;
 	private DefaultListModel pathModel;
 	private JScrollPane jScrollPane1;
 	private JTextField pathTextField;
@@ -78,6 +74,8 @@ public class cmdPath extends javax.swing.JPanel {
 	private Network network;
 	private LinkedList<Path> listModelPaths;
 	private LinkedList<Path> paths;
+	private SNePSInterface frame;
+	private JFrame windowFrame;
 	
 	@Action
     public void add() {}
@@ -89,10 +87,12 @@ public class cmdPath extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdPath(Network network) {
+	public cmdPath(Network network, SNePSInterface frame, JFrame windowFrame) {
 		super();
 		listModelPaths = new LinkedList<Path>();
 		paths = new LinkedList<Path>();
+		this.windowFrame = windowFrame;
+		this.frame = frame;
 		this.network = network;
 		initGUI();
 	}
@@ -167,9 +167,11 @@ public class cmdPath extends javax.swing.JPanel {
 				this.add(pathComboBox);
 				pathComboBox.setModel(pathComboBoxModel);
 				pathComboBox.setBounds(216, 30, 115, 22);
-				pathComboBox.addItemListener(new ItemListener() {
-					public void itemStateChanged(ItemEvent evt) {
-						pathComboBoxItemStateChanged(evt);
+				pathComboBox.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						pathComboBoxActionPerformed(e);
 					}
 				});
 			}
@@ -207,19 +209,32 @@ public class cmdPath extends javax.swing.JPanel {
 	}
 
 	private void pathButtonActionPerformed(ActionEvent evt) {
-		JFrame frame = new JFrame("Path");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		final cmdPath pathPanel = new cmdPath(network);
-		frame.getContentPane().add(pathPanel);
-		frame.pack();
-		frame.setVisible(true);
-		frame.addWindowListener(new WindowAdapter() {
+		JFrame popupFrame = new JFrame("Path");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		final cmdPath pathPanel = new cmdPath(network, frame, popupFrame);
+		popupFrame.getContentPane().add(pathPanel);
+		Point point = frame.getsNePSULPanel1().getMenuDrivenCommands().cascadePosition();
+		popupFrame.setLocation(point);
+		popupFrame.pack();
+		popupFrame.setVisible(true);
+		doneButton.setEnabled(false);
+		popupFrame.addWindowListener(new WindowAdapter() {
+			
+			@Override
 			public void windowClosed(WindowEvent e) {
-				LinkedList<Path> localPath= new LinkedList<Path>();
-				localPath = pathPanel.getPaths();
-				for(int i = 0; i < localPath.size(); i++) {
-					paths.add(localPath.get(i));
+				for(Path path :pathPanel.getPaths()) {
+					paths.add(path);
+					
+					String currentPath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(path);
+					if(pathTextField.getText().isEmpty()) {
+						pathTextField.setText(currentPath);
+					} else {
+						String previousPath = pathTextField.getText();
+						pathTextField.setText(previousPath + ", " + currentPath);
+					}
 				}
+				frame.getsNePSULPanel1().getMenuDrivenCommands().cascadeBack();
+				doneButton.setEnabled(true);
 			}
 		});
 	}
@@ -258,21 +273,33 @@ public class cmdPath extends javax.swing.JPanel {
 			//Path path = new RangeRestrictPath(p, q, node);
 			//network.definePath(relation, path);
 		}
-	}
-	
-	private void doneButtonMouseClicked(MouseEvent evt) {
-		try {
-			for(int i = 0; i < listModelPaths.size(); i++) {
-				Relation relation = network.getRelation(relationModel.get(i).toString());
-				Path path = listModelPaths.get(i);
-				network.definePath(relation, path);
-			}
-		} catch (CustomException e) {
-			e.printStackTrace();
+		
+		//Add the path to the List
+		String completePath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(listModelPaths.getLast());
+		pathModel.addElement(completePath);
+		
+		//Delete previous paths
+		for(int i = 0; i < paths.size(); i++) {
+			paths.remove(i);
 		}
 	}
 	
-	private void pathComboBoxItemStateChanged(ItemEvent evt) {
+	private void doneButtonMouseClicked(MouseEvent evt) {
+		for(int i = 0; i < listModelPaths.size(); i++) {
+			paths.add(listModelPaths.get(i));
+		}
+		windowFrame.dispose();
+	}
+	
+	public LinkedList<Path> getPaths() {
+		return paths;
+	}
+
+	public void setPaths(LinkedList<Path> paths) {
+		this.paths = paths;
+	}
+	
+	private void pathComboBoxActionPerformed(ActionEvent evt) {
 		if(pathComboBox.getSelectedItem().toString().equals("unitpath") || 
 				pathComboBox.getSelectedItem().toString().equals("unitpath-")) {
 			
@@ -305,6 +332,13 @@ public class cmdPath extends javax.swing.JPanel {
 				try {
 					Path path = new FUnitPath(network.getRelation(relation).getName());
 					paths.add(path);
+					
+					if(pathTextField.getText().isEmpty()) {
+						pathTextField.setText(relation);
+					} else {
+						String previousPath = pathTextField.getText();
+						pathTextField.setText(previousPath + ", " + relation);
+					}
 				} catch (CustomException e) {
 					e.printStackTrace();
 				}
@@ -312,6 +346,13 @@ public class cmdPath extends javax.swing.JPanel {
 				try {
 					Path path = new BUnitPath(network.getRelation(relation).getName());
 					paths.add(path);
+					
+					if(pathTextField.getText().isEmpty()) {
+						pathTextField.setText(relation + "-");
+					} else {
+						String previousPath = pathTextField.getText();
+						pathTextField.setText(previousPath + ", " + relation + "-");
+					}
 				} catch (CustomException e) {
 					e.printStackTrace();
 				}
@@ -319,13 +360,5 @@ public class cmdPath extends javax.swing.JPanel {
 		} else {
 			return;
 		}
-	}
-	
-	public LinkedList<Path> getPaths() {
-		return paths;
-	}
-
-	public void setPaths(LinkedList<Path> paths) {
-		this.paths = paths;
 	}
 }

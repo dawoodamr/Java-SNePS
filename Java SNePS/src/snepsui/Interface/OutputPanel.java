@@ -51,11 +51,4 @@ public class OutputPanel extends javax.swing.JPanel {
 		this.validate();
 		this.repaint();
 	}
-	
-	public void writeToTextArea(String text, Color color) {
-		jTextArea1.setSelectedTextColor(color);
-		jTextArea1.append(text);
-		this.validate();
-		this.repaint();
-	}
 }

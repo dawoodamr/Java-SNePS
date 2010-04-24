@@ -1,6 +1,5 @@
 package snepsui.Commands;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,7 +7,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.ActionMap;
@@ -23,18 +21,13 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import sneps.Cable;
 import sneps.CustomException;
-import sneps.MolecularNode;
 import sneps.Network;
 import sneps.Node;
-import sneps.NodeSet;
-import sneps.UpCable;
 import snepsui.Interface.SNePSInterface;
 
 
@@ -277,44 +270,7 @@ public class cmdDump extends javax.swing.JPanel {
 		try {
 			for(int i = 0; i < nodesetListModel.size(); i++) {
 				Node node = network.getNode(nodesetListModel.getElementAt(i).toString());
-				
-				//Print out node name
-				frame.getOutputPanel1().writeToTextArea(node.getIdentifier() + newLine, Color.YELLOW);
-				
-				//Print out semantic class
-				node.getEntity();
-				
-				//Print out cable
-				if(node instanceof MolecularNode) {
-					MolecularNode molNode = (MolecularNode) network.getNode(nodesetListModel.getElementAt(i).toString());
-					LinkedList<Cable> cables = molNode.getCableSet().getCables();
-					if(!cables.isEmpty()) {
-						frame.getOutputPanel1().writeToTextArea("Cable Set (Nodes pointing from " + node.getIdentifier() + "):" + newLine);
-						for(Cable item1 : cables) {
-							item1.getRelation();
-							LinkedList<Node> nodes = item1.getNodeSet().getNodes();
-							
-							for(Node item2 : nodes) {
-								frame.getOutputPanel1().writeToTextArea(item2.getIdentifier() + newLine);
-							}
-						}
-					}
-				}
-				
-				//Print out up cable
-				LinkedList<UpCable> nodeUpCables = node.getUpCableSet().getUpCables();
-				if(!nodeUpCables.isEmpty()) {
-					frame.getOutputPanel1().writeToTextArea("Up Cable Set (Nodes pointing to " + node.getIdentifier() + ")" + newLine);
-					for(UpCable item3 : nodeUpCables) {
-						item3.getRelation();
-						LinkedList<Node> nodes = item3.getNodeSet().getNodes();
-						
-						for(Node item4 : nodes) {
-							frame.getOutputPanel1().writeToTextArea(item4.getIdentifier() + newLine);
-						}
-					}
-				}
-				frame.getOutputPanel1().writeToTextArea(newLine);
+				frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(node);
 			}
 		} catch (CustomException e) {
 		}

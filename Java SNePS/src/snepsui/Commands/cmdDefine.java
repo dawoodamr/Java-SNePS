@@ -354,7 +354,7 @@ public class cmdDefine extends javax.swing.JPanel {
 			e.printStackTrace();
 		}
 		
-		frame.getNodesTreePanel1().addTreeInfo();
+		frame.getNodesTreePanel1().initGUI();
 		frame.getNodesTreePanel1().validate();
 		frame.getNodesTreePanel1().repaint();
 	}
