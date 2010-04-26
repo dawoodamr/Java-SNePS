@@ -75,5 +75,35 @@ public class NodeSet
 	{
 		return nodes.size() == 0;
 	}
+	
+	/**
+	 * @param ns the NodeSet we want to get the union with
+	 * @return the NodeSet resulted from union of this node set and ns
+	 */
+	public NodeSet Union(NodeSet ns)
+	{
+		NodeSet nodeSet = new NodeSet();
+		nodeSet.getNodes().addAll(this.nodes);
+		for(int i=0;i<ns.getNodes().size();i++)
+		{
+			nodeSet.addNode(ns.getNodes().get(i));
+		}
+		return nodeSet;
+	}
+	
+	/**
+	 * @param ns the NodeSet we need to get its intersection with this one
+	 * @return the NodeSet resulted from the intersection
+	 */
+	public NodeSet Intersection(NodeSet ns)
+	{
+		NodeSet nodeSet = new NodeSet();
+		for(int i=0;i<ns.getNodes().size();i++)
+		{
+			if(this.nodes.contains(ns.getNodes().get(i)))
+				nodeSet.addNode(ns.getNodes().get(i));
+		}
+		return nodeSet;
+	}
 
 }
