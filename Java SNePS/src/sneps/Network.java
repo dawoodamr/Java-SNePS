@@ -60,6 +60,11 @@ public class Network implements Serializable
 	private LinkedList<Integer> userDefinedPatPostfix;
 	
 	/**
+	 * the instance of the class Network(assuming a Network may have only one instance).
+	 */
+	private static Network instance = null;
+	
+	/**
 	 * The constructor initializes all instance variables.
 	 */
 	public Network()
@@ -71,6 +76,15 @@ public class Network implements Serializable
 		userDefinedPatPostfix = new LinkedList<Integer>();
 		molCounter = 0;
 		patCounter = 0;
+		instance = this;
+	}
+
+	/**
+	 * @return the instance of the class Network.
+	 */
+	public static Network getInstance()
+	{
+		return instance;
 	}
 
 	/**
