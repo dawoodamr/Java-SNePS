@@ -42,6 +42,11 @@ public class Relation
 	private Path path;
 	
 	/**
+	 * this boolean is true if the relation is quantifier, and false otherwise
+	 */
+	private boolean quantifier;
+	
+	/**
 	 * @param name the name of the Relation which is unique
 	 * @param type the semantic type of the node that the Relation can point to
 	 * @param adjust the adjustability of the Relation "reduce", "expand", or "none"
@@ -54,6 +59,7 @@ public class Relation
 		this.adjust = adjust;
 		this.limit = limit;
 		this.path = null;
+		this.quantifier = false;
 	}
 
 	/**
@@ -111,7 +117,15 @@ public class Relation
 	 */
 	public boolean isQuantifier()
 	{
-		return false;
+		return quantifier;
+	}
+
+	/**
+	 * this method sets the relation to be quantifier
+	 */
+	public void setQuantifier()
+	{
+		this.quantifier = true;
 	}
 	
 }
