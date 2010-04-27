@@ -9,6 +9,7 @@ package match.ds;
 import java.util.Vector;
 
 import sneps.Node;
+import sneps.VariableNode;
 
 public class Substitutions 
 {
@@ -60,7 +61,7 @@ public class Substitutions
 	 *@param mv the mvar
 	 *@return true if the mv is bound false otherwise
 	 */
-    public boolean isBound(Object mv) 
+    public boolean isBound(VariableNode mv) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
@@ -77,7 +78,7 @@ public class Substitutions
 	 *@param mn the mnode
 	 *@return true if the mn is a value false otherwise
 	 */
-    public boolean isValue(Object mn) 
+    public boolean isValue(Node mn) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
@@ -95,7 +96,7 @@ public class Substitutions
 	 *@param mn is the mnode
 	 *@return mvar or null
 	 */
-    public Object srcNode(Object mn) 
+    public Object srcNode(Node mn) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
@@ -113,11 +114,11 @@ public class Substitutions
 	 *@param mv mvar
 	 *@return binding or null
 	 */
-    public Binding getBindingByMv(Object mv) 
+    public Binding getBindingByVariable(VariableNode mv) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
-    		if(sub.get(i).getVariable()==mv)//---------node-----------
+    		if(sub.get(i).getVariable()==mv)
     		{
     			return sub.get(i);
     		}
@@ -126,16 +127,16 @@ public class Substitutions
     }
     
     /**
-	 *Returns the binding witch have mn as its mnode or null if mn is not in the 
+	 *Returns the binding witch have mn as its node or null if mn is not in the 
 	 *substitutions list
 	 *@param mn mnode
 	 *@return binding or null
 	 */
-    public Binding getBindingByMn(Object mn) 
+    public Binding getBindingByNode(Node mn) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
-    		if(sub.get(i).getNode()==mn)//---------node-----------
+    		if(sub.get(i).getNode()==mn)
     		{
     			return sub.get(i);
     		}
@@ -209,18 +210,29 @@ public class Substitutions
     }
     
     /**
-     * Union the substitution list s with this substitution list
+     * Union the substitution list s with this substitution list in a new
+     * substitutions list
      * @param s substitutions list
+     * @return substitutions
      */
-    public void union (Substitutions s)
+    public Substitutions union (Substitutions s)
     {
-    	for(int i=0;i<s.sub.size();i++)
+    	Substitutions res=new Substitutions();
+    	for(int i=0;i<this.sub.size();i++)
     	{
-    		if(!isMemb(s.sub.get(i)))
+    		if(!res.isMemb(this.sub.get(i)))
     		{
-    			this.putIn(s.sub.get(i));
+    			res.putIn(this.sub.get(i));
     		}
     	}
+    	for(int i=0;i<s.sub.size();i++)
+    	{
+    		if(!res.isMemb(s.sub.get(i)))
+    		{
+    			res.putIn(s.sub.get(i));
+    		}
+    	}
+    	return res;
     }
     
     /**
@@ -229,12 +241,12 @@ public class Substitutions
      * @param ns array of mvar nodes
      * @return substitutions list
      */
-    public Substitutions restrict(Object [] ns)
+    public Substitutions restrict(VariableNode [] ns)
     {
     	Substitutions s=new Substitutions();
     	for(int i=0;i<ns.length;i++)
     	{
-    		Binding x=getBindingByMv(ns[i]);
+    		Binding x=getBindingByVariable(ns[i]);
     		if(x!=null)
     		s.putIn(x);
     	}
@@ -247,11 +259,11 @@ public class Substitutions
      * @param mv mvar
      * @return mnode or null
      */
-    public Object term(Object mv) 
+    public Object term(VariableNode mv) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
-    		if(sub.get(i).getVariable()==mv)//---------node-----------
+    		if(sub.get(i).getVariable()==mv)
     		{
     			return sub.get(i).getNode();
     		}
@@ -298,9 +310,9 @@ public class Substitutions
 	 * @param n node
 	 * @return node
 	 */
-	public Object value(Object n)//----------node------------
+	public Object value(VariableNode n)
 	{
-		Binding b = getBindingByMv(n);
+		Binding b = getBindingByVariable(n);
 		if(b==null)
 			return n;
 		return b.getNode();
@@ -334,8 +346,8 @@ public class Substitutions
 	{
 		for(int i=0;i<this.sub.size();i++)
 		{
-			Binding m1=s.getBindingByMn(this.sub.get(i).getNode());
-			Binding m2=s.getBindingByMv(this.sub.get(i).getVariable());
+			Binding m1=s.getBindingByNode(this.sub.get(i).getNode());
+			Binding m2=s.getBindingByVariable(this.sub.get(i).getVariable());
 			if(!this.sub.get(i).isEqual(m1)||!this.sub.get(i).isEqual(m2))
 				return false;
 		}
@@ -351,6 +363,4 @@ public class Substitutions
 	{
 		return sub.get(x);
 	}
-	
-	
 }

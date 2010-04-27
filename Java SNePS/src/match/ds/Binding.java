@@ -31,7 +31,7 @@ public class Binding
 	 *returns the variable of the binding
 	 *@return variable
 	 */
-    public Object getVariable() 
+    public VariableNode getVariable() 
     {
     	return variable;
     }
@@ -39,7 +39,7 @@ public class Binding
 	 *returns the node of the binding
 	 *@return node
 	 */
-    public Object getNode() 
+    public Node getNode() 
     {
     	return node;
     }
