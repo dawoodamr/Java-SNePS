@@ -479,7 +479,7 @@ public class Network implements Serializable
 	public boolean varHERe(VariableNode u,Node t,Substitutions rSub,boolean rightOrder)
 	{
 		System.out.println("varhere    >>>>> 1  " + u.getIdentifier() + t.getIdentifier());
-		if(! rSub.contains(u))
+		if(! rSub.isBound(u))
 		{
 			System.out.println("varhere    >>>>> 2  " + u.getIdentifier());
 			rSub.putIn(new Binding(u,t));
@@ -492,26 +492,26 @@ public class Network implements Serializable
 			Stack<VariableNode> path = source(u,rSub);
 			VariableNode v = path.pop();
 			collapse(path,v,rSub);
-			if(! rSub.contains(v))
+			if(! rSub.isBound(v))
 			{
 				rSub.putIn(new Binding(v,t));
 				return true;
 			}
-			if(recurHERe(v,(Node) rSub.getBindingByMv(v).getMn(),t,rSub,rightOrder))
+			if(recurHERe(v,(Node) rSub.getBindingByVariable(v).getNode(),t,rSub,rightOrder))
 				return true;
 		}else
 		{
 			System.out.println("varhere    >>>>> 4");
 			VariableNode tt = (VariableNode) t;
-			if(! rSub.contains(tt))
+			if(! rSub.isBound(tt))
 			{
-				rSub.putIn(new Binding(t,u));
+				rSub.putIn(new Binding(tt,u));
 				return true;
 			}
 			System.out.println("varhere    >>>>> 5");
 			Stack<VariableNode> path = source(u,rSub);
 			VariableNode v = path.pop();
-			if(! rSub.contains(v))
+			if(! rSub.isBound(v))
 			{
 				path.push(v);
 				collapse(path,t,rSub);
@@ -519,7 +519,7 @@ public class Network implements Serializable
 			}else
 			{
 				System.out.println("varhere    >>>>> 6");
-				if(rSub.getBindingByMv(v).getMn().equals(v))
+				if(rSub.getBindingByVariable(v).getNode().equals(v))
 				{
 					path.push(v);
 					collapse(path,t,rSub);
@@ -536,15 +536,15 @@ public class Network implements Serializable
 						return true;
 					}else{
 						System.out.println("varhere    >>>>> 8");
-						Node z = (Node) rSub.getBindingByMv(w).getMn();
+						Node z = (Node) rSub.getBindingByVariable(w).getNode();
 						path.push(w);
 						collapse(path,v,rSub);
-						if(rSub.contains(z))
+						if(rSub.isValue(z))
 						{
 							if(! z.equals(w))
 							{
 								if(
-							recurHERe(v,(Node)rSub.getBindingByMv(v).getMn(),z,rSub,rightOrder))
+							recurHERe(v,(Node)rSub.getBindingByVariable(v).getNode(),z,rSub,rightOrder))
 								{
 									return true;
 								}
@@ -566,16 +566,16 @@ public class Network implements Serializable
 		while(true)
 		{
 			VariableNode v = path.peek();
-			if(rSub.contains(v) &&
-			rSub.getBindingByMv(v).getMn().getClass().getSimpleName().equals("VariableNode") &&
-			!rSub.getBindingByMv(v).getMn().equals(v))
+			if(rSub.isBound(v) &&
+			rSub.getBindingByVariable(v).getNode().getClass().getSimpleName().equals("VariableNode") &&
+			!rSub.getBindingByVariable(v).getNode().equals(v))
 			{
-				path.push((VariableNode) rSub.getBindingByMv(v).getMn());
-				rSub.getBindingByMv(v).setMn(v);
+				path.push((VariableNode) rSub.getBindingByVariable(v).getNode());
+				rSub.getBindingByVariable(v).setNode(v);
 			}else
 				break;
 		}
-		if(rSub.getBindingByMv(path.peek()).getMn().equals(path.peek()))
+		if(rSub.getBindingByVariable(path.peek()).getNode().equals(path.peek()))
 		{
 			path.pop();
 		}
@@ -587,9 +587,9 @@ public class Network implements Serializable
 		System.out.println("collapse    >>>>> 1");
 		for(int i=0;i<path.size();i++)
 		{
-			if(rSub.contains(path.get(i)))
+			if(rSub.isBound(path.get(i)))
 			{
-				rSub.getBindingByMv(path.get(i)).setMn(v);
+				rSub.getBindingByVariable(path.get(i)).setNode(v);
 			}else
 				rSub.putIn(new Binding(path.get(i),v));
 		}
@@ -602,9 +602,9 @@ public class Network implements Serializable
 		v.setLoop(true);
 		if(hERe(y,t,rSub,rightOrder))
 		{
-			if(rSub.contains(v))
+			if(rSub.isBound(v))
 			{
-				rSub.getBindingByMv(v).setMn(y);
+				rSub.getBindingByVariable(v).setNode(y);
 			}else
 			{
 				rSub.putIn(new Binding(v,y));
@@ -1189,8 +1189,8 @@ public class Network implements Serializable
 			System.out.println(r.getSub().size());
 			for(int i=0;i<r.getSub().size();i++)
 			{
-				System.out.print(((Node) r.getSub().get(i).getMv()).getIdentifier());
-				System.out.println(" "+((Node) r.getSub().get(i).getMn()).getIdentifier());
+				System.out.print(((Node) r.getSub().get(i).getVariable()).getIdentifier());
+				System.out.println(" "+((Node) r.getSub().get(i).getNode()).getIdentifier());
 			}
 		}
 		/*VariableNode v1 = new VariableNode("V1");
