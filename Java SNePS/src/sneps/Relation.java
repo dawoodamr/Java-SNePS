@@ -19,7 +19,8 @@ public class Relation
 	 * This String represents the semantic type of the node that the Relation 
 	 * could be pointing at
 	 */
-	private String type;
+	@SuppressWarnings("unchecked")
+	private Class type;
 	
 	/**
 	 * This String represents the adjustability of the Relation which can hold
@@ -48,11 +49,12 @@ public class Relation
 	
 	/**
 	 * @param name the name of the Relation which is unique
-	 * @param type the semantic type of the node that the Relation can point to
+	 * @param type the semantic Class of the node that the Relation can point to
 	 * @param adjust the adjustability of the Relation "reduce", "expand", or "none"
 	 * @param limit the minimum number that the Relation can be reduced to or expanded from
 	 */
-	public Relation(String name,String type,String adjust,int limit)
+	@SuppressWarnings("unchecked")
+	public Relation(String name,Class type,String adjust,int limit)
 	{
 		this.name = name;
 		this.type = type;
@@ -71,9 +73,10 @@ public class Relation
 	}
 
 	/**
-	 * @return the semantic type of the node that the Relation can point to
+	 * @return the semantic Class of the node that the Relation can point to
 	 */
-	public String getType()
+	@SuppressWarnings("unchecked")
+	public Class getType()
 	{
 		return type;
 	}

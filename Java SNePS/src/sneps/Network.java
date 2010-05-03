@@ -182,7 +182,8 @@ public class Network implements Serializable
 	 * @return the relation that was just created
 	 * @throws CustomException an exception is thrown if the relation already exists
 	 */
-	public Relation defineRelation(String name,String type,
+	@SuppressWarnings("unchecked")
+	public Relation defineRelation(String name,Class type,
 			String adjust,int limit)throws CustomException
 	{
 		if(relations.containsKey(name))
@@ -1123,10 +1124,10 @@ public class Network implements Serializable
 		Node x7 = n.buildVariableNode("x7");
 		Node x8 = n.buildVariableNode("x8");
 		Node a = n.build("a");
-		Relation rr1 = n.defineRelation("r1","entity","none",0);
-		Relation rr2 = n.defineRelation("r2","entity","none",0);
-		Relation rr3 = n.defineRelation("r3","entity","none",0);
-		Relation rr4 = n.defineRelation("r4","entity","none",0);
+		Relation rr1 = n.defineRelation("r1",Entity.class,"none",0);
+		Relation rr2 = n.defineRelation("r2",Entity.class,"none",0);
+		Relation rr3 = n.defineRelation("r3",Entity.class,"none",0);
+		Relation rr4 = n.defineRelation("r4",Entity.class,"none",0);
 		LinkedList<Relation> l2 = new LinkedList<Relation>();
 		l2.add(rr1);
 		l2.add(rr2);
