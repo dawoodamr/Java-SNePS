@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Stack;
+
+import match.ds.*;
 
 /**
  * The Network class is the main class for the network management system. this class 
@@ -353,6 +356,265 @@ public class Network implements Serializable
 			return createMolNode(array,caseFrame);
 	}
 	
+	public boolean match(Node u,Node t,Substitutions r)
+	{
+		System.out.println("match    >>>>> 1");
+		if(hERe(u,t,r,true))
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean hERe(Node u,Node t,Substitutions rSub,boolean rightOrder)
+	{
+		System.out.println("here    >>>>> 1");
+		// if not the same constants
+		if((u.getClass().getSimpleName().equals("BaseNode") &&
+				t.getClass().getSimpleName().equals("ClosedNode")) || 
+				(u.getClass().getSimpleName().equals("ClosedNode") &&
+				t.getClass().getSimpleName().equals("BaseNode")) ||
+				(u.getClass().getSimpleName().equals("BaseNode") &&
+				t.getClass().getSimpleName().equals("BaseNode") &&
+				t != u)||(t != u && 
+				u.getClass().getSimpleName().equals("ClosedNode") &&
+				t.getClass().getSimpleName().equals("ClosedNode")))
+		{
+			System.out.println("here    >>>>> 2");
+			return false;
+		}
+		// if one is variable
+		if(u.getClass().getSimpleName().equals("VariableNode"))
+		{
+			System.out.println("here    >>>>> 3");
+			varHERe((VariableNode) u,t,rSub,true);
+		}else
+		{
+			if(t.getClass().getSimpleName().equals("VariableNode"))
+			{
+				System.out.println("here    >>>>> 4");
+				varHERe((VariableNode) t,u,rSub,false);
+			}else
+			{
+				// if both are molecular nodes
+				if(u.getClass().getSimpleName().equals("PatternNode") ||
+						t.getClass().getSimpleName().equals("PatternNode"))
+				{
+					System.out.println("here    >>>>> 5");
+					MolecularNode t1 = (MolecularNode) u;
+					MolecularNode t2 = (MolecularNode) t;
+					if(t1.getCableSet().getCaseFrame() != t2.getCableSet().getCaseFrame())
+						return false;
+					// checking the node sets in the cables
+					for(int i=0;i<t1.getCableSet().getCables().size();i++)
+					{
+						System.out.println("here    >>>>> 6");
+						Relation r = t1.getCableSet().getCables().get(i).getRelation();
+						NodeSet ns1 = t1.getCableSet().getCable(r.getName()).getNodeSet();
+						NodeSet ns2 = t2.getCableSet().getCable(r.getName()).getNodeSet();
+						if(rightOrder && ((r.getAdjust().equals("reduce") &&
+							ns1.getNodes().size() > ns2.getNodes().size()) ||
+							(r.getAdjust().equals("expand") &&
+							ns1.getNodes().size() < ns2.getNodes().size()) ||
+							(r.getAdjust().equals("none") &&
+							ns1.getNodes().size() != ns2.getNodes().size())))
+							return false;
+						if((!rightOrder) && ((r.getAdjust().equals("expand") &&
+								ns1.getNodes().size() > ns2.getNodes().size()) ||
+								(r.getAdjust().equals("reduce") &&
+								ns1.getNodes().size() < ns2.getNodes().size()) ||
+								(r.getAdjust().equals("none") &&
+								ns1.getNodes().size() != ns2.getNodes().size())))
+								return false;
+						if(setUnify(ns1,ns2,rSub,rightOrder))
+						{
+							System.out.println("here    >>>>> 7");
+							continue;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	public boolean setUnify(NodeSet ns1,NodeSet ns2,Substitutions rSub,boolean rightOrder)
+	{
+		System.out.println("setunify    >>>>> 1");
+		if(ns1.getNodes().size() == 0 || ns2.getNodes().size() == 0)
+			return true;
+		// loop for ns1
+		for(int i=0;i<ns1.getNodes().size();i++)
+		{
+			System.out.println("setunify    >>>>> 2");
+			Node n1 = ns1.getNodes().get(i);
+			NodeSet n1Others = new NodeSet();
+			n1Others.getNodes().addAll(ns1.getNodes());
+			n1Others.removeNode(n1);
+			// loop for ns2
+			for(int j=0;j<ns2.getNodes().size();j++)
+			{
+				System.out.println("setunify    >>>>> 3");
+				Node n2 = ns2.getNodes().get(j);
+				NodeSet n2Others = new NodeSet();
+				n2Others.getNodes().addAll(ns2.getNodes());
+				n2Others.removeNode(n2);
+				Substitutions s = new Substitutions();
+				s.getSub().addAll(rSub.getSub());
+				if(match(n1,n2,s))
+				{
+					if(setUnify(n1Others,n2Others,s,rightOrder))
+					{
+						System.out.println("setunify    >>>>> 4");
+						rSub.getSub().removeAllElements();
+						rSub.getSub().addAll(s.getSub());
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean varHERe(VariableNode u,Node t,Substitutions rSub,boolean rightOrder)
+	{
+		System.out.println("varhere    >>>>> 1  " + u.getIdentifier() + t.getIdentifier());
+		if(! rSub.contains(u))
+		{
+			System.out.println("varhere    >>>>> 2  " + u.getIdentifier());
+			rSub.putIn(new Binding(u,t));
+			System.out.println("size >>>>>>>>>>>>>>  "+rSub.getSub().size());
+			return true;
+		}
+		if(! t.getClass().getSimpleName().equals("VariableNode"))
+		{
+			System.out.println("varhere    >>>>> 3");
+			Stack<VariableNode> path = source(u,rSub);
+			VariableNode v = path.pop();
+			collapse(path,v,rSub);
+			if(! rSub.contains(v))
+			{
+				rSub.putIn(new Binding(v,t));
+				return true;
+			}
+			if(recurHERe(v,(Node) rSub.getBindingByMv(v).getMn(),t,rSub,rightOrder))
+				return true;
+		}else
+		{
+			System.out.println("varhere    >>>>> 4");
+			VariableNode tt = (VariableNode) t;
+			if(! rSub.contains(tt))
+			{
+				rSub.putIn(new Binding(t,u));
+				return true;
+			}
+			System.out.println("varhere    >>>>> 5");
+			Stack<VariableNode> path = source(u,rSub);
+			VariableNode v = path.pop();
+			if(! rSub.contains(v))
+			{
+				path.push(v);
+				collapse(path,t,rSub);
+				return true;
+			}else
+			{
+				System.out.println("varhere    >>>>> 6");
+				if(rSub.getBindingByMv(v).getMn().equals(v))
+				{
+					path.push(v);
+					collapse(path,t,rSub);
+					return true;
+				}else
+				{
+					System.out.println("varhere    >>>>> 7");
+					Stack<VariableNode> path2 = source(tt,rSub);
+					VariableNode w = path2.pop();
+					if(v.equals(w))
+					{
+						path.addAll(path2);
+						collapse(path,v,rSub);
+						return true;
+					}else{
+						System.out.println("varhere    >>>>> 8");
+						Node z = (Node) rSub.getBindingByMv(w).getMn();
+						path.push(w);
+						collapse(path,v,rSub);
+						if(rSub.contains(z))
+						{
+							if(! z.equals(w))
+							{
+								if(
+							recurHERe(v,(Node)rSub.getBindingByMv(v).getMn(),z,rSub,rightOrder))
+								{
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		System.out.println("varhere    >>>>> 9");
+		return false;
+	}
+	
+	public Stack<VariableNode> source(VariableNode x,Substitutions rSub)
+	{
+		System.out.println("source    >>>>> 1");
+		Stack<VariableNode> path = new Stack<VariableNode>();
+		path.push(x);
+		while(true)
+		{
+			VariableNode v = path.peek();
+			if(rSub.contains(v) &&
+			rSub.getBindingByMv(v).getMn().getClass().getSimpleName().equals("VariableNode") &&
+			!rSub.getBindingByMv(v).getMn().equals(v))
+			{
+				path.push((VariableNode) rSub.getBindingByMv(v).getMn());
+				rSub.getBindingByMv(v).setMn(v);
+			}else
+				break;
+		}
+		if(rSub.getBindingByMv(path.peek()).getMn().equals(path.peek()))
+		{
+			path.pop();
+		}
+		return path;
+	}
+	
+	public void collapse(Stack<VariableNode> path,Node v,Substitutions rSub)
+	{
+		System.out.println("collapse    >>>>> 1");
+		for(int i=0;i<path.size();i++)
+		{
+			if(rSub.contains(path.get(i)))
+			{
+				rSub.getBindingByMv(path.get(i)).setMn(v);
+			}else
+				rSub.putIn(new Binding(path.get(i),v));
+		}
+	}
+	
+	public boolean recurHERe(VariableNode v,Node y,Node t,Substitutions rSub,boolean rightOrder)
+	{
+		System.out.println("recurhere    >>>>> 1");
+		boolean flag = false;
+		v.setLoop(true);
+		if(hERe(y,t,rSub,rightOrder))
+		{
+			if(rSub.contains(v))
+			{
+				rSub.getBindingByMv(v).setMn(y);
+			}else
+			{
+				rSub.putIn(new Binding(v,y));
+			}
+			flag = true;
+		}
+		v.setLoop(false);
+		return flag;
+	}
+	
 	/**
 	 * @param array the array that contains pairs of paths and node sets
 	 * @return the node set of nodes that we can start following those paths in the array
@@ -525,6 +787,8 @@ public class Network implements Serializable
 	{
 		for(int i=0;i<array.length;i++)
 		{
+			if(array[i][1].getClass().getSimpleName().equals("NodeSet"))
+				continue;
 			Relation r = (Relation) array[i][0];
 			Node node = (Node) array[i][1];
 			if(node.getClass().getSimpleName().equals("VariableNode") && 
@@ -637,13 +901,17 @@ public class Network implements Serializable
 		for(int i=0;i<array.length;i++)
 		{
 			Relation r = (Relation) array[i][0];
-			Node n = (Node) array[i][1];
+			NodeSet nos = new NodeSet();
+			if(! array[i][1].getClass().getSimpleName().equals("NodeSet"))
+			{
+				nos.addNode((Node) array[i][1]);
+			}
 			for(int j=0;j<relCount;j++)
 			{
 				if(r.equals((Relation) tempResult[j][0]))
 				{
 					NodeSet ns = (NodeSet) tempResult[j][1];
-					ns.getNodes().add(n);
+					ns.getNodes().addAll(nos.getNodes());
 					exists = true;
 					break;
 				}else
@@ -653,7 +921,7 @@ public class Network implements Serializable
 			{
 				exists = false;
 				NodeSet nodeSet = new NodeSet();
-				nodeSet.getNodes().add(n);
+				nodeSet.getNodes().addAll(nos.getNodes());
 				tempResult[relCount][0] = r;
 				tempResult[relCount][1] = nodeSet;
 				relCount++;
@@ -832,7 +1100,9 @@ public class Network implements Serializable
 	{
 //		Relation r1 = new Relation("member","entity","reduce",0);
 //		Relation r2 = new Relation("class","entity","reduce",0);
-		Object[][] o = new Object[2][2];
+		Object[][] o4 = new Object[4][2];
+		Object[][] o3 = new Object[3][2];
+		Object[][] o2 = new Object[2][2];
 		/*o[0][0] = r1;
 		o[1][0] = r1;
 		o[2][0] = r1;
@@ -844,21 +1114,108 @@ public class Network implements Serializable
 		o[0][1] = new BaseNode("amr");
 		o[1][1] = new BaseNode("human");*/
 		Network n = new Network();
-		Node node = n.build("amr");
-		Node node1 = n.buildVariableNode("human");
-		Relation rr1 = n.defineRelation("member","entity","reduce",0);
-		Relation rr2 = n.defineRelation("class","entity","reduce",0);
-		LinkedList<Relation> l = new LinkedList<Relation>();
-		l.add(rr1);
-		l.add(rr2);
-		o[0][0] = rr1;
-		o[1][0] = rr2;
-		o[0][1] = node;
-		o[1][1] = node1;
-		CaseFrame caseFrame = new CaseFrame("entity",l);
-		n.defineCaseFrame(caseFrame.getSemanticClass(),caseFrame.getRelations());
-		Node res1 = n.build(o,caseFrame);
-		o[0][1] = res1;
+		Node x1 = n.buildVariableNode("x1");
+		Node x2 = n.buildVariableNode("x2");
+		Node x3 = n.buildVariableNode("x3");
+		Node x4 = n.buildVariableNode("x4");
+		Node x5 = n.buildVariableNode("x5");
+		Node x6 = n.buildVariableNode("x6");
+		Node x7 = n.buildVariableNode("x7");
+		Node x8 = n.buildVariableNode("x8");
+		Node a = n.build("a");
+		Relation rr1 = n.defineRelation("r1","entity","none",0);
+		Relation rr2 = n.defineRelation("r2","entity","none",0);
+		Relation rr3 = n.defineRelation("r3","entity","none",0);
+		Relation rr4 = n.defineRelation("r4","entity","none",0);
+		LinkedList<Relation> l2 = new LinkedList<Relation>();
+		l2.add(rr1);
+		l2.add(rr2);
+		LinkedList<Relation> l3 = new LinkedList<Relation>();
+		l3.add(rr1);
+		l3.add(rr2);
+		l3.add(rr3);
+		LinkedList<Relation> l4 = new LinkedList<Relation>();
+		l4.add(rr1);
+		l4.add(rr2);
+		l4.add(rr3);
+		l4.add(rr4);
+		CaseFrame caseFrame2 = n.defineCaseFrame("entity",l2);
+		CaseFrame caseFrame3 = n.defineCaseFrame("entity",l3);
+		CaseFrame caseFrame4 = n.defineCaseFrame("entity",l4);
+		o3[0][0] = rr1;
+		o3[1][0] = rr2;
+		o3[2][0] = rr3;
+		o3[0][1] = x1;
+		o3[1][1] = x2;
+		o3[2][1] = x3;
+		Node h1 = n.build(o3,caseFrame3);
+		o3[0][1] = x6;
+		o3[1][1] = x7;
+		o3[2][1] = x8;
+		Node h2 = n.build(o3,caseFrame3);
+		o4[0][0] = rr1;
+		o4[1][0] = rr2;
+		o4[2][0] = rr3;
+		o4[3][0] = rr4;
+		o4[0][1] = h1;
+		o4[1][1] = h2;
+		o4[2][1] = x3;
+		o4[3][1] = x6;
+		Node t = n.build(o4,caseFrame4);
+		o2[0][0] = rr1;
+		o2[1][0] = rr2;
+		o2[0][1] = x4;
+		o2[1][1] = x5;
+		Node g1 = n.build(o2,caseFrame2);
+		o3[0][1] = g1;
+		o3[1][1] = x1;
+		o3[2][1] = x2;
+		Node h3 = n.build(o3,caseFrame3);
+		o3[0][1] = x7;
+		o3[1][1] = x8;
+		o3[2][1] = x6;
+		Node h4 = n.build(o3,caseFrame3);
+		o2[0][1] = x5;
+		o2[1][1] = a;
+		Node g2 = n.build(o2,caseFrame2);
+		o4[0][1] = h3;
+		o4[1][1] = h4;
+		o4[2][1] = g2;
+		o4[3][1] = x5;
+		Node tdash = n.build(o4,caseFrame4);
+		Substitutions r = new Substitutions();
+		if(n.match(t,tdash,r))
+		{
+			System.out.println(r.getSub().size());
+			for(int i=0;i<r.getSub().size();i++)
+			{
+				System.out.print(((Node) r.getSub().get(i).getMv()).getIdentifier());
+				System.out.println(" "+((Node) r.getSub().get(i).getMn()).getIdentifier());
+			}
+		}
+		/*VariableNode v1 = new VariableNode("V1");
+		VariableNode v2 = new VariableNode("V2");
+		VariableNode v3 = new VariableNode("V3");
+		VariableNode v4 = new VariableNode("V4");
+		VariableNode v5 = new VariableNode("V5");
+		Stack<VariableNode> s = new Stack<VariableNode>();
+		s.push(v1);
+		s.push(v2);
+		s.push(v3);
+		s.push(v4);
+		s.push(v5);
+		BaseNode b = new BaseNode("amr");
+		Substitutions z = new Substitutions();
+		z.putIn(new Binding(v1,v2));
+		z.putIn(new Binding(v2,v1));
+		z.putIn(new Binding(v3,v4));
+		z.putIn(new Binding(v4,v5));
+		z.putIn(new Binding(v5,v1));
+		Stack<VariableNode> x = n.source(v3,z);
+		for(int i=0;i<x.size();i++)
+		{
+			System.out.println(x.get(i).getIdentifier());
+		}*/
 	//	Node res = n.build(o,caseFrame);
 		/*System.out.println(res.getIdentifier());
 		System.out.println(n.getNodes().get(res.getIdentifier()).getIdentifier());
