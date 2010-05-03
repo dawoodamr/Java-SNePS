@@ -19,4 +19,13 @@ public class Request
 	{
 		this.c=c;
 	}
+	
+	/**
+	 * return the channel of the request
+	 * @return
+	 */
+	public Channel getChannel()
+	{
+		return c;
+	}
 }

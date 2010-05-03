@@ -25,8 +25,8 @@ public class Report
 	 * @param substitution Substitution
 	 * @param support support
 	 * @param sign positive of negative
-	 * @param signature signature
-	 * @param node node
+	 * @param signature the node this report is from
+	 * @param node the node this report is to
 	 * @param context context
 	 */
 	public Report(Substitutions substitution,Object support,boolean sign,
@@ -71,7 +71,7 @@ public class Report
 	 * return the signature of the report
 	 * @return Signature
 	 */
-	public Object getSignature()
+	public Node getSignature()
 	{
 		return sig;
 	}

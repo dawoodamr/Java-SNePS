@@ -28,4 +28,17 @@ public class Switch
 	{
 		return this.s.isEqual(s.s);
 	}
+	
+	/**
+	 * Switch the substitutions list of the report r
+	 * @param r Report
+	 */
+	public void switchReport(Report r)
+	{
+		for(int i=0;i<this.s.cardinality();i++)
+		{
+			r.getSubstitutions().getBinding(i).setvariable(this.s.getBinding(i)
+					.getVariable());
+		}
+	}
 }

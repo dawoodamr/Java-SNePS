@@ -12,4 +12,22 @@ import java.util.Vector;
 public class RequestSet
 {
 	private Vector<Request> rs;
+	
+	/**
+	 * Create new request set
+	 */
+	public RequestSet()
+	{
+		rs=new Vector<Request>();
+	}
+	
+	/**
+	 * Return the request number x in the set
+	 * @param x
+	 * @return Request
+	 */
+	public Request getRequest(int x)
+	{
+		return rs.get(x); 
+	}
 }

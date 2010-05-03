@@ -7,11 +7,13 @@
  */
 package snip.ds;
 
+import snebr.Context;
+
 public class Channel
 {
 	private Filter fil;
 	private Switch swi;
-	private Object con;
+	private Context con;
 	private Destination des;
 	private boolean valve;
 	
@@ -23,7 +25,7 @@ public class Channel
 	 * @param d destination
 	 * @param v true for open false for closed
 	 */
-	public Channel(Filter f,Switch s,Object c,Destination d,boolean v)
+	public Channel(Filter f,Switch s,Context c,Destination d,boolean v)
 	{
 		fil=f;
 		swi=s;
@@ -54,7 +56,7 @@ public class Channel
 	 * Return the context of the channel
 	 * @return context
 	 */
-	public Object getContext()
+	public Context getContext()
 	{
 		return con;
 	}

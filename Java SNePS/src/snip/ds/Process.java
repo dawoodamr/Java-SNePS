@@ -7,13 +7,14 @@
  */
 package snip.ds;
 
-import sneps.Node;
+import sneps.MolecularNode;
+import sneps.NodeSet;
 
 public class Process
 {
 	private String name;
 	private Object type;//-------rule-------
-	private Node node;
+	private MolecularNode node;
 	private ReportSet knownInstsnces;
 	private ReportSet reps;
 	private RequestSet reqs;
@@ -73,7 +74,7 @@ public class Process
 	 * Return the node this process is associated to
 	 * @return Node
 	 */
-	public Node getNode()
+	public MolecularNode getNode()
 	{
 		return node;
 	}
@@ -90,5 +91,24 @@ public class Process
 			c.send(rSent);
 			addToSent(r);
 		
+	}
+	
+	/**
+	 * Return the pattern node set of this node
+	 * @param name the relation name
+	 * @return NodeSet
+	 */
+	public NodeSet getNodeSet(String name)
+	{
+		return node.getCableSet().getCable(name).getNodeSet();
+	}
+	
+	/**
+	 * Check if all patterns share all variables or not
+	 * @return true or false
+	 */
+	public boolean allShareVars(NodeSet nodes)
+	{
+		return true;
 	}
 }
