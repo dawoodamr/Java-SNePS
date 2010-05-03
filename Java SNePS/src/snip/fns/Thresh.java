@@ -8,61 +8,114 @@
 
 package snip.fns;
 
-import snip.ds.ChannelsSet;
-import snip.ds.Process;
-import snip.ds.ReportSet;
+import java.util.LinkedList;
 
-public class Thresh
+import sneps.NodeSet;
+import sneps.PatternNode;
+import sneps.VariableNode;
+import snip.ds.FlagNode;
+import snip.ds.FlagNodeSet;
+import snip.ds.Process;
+import snip.ds.Report;
+import snip.ds.RuleUseInfo;
+import snip.ds.RuleUseInfoSet;
+import snip.ds.Sindexing;
+
+public class Thresh 
 {
 	Process p;
 	int min;
 	int max;
+	int total;
+	boolean shareVars;
+	Sindexing si;
+	RuleUseInfoSet ruis;
 	int reportCounter;
-	
+
 	/**
-	 * Creating the Thresh process and give it the process p having needed data 
-	 * and integer threshmax and threshmin are the pounds of the number of the true 
-	 * arguments(less then min or more than max should be true)
-	 * @param p process
-	 * @param threshmax max thresh
-	 * @param threshmin min thresh
+	 * Creating the Thresh process
+	 * 
+	 * @param p
+	 *            process
 	 */
-	public Thresh(Process p,int threshmax,int threshmin)
+	public Thresh(Process p) 
 	{
-		this.p=p;
-		max=threshmax;
-		min=threshmin;
-		reportCounter=0;
-	}
-	
-	/**
-	 * Run the thresh test 
-	 */
-	public void run()
-	{
-		reportCounter++;
-		if(reportCounter==p.getInComing().cardinality())
+		this.p = p;
+		reportCounter = 0;
+		NodeSet minNode = p.getNodeSet("thresh");
+		min = Integer.parseInt(minNode.getNodes().get(0).getIdentifier());
+		NodeSet maxNode = p.getNodeSet("threshmax");
+		max = Integer.parseInt(maxNode.getNodes().get(0).getIdentifier());
+		NodeSet patternNodes = p.getNodeSet("arg");
+		total = patternNodes.getNodes().size();
+		shareVars = p.allShareVars(patternNodes);
+		if (shareVars) 
 		{
-			//Check if they all have the same vars (is-all-pat-same-vars)
-			ReportSet rs=p.getReportSet();
-			ChannelsSet cs=p.getOutGoing();
-			int posrep=0;
-			for(int i=0;i<reportCounter;i++)
+			si = new Sindexing();
+		} 
+		else 
+		{
+			ruis = new RuleUseInfoSet();
+		}
+	}
+
+	/**
+	 * Run the thresh test
+	 */
+	public void run() 
+	{
+		for (; reportCounter < p.getReportSet().cardinality(); reportCounter++) 
+		{
+			Report r = p.getReportSet().getReport(reportCounter);
+			RuleUseInfo rui;
+			RuleUseInfoSet res;
+			if (r.getSign()) 
 			{
-				if(rs.getReport(i).isPositive())
+				FlagNode fn = new FlagNode((PatternNode) r.getSignature(), r
+						.getSupport(), 1);
+				FlagNodeSet fns = new FlagNodeSet();
+				fns.putIn(fn);
+				rui = new RuleUseInfo(r.getSubstitutions(), 1, 0, fns);
+			} 
+			else 
+			{
+				FlagNode fn = new FlagNode((PatternNode) r.getSignature(), r
+						.getSupport(), 2);
+				FlagNodeSet fns = new FlagNodeSet();
+				fns.putIn(fn);
+				rui = new RuleUseInfo(r.getSubstitutions(), 0, 1, fns);
+			}
+			if (shareVars) 
+			{
+				LinkedList<VariableNode> varsll = rui.getFlagNodeSet()
+						.getFlagNode(0).getNode().getFreeVariables();
+				int[] vars = new int[varsll.size()];
+				for (int i = 0; i < vars.length; i++) 
 				{
-					posrep++;
+					vars[i] = varsll.get(i).getId();
 				}
-			}
-			if(posrep<min||posrep>max)
+				res = si.insert(rui, vars);
+			} 
+			else 
 			{
-				//combine reports from rs and send over cs page 15 16
+				res = ruis.insert(rui);
+				if (res == null)
+					res = new RuleUseInfoSet();
 			}
-			else
+			for (int i = 0; i < res.cardinality(); i++) 
 			{
-				//send a negative report
+				if (res.getRuleUseInfo(i).getPosCount() > min 
+						&& res.getRuleUseInfo(i).getNegCount()==total-max-1) 
+				{
+					// What?
+				} 
+				else if (res.getRuleUseInfo(i).getPosCount() == min-1 
+						&& res.getRuleUseInfo(i).getNegCount()>=total-max) 
+				{
+					// What?
+				}
 			}
 		}
 	}
-	
+
 }

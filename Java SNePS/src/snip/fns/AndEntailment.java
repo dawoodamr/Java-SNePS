@@ -7,23 +7,53 @@
  */
 package snip.fns;
 
-import snip.ds.ChannelsSet;
+import java.util.LinkedList;
+
+import sneps.NodeSet;
+import sneps.PatternNode;
+import sneps.VariableNode;
+import snip.ds.FlagNode;
+import snip.ds.FlagNodeSet;
 import snip.ds.Process;
-import snip.ds.ReportSet;
+import snip.ds.Ptree;
+import snip.ds.Report;
+import snip.ds.RuleUseInfo;
+import snip.ds.RuleUseInfoSet;
+import snip.ds.Sindexing;
 
 public class AndEntailment
 {
 	Process p;
+	boolean shareVars;
+	Sindexing si;
+	Ptree pt;
 	int reportCounter;
-	
+	int patternsNumber;
 	/**
-	 * Creating the andentailment process and give it the process p having needed data
+	 * Creating the andentailment process and give it the process p
 	 * @param p process
 	 */
 	public AndEntailment(Process p)
 	{
 		this.p=p;
 		reportCounter=0;
+		NodeSet patternNodes =p.getNodeSet("ant");
+		shareVars=p.allShareVars(patternNodes);
+		patternsNumber=patternNodes.getNodes().size();
+		if(shareVars)
+		{
+			si=new Sindexing();
+		}
+		else
+		{
+			pt=new Ptree();
+			int [] patsIds=new int [patternsNumber];
+			for(int i=0;i<patternsNumber;i++)
+			{
+				patsIds[i]=patternNodes.getNodes().get(i).getId();
+			}
+			pt.buildTree(patsIds);
+		}
 	}
 	
 	/**
@@ -31,28 +61,42 @@ public class AndEntailment
 	 */
 	public void run()
 	{
-		reportCounter++;
-		if(reportCounter==p.getInComing().cardinality())
+		for(;reportCounter<p.getReportSet().cardinality();reportCounter++)
 		{
-			//Check if they all have the same vars (is-all-pat-same-vars)
-			ReportSet rs=p.getReportSet();
-			ChannelsSet cs=p.getOutGoing();
-			boolean allTrue=true;
-			for(int i=0;i<rs.cardinality();i++)
+			Report r=p.getReportSet().getReport(reportCounter);
+			RuleUseInfo rui=null;
+			RuleUseInfoSet res;
+			if(r.getSign())
 			{
-				if(rs.getReport(i).isNegative())
+				FlagNode fn=new FlagNode((PatternNode)r.getSignature()
+						,r.getSupport(),1);
+				FlagNodeSet fns=new FlagNodeSet();
+				fns.putIn(fn);
+				rui=new RuleUseInfo(r.getSubstitutions(),1,0,fns);
+				if(shareVars)
 				{
-					allTrue=false;
-					break;
+					LinkedList<VariableNode> varsll=rui.getFlagNodeSet().getFlagNode(0)
+					.getNode().getFreeVariables();
+					int[] vars=new int [varsll.size()];
+					for(int i=0;i<vars.length;i++)
+					{
+						vars[i]=varsll.get(i).getId();
+					}
+					res=si.insert(rui, vars);
 				}
-			}
-			if(allTrue)
-			{
-				//combine reports from rs and send over cs page 15 16
-			}
-			else
-			{
-				//send a negative report
+				else
+				{
+					res=pt.insert(rui);
+					if(res==null)
+						res=new RuleUseInfoSet();
+				}
+				for(int i=0;i<res.cardinality();i++)
+				{
+					if(res.getRuleUseInfo(i).getPosCount()==patternsNumber)
+					{
+						//What?
+					}
+				}
 			}
 		}
 	}
