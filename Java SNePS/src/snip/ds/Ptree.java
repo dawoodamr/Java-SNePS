@@ -437,28 +437,4 @@ public class Ptree
 		}
 		return res;
 	}
-	/*public static void main (String []args)
-	{
-		Ptree p=new Ptree();
-		Vector<Vector<Integer>> patvar=new Vector<Vector<Integer>>();
-		Vector<Integer>pat1=new Vector<Integer>();
-		pat1.add(1);pat1.add(6);
-		Vector<Integer>pat2=new Vector<Integer>();
-		pat2.add(2);pat2.add(7);pat2.add(8);
-		Vector<Integer>pat3=new Vector<Integer>();
-		pat3.add(3);pat3.add(9);pat3.add(8);
-		Vector<Integer>pat4=new Vector<Integer>();
-		pat4.add(4);pat4.add(10);pat4.add(9);
-		Vector<Integer>pat5=new Vector<Integer>();
-		pat5.add(5);pat5.add(6);pat5.add(10);
-		patvar.add(pat1);patvar.add(pat2);patvar.add(pat3);patvar.add(pat4);patvar.add(pat5);
-		System.out.println("PatVar"+patvar);
-		Vector<Vector<Integer>> varpat=p.getVarPat(patvar);
-		System.out.println("VarPat"+varpat);
-		int x[]=p.getPatSeq(patvar, varpat);
-		Vector<Integer> seq=new Vector<Integer>();
-		for(int i=0;i<x.length;i++)
-			seq.add(x[i]);
-		System.out.println("PatSeq"+seq);
-	}*/
 }
