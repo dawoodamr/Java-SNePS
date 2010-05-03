@@ -33,11 +33,23 @@ public class Substitutions
     
     /**
 	 *Insert a new binding in the list of substitutions
-	 *@param mb
+	 *@param mb Binding
 	 */
     public void putIn(Binding mb) 
     {
     	sub.add(mb);
+    }
+    
+    /**
+     * Check if mb is compatible with this substitutions list 
+     * @param mb Binding
+     * @return true or false
+     */
+    public boolean isCompatible(Binding mb) 
+    {
+    	Substitutions test =new Substitutions();
+    	test.sub.add(mb);
+    	return this.isCompatible(test);
     }
     
     /**
