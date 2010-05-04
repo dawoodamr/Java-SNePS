@@ -9,50 +9,70 @@ package snip.fns;
 
 import java.util.LinkedList;
 
+import snebr.Context;
+import sneps.Node;
 import sneps.NodeSet;
 import sneps.PatternNode;
 import sneps.VariableNode;
+import snip.ds.ChannelsSet;
+import snip.ds.ContextRUIS;
 import snip.ds.FlagNode;
 import snip.ds.FlagNodeSet;
 import snip.ds.Process;
-import snip.ds.Ptree;
 import snip.ds.Report;
 import snip.ds.RuleUseInfo;
 import snip.ds.RuleUseInfoSet;
-import snip.ds.Sindexing;
 
 public class AndEntailment
 {
-	Process p;
-	boolean shareVars;
-	Sindexing si;
-	Ptree pt;
-	int reportCounter;
-	int patternsNumber;
+	private Process p;
+	private boolean shareVars;
+	private int reportCounter;
+	private int patternsNumber;
+	private int[] vars;
 	/**
-	 * Creating the andentailment process and give it the process p
-	 * @param p process
+	 * Creating the andentailment process
+	 * @param node Node
 	 */
-	public AndEntailment(Process p)
+	public AndEntailment(Node node)
 	{
-		this.p=p;
+		p=new Process(node,'r',"AndEntailment");
 		reportCounter=0;
 		NodeSet patternNodes =p.getNodeSet("ant");
 		shareVars=p.allShareVars(patternNodes);
 		patternsNumber=patternNodes.getNodes().size();
+		PatternNode n =(PatternNode)patternNodes.getNodes().get(0);
 		if(shareVars)
 		{
-			si=new Sindexing();
+			LinkedList<VariableNode> varsll=n.getFreeVariables();
+			vars=new int [varsll.size()];
+			for(int i=0;i<vars.length;i++)
+			{
+				vars[i]=varsll.get(i).getId();
+			}
 		}
+	}
+	
+	/**
+	 * Add a ContextRUIS to ContextRUISSet
+	 * @param c Context
+	 * @return ContextRUIS
+	 */
+	public ContextRUIS addContextRUIS(Context c)
+	{
+		if(shareVars)
+			return p.addContextRUIS(c,'s');
 		else
 		{
-			pt=new Ptree();
+			ContextRUIS cr=p.addContextRUIS(c,'p');
+			NodeSet patternNodes =p.getNodeSet("ant");
 			int [] patsIds=new int [patternsNumber];
 			for(int i=0;i<patternsNumber;i++)
 			{
 				patsIds[i]=patternNodes.getNodes().get(i).getId();
 			}
-			pt.buildTree(patsIds);
+			cr.getPtree().buildTree(patsIds);
+			return cr;
 		}
 	}
 	
@@ -64,6 +84,7 @@ public class AndEntailment
 		for(;reportCounter<p.getReportSet().cardinality();reportCounter++)
 		{
 			Report r=p.getReportSet().getReport(reportCounter);
+			Context c=r.getContext();
 			RuleUseInfo rui=null;
 			RuleUseInfoSet res;
 			if(r.getSign())
@@ -73,28 +94,31 @@ public class AndEntailment
 				FlagNodeSet fns=new FlagNodeSet();
 				fns.putIn(fn);
 				rui=new RuleUseInfo(r.getSubstitutions(),1,0,fns);
+				int pos=p.getCRS().getIndex(c);
+				ContextRUIS crtemp;
+				if(pos==-1)
+					crtemp=addContextRUIS(c);
+				else
+					crtemp=p.getCRS().getContextRUIS(pos);
 				if(shareVars)
 				{
-					LinkedList<VariableNode> varsll=rui.getFlagNodeSet().getFlagNode(0)
-					.getNode().getFreeVariables();
-					int[] vars=new int [varsll.size()];
-					for(int i=0;i<vars.length;i++)
-					{
-						vars[i]=varsll.get(i).getId();
-					}
-					res=si.insert(rui, vars);
+					res=crtemp.getSindexing().insert(rui, vars);
 				}
 				else
 				{
-					res=pt.insert(rui);
+					res=crtemp.getPtree().insert(rui);
 					if(res==null)
 						res=new RuleUseInfoSet();
 				}
 				for(int i=0;i<res.cardinality();i++)
 				{
-					if(res.getRuleUseInfo(i).getPosCount()==patternsNumber)
+					RuleUseInfo ruitemp=res.getRuleUseInfo(i);
+					if(ruitemp.getPosCount()==patternsNumber)
 					{
-						//What?
+						Report reply=new Report(ruitemp.getSub(),null,true,p.getNode()
+								,null,c);
+						ChannelsSet ctemp=crtemp.getChannels();
+						p.sendReport(reply,ctemp);
 					}
 				}
 			}

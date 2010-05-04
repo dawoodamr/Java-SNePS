@@ -7,9 +7,10 @@
  */
 package snip.fns;
 
+import sneps.Node;
 import snip.ds.ChannelsSet;
 import snip.ds.Process;
-import snip.ds.ReportSet;
+import snip.ds.Report;
 
 public class OrEntailment
 {
@@ -17,13 +18,13 @@ public class OrEntailment
 	int reportCounter;
 	
 	/**
-	 * Creating the orentailment process and give it the process p having needed data
-	 * @param p process
+	 * Creating the orentailment process
+	 * @param node Node
 	 */
-	public OrEntailment(Process p)
+	public OrEntailment(Node node)
 	{
-		this.p=p;
-		reportCounter=-1;
+		p=new Process(node,'r',"OrEntailment");
+		reportCounter=0;
 	}
 	
 	/**
@@ -31,19 +32,16 @@ public class OrEntailment
 	 */
 	public void run()
 	{
-		reportCounter++;
-		ReportSet rs=p.getReportSet();
-		ChannelsSet cs=p.getOutGoing();
-		if(rs.getReport(reportCounter).isPositive())
+		for(;reportCounter<p.getReportSet().cardinality();reportCounter++)
 		{
-			for(int i=0;i<cs.cardinality();i++)
+			Report r=p.getReportSet().getReport(reportCounter);
+			if(r.getSign())
 			{
-				p.send(rs.getReport(reportCounter), cs.getChannel(i));
+				Report reply=new Report(r.getSubstitutions(),r.getSupport(),true
+						,p.getNode(),null,r.getContext());
+				ChannelsSet ctemp=p.getCQChannels().getConChannelsSet(r.getContext());
+				p.sendReport(reply,ctemp);
 			}
-		}
-		else if(reportCounter==p.getInComing().cardinality())
-		{
-			//send a negative report
 		}
 	}
 }
