@@ -79,6 +79,7 @@ public class Network implements Serializable
 	public Network()
 	{
 		nodes = new Hashtable<String, Node>();
+		molecularNodes = new Hashtable<String,NodeSet>();
 		caseFrames = new Hashtable<String, CaseFrame>();
 		relations = new Hashtable<String, Relation>();
 		userDefinedMolPostfix = new LinkedList<Integer>();
