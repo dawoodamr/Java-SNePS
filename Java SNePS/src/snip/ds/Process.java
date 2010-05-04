@@ -7,23 +7,48 @@
  */
 package snip.ds;
 
+import snebr.Context;
 import sneps.MolecularNode;
+import sneps.Node;
 import sneps.NodeSet;
 
 public class Process
 {
-	private String name;
-	private Object type;//-------rule-------
-	private MolecularNode node;
+	private char name;
+	private String type;
+	private Node node;
 	private ReportSet knownInstsnces;
 	private ReportSet reps;
 	private RequestSet reqs;
 	private ChannelsSet outGoing;
 	private ChannelsSet inComing;
-	private ChannelsSet ruleUse;
-	private ReportSet pendingForwardInferences;
+	private ChannelsSet consequentChannel;
 	private boolean priority;//true for high false for low
 	private boolean uasbility;
+	private ContextRUISSet crs;
+	
+	/**
+	 * Create a new process
+	 * @param node Node
+	 * @param n 'r' for "RULE" or 'n' for "NON-RULE"
+	 * @param t if it is a rule node then type will be the name of the inference rule
+	 * null otherwise
+	 */
+	public Process(Node node, char n, String t)
+	{
+		name =n;
+		type=t;
+		this.node=node;
+		knownInstsnces=new ReportSet();
+		reps=new ReportSet();
+		reqs=new RequestSet();
+		outGoing=new ChannelsSet();
+		inComing=new ChannelsSet();
+		consequentChannel=new ChannelsSet();
+		priority=false;
+		uasbility=false;
+		crs=new ContextRUISSet();
+	}
 	
 	/**
 	 * Return the in coming channels list
@@ -74,23 +99,9 @@ public class Process
 	 * Return the node this process is associated to
 	 * @return Node
 	 */
-	public MolecularNode getNode()
+	public Node getNode()
 	{
 		return node;
-	}
-	
-	/**
-	 * Sends the report r over the channel c
-	 * @param r report
-	 * @param c channel
-	 */
-	public void send(Report r,Channel c)
-	{
-		Report rSent=new Report(r.getSubstitutions(),r.getSupport(),
-				r.getSign(),this.getNode(),null,r.getContext());
-			c.send(rSent);
-			addToSent(r);
-		
 	}
 	
 	/**
@@ -100,7 +111,8 @@ public class Process
 	 */
 	public NodeSet getNodeSet(String name)
 	{
-		return node.getCableSet().getCable(name).getNodeSet();
+		MolecularNode n=(MolecularNode)node;
+		return n.getCableSet().getCable(name).getNodeSet();
 	}
 	
 	/**
@@ -110,5 +122,59 @@ public class Process
 	public boolean allShareVars(NodeSet nodes)
 	{
 		return true;
+	}
+	
+	/**
+	 * Return the consequent channel set
+	 * @return ChannelsSet
+	 */
+	public ChannelsSet getCQChannels()
+	{
+		return consequentChannel;
+	}
+	
+	/**
+	 * Return the ContextRUISSet
+	 * @return ContextRUISSet
+	 */
+	public ContextRUISSet getCRS()
+	{
+		return crs;
+	}
+	
+	/**
+	 * Add a ContextRUIS to the ContextRUISSet and return it.
+	 * @param c Context
+	 * @param t 's' for Sindexing, 'p' for Ptree and 'r' for RuleUseInfoSet
+	 * @return ContextRUIS
+	 */
+	public ContextRUIS addContextRUIS(Context c, char t)
+	{
+		ChannelsSet ctemp=consequentChannel.getConChannelsSet(c);
+		ContextRUIS cr;
+		if(t=='s')
+			cr=new ContextRUIS(c,ctemp,'s');
+		else if(t=='p')
+		{
+			cr=new ContextRUIS(c,ctemp,'p');
+		}
+		else
+		{
+			cr=new ContextRUIS(c,ctemp,'r');
+		}
+		crs.putIn(cr);
+		return cr;
+	}
+	
+	/**
+	 * Send r
+	 * @param r Report
+	 */
+	public void sendReport(Report r, ChannelsSet c)
+	{
+		for(int i=0;i<c.cardinality();i++)
+		{
+			c.getChannel(i).send(r);
+		}
 	}
 }

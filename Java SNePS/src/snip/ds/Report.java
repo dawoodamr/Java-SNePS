@@ -7,6 +7,7 @@
  */
 package snip.ds;
 
+import snebr.Context;
 import sneps.Node;
 import match.ds.Binding;
 import match.ds.Substitutions;
@@ -18,7 +19,7 @@ public class Report
 	private boolean sign;
 	private Node sig;
 	private Node node;
-	private Object ct;//------------context---------
+	private Context ct;
 	
 	/**
 	 * Create new report with the given arguments
@@ -30,7 +31,7 @@ public class Report
 	 * @param context context
 	 */
 	public Report(Substitutions substitution,Object support,boolean sign,
-			Node signature,Node node,Object context )
+			Node signature,Node node,Context context )
 	{
 		s=substitution;
 		sup=support;
@@ -80,7 +81,7 @@ public class Report
 	 * return the node of the report
 	 * @return node
 	 */
-	public Object getNode()
+	public Node getNode()
 	{
 		return node;
 	}
@@ -89,14 +90,14 @@ public class Report
 	 * return the context of the report
 	 * @return context
 	 */
-	public Object getContext()
+	public Context getContext()
 	{
 		return ct;
 	}
 	
 	/**
 	 * Add the given binding to the substitutions list of the report
-	 * @param m mbind
+	 * @param m Binding
 	 */
 	public void addBinding(Binding m)
 	{
@@ -116,7 +117,7 @@ public class Report
 			{
 				return true;
 			}
-			else if(this.node==r.node&&this.ct==r.ct)//----------node context---------
+			else if(this.node==r.node&&this.ct==r.ct)
 			{
 				return true;
 			}		

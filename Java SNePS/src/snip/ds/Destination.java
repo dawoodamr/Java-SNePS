@@ -26,7 +26,7 @@ public class Destination
 	 */
 	public boolean isEqual(Destination d)
 	{
-		return d.node==this.node;//------------node-------------
+		return d.node==this.node;
 	}
 	
 	/**

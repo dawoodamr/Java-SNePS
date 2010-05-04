@@ -8,6 +8,8 @@
 package snip.ds;
 import java.util.Vector;
 
+import snebr.Context;
+
 public class ChannelsSet
 {
 	private Vector<Channel> ch;
@@ -121,5 +123,24 @@ public class ChannelsSet
 	public Channel getChannel(int x)
 	{
 		return ch.get(x);
+	}
+	
+	/**
+	 * Return a channels set having all the channels with the context c
+	 * @param c Context
+	 * @return ChannelsSet
+	 */
+	public ChannelsSet getConChannelsSet(Context c)
+	{
+		ChannelsSet res =new ChannelsSet();
+		for(int i=0;i<ch.size();i++)
+		{
+			Channel ctemp=ch.get(i);
+			if(ctemp.getContext()==c)
+			{
+				res.putIn(ctemp);
+			}
+		}
+		return res;
 	}
 }
