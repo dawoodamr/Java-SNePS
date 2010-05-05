@@ -10,7 +10,7 @@ public class Achieve extends Action
 	
 	LinkedList<Node> reports = new LinkedList<Node>();
 
-	Network m;
+	Network m = Network.getInstance();
 	public Achieve(Node node)
 	{
 		
@@ -18,48 +18,70 @@ public class Achieve extends Action
 		
 	}
 	
-	@SuppressWarnings({ "unchecked", "static-access" })
+	@SuppressWarnings({ })
 	public void Perform()
 	{
+		
 		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
-		LinkedList nodes = ((Act) n.getEntity()).getArrangedObjects();
+		LinkedList<Node> nodes = ((Act) n.getEntity()).getArrangedObjects();
 		
 		
-		if(((Act) n.getEntity()).getAgenda().equals("start"))
-		{
-			if(testConditions((Node) nodes.getFirst()))
+	
+			
+			if(testConditions( nodes.getFirst()))
 			{
 				System.out.println("Already Achieved");
 				((Act) n.getEntity()).setAgenda("done");
 			}
 			else
 			{
-				((Act) n.getEntity()).setAgenda("find-plans");
-				queue.stackPush(n);
-				System.out.println("Want to find a plan to achieve");
+				System.out.println("Want to find a plan to achieve" + " "+nodes.getFirst().getIdentifier());
 				findGplans(n,(Node) nodes.getFirst());
-			}
-			
-		}
-		else if(((Act) n.getEntity()).getAgenda().equals("find-plans"))
-		{
-			((Act) n.getEntity()).setPlans(((Act) n.getEntity()).getReports());
+				//System.out.println(reports.getLast().);
+				((Act) n.getEntity()).setPlans(reports);
+				((Act) n.getEntity()).setReports(new LinkedList<Node>());
 			if(!((Act) n.getEntity()).getPlans().isEmpty())
 			{
-				((Act) n.getEntity()).setAgenda("done");
-				schedulePlans(((Act) n.getEntity()).getPlans());
+				System.out.println("Plan found to achieve" + " "+nodes.getFirst().getIdentifier() );
+				//((Act) n.getEntity()).setAgenda("done");
+				//System.out.println(((Act) ((Act) n.getEntity()).getPlans().getFirst().getEntity()).getTheAction().getIdentifier());
+				schedulePlans(((Act) n.getEntity()).getPlans().getFirst());
+				//Queue.stackPop();
 			}
 			else
 			{
 				System.out.println("DEAD END!");
 			}
+			}
+			
+			
 		}
 	
-	}
 	
-	private void schedulePlans(LinkedList<Node> plans) 
+	
+	private void schedulePlans(Node plan)
 	{
-		
+		((Act) plan.getEntity()).setPrimaction(true);
+		((Act) plan.getEntity()).setAgenda("start");
+	//	System.out.println(((MolecularNode) plan).getCableSet().getCables().getFirst().getRelation().getName());
+	//	System.out.println(((MolecularNode) plan).getCableSet().getCables().getLast().getNodeSet().getNodes().getLast().getIdentifier());
+
+		Queue.stackPush(plan);
+	try {
+		//	System.out.println("mark");
+			((Act) plan.getEntity()).performSNePS(plan, m);
+		} catch (CustomException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		try {
+//			System.out.println("a7oo");
+//			//((Act) plan.getEntity()).performSNePS(plan, m);
+//			
+//		} catch (CustomException e) {
+//			System.out.println("a7a");
+//			e.printStackTrace();
+//		}
 		
 	}
 
@@ -79,11 +101,11 @@ public class Achieve extends Action
        if(!nodess.getLast().getClass().getSimpleName().equals("BaseNode"))
 	        	{ 
     	   if(((MolecularNode) nodess.getLast()).getCableSet().contains("plan")&&
-			  ((MolecularNode)nodess.getLast()).getCableSet().contains("act"))
+			  ((MolecularNode)nodess.getLast()).getCableSet().contains("goal"))
     	   			{
-    		   if(((MolecularNode) nodess.getLast()).getCableSet().getCable("act").getNodeSet().getNodes().getFirst().getIdentifier().equals(n.getIdentifier()))
+    		   if(((MolecularNode) nodess.getLast()).getCableSet().getCable("goal").getNodeSet().getNodes().getFirst().getIdentifier().equals(prop.getIdentifier()))
     		   {
-    			   System.out.println(nodess.getLast().getIdentifier());
+    			  // System.out.println(((MolecularNode) nodess.getLast()).getCableSet().getCable("plan").getNodeSet().getNodes().getFirst().getIdentifier());
 	        	   reports.add(((MolecularNode) nodess.getLast()).getCableSet().getCable("plan").getNodeSet().getNodes().getFirst());
     		   } 
     	   			}

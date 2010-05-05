@@ -1,20 +1,22 @@
 package snactor;
 
-import java.util.Stack;
+import java.util.LinkedList;
+
 
 import sneps.*;
 
 public class Condition
 {
-	@SuppressWarnings("unchecked")
-	public static Stack conditions = new Stack();
-	
-@SuppressWarnings("unchecked")
+
+	public static LinkedList<Node> conditions = new LinkedList<Node>();
+	Network m = Network.getInstance();
+
 public Condition()
 	
 	{ 
-		conditions.push("condition");
-		conditions.push("D");	
+	
+		
+		
 	}
 
 public Boolean testConditions(Node s)
@@ -23,7 +25,7 @@ public Boolean testConditions(Node s)
 		int x = conditions.size();
 		for(int i=0;i<x;i++)
 		{
-			if(conditions.pop()==s.getIdentifier())
+			if(conditions.get(i).getIdentifier()==s.getIdentifier())
 			{
 				return true;
 			}
@@ -31,5 +33,15 @@ public Boolean testConditions(Node s)
 		}
 		return false;
 	}
+
+public void printem()
+{
+	int x = conditions.size();
+	for(int i=0;i<x;i++)
+	{
+		System.out.println(((Node) conditions.pop()).getIdentifier());
+		
+	}
+}
 	
 }

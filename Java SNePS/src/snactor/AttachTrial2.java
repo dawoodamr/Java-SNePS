@@ -10,6 +10,7 @@ public class AttachTrial2 {
   static File targetDir;
   String mycode;
   JTextArea code;
+  static String className;
   
   public static void main(String[] args)
   {
@@ -27,9 +28,15 @@ public class AttachTrial2 {
 	
 	code = new JTextArea ("Enter Code");
 	frame.getContentPane().add(code);
-	code.setBounds(100,150,300,300); 
+	code.setBounds(200,120,300,300); 
 	code.setVisible(true);
-  
+	
+	final JTextField enterName = new JTextField ("Enter Name of the class");
+	frame.getContentPane().add(enterName);
+	enterName.setBounds(270,50,150,30); 
+	enterName.setVisible(true);
+	
+	 
    JButton button = new JButton("Recompile and Reload");
    frame.getContentPane().add(button);
     button.addActionListener(
@@ -39,18 +46,18 @@ public class AttachTrial2 {
           //System.out.println(mycode);
 
      //      System.out.println(code.getText());
-           
+           className = enterName.getText();
    		   AttachTrial2.writeTheClassFile(code.getText());
            
            try{
             boolean compileStatus = compile(
-               "src" + File.separator + "snactor" + File.separator + "Reload01a.java");
+               "src" + File.separator + "snactor" + File.separator + className+".java");
       
             if(compileStatus){
               System.out.println("Compile complete");
  
               Class loadedClass = 
-                                reloadTheClass("Reload01a",
+                                reloadTheClass(className,
                                                 targetDir);
            //  System.out.println("Class Loaded");
               Object obj = loadedClass.newInstance();
@@ -73,8 +80,8 @@ public class AttachTrial2 {
             ex.printStackTrace();
           }
    }});
-    
-    button.setSize(250,100);
+    button.setBounds(230,450,250,100); 
+//    button.setSize(,);
     button.setVisible(true); 
   }
   
@@ -87,7 +94,7 @@ public class AttachTrial2 {
       }
       DataOutputStream dataOut = new DataOutputStream(
              new FileOutputStream("src" + File.separator + "snactor" + File.separator +
-                                        "Reload01a.java"));
+                                        className+".java"));
                                         
       System.out.println("Writing the class file.");
       dataOut.writeBytes(theCode);

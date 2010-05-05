@@ -103,7 +103,8 @@ public class Act extends Entity {
 	public static void excute(Node a,Network m) throws CustomException { 
 		
 		if (((Act) a.getEntity()).getAgenda().equals("start")) {
-			Queue.stackPop();
+			//Queue.stackPop();
+			
 			if(Queue.isEmpty())
 			{System.out.println("mxmxmx");}
 			((Act) a.getEntity()).setAgenda("find-preconditions");
@@ -112,22 +113,19 @@ public class Act extends Entity {
 			
 		} else if (((Act) a.getEntity()).getAgenda().equals(
 				"find-preconditions")) {
-			Queue.stackPop();
-			System.out.println("2");
+			//Queue.stackPop();
+			//System.out.println("2");
 			if (!reports.isEmpty()) {
-				System.out.println("22");
+				
 				((Act) a.getEntity()).setPreConditions(reports);
-			
+				//System.out.println(reports.getFirst().getIdentifier());
 				((Act) a.getEntity()).setReports(new LinkedList<Node>());
 				((Act) a.getEntity())
 						.setUnAchievedPreConditions(new LinkedList<Node>());
 				((Act) a.getEntity()).setAgenda("test-preconditions");
 				Queue.stackPush(a);
 				testPreconditions();
-				if(!preConditions.isEmpty())
-				{
-				System.out.println("a7a");
-				}
+				
 			} else {
 				((Act) a.getEntity()).setAgenda("find-effects");
 				Queue.stackPush(a);
@@ -135,11 +133,11 @@ public class Act extends Entity {
 			}
 		} else if (((Act) a.getEntity()).getAgenda().equals(
 				"test-preconditions")) {
-			Queue.stackPop();
+			//Queue.stackPop();
 			
 			if (pretrialcount < 5) {
 				if (tallyPreconditions(preConditions, reports)) {
-					System.out.println("a7a");
+					//System.out.println("a7a");
 
 					((Act) a.getEntity()).setReports(new LinkedList<Node>());
 					((Act) a.getEntity()).setAgenda("find-effects");
@@ -149,7 +147,9 @@ public class Act extends Entity {
 					((Act) a.getEntity()).setAgenda("start");
 					((Act) a.getEntity()).setReports(new LinkedList<Node>());
 					Queue.stackPush(a);
+				//	System.out.println(unAchievedPreConditions.getLast().getIdentifier());
 					schedulePreconditions(unAchievedPreConditions,m);
+					
 					pretrialcount++;
 				}
 			} else {
@@ -158,40 +158,58 @@ public class Act extends Entity {
 			}
 
 		} else if (((Act) a.getEntity()).getAgenda().equals("find-effects")) {
-			Queue.stackPop();
-			System.out.println("3");
+			//Queue.stackPop();
+		//	System.out.println("3");
+			
 			pretrialcount = 0;
 			if (!reports.isEmpty()) {
+				
 				((Act) a.getEntity()).setEffects(reports);
 				((Act) a.getEntity()).setReports(new LinkedList<Node>());
+				Queue.stackPush(a);
 				scheduleBelieveEffects(((Act) a.getEntity()).getEffects(),m);
 			}
+			
 				((Act) a.getEntity()).setAgenda("excute");
 				Queue.stackPush(a);
+				
 			
 			
 		} else if (((Act) a.getEntity()).getAgenda().equals("excute")) {
-			Queue.stackPop();
-			// This will change to primitive check
+			
+			//Queue.stackPop();
+		//	System.out.println(((Act) a.getEntity()).getPrimaction());
 			if (((Act) a.getEntity()).getPrimaction()) {
+			//System.out.println(((Act) a.getEntity()).getTheAction().getIdentifier());
 				excutePrimaction(((Act) a.getEntity()).getTheAction());
 				((Act) a.getEntity()).setAgenda("done");
 			} else {
+				
 				((Act) a.getEntity()).setReports(new LinkedList<Node>());
 				((Act) a.getEntity()).setAgenda("find-plans");
 				Queue.stackPush(a);
 				findPlans(a,m);
 			}
 		} else if (((Act) a.getEntity()).getAgenda().equals("find-plans")) {
-			Queue.stackPop();
+		//	Queue.stackPop();
 			if (!reports.isEmpty())
 				((Act) a.getEntity()).setPlans(plans);
 			((Act) a.getEntity()).setReports(new LinkedList<Node>());
 			
 		//	schedulePlans(((Act) a.getEntity()).getPlans());
-		} else {
-			System.out.println("No plans found!");
+		} else if (((Act) a.getEntity()).getAgenda().equals("done"))
+		{
+			Queue.stackPop();
+		}
+		else
+		{
 			
+			System.out.println("No plans found!");
+//			while(!Queue.isEmpty())
+//			{
+//				Queue.stackPop();
+//				
+//			}
 		}
 	}
 
@@ -237,7 +255,7 @@ public class Act extends Entity {
 
 	private static void excutePrimaction(Node a) 
 	{
-		System.out.println(a.getIdentifier());
+	//	System.out.println(a.getIdentifier());
 		 ((Action) a.getEntity()).Perform();
 	}
 
@@ -246,58 +264,101 @@ public class Act extends Entity {
 		
 		Relation r1 = m.getRelation("action");
 		Relation r2 = m.getRelation("actObject");
-
-		CaseFrame cf1 = m.getCaseFrame("act");
 		
-			for (int i = 0; i < effects.size(); i++) {
-				Object[][] o4 = new Object[2][2];
+		CaseFrame x = m.getCaseFrame("actObject,action");
+		
+		
+			Object[][] o20 = new Object[2][2];
 
-				o4[0][0] = r1;
-				o4[1][0] = r2;
-				Node bn7 = m.build("effectBTest");
-				Node bn8 = effectsList.get(i);
-				o4[0][1] = bn7;
-				o4[1][1] = bn8;
+			o20[0][0] = r1;
+			o20[1][0] = r2;
+			Node bn21 = m.build("AchieveEffect");
+			//Node bn22 = ;
+			//System.out.println(preConditions.getFirst().getIdentifier());
+			o20[0][1] = bn21;
+			o20[1][1] = effects.getFirst();
 
-				BELIEVE b1 = new BELIEVE(bn7);
-				bn7.setEntity(b1);
-
-				Node zz = m.build(o4, cf1);
-				((Act) zz.getEntity()).setAgenda("start");
-				((Act) zz.getEntity()).setPrimaction(true);
-				performSNePS(zz,m);
+			try {
+				Act.attach(bn21,"Achieve");
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-	}
+
+			Node yy = m.build(o20,x);
+			
+			Act a21 = new Act((MolecularNode) yy);
+			yy.setEntity(a21);
+
+			
+			a21.setPrimaction(true);
+			a21.setAgenda("start");
+			
+			Queue.stackPush(yy);
+		//	System.out.println("node built");
+		//	System.out.println(((MolecularNode) yy).getCableSet().getCable("actObject").getNodeSet().getNodes().getLast().getIdentifier());
+			performSNePS(yy,m);
+			
+			m.removeNode(yy);
+			m.removeNode(bn21);
+			}
+	
 
 	private static void schedulePreconditions(LinkedList<Node> preConditions,Network m)
 			throws CustomException {
 
-
+		
 		Relation r1 = m.getRelation("action");
 		Relation r2 = m.getRelation("actObject");
+		
+		CaseFrame x = m.getCaseFrame("actObject,action");
+		
+		
+			Object[][] o20 = new Object[2][2];
 
-		CaseFrame cf1 = m.getCaseFrame("act");
+			o20[0][0] = r1;
+			o20[1][0] = r2;
+			Node bn21 = m.build("AchievePreCond");
+			//Node bn22 = ;
+			//System.out.println(preConditions.getFirst().getIdentifier());
+			o20[0][1] = bn21;
+			o20[1][1] = preConditions.getFirst();
 
-		for (int i = 0; i < preConditions.size(); i++) 
-		{
-			Object[][] o4 = new Object[2][2];
+			try {
+				Act.attach(bn21,"Achieve");
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-			o4[0][0] = r1;
-			o4[1][0] = r2;
-			Node bn7 = m.build("AchievePreCond");
-			Node bn8 = preConditions.get(i);
-			o4[0][1] = bn7;
-			o4[1][1] = bn8;
-
-			Achieve aa = new Achieve(bn7);
-			bn7.setEntity(aa);
-
-			Node yy = m.build(o4, cf1);
+			Node yy = m.build(o20,x);
 			
-			((Act) yy.getEntity()).setAgenda("start");
-			((Act) yy.getEntity()).setPrimaction(true);
+			Act a21 = new Act((MolecularNode) yy);
+			yy.setEntity(a21);
+
+			
+			a21.setPrimaction(true);
+			a21.setAgenda("start");
+			
+			Queue.stackPush(yy);
+		//	System.out.println("node built");
+		//	System.out.println(((MolecularNode) yy).getCableSet().getCable("actObject").getNodeSet().getNodes().getLast().getIdentifier());
 			performSNePS(yy,m);
-		}
+			
+			m.removeNode(yy);
+			m.removeNode(bn21);
 		/*LinkedList<Act> achieveActs = new LinkedList<Act>();
 		Node achieveActProcess = null;
 
@@ -378,7 +439,7 @@ public class Act extends Entity {
 					if (((MolecularNode) nodess.getLast()).getCableSet()
 							.getCable("act").getNodeSet().getNodes().getFirst()
 							.getIdentifier().equals(a.getIdentifier())) {
-						System.out.println(nodess.getLast().getIdentifier());
+						//System.out.println(nodess.getLast().getIdentifier());
 						reports.add(((MolecularNode) nodess.getLast())
 								.getCableSet().getCable("effect").getNodeSet()
 								.getNodes().getFirst());
@@ -408,7 +469,7 @@ public class Act extends Entity {
 			} else {
 				System.out.println("Pre-Condition :"
 						+ preConditions.get(i).getIdentifier()
-						+ "is not Asserted");
+						+ " "+"is not Asserted");
 				unAchievedPreConditions.add(preConditions.get(i));
 			}
 		}
@@ -438,7 +499,7 @@ public class Act extends Entity {
 					if (((MolecularNode) nodess.getLast()).getCableSet()
 							.getCable("act").getNodeSet().getNodes().getFirst()
 							.getIdentifier().equals(a.getIdentifier())) {
-						System.out.println(nodess.getLast().getIdentifier());
+						//System.out.println(nodess.getLast().getIdentifier());
 						reports.add(((MolecularNode) nodess.getLast())
 								.getCableSet().getCable("precondition")
 								.getNodeSet().getNodes().getFirst());
@@ -556,7 +617,7 @@ public class Act extends Entity {
 		while(!Queue.isEmpty())
 				{	
 				excute(n,m);
-				performSNePS(n,m);
+				performSNePS(Queue.stackPop(),m);
 					
 			}
 	}
@@ -580,8 +641,8 @@ public class Act extends Entity {
 	 return null;
 	}
 	}
-	@SuppressWarnings("static-access")
-	public static void main(String[] args) throws CustomException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+//	@SuppressWarnings("static-access")
+/*	public static void main(String[] args) throws CustomException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		// Condition test = new Condition();
 		Condition test = new Condition();
 		
@@ -598,6 +659,8 @@ public class Act extends Entity {
 		l.add(r2);
 		
 		CaseFrame cf1 = m.defineCaseFrame("act", l);
+		
+		//System.out.println(cf1.getId());
 		
 		LinkedList<Relation> l2 = new LinkedList<Relation>();
 		l2.add(r3);
@@ -637,11 +700,11 @@ public class Act extends Entity {
 		o3[1][1] = n4;
 		
 		
-		SNSEQUENCE aa2  = new SNSEQUENCE(n4);
-		n4.setEntity(aa2);
+//		SNSEQUENCE aa2  = new SNSEQUENCE(n4);
+//		n4.setEntity(aa2);
 		
-		Action aa3  = new Action(bn5);
-		bn5.setEntity(aa3);
+//		Action aa3  = new Action(bn5);
+//		bn5.setEntity(aa3);
 		
 	
 		
@@ -778,4 +841,4 @@ public class Act extends Entity {
 		 */
 	}
 
-}
+

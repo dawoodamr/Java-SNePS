@@ -9,8 +9,9 @@ public class WITHALL extends Action
 {
 	Condition test = new Condition();
 	
-	LinkedList<Node> designator = new LinkedList<Node>();
-	
+	LinkedList<Node> reports = new LinkedList<Node>();
+
+	Network m;
 	public WITHALL(Node node)
 	{
 		
@@ -18,17 +19,19 @@ public class WITHALL extends Action
 	
 	}
 	
-	@SuppressWarnings({ "static-access", "unchecked" })
+	@SuppressWarnings({ "static-access" })
 	public void Perform()
 	{
 		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
-		LinkedList nodes = ((Act) n.getEntity()).getArrangedObjects();
-		
+		LinkedList<Node> vars = ((Act) n.getEntity()).getArrangedObjects();
+		@SuppressWarnings("unused")
+		Node doAct = ((MolecularNode) n).getCableSet().getCable("do").getNodeSet().getNodes().getFirst();
+		Node suchThat = ((MolecularNode) n).getCableSet().getCable("suchthat").getNodeSet().getNodes().getFirst();
 		if(((Act) n.getEntity()).getAgenda().equals("start"))
 		{
 			((Act) n.getEntity()).setAgenda("identify-objects");
 			queue.stackPush(n);
-			identifyObjects(n,nodes);
+			identifyObjects(n,suchThat, vars);
 		}
 		else
 		if(((Act) n.getEntity()).getAgenda().equals("identify-objects"))
@@ -36,7 +39,7 @@ public class WITHALL extends Action
 			((Act) n.getEntity()).setAgenda("done");
 
 		}
-		if(!designator.isEmpty())
+		if(!reports.isEmpty())
 		{
 			scheduleWithsomeActs();
 		}
@@ -48,16 +51,42 @@ public class WITHALL extends Action
 		
 	}
 
-	@SuppressWarnings("unchecked")
-	private void identifyObjects(Node n, LinkedList nodes) 
-	{
-		for(int i=0; i<nodes.size();i++)
+	
+		@SuppressWarnings("unchecked")
+		private void identifyObjects(Node n, Node suchThat, LinkedList<Node> vars) 
 		{
-		if(test.testConditions((Node) nodes.get(i)))
-		{
-			designator.add((Node) nodes.get(i));		
-		}
+			LinkedList<Node> nodess = new LinkedList<Node>();
+			java.util.Enumeration keys = m.getNodes().keys();
+			while( keys.hasMoreElements() )		
+				
+		    {
+				Object aKey = keys.nextElement();
+				Object aValue = m.getNodes().get(aKey);
+				nodess.add((Node) aValue);
+	   			test.testConditions(suchThat);
+	   			if(!nodess.getLast().getClass().getSimpleName().equals("BaseNode"))
+	{ 
+	   if(((MolecularNode) nodess.getLast()).getCableSet().contains("property")&&
+		  ((MolecularNode)nodess.getLast()).getCableSet().contains("object"))
+	   	{
+		   if(((MolecularNode) nodess.getLast()).getCableSet().getCable("property").getNodeSet().getNodes().getFirst().getIdentifier().equals(suchThat.getIdentifier()))
+		   {	
+			   for(int i=0; i<vars.size();i++)
+			   {
+				   if(((MolecularNode) nodess.getLast()).getCableSet().getCable("object").getNodeSet().getNodes().getFirst().equals(vars.get(i)))
+				   {
+				   
+					   	reports.add(((MolecularNode) nodess.getLast()).getCableSet().getCable("object").getNodeSet().getNodes().getFirst());
+		  
+				   }
+			   }
+		   }
+		   
+	   	}
+	}
+	   		}
+			
+			((Act) n.getEntity()).setReports(reports);
 		}
 	}
 
-}

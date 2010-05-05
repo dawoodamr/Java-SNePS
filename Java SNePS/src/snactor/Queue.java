@@ -14,6 +14,11 @@ public class Queue
 	{
 		theQueue.push(n);
 	}
+
+	public static int getsize()
+	{
+		return theQueue.size();
+	}
 	
 	public static Node stackPop()
 	{
@@ -28,6 +33,15 @@ public class Queue
 			return theQueue.pop();
 		}
 		
+	}
+
+	public static boolean isEmpty() 
+	{
+		if(theQueue.isEmpty())
+		{
+			return true;
+		}
+		return false;
 	}
 	
 

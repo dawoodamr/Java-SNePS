@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import sneps.MolecularNode;
 
 import sneps.Node;
-//shecdules snitrate each time 
+
 public class SNITRATE extends Action
 {
 	Condition test = new Condition();
@@ -61,7 +61,7 @@ public class SNITRATE extends Action
 	private void queuePlanB() 
 	{
 		
-		
+		System.out.println("No Else Defined");
 		
 	}
 

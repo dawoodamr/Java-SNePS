@@ -16,14 +16,15 @@ public class DoOne extends Action
 	
 	}
 	
-	@SuppressWarnings({ "static-access", "unchecked" })
+	@SuppressWarnings({ "static-access" })
 	public void Perform()
 	{
 		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
-		LinkedList nodes = ((Act) n.getEntity()).getArrangedObjects();
+		LinkedList<Node> nodes = ((Act) n.getEntity()).getArrangedObjects();
 		
+		((Act) nodes.getFirst().getEntity()).setAgenda("start");
 			queue.stackPush((Node) nodes.getFirst());
-			System.out.println(queue.stackPop().getIdentifier());
+		//	System.out.println(queue.stackPop().getIdentifier());
 		
 		
 	}
