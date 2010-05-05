@@ -1,12 +1,9 @@
 package snepsui.Interface;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -57,11 +54,11 @@ public class TracingPanel extends javax.swing.JPanel {
 	
 	private void updateTextArea(final String text) {  
 		  SwingUtilities.invokeLater(new Runnable() {  
-		    public void run() {  
+		  public void run() {  
 		    	jTextArea1.append(text);  
 		    }  
 		  });  
-		}
+	}
 	
 	private void redirectSystemStreams() {  
 		  OutputStream out = new OutputStream() {  
@@ -83,31 +80,5 @@ public class TracingPanel extends javax.swing.JPanel {
 		  
 		  System.setOut(new PrintStream(out, true));  
 		  System.setErr(new PrintStream(out, true));  
-		}
-	
-	public void writeToTextArea(String text) {
-		jTextArea1.setSelectedTextColor(Color.BLACK);
-		jTextArea1.append(text);
-		
-		Timer timer = new Timer();
-		TimerTask timerTask = new TimerTask() {
-			int i = 0 ;
-			@Override
-			public void run() {
-				getText(i);
-				i++;
-			}
-		};
-		timer.schedule(timerTask, 60000, Long.MAX_VALUE);
-		
-		this.validate();
-		this.repaint();
-	}
-	
-	private void getText(int i) {
-		jTextArea1.append("Counter" + i + "\n");
-		System.out.println("Counter" + i);
-		this.validate();
-		this.repaint();
 	}
 }
