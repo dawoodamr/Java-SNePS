@@ -15,7 +15,7 @@ public abstract class Node
 	/**
 	 * the counter used for counting the nodes created
 	 */
-	private static int count = 0;
+	private static int count = 1;
 	
 	/**
 	 * the id is like an index of the node

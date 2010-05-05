@@ -108,7 +108,7 @@ public class Network implements Serializable
 	/**
 	 * @return the hash table of molecular nodes
 	 */
-	public Hashtable<String, NodeSet> getMolecularNodes()
+	public Hashtable<String,NodeSet> getMolecularNodes()
 	{
 		return molecularNodes;
 	}
@@ -187,6 +187,46 @@ public class Network implements Serializable
 			throw new CustomException("there is no node with such name");
 		else
 			return nodes.get(identifier);
+	}
+	
+	/**
+	 * @param array the 2D array of Objects that represents relation-node pairs for the cable set
+	 * @return the molecular node that have such a cable set
+	 * @throws CustomException if the node does not exist
+	 */
+	public MolecularNode getMolecularNode(Object[][] array)throws CustomException
+	{
+		if(! cableSetExists(array))
+			throw new CustomException("the node does not exist");
+		else
+		{
+			int counter = 0;
+			NodeSet intersection = new NodeSet();
+			while(true)
+			{
+				if(array[counter][1].getClass().getSimpleName().equals("NodeSet"))
+					counter++;
+				else
+				{
+					String r = ((Relation) array[counter][0]).getName();
+					NodeSet ns = ((Node) array[counter][1]).getUpCableSet().getUpCable(r).getNodeSet();
+					intersection.getNodes().addAll(ns.getNodes());
+					break;
+				}
+			}
+			for(int i=counter;i<array.length;i++)
+			{
+				if(array[i][1].getClass().getSimpleName().equals("NodeSet"))
+					continue;
+				else
+				{
+					Relation r1 = (Relation) array[i][0];
+					NodeSet ns1 = ((Node) array[i][1]).getUpCableSet().getUpCable(r1).getNodeSet();
+					intersection = intersection.Intersection(ns1);
+				}
+			}
+			return (MolecularNode) intersection.getNodes().getFirst();
+		}
 	}
 	
 	/**
@@ -315,6 +355,54 @@ public class Network implements Serializable
 	}
 	
 	/**
+	 * this method checks whether a CableSet was build before in the network or not
+	 * 
+	 * @param array a 2D array of relations and nodes that we want to check it it represents
+	 * a cable set that already exists in the network
+	 * @return true if the CableSet exists and false otherwise
+	 */
+	public boolean cableSetExists(Object[][] array)
+	{
+		int counter = 0;
+		NodeSet result = new NodeSet();
+		while(true)
+		{
+			if(array[counter][1].getClass().getSimpleName().equals("NodeSet"))
+				counter++;
+			else
+			{
+				break;
+			}
+		}
+		Node node = (Node) array[counter][1];
+		UpCableSet upCableSet = node.getUpCableSet();
+		Relation relation = (Relation) array[counter][0];
+		if(! upCableSet.contains(relation))
+			return false;
+		UpCable upCable = upCableSet.getUpCable(relation);
+		NodeSet ns = upCable.getNodeSet();
+		result.getNodes().addAll(ns.getNodes());
+		
+		for(int i=counter;i<array.length;i++)
+		{
+			if(array[i][1].getClass().getSimpleName().equals("NodeSet"))
+				continue;
+			node = (Node) array[i][1];
+			upCableSet = node.getUpCableSet();
+			relation = (Relation) array[i][0];
+			if(! upCableSet.contains(relation))
+				return false;
+			upCable = upCableSet.getUpCable(relation);
+			ns = upCable.getNodeSet();
+			result = result.Intersection(ns);
+		}
+		
+		if(result.getNodes().size() == 1)
+			return true;
+		return false;
+	}
+	
+	/**
 	 * @param identifier the name of the variable node as the user specified
 	 * @return the variable node that was just created
 	 * @throws CustomException an exception is thrown if the node already exists
@@ -367,7 +455,7 @@ public class Network implements Serializable
 	 */
 	public Node build(Object[][] array,CaseFrame caseFrame)throws CustomException
 	{
-		if(exists(array))
+		if(cableSetExists(array))
 			throw new CustomException("cable set already exists");
 		if(isToBePattern(array))
 			return createPatNode(array,caseFrame);
@@ -509,15 +597,18 @@ public class Network implements Serializable
 		{
 			System.out.println("varhere    >>>>> 3");
 			Stack<VariableNode> path = source(u,rSub);
-			VariableNode v = path.pop();
-			collapse(path,v,rSub);
-			if(! rSub.isBound(v))
+			if(! path.isEmpty())
 			{
-				rSub.putIn(new Binding(v,t));
-				return true;
+				VariableNode v = path.pop();
+				collapse(path,v,rSub);
+				if(! rSub.isBound(v))
+				{
+					rSub.putIn(new Binding(v,t));
+					return true;
+				}
+				if(recurHERe(v,(Node) rSub.getBindingByVariable(v).getNode(),t,rSub,rightOrder))
+					return true;
 			}
-			if(recurHERe(v,(Node) rSub.getBindingByVariable(v).getNode(),t,rSub,rightOrder))
-				return true;
 		}else
 		{
 			System.out.println("varhere    >>>>> 4");
@@ -529,6 +620,8 @@ public class Network implements Serializable
 			}
 			System.out.println("varhere    >>>>> 5");
 			Stack<VariableNode> path = source(u,rSub);
+			if(! path.isEmpty())
+			{
 			VariableNode v = path.pop();
 			if(! rSub.isBound(v))
 			{
@@ -572,7 +665,7 @@ public class Network implements Serializable
 					}
 				}
 			}
-		}
+		}}
 		System.out.println("varhere    >>>>> 9");
 		return false;
 	}
@@ -634,7 +727,7 @@ public class Network implements Serializable
 		return flag;
 	}
 	
-	public boolean vERe(VariableNode u,Substitutions r,Substitutions s,NodeSet zSet)
+	public Node vERe(VariableNode u,Substitutions r,Substitutions s,NodeSet zSet)
 	{
 		Node z = null;
 		Stack<VariableNode> path = source(u,r);
@@ -665,7 +758,7 @@ public class Network implements Serializable
 						path.get(i).setLoop(true);
 					}
 					NodeSet tSet = new NodeSet();
-					if(termVERe(y,r,s,tSet))
+					if(termVERe(y,r,s,tSet) != null)
 					{
 						z = tSet.getNodes().getFirst();
 						if(! s.isBound(v))
@@ -676,7 +769,7 @@ public class Network implements Serializable
 						if(v.isLoop())
 						{
 							v.setLoop(false);
-							return false;
+							return null;
 						}
 						else{
 							if(! s.isBound(v))
@@ -695,10 +788,10 @@ public class Network implements Serializable
 			s.getBindingByVariable(path.get(i)).setNode(z);
 		}
 		
-		return true;
+		return z;
 	}
 	
-	public boolean termVERe(MolecularNode t,Substitutions r,Substitutions s,NodeSet tSet)
+	public Node termVERe(MolecularNode t,Substitutions r,Substitutions s,NodeSet tSet)
 	{
 		for(int i=0;i<t.getCableSet().getCables().size();i++)
 		{
@@ -714,14 +807,14 @@ public class Network implements Serializable
 						if(v.isLoop())
 						{
 							v.setLoop(false);
-							return false;
+							return null;
 						}	
 					}
 					else{
 						if(r.isBound(v))
 						{
 							NodeSet z = new NodeSet();
-							if(vERe(v,r,s,z))
+							if(vERe(v,r,s,z) != null)
 							{
 								s.getBindingByVariable(v).setNode(z.getNodes().getFirst());
 							}
@@ -733,7 +826,7 @@ public class Network implements Serializable
 				}
 			}
 		}
-		return true;
+		return t;
 	}
 	
 	/**
@@ -839,7 +932,7 @@ public class Network implements Serializable
 		Node node = nodeList.removeFirst();
 		NodeSet ns = new NodeSet(nodeList);
 		
-		return Union(path.followConverse(node),findUnion(path,ns));
+		return path.followConverse(node).Union(findUnion(path,ns));
 	}
 	
 	/**
@@ -856,43 +949,7 @@ public class Network implements Serializable
 		Path path = (Path) array[index][0];
 		NodeSet nodeSet = (NodeSet) array[index][1];
 		
-		return intersection(findUnion(path,nodeSet),findIntersection(array,++index));
-	}
-	
-	/**
-	 * this method checks whether a CableSet was build before in the notwork or not
-	 * 
-	 * @param array a 2D array of relations and nodes that we want to check it it represents
-	 * a cable set that already exists in the network
-	 * @return true if the CableSet exists and false otherwise
-	 */
-	private boolean exists(Object[][] array)
-	{
-		NodeSet result = new NodeSet();
-		Node node = (Node) array[0][1];
-		UpCableSet upCableSet = node.getUpCableSet();
-		Relation relation = (Relation) array[0][0];
-		if(! upCableSet.contains(relation))
-			return false;
-		UpCable upCable = upCableSet.getUpCable(relation);
-		NodeSet ns = upCable.getNodeSet();
-		result.getNodes().addAll(ns.getNodes());
-		
-		for(int i=1;i<array.length;i++)
-		{
-			node = (Node) array[i][1];
-			upCableSet = node.getUpCableSet();
-			relation = (Relation) array[i][0];
-			if(! upCableSet.contains(relation))
-				return false;
-			upCable = upCableSet.getUpCable(relation);
-			ns = upCable.getNodeSet();
-			result = intersection(result,ns);
-		}
-		
-		if(result.getNodes().size() == 1)
-			return true;
-		return false;
+		return findUnion(path,nodeSet).Intersection(findIntersection(array,++index));
 	}
 	
 	/**
@@ -919,13 +976,19 @@ public class Network implements Serializable
 			{
 				PatternNode patternNode = (PatternNode) node;
 				LinkedList<VariableNode> varNodes = patternNode.getFreeVariables();
-				for(int j=0;j<array.length;j++)
+				for(int j=0;j<varNodes.size();j++)
 				{
-					Relation re = (Relation) array[j][0];
-					Node no = (Node) array[j][1];
-					if(varNodes.contains(no) && !re.isQuantifier())
-						{
-						return true;}	
+					VariableNode v = varNodes.get(j);
+					boolean flag = false;
+					for(int k=0;k<array.length;k++)
+					{
+						if(array[k][1].getClass().getSimpleName().equals("NodeSet"))
+							continue;
+						if(array[k][1].equals(v))
+							flag = true;
+					}
+					if(! flag)
+						return true;
 				}
 				
 			}
@@ -1166,56 +1229,6 @@ public class Network implements Serializable
 		case '8':;
 		case '9':return true;
 		default : return false;
-		}
-	}
-	
-	/**
-	 * this method gets the union of two node sets
-	 * 
-	 * @param ns1 the first node set
-	 * @param ns2 the second node set
-	 * @return the union of the two node sets
-	 */
-	private NodeSet Union(NodeSet ns1,NodeSet ns2)
-	{
-		NodeSet result = new NodeSet();
-		result.getNodes().addAll(ns1.getNodes());
-		addWithNoRepeation(ns2,result);
-		return result;
-	}
-	
-	/**
-	 * this method gets the intersection between two node sets
-	 * 
-	 * @param ns1 the first node set
-	 * @param ns2 the second node set
-	 * @return the intersection nodes of those two node sets
-	 */
-	private NodeSet intersection(NodeSet ns1,NodeSet ns2)
-	{
-		NodeSet result = new NodeSet();
-		LinkedList<Node> n1 = ns1.getNodes();
-		LinkedList<Node> n2 = ns2.getNodes();
-		for(int i=0;i<n1.size();i++)
-		{
-			if(n2.contains(n1.get(i)))
-				result.addNode(n1.get(i));
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * @param source the node set containing nodes we want to add to the other node set
-	 * @param destination the node set containing nodes we want to add the nodes to
-	 */
-	private void addWithNoRepeation(NodeSet source,NodeSet destination)
-	{
-		for(int i=0;i<source.getNodes().size();i++)
-		{
-			Node n = source.getNodes().get(i);
-			if(! destination.getNodes().contains(n))
-				destination.getNodes().add(n);
 		}
 	}
 	
