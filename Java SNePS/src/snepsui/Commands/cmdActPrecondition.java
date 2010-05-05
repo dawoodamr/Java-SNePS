@@ -2,14 +2,17 @@ package snepsui.Commands;
 
 import java.awt.Dimension;
 
+import javax.swing.WindowConstants;
+import javax.swing.JFrame;
+
 import sneps.Network;
 import snepsui.Interface.SNePSInterface;
 
-public class cmdWithSome extends javax.swing.JPanel {
+public class cmdActPrecondition extends javax.swing.JPanel {
 	private Network network;
 	private SNePSInterface frame;
 	
-	public cmdWithSome(Network network, SNePSInterface frame) {
+	public cmdActPrecondition(Network network, SNePSInterface frame) {
 		super();
 		this.frame = frame;
 		this.network = network;

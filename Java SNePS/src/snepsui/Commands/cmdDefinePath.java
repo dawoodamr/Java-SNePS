@@ -77,9 +77,9 @@ public class cmdDefinePath extends javax.swing.JPanel {
 	private JButton pathButton;
 	private JButton infoButton;
 	private Network network;
-	private LinkedList<Path> listModelPaths;
-	private LinkedList<Path> paths;
 	private SNePSInterface frame;
+	private LinkedList<Path> paths;
+	private LinkedList<Path> listModelPaths;
 	
 	@Action
     public void add() {}
@@ -260,17 +260,16 @@ public class cmdDefinePath extends javax.swing.JPanel {
 			
 			@Override
 			public void windowClosed(WindowEvent e) {
-				for(Path path :pathPanel.getPaths()) {
-					paths.add(path);
-					
-					String currentPath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(path);
-					if(pathTextField.getText().isEmpty()) {
-						pathTextField.setText(currentPath);
-					} else {
-						String previousPath = pathTextField.getText();
-						pathTextField.setText(previousPath + ", " + currentPath);
-					}
+				paths.add(pathPanel.getResultPath());
+				
+				String currentPath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(pathPanel.getResultPath());
+				if(pathTextField.getText().isEmpty()) {
+					pathTextField.setText(currentPath);
+				} else {
+					String previousPath = pathTextField.getText();
+					pathTextField.setText(previousPath + ", " + currentPath);
 				}
+				
 				frame.getsNePSULPanel1().getMenuDrivenCommands().cascadeBack();
 				doneButton.setEnabled(true);
 			}
@@ -279,53 +278,62 @@ public class cmdDefinePath extends javax.swing.JPanel {
 	
 	private void addButtonMouseClicked(MouseEvent evt) {
 		try {
-			//Add Relation
-			Relation relation = network.getRelation(relationComboBox.getSelectedItem().toString());
-			relationModel.addElement(relation.getName());
-
-			//Add Path
-			String pathType = pathComboBox.getSelectedItem().toString();
-			if (pathType.equals("converse")) {
-				Path path = new ConversePath(paths.getFirst());
-				listModelPaths.add(path);
-			} else if (pathType.equals("compose")) {
-				Path path = new ComposePath(paths);
-				listModelPaths.add(path);
-			} else if (pathType.equals("kstar")) {
-				Path path = new KStarPath(paths.getFirst());
-				listModelPaths.add(path);
-			} else if (pathType.equals("kplus")) {
-				Path path = new KPlusPath(paths.getFirst());
-				listModelPaths.add(path);
-			} else if (pathType.equals("or")) {
-				Path path = new OrPath(paths);
-				listModelPaths.add(path);
-			} else if (pathType.equals("and")) {
-				Path path = new AndPath(paths);
-				listModelPaths.add(path);
-			} else if (pathType.equals("relative-complement")) {
-				Path path = new RelativeComplementPath(paths.get(0), paths.get(1));
-				listModelPaths.add(path);
-			} else if (pathType.equals("irreflexive-restrict")) {
-				Path path = new IrreflexiveRestrictPath(paths.getFirst());
-				listModelPaths.add(path);
-			} else if (pathType.equals("domain-restrict")) {
-				//Path path = new DomainRestrictPath(q, node, p);
-				//network.definePath(relation, path);
-			} else if (pathType.equals("range-restrict")) {
-				//Path path = new RangeRestrictPath(p, q, node);
-				//network.definePath(relation, path);
+			if(pathComboBox.getSelectedItem().equals("unitpath") || pathComboBox.getSelectedItem().equals("unitpath-")) {
+				JOptionPane.showMessageDialog(this, 
+						"Choose a path type",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+			} else {
+				//Add Relation
+				Relation relation = network.getRelation(relationComboBox.getSelectedItem().toString());
+				relationModel.addElement(relation.getName());
+	
+				//Add Path
+				String pathType = pathComboBox.getSelectedItem().toString();
+				if (pathType.equals("converse")) {
+					Path path = new ConversePath(paths.getFirst());
+					listModelPaths.add(path);
+				} else if (pathType.equals("compose")) {
+					Path path = new ComposePath(paths);
+					listModelPaths.add(path);
+				} else if (pathType.equals("kstar")) {
+					Path path = new KStarPath(paths.getFirst());
+					listModelPaths.add(path);
+				} else if (pathType.equals("kplus")) {
+					Path path = new KPlusPath(paths.getFirst());
+					listModelPaths.add(path);
+				} else if (pathType.equals("or")) {
+					Path path = new OrPath(paths);
+					listModelPaths.add(path);
+				} else if (pathType.equals("and")) {
+					Path path = new AndPath(paths);
+					listModelPaths.add(path);
+				} else if (pathType.equals("relative-complement")) {
+					Path path = new RelativeComplementPath(paths.get(0), paths.get(1));
+					listModelPaths.add(path);
+				} else if (pathType.equals("irreflexive-restrict")) {
+					Path path = new IrreflexiveRestrictPath(paths.getFirst());
+					listModelPaths.add(path);
+				} else if (pathType.equals("domain-restrict")) {
+					//Path path = new DomainRestrictPath(q, node, p);
+					//network.definePath(relation, path);
+				} else if (pathType.equals("range-restrict")) {
+					//Path path = new RangeRestrictPath(p, q, node);
+					//network.definePath(relation, path);
+				}
+				
+				//Add the path to the List
+				String completePath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(listModelPaths.getLast());
+				pathModel.addElement(completePath);
+				
+				//Reset TestField
+				pathTextField.setText("");
+				
+				//Delete previous paths
+				for(int i = 0; i < paths.size(); i++) {
+					paths.remove(i);
+				}
 			}
-			
-			//Add the path to the List
-			String completePath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(listModelPaths.getLast());
-			pathModel.addElement(completePath);
-			
-			//Delete previous paths
-			for(int i = 0; i < paths.size(); i++) {
-				paths.remove(i);
-			}
-			
 		} catch (CustomException e) {
 			e.printStackTrace();
 		}
@@ -338,6 +346,17 @@ public class cmdDefinePath extends javax.swing.JPanel {
 				Path path = listModelPaths.get(i);
 				network.definePath(relation, path);
 			}
+			
+			relationModel.removeAllElements();
+			pathModel.removeAllElements();
+			relationComboBox.setSelectedIndex(0);
+			pathComboBox.setSelectedIndex(0);
+			
+			//Delete paths in the list
+			for(int i = 0; i < listModelPaths.size(); i++) {
+				listModelPaths.remove(i);
+			}
+			
 		} catch (CustomException e) {
 			e.printStackTrace();
 		}

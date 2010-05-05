@@ -2,15 +2,17 @@ package snepsui.Commands;
 
 import java.awt.Dimension;
 
-public class cmdNumericalQuantifier extends javax.swing.JPanel {
+import sneps.Network;
+import snepsui.Interface.SNePSInterface;
 
-	/**
-	* Auto-generated main method to display this 
-	* JPanel inside a new JFrame.
-	*/
+public class cmdNumericalQuantifier extends javax.swing.JPanel {
+	private Network network;
+	private SNePSInterface frame;
 	
-	public cmdNumericalQuantifier() {
+	public cmdNumericalQuantifier(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
+		this.network = network;
 		initGUI();
 	}
 	

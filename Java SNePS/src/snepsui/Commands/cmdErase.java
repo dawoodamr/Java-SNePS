@@ -24,7 +24,6 @@ import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
 
-
 /**
 * This code was edited or generated using CloudGarden's Jigloo
 * SWT/Swing GUI Builder, which is free for non-commercial
@@ -164,7 +163,20 @@ public class cmdErase extends javax.swing.JPanel {
 				e.printStackTrace();
 			}
 		}
-		getRootPane().getContentPane().add(new cmdErase(network));
+		nodesetModel.removeAllElements();
+		
+		DefaultComboBoxModel nodesetComboBoxModel = new DefaultComboBoxModel();
+		String str = "";
+		Hashtable<String, Node> nodes = network.getNodes();
+		Set<String> set = nodes.keySet();
+
+	    Iterator<String> itr = set.iterator();
+	    while (itr.hasNext()) {
+	      str = itr.next();
+	      nodesetComboBoxModel.addElement(nodes.get(str).getIdentifier()) ;
+	    }
+	    nodesetComboBox.setModel(nodesetComboBoxModel);
+		
 		this.repaint();
 		this.validate();
 	}

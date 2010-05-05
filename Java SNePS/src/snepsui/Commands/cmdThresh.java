@@ -2,15 +2,21 @@ package snepsui.Commands;
 
 import java.awt.Dimension;
 
-public class cmdThresh extends javax.swing.JPanel {
+import sneps.Network;
+import snepsui.Interface.SNePSInterface;
 
+public class cmdThresh extends javax.swing.JPanel {
+	private Network network;
+	private SNePSInterface frame;
 	/**
 	* Auto-generated main method to display this 
 	* JPanel inside a new JFrame.
 	*/
 	
-	public cmdThresh() {
+	public cmdThresh(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
+		this.network = network;
 		initGUI();
 	}
 	

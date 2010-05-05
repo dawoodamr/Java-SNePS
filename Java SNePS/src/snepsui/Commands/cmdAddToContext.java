@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.ActionMap;
-import javax.swing.ButtonGroup;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -19,7 +18,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
@@ -54,7 +52,6 @@ public class cmdAddToContext extends javax.swing.JPanel {
 	private JLabel contextNameLabel;
 	private JLabel nodesetLabel;
 	private JTextField nodesetTextField;
-	private ButtonGroup group;
 	private JButton buildButton;
 	private Network network;
 	private JButton assertButton;
@@ -149,7 +146,7 @@ public class cmdAddToContext extends javax.swing.JPanel {
 					nodesetList = new JList();
 					jScrollPane2.setViewportView(nodesetList);
 					nodesetList.setModel(nodesetListModel);
-					nodesetList.setBounds(463, 79, 205, 100);
+					nodesetList.setBounds(402, 83, 225, 102);
 				}
 			}
 			{
@@ -159,9 +156,6 @@ public class cmdAddToContext extends javax.swing.JPanel {
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
 				infoButton.setToolTipText("info");
-			}
-			{
-				group = new ButtonGroup();
 			}
 			{
 				buildButton = new JButton();
@@ -218,7 +212,7 @@ public class cmdAddToContext extends javax.swing.JPanel {
 				nodesetComboBox = new JComboBox();
 				this.add(nodesetComboBox);
 				nodesetComboBox.setModel(nodesetComboBoxModel);
-				nodesetComboBox.setBounds(127, 23, 108, 22);
+				nodesetComboBox.setBounds(130, 23, 108, 22);
 			}
 			{
 				ComboBoxModel contextNameComboBoxModel = new DefaultComboBoxModel();

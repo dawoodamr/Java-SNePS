@@ -3,7 +3,6 @@ package snepsui.Commands;
 import java.awt.Dimension;
 
 import javax.swing.ActionMap;
-import javax.swing.ButtonGroup;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -14,8 +13,7 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.Network;
-
-
+import snepsui.Interface.SNePSInterface;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -33,10 +31,10 @@ public class cmdListHypotheses extends javax.swing.JPanel {
 	private JLabel listHypotheseLabel;
 	private JComboBox contextNameComboBox;
 	private JLabel contextNameLabel;
-	private ButtonGroup group;
 	private JButton infoButton;
 	private JButton doneButton;
 	private Network network;
+	private SNePSInterface frame;
 
 	@Action
     public void add() {
@@ -52,8 +50,9 @@ public class cmdListHypotheses extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdListHypotheses(Network network) {
+	public cmdListHypotheses(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
 		this.network = network;
 		initGUI();
 	}
@@ -94,9 +93,6 @@ public class cmdListHypotheses extends javax.swing.JPanel {
 				this.add(contextNameComboBox);
 				contextNameComboBox.setModel(contextNameComboBoxModel);
 				contextNameComboBox.setBounds(304, 85, 200, 22);
-			}
-			{
-				group = new ButtonGroup();
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {

@@ -25,11 +25,8 @@ import javax.swing.table.TableCellEditor;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import sneps.CaseFrame;
-import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
-import sneps.Relation;
 import snepsui.Interface.SNePSInterface;
 
 /**
@@ -64,7 +61,6 @@ public class cmdObject extends javax.swing.JPanel {
 	private JTextField nodesetTextField;
 	private LinkedList<Node> nodes;
 	private SNePSInterface frame;
-	private JComboBox actions;
 
 	public cmdObject(Network network, SNePSInterface frame) {
 		super();

@@ -44,7 +44,7 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-public class cmdDoAll extends javax.swing.JPanel {
+public class cmdAchieve extends javax.swing.JPanel {
 	private JLabel addLabel;
 	private JButton doneButton;
 	private JScrollPane jScrollPane1;
@@ -63,7 +63,7 @@ public class cmdDoAll extends javax.swing.JPanel {
 	private LinkedList<Node> nodes;
 	private SNePSInterface frame;
 
-	public cmdDoAll(Network network, SNePSInterface frame) {
+	public cmdAchieve(Network network, SNePSInterface frame) {
 		super();
 		this.frame = frame;
 		this.network = network;
@@ -212,7 +212,7 @@ public class cmdDoAll extends javax.swing.JPanel {
 		Vector<Object> actionData = new Vector<Object>();
 		//actionData.add(relations.getFirst());
 		actionData.add("action");
-		actionData.add("do-all");
+		actionData.add("achieve");
 		relationNodesetTableModel.addRow(actionData);
 	
 		int numOfObjects = Integer.parseInt(objectNumberComboBox.getSelectedItem().toString());

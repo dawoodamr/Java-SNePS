@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
 import org.jdesktop.application.Action;
@@ -41,8 +42,6 @@ import snepsui.Interface.SNePSInterface;
 public class cmdUndefinePath extends javax.swing.JPanel {
 	private JLabel definePathLabel;
 	private JLabel pathLabel;
-	private DefaultListModel relationModel;
-	private DefaultListModel pathModel;
 	private JScrollPane jScrollPane1;
 	private JComboBox pathsComboBox;
 	private JList pathsList;
@@ -168,10 +167,38 @@ public class cmdUndefinePath extends javax.swing.JPanel {
 	private void doneButtonMouseClicked(MouseEvent evt) {
 		for(int i = 0; i < pathsListModel.size(); i++) {
 			try {
-				network.undefinePath(network.getRelation(pathsListModel.get(i).toString()));
+				String relation = pathsListModel.get(i).toString();
+				network.undefinePath( network.getRelation(relation.substring(0, relation.indexOf(":"))));
 			} catch (CustomException e) {
 				e.printStackTrace();
 			}
 		}
+		
+		if(pathsListModel.size() == 1) {
+			JOptionPane.showMessageDialog(this,
+			"The Path has been successfully undefined");
+		} else if(pathsListModel.size() > 1) {
+			JOptionPane.showMessageDialog(this,
+			"The Paths have been successfully undefined");
+		}
+	
+		DefaultComboBoxModel pathsComboBoxModel = new DefaultComboBoxModel();
+		
+		String str = "";
+		Hashtable<String, Relation> relations = network.getRelations();
+		Set<String> set = relations.keySet();
+
+	    Iterator<String> itr = set.iterator();
+	    while (itr.hasNext()) {
+	      str = itr.next();
+	      Path path = relations.get(str).getPath();
+	      if(path != null) {
+	    	  pathsComboBoxModel.addElement(relations.get(str).getName() + ": " 
+	    			  + frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(path));
+	      }
+	    }
+	    pathsComboBox.setModel(pathsComboBoxModel);
+	    
+	    pathsListModel.removeAllElements();
 	}
 }

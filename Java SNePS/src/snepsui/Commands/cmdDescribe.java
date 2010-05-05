@@ -5,25 +5,32 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Set;
 
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import sneps.CustomException;
+import sneps.MolecularNode;
 import sneps.Network;
+import sneps.Node;
+import sneps.PatternNode;
 import snepsui.Interface.SNePSInterface;
-
-
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -39,19 +46,16 @@ import snepsui.Interface.SNePSInterface;
 */
 public class cmdDescribe extends javax.swing.JPanel {
 	private JLabel describeLabel;
-	private JTextField contextNameTextField;
 	private JButton addButton;
 	private JButton doneButton;
 	private DefaultListModel nodesetModel;
 	private JScrollPane jScrollPane2;
-	private JRadioButton contextNameRadioButton2;
-	private JRadioButton contextNameRadioButton1;
+	private JComboBox contextComboBox;
+	private JComboBox nodesComboBox;
 	private JButton infoButton;
 	private JList nodesetList;
 	private JLabel contextNameLabel;
 	private JLabel nodesetLabel;
-	private JTextField nodesetTextField;
-	private ButtonGroup group;
 	private JButton buildButton;
 	private Network network;
 	private SNePSInterface frame;
@@ -90,12 +94,6 @@ public class cmdDescribe extends javax.swing.JPanel {
 				describeLabel.setBounds(50, 28, 58, 15);
 			}
 			{
-				contextNameTextField = new JTextField();
-				this.add(contextNameTextField);
-				contextNameTextField.setBounds(415, 54, 184, 22);
-				contextNameTextField.setEditable(false);
-			}
-			{
 				addButton = new JButton();
 				this.add(addButton);
 				addButton.setBounds(314, 27, 16, 18);
@@ -104,8 +102,8 @@ public class cmdDescribe extends javax.swing.JPanel {
 				addButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent evt) {
-						nodesetModel.addElement(nodesetTextField.getText());
-						nodesetTextField.setText("");
+						nodesetModel.addElement(nodesComboBox.getSelectedItem().toString());
+						nodesComboBox.setSelectedIndex(0);
 						validate();
 					}
 				});
@@ -115,11 +113,11 @@ public class cmdDescribe extends javax.swing.JPanel {
 				this.add(doneButton);
 				doneButton.setBounds(314, 185, 77, 29);
 				doneButton.setName("doneButton");
-			}
-			{
-				nodesetTextField = new JTextField();
-				this.add(nodesetTextField);
-				nodesetTextField.setBounds(108, 25, 189, 22);
+				doneButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						doneButtonMouseClicked(evt);
+					}
+				});
 			}
 			{
 				nodesetLabel = new JLabel();
@@ -130,7 +128,7 @@ public class cmdDescribe extends javax.swing.JPanel {
 			{
 				contextNameLabel = new JLabel();
 				this.add(contextNameLabel);
-				contextNameLabel.setBounds(391, 4, 97, 15);
+				contextNameLabel.setBounds(414, 4, 97, 15);
 				contextNameLabel.setName("contextNameLabel");
 			}
 			{
@@ -154,32 +152,9 @@ public class cmdDescribe extends javax.swing.JPanel {
 				infoButton.setToolTipText("info");
 			}
 			{
-				contextNameRadioButton1 = new JRadioButton();
-				this.add(contextNameRadioButton1);
-				contextNameRadioButton1.setBounds(391, 26, 97, 19);
-				contextNameRadioButton1.setName("contextNameRadioButton1");
-				contextNameRadioButton1.setSelected(true);
-			}
-			{
-				contextNameRadioButton2 = new JRadioButton();
-				this.add(contextNameRadioButton2);
-				contextNameRadioButton2.setBounds(390, 59, 25, 17);
-			}
-			{
-				group = new ButtonGroup();
-				group.add(contextNameRadioButton1);
-				group.add(contextNameRadioButton2);
-				contextNameRadioButton2.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent evt) {
-						contextNameRadioButton2MouseClicked(evt);
-					}
-				});
-			}
-			{
 				buildButton = new JButton();
 				this.add(buildButton);
-				buildButton.setBounds(341, 26, 18, 20);
+				buildButton.setBounds(335, 26, 18, 20);
 				buildButton.setAction(getAppActionMap().get("build"));
 				buildButton.setFocusable(false);
 				buildButton.setToolTipText("build");
@@ -189,18 +164,36 @@ public class cmdDescribe extends javax.swing.JPanel {
 					}
 				});
 			}
+			{
+				DefaultComboBoxModel nodesetComboBoxModel = new DefaultComboBoxModel();
+				
+				String str = "";
+				Hashtable<String, Node> nodes = network.getNodes();
+				Set<String> set = nodes.keySet();
+
+			    Iterator<String> itr = set.iterator();
+			    while (itr.hasNext()) {
+			      str = itr.next();
+			      Node node = nodes.get(str);
+			      if(node instanceof PatternNode || node instanceof MolecularNode) {
+			    	  nodesetComboBoxModel.addElement(nodes.get(str).getIdentifier()) ;
+			      }
+			    }
+				nodesComboBox = new JComboBox();
+				this.add(nodesComboBox);
+				nodesComboBox.setModel(nodesetComboBoxModel);
+				nodesComboBox.setBounds(108, 24, 189, 22);
+			}
+			{
+				ComboBoxModel contextComboBoxModel = new DefaultComboBoxModel();
+				contextComboBox = new JComboBox();
+				this.add(contextComboBox);
+				contextComboBox.setModel(contextComboBoxModel);
+				contextComboBox.setBounds(414, 24, 139, 22);
+			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-	
-	private void contextNameRadioButton2MouseClicked(MouseEvent evt) {
-		if(contextNameRadioButton2.isSelected()) {
-			contextNameTextField.setEditable(true);
-		}
-		else {
-			contextNameTextField.setEditable(false);
 		}
 	}
 	
@@ -210,5 +203,17 @@ public class cmdDescribe extends javax.swing.JPanel {
 		popupFrame.getContentPane().add(new cmdBuild(network, frame));
 		popupFrame.pack();
 		popupFrame.setVisible(true);
+	}
+	
+	private void doneButtonMouseClicked(MouseEvent evt) {
+		try {
+			LinkedList<Node> nodes = new LinkedList<Node>();
+			for(int i = 0; i < nodesetModel.size(); i++) {
+				Node node = network.getNode(nodesetModel.getElementAt(i).toString());
+				nodes.add(node);
+			}
+			frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(nodes);
+		} catch (CustomException e) {
+		}
 	}
 }

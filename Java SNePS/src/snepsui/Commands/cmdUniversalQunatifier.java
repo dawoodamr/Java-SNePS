@@ -14,6 +14,9 @@ import javax.swing.ListModel;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import sneps.Network;
+import snepsui.Interface.SNePSInterface;
+
 /**
 * This code was edited or generated using CloudGarden's Jigloo
 * SWT/Swing GUI Builder, which is free for non-commercial
@@ -46,9 +49,13 @@ public class cmdUniversalQunatifier extends javax.swing.JPanel {
 	private JButton infoButton;
 	private JButton addButton;
 	private JButton doneButton;
+	private Network network;
+	private SNePSInterface frame;
 
-	public cmdUniversalQunatifier() {
+	public cmdUniversalQunatifier(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
+		this.network = network;
 		initGUI();
 	}
 	

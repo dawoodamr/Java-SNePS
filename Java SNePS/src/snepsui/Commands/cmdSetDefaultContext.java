@@ -10,6 +10,9 @@ import javax.swing.JTextField;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import sneps.Network;
+import snepsui.Interface.SNePSInterface;
+
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -29,6 +32,8 @@ public class cmdSetDefaultContext extends javax.swing.JPanel {
 	private JTextField contextNameTextField;
 	private JButton doneButton;
 	private JButton infoButton;
+	private Network network;
+	private SNePSInterface frame;
 
 	@Action
     public void add() {
@@ -44,8 +49,10 @@ public class cmdSetDefaultContext extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdSetDefaultContext() {
+	public cmdSetDefaultContext(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
+		this.network = network;
 		initGUI();
 	}
 	

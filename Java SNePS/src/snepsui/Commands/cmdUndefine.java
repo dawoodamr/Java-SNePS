@@ -160,10 +160,28 @@ public class cmdUndefine extends javax.swing.JPanel {
 			network.undefineRelation(listModel.get(i).toString());
 		}
 		
-		JOptionPane.showMessageDialog(this,
-		"The Relations have been successfully undefined");
+		if(listModel.size() == 1) {
+			JOptionPane.showMessageDialog(this,
+			"The Relation has been successfully undefined");
+		} else if (listModel.size() > 1) {
+			JOptionPane.showMessageDialog(this,
+			"The Relations have been successfully undefined");
+		}
 		
+		//Reinitialize drop-down list
+		DefaultComboBoxModel relationsComboBoxModel = new DefaultComboBoxModel();
+		String str = "";
+		Hashtable<String, Relation> relations = network.getRelations();
+		Set<String> set = relations.keySet();
+
+	    Iterator<String> itr = set.iterator();
+	    while (itr.hasNext()) {
+	      str = itr.next();
+	      relationsComboBoxModel.addElement(relations.get(str).getName()) ;
+	    }
+	    relationsComboBox.setModel(relationsComboBoxModel);
 		listModel.removeAllElements();
+		
 		this.repaint();
 		this.validate();
 		

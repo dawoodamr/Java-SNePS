@@ -17,6 +17,7 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.Network;
+import snepsui.Interface.SNePSInterface;
 
 
 /**
@@ -46,6 +47,7 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
 	private JButton addButton;
 	private DefaultListModel relationModel;
 	private Network network;
+	private SNePSInterface frame;
 
 	@Action
     public void add() {
@@ -61,8 +63,9 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdDefinePrimaction(Network network) {
+	public cmdDefinePrimaction(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
 		this.network = network;
 		initGUI();
 	}

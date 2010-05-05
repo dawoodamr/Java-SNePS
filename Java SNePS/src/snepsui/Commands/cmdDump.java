@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.ActionMap;
@@ -58,7 +59,6 @@ public class cmdDump extends javax.swing.JPanel {
 	private JButton assertButton;
 	private JButton findButton;
 	private SNePSInterface frame;
-	private String newLine = "\n";
 
 	public cmdDump(Network network, SNePSInterface frame) {
 		super();
@@ -268,10 +268,12 @@ public class cmdDump extends javax.swing.JPanel {
 	
 	private void doneButtonMouseClicked(MouseEvent evt) {
 		try {
+			LinkedList<Node> nodes = new LinkedList<Node>();
 			for(int i = 0; i < nodesetListModel.size(); i++) {
 				Node node = network.getNode(nodesetListModel.getElementAt(i).toString());
-				frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(node);
+				nodes.add(node);
 			}
+			frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(nodes);
 		} catch (CustomException e) {
 		}
 	}

@@ -3,7 +3,10 @@ package snepsui.Commands;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 
 import javax.swing.ActionMap;
 import javax.swing.ComboBoxModel;
@@ -124,7 +127,17 @@ public class cmdActivate extends javax.swing.JPanel {
 				nodesetLabel.setName("nodesetLabel");
 			}
 			{
-				ComboBoxModel nodesetComboBoxModel = new DefaultComboBoxModel();
+				DefaultComboBoxModel nodesetComboBoxModel = new DefaultComboBoxModel();
+				
+				String str = "";
+				Hashtable<String, Node> nodes = network.getNodes();
+				Set<String> set = nodes.keySet();
+
+			    Iterator<String> itr = set.iterator();
+			    while (itr.hasNext()) {
+			      str = itr.next();
+			      nodesetComboBoxModel.addElement(nodes.get(str).getIdentifier()) ;
+			    }
 				nodesetComboBox = new JComboBox();
 				this.add(nodesetComboBox);
 				nodesetComboBox.setModel(nodesetComboBoxModel);

@@ -62,7 +62,6 @@ public class cmdDoOne extends javax.swing.JPanel {
 	private JTextField nodesetTextField;
 	private LinkedList<Node> nodes;
 	private SNePSInterface frame;
-	private JComboBox actions;
 
 	public cmdDoOne(Network network, SNePSInterface frame) {
 		super();
@@ -226,10 +225,6 @@ public class cmdDoOne extends javax.swing.JPanel {
 			objectData.add("Choose Node Type");
 			relationNodesetTableModel.addRow(objectData);
 		}
-	}
-	
-	private void actionsComboBoxActionPerformed(ActionEvent e) {
-		
 	}
 	
 	private void optionsComboBoxActionPerformed(ActionEvent e) {

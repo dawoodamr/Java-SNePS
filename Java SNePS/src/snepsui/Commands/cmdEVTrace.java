@@ -15,6 +15,9 @@ import javax.swing.JTextField;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import sneps.Network;
+import snepsui.Interface.SNePSInterface;
+
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -38,6 +41,8 @@ public class cmdEVTrace extends javax.swing.JPanel {
 	private JScrollPane jScrollPane1;
 	private JLabel jLabel2;
 	private JButton infoButton;
+	private Network network;
+	private SNePSInterface frame;
 	
 	@Action
     public void add() {
@@ -53,8 +58,10 @@ public class cmdEVTrace extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdEVTrace() {
+	public cmdEVTrace(Network network, SNePSInterface frame) {
 		super();
+		this.network = network;
+		this.frame = frame;
 		initGUI();
 	}
 	

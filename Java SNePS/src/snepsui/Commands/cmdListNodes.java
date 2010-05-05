@@ -1,19 +1,19 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.ActionMap;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
+
+import sneps.Network;
+import snepsui.Interface.SNePSInterface;
 
 
 /**
@@ -30,14 +30,12 @@ import org.jdesktop.application.Application;
 */
 public class cmdListNodes extends javax.swing.JPanel {
 	private JLabel listNodesLabel;
-	private JTextField contextNameTextField;
 	private JButton doneButton;
-	private DefaultListModel listModel;
-	private JRadioButton contextNameRadioButton2;
-	private JRadioButton contextNameRadioButton1;
+	private JComboBox contextComboBox;
 	private JButton infoButton;
 	private JLabel contextNameLabel;
-	private ButtonGroup group;
+	private Network network;
+	private SNePSInterface frame;
 
 	@Action
     public void add() {
@@ -53,8 +51,10 @@ public class cmdListNodes extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdListNodes() {
+	public cmdListNodes(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
+		this.network = network;
 		initGUI();
 	}
 	
@@ -67,12 +67,6 @@ public class cmdListNodes extends javax.swing.JPanel {
 				this.add(listNodesLabel);
 				listNodesLabel.setName("listNodesLabel");
 				listNodesLabel.setBounds(218, 59, 90, 15);
-			}
-			{
-				contextNameTextField = new JTextField();
-				this.add(contextNameTextField);
-				contextNameTextField.setBounds(351, 85, 184, 22);
-				contextNameTextField.setEditable(false);
 			}
 			{
 				doneButton = new JButton();
@@ -95,41 +89,15 @@ public class cmdListNodes extends javax.swing.JPanel {
 				infoButton.setToolTipText("info");
 			}
 			{
-				contextNameRadioButton1 = new JRadioButton();
-				this.add(contextNameRadioButton1);
-				contextNameRadioButton1.setBounds(326, 57, 97, 19);
-				contextNameRadioButton1.setName("contextNameRadioButton1");
-				contextNameRadioButton1.setSelected(true);
-			}
-			{
-				contextNameRadioButton2 = new JRadioButton();
-				this.add(contextNameRadioButton2);
-				contextNameRadioButton2.setBounds(326, 90, 25, 17);
-			}
-			{
-				group = new ButtonGroup();
-				group.add(contextNameRadioButton1);
-				group.add(contextNameRadioButton2);
-				contextNameRadioButton2.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent evt) {
-						contextNameRadioButton2MouseClicked(evt);
-					}
-				});
+				ComboBoxModel contextComboBoxModel = new DefaultComboBoxModel();
+				contextComboBox = new JComboBox();
+				this.add(contextComboBox);
+				contextComboBox.setModel(contextComboBoxModel);
+				contextComboBox.setBounds(326, 55, 168, 22);
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	private void contextNameRadioButton2MouseClicked(MouseEvent evt) {
-		if(contextNameRadioButton2.isSelected()) {
-			contextNameTextField.setEditable(true);
-		}
-		else {
-			contextNameTextField.setEditable(false);
-		}
-	}
-
 }

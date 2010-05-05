@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 
 import javax.swing.ActionMap;
 import javax.swing.JButton;
@@ -9,6 +10,9 @@ import javax.swing.JTextField;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
+
+import sneps.Network;
+import snepsui.Interface.SNePSInterface;
 
 
 /**
@@ -29,6 +33,8 @@ public class cmdMultiPrintRegs extends javax.swing.JPanel {
 	private JButton doneButton;
 	private JButton infoButton;
 	private JLabel jLabel3;
+	private Network network;
+	private SNePSInterface frame;
 
 	@Action
     public void add() {
@@ -44,8 +50,10 @@ public class cmdMultiPrintRegs extends javax.swing.JPanel {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdMultiPrintRegs() {
+	public cmdMultiPrintRegs(Network network, SNePSInterface frame) {
 		super();
+		this.frame = frame;
+		this.network = network;
 		initGUI();
 	}
 	

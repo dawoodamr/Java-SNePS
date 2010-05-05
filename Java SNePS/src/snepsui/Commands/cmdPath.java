@@ -16,16 +16,13 @@ import java.util.Set;
 import javax.swing.ActionMap;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.jdesktop.application.Action;
@@ -46,6 +43,7 @@ import sneps.Path;
 import sneps.Relation;
 import sneps.RelativeComplementPath;
 import snepsui.Interface.SNePSInterface;
+import snip.fns.AndOr;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -63,19 +61,17 @@ public class cmdPath extends javax.swing.JPanel {
 	private JLabel pathLabel;
 	private JLabel relationLabel;
 	private JComboBox pathComboBox;
-	private JList pathList;
-	private DefaultListModel pathModel;
-	private JScrollPane jScrollPane1;
 	private JTextField pathTextField;
 	private JButton addButton;
 	private JButton doneButton;
 	private JButton pathButton;
 	private JButton infoButton;
 	private Network network;
-	private LinkedList<Path> listModelPaths;
-	private LinkedList<Path> paths;
+	private JTextField completePathTextField;
 	private SNePSInterface frame;
 	private JFrame windowFrame;
+	private LinkedList<Path> paths;
+	private Path resultPath;
 	
 	@Action
     public void add() {}
@@ -89,7 +85,6 @@ public class cmdPath extends javax.swing.JPanel {
 	
 	public cmdPath(Network network, SNePSInterface frame, JFrame windowFrame) {
 		super();
-		listModelPaths = new LinkedList<Path>();
 		paths = new LinkedList<Path>();
 		this.windowFrame = windowFrame;
 		this.frame = frame;
@@ -104,7 +99,7 @@ public class cmdPath extends javax.swing.JPanel {
 			{
 				addButton = new JButton();
 				this.add(addButton);
-				addButton.setBounds(481, 33, 16, 18);
+				addButton.setBounds(522, 84, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
 				addButton.addMouseListener(new MouseAdapter() {
@@ -126,18 +121,6 @@ public class cmdPath extends javax.swing.JPanel {
 				doneButton.setVisible(false);
 			}
 			{
-				jScrollPane1 = new JScrollPane();
-				this.add(jScrollPane1);
-				jScrollPane1.setBounds(216, 64, 259, 99);
-				{
-					pathModel = new DefaultListModel();
-					pathList = new JList();
-					jScrollPane1.setViewportView(pathList);
-					pathList.setModel(pathModel);
-					pathList.setBounds(12, 169, 256, 96);
-				}
-			}
-			{
 				relationLabel = new JLabel();
 				this.add(relationLabel);
 				relationLabel.setBounds(98, 12, 70, 15);
@@ -146,7 +129,7 @@ public class cmdPath extends javax.swing.JPanel {
 			{
 				pathLabel = new JLabel();
 				this.add(pathLabel);
-				pathLabel.setBounds(216, 7, 66, 15);
+				pathLabel.setBounds(212, 60, 66, 15);
 				pathLabel.setName("pathLabel");
 			}
 			{
@@ -166,7 +149,7 @@ public class cmdPath extends javax.swing.JPanel {
 				pathComboBox = new JComboBox();
 				this.add(pathComboBox);
 				pathComboBox.setModel(pathComboBoxModel);
-				pathComboBox.setBounds(216, 30, 115, 22);
+				pathComboBox.setBounds(212, 81, 115, 22);
 				pathComboBox.addActionListener(new ActionListener() {
 					
 					@Override
@@ -178,7 +161,7 @@ public class cmdPath extends javax.swing.JPanel {
 			{
 				pathButton = new JButton();
 				this.add(pathButton);
-				pathButton.setBounds(502, 31, 40, 22);
+				pathButton.setBounds(477, 82, 40, 22);
 				pathButton.setName("pathButton");
 				pathButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -189,7 +172,7 @@ public class cmdPath extends javax.swing.JPanel {
 			{
 				pathTextField = new JTextField();
 				this.add(pathTextField);
-				pathTextField.setBounds(337, 30, 138, 22);
+				pathTextField.setBounds(333, 82, 138, 22);
 			}
 			{
 				doneButton = new JButton();
@@ -202,6 +185,11 @@ public class cmdPath extends javax.swing.JPanel {
 					}
 				});
 			}
+			{
+				completePathTextField = new JTextField();
+				this.add(completePathTextField);
+				completePathTextField.setBounds(212, 110, 259, 22);
+			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -213,26 +201,25 @@ public class cmdPath extends javax.swing.JPanel {
 		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		final cmdPath pathPanel = new cmdPath(network, frame, popupFrame);
 		popupFrame.getContentPane().add(pathPanel);
-		Point point = frame.getsNePSULPanel1().getMenuDrivenCommands().cascadePosition();
-		popupFrame.setLocation(point);
 		popupFrame.pack();
 		popupFrame.setVisible(true);
+		Point point = frame.getsNePSULPanel1().getMenuDrivenCommands().cascadePosition();
+		popupFrame.setLocation(point);
 		doneButton.setEnabled(false);
 		popupFrame.addWindowListener(new WindowAdapter() {
 			
 			@Override
 			public void windowClosed(WindowEvent e) {
-				for(Path path :pathPanel.getPaths()) {
-					paths.add(path);
-					
-					String currentPath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(path);
-					if(pathTextField.getText().isEmpty()) {
-						pathTextField.setText(currentPath);
-					} else {
-						String previousPath = pathTextField.getText();
-						pathTextField.setText(previousPath + ", " + currentPath);
-					}
+				paths.add(pathPanel.getResultPath());
+				
+				String currentPath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(pathPanel.getResultPath());
+				if(pathTextField.getText().isEmpty()) {
+					pathTextField.setText(currentPath);
+				} else {
+					String previousPath = pathTextField.getText();
+					pathTextField.setText(previousPath + ", " + currentPath);
 				}
+				
 				frame.getsNePSULPanel1().getMenuDrivenCommands().cascadeBack();
 				doneButton.setEnabled(true);
 			}
@@ -240,63 +227,55 @@ public class cmdPath extends javax.swing.JPanel {
 	}
 	
 	private void addButtonMouseClicked(MouseEvent evt) {
-		//Add Path
-		String pathType = pathComboBox.getSelectedItem().toString();
-		if (pathType.equals("converse")) {
-			Path path = new ConversePath(paths.getFirst());
-			listModelPaths.add(path);
-		} else if (pathType.equals("compose")) {
-			Path path = new ComposePath(paths);
-			listModelPaths.add(path);
-		} else if (pathType.equals("kstar")) {
-			Path path = new KStarPath(paths.getFirst());
-			listModelPaths.add(path);
-		} else if (pathType.equals("kplus")) {
-			Path path = new KPlusPath(paths.getFirst());
-			listModelPaths.add(path);
-		} else if (pathType.equals("or")) {
-			Path path = new OrPath(paths);
-			listModelPaths.add(path);
-		} else if (pathType.equals("and")) {
-			Path path = new AndPath(paths);
-			listModelPaths.add(path);
-		} else if (pathType.equals("relative-complement")) {
-			Path path = new RelativeComplementPath(paths.get(0), paths.get(1));
-			listModelPaths.add(path);
-		} else if (pathType.equals("irreflexive-restrict")) {
-			Path path = new IrreflexiveRestrictPath(paths.getFirst());
-			listModelPaths.add(path);
-		} else if (pathType.equals("domain-restrict")) {
-			//Path path = new DomainRestrictPath(q, node, p);
-			//network.definePath(relation, path);
-		} else if (pathType.equals("range-restrict")) {
-			//Path path = new RangeRestrictPath(p, q, node);
-			//network.definePath(relation, path);
-		}
-		
-		//Add the path to the List
-		String completePath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(listModelPaths.getLast());
-		pathModel.addElement(completePath);
-		
-		//Delete previous paths
-		for(int i = 0; i < paths.size(); i++) {
-			paths.remove(i);
+		try{
+			if(pathComboBox.getSelectedItem().equals("unitpath") || pathComboBox.getSelectedItem().equals("unitpath-")) {
+				JOptionPane.showMessageDialog(this, 
+						"Choose a path type",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
+			} else {
+				//Add Path
+				String pathType = pathComboBox.getSelectedItem().toString();
+				if (pathType.equals("converse")) {
+					resultPath = new ConversePath(paths.getFirst());
+				} else if (pathType.equals("compose")) {
+					resultPath = new ComposePath(paths);
+				} else if (pathType.equals("kstar")) {
+					resultPath = new KStarPath(paths.getFirst());
+				} else if (pathType.equals("kplus")) {
+					resultPath = new KPlusPath(paths.getFirst());
+				} else if (pathType.equals("or")) {
+					resultPath = new OrPath(paths);
+				} else if (pathType.equals("and")) {
+					resultPath = new AndPath(paths);
+				} else if (pathType.equals("relative-complement")) {
+					resultPath = new RelativeComplementPath(paths.get(0), paths.get(1));
+				} else if (pathType.equals("irreflexive-restrict")) {
+					resultPath = new IrreflexiveRestrictPath(paths.getFirst());;
+				} else if (pathType.equals("domain-restrict")) {
+					//Path path = new DomainRestrictPath(q, node, p);
+					//network.definePath(relation, path);
+				} else if (pathType.equals("range-restrict")) {
+					//Path path = new RangeRestrictPath(p, q, node);
+					//network.definePath(relation, path);
+				}
+				
+				//Add the path to the List
+				String completePath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(resultPath);
+				completePathTextField.setText(completePath);
+				
+				//Delete previous paths
+				for(int i = 0; i < paths.size(); i++) {
+					paths.remove(i);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
 	private void doneButtonMouseClicked(MouseEvent evt) {
-		for(int i = 0; i < listModelPaths.size(); i++) {
-			paths.add(listModelPaths.get(i));
-		}
 		windowFrame.dispose();
-	}
-	
-	public LinkedList<Path> getPaths() {
-		return paths;
-	}
-
-	public void setPaths(LinkedList<Path> paths) {
-		this.paths = paths;
 	}
 	
 	private void pathComboBoxActionPerformed(ActionEvent evt) {
@@ -360,5 +339,9 @@ public class cmdPath extends javax.swing.JPanel {
 		} else {
 			return;
 		}
+	}
+	
+	public Path getResultPath() {
+		return resultPath;
 	}
 }

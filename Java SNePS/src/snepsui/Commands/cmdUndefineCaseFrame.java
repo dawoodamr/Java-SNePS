@@ -160,9 +160,27 @@ public class cmdUndefineCaseFrame extends javax.swing.JPanel {
 			network.undefineCaseFrame(listModel.get(i).toString());
 		}
 		
-		JOptionPane.showMessageDialog(this,
-		"The Case frames have been successfully undefined");
+		if(listModel.size() == 1) {
+			JOptionPane.showMessageDialog(this,
+			"The Case frame has been successfully undefined");
+		} else if (listModel.size() > 1) {
+			JOptionPane.showMessageDialog(this,
+			"The Case frames have been successfully undefined");
+		}
 		
+		//Reinitialize drop-down list
+		DefaultComboBoxModel caseframeComboBoxModel = new DefaultComboBoxModel();
+		String str = "";
+		Hashtable<String, CaseFrame> caseframes = network.getCaseFrames();
+		Set<String> set = caseframes.keySet();
+
+	    Iterator<String> itr = set.iterator();
+	    while (itr.hasNext()) {
+	      str = itr.next();
+	      caseframeComboBoxModel.addElement(caseframes.get(str).getId()) ;
+	    }
+	    caseframeComboBox.setModel(caseframeComboBoxModel);
+	    
 		listModel.removeAllElements();
 		this.repaint();
 		this.validate();

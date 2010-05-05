@@ -5,11 +5,11 @@ import java.awt.Dimension;
 import sneps.Network;
 import snepsui.Interface.SNePSInterface;
 
-public class cmdWithSome extends javax.swing.JPanel {
+public class cmdActEffect extends javax.swing.JPanel {
 	private Network network;
 	private SNePSInterface frame;
 	
-	public cmdWithSome(Network network, SNePSInterface frame) {
+	public cmdActEffect(Network network, SNePSInterface frame) {
 		super();
 		this.frame = frame;
 		this.network = network;
