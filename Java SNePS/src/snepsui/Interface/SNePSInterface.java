@@ -8,6 +8,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 
 import javax.swing.ActionMap;
@@ -28,7 +34,10 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
+import snactor.Act;
+import snactor.Queue;
 import sneps.CaseFrame;
+import sneps.MolecularNode;
 import sneps.Network;
 import sneps.Node;
 import sneps.Relation;
@@ -61,49 +70,50 @@ public class SNePSInterface extends SingleFrameApplication {
 	private JMenuBar menuBar;
     private JMenu jMenu1;
     private JMenuItem deduceMenuItem;
-    private JMenu jMenu20;
-    private JMenuItem jMenuItem86;
-    private JMenu jMenu24;
-    private JMenu jMenu23;
+    private JMenu complexActsMenu;
     private JMenuItem actEffectMenuItem;
     private JMenuItem actPreconditionMenuItem;
-    private JMenu jMenu22;
+    private JMenu preconditionsAndEffectsMenu;
     private JMenuItem achieveMenuItem;
-    private JMenu jMenu21;
+    private JMenu goalsMenu;
     private JMenuItem planActMenuItem;
     private JMenuItem attachPrimActionMenuItem;
-    private JMenuItem jMenuItem80;
-    private JMenuItem jMenuItem79;
-    private JMenuItem jMenuItem78;
-    private JMenuItem jMenuItem77;
-    private JMenuItem jMenuItem76;
+    private JMenuItem withsomeMenuItem;
+    private JMenuItem withallMenuItem;
+    private JMenuItem sniterateMenuItem;
+    private JMenuItem snifMenuItem;
+    private JMenuItem snsequenceMenuItem;
     private JMenuItem doOneMenuItem;
+    private JMenuItem undefineCaseframeMenuItem;
+    private JMenuItem defineCaseframeMenuItem;
+    private JMenu caseframesMenu;
+    private JMenuItem performMenuItem;
     private JMenuItem doAllMenuItem;
-    private JMenu jMenu19;
+    private JMenu controlActsMenu;
     private JMenuItem disbelieveMenuItem;
     private JMenuItem believeMenuItem;
-    private JMenu jMenu18;
+    private JMenu mentalFunctionsMenu;
     private JMenuItem definePrimactionMenuItem;
-    private JMenu jMenu17;
+    private JMenu premitiveActsMenu;
     private JMenuItem ifDoMenuItem;
     private JMenuItem whenDoMenuItem;
     private JMenuItem wheneverDoMenuItem;
-    private JMenu jMenu16;
+    private JMenu actingMenu;
     private JMenuItem multiPrintRegsMenuItem;
     private JMenuItem uninTraceMenuItem;
     private JMenuItem inTraceMenuItem;
     private JMenuItem unevTraceMenuItem;
     private JMenuItem evTraceMenuItem;
-    private JMenu jMenu15;
+    private JMenu tracingInferenceMenu;
     private JMenuItem numericalQuantifierMenuItem;
     private JMenuItem universalQuantifierMenuItem;
-    private JMenu jMenu14;
+    private JMenu quantifiersMenu;
     private JMenuItem threshMenuItem;
     private JMenuItem andOrMenuItem;
     private JMenuItem numericalEntailmentMenuItem;
     private JMenuItem orEntailmentMenuItem;
     private JMenuItem andEntailmentMenuItem;
-    private JMenu jMenu13;
+    private JMenu connectivesMenu;
     private JMenuItem deduceWHNOTMenuItem;
     private JMenuItem deduceWHMenuItem;
     private JMenuItem deduceFalseMenuItem;
@@ -114,7 +124,7 @@ public class SNePSInterface extends SingleFrameApplication {
     private JMenuItem findConstantMenuItem;
     private JMenuItem findAssertMenuItem;
     private JMenuItem findMenuItem;
-    private JMenu jMenu12;
+    private JMenu retrievingInformationMenu;
     private JMenuItem fullDescribeMenuItem;
     private JMenuItem describeMenuItem;
     private JMenuItem dumpMenuItem;
@@ -135,9 +145,9 @@ public class SNePSInterface extends SingleFrameApplication {
     private JMenuItem setDefaultContextMenuItem;
     private JMenuItem setContextMenuItem;
     private JMenuItem undefinePathMenuItem;
-    private JMenu jMenu9;
+    private JMenu contextsMenu;
     private JMenuItem definePathMenuItem;
-    private JMenu jMenu8;
+    private JMenu pathbasedInferenceMenu;
     private JCheckBoxMenuItem jCheckBoxMenuItem3;
     private JMenuItem resetnetMenuItem;
     private JMenuItem silentEraseMenuItem;
@@ -148,14 +158,14 @@ public class SNePSInterface extends SingleFrameApplication {
     private JMenuItem activateMenuItem;
     private JMenuItem addMenuItem;
     private JMenuItem assertMenuItem;
-    private JMenu jMenu6;
+    private JMenu buildingNetworksMenu;
     private JMenuItem undefineMenuItem;
     private JMenuItem defineMenuItem;
-    private JMenu jMenu5;
-    private JMenu jMenu4;
+    private JMenu relationsMenu;
+    private JMenu displayingInformationMenu;
     private JMenuItem clearInferAllMenuItem;
     private JMenuItem clearInferMenuItem;
-    private JMenu jMenu3;
+    private JMenu deletingInformationMenu;
     private JMenu jMenu2;
     private JLabel jLabel1;
     private JMenuItem jMenuItem7;
@@ -179,6 +189,9 @@ public class SNePSInterface extends SingleFrameApplication {
     private JButton showNetworkButton;
     private JToolBar toolBar;
     private ResultNodes nodesResult;
+    private int previousTab;
+    private boolean viewNetworkClickCount;
+    private Network network;
 
     @Action
     public void open() {
@@ -224,7 +237,7 @@ public class SNePSInterface extends SingleFrameApplication {
     protected void startup() {
         {
         	getMainFrame().setResizable(false);
-        	
+
             topPanel = new JPanel();
             BorderLayout panelLayout = new BorderLayout();
             topPanel.setLayout(panelLayout);
@@ -305,6 +318,11 @@ public class SNePSInterface extends SingleFrameApplication {
                         toolBar.add(openButton);
                         openButton.setAction(getAppActionMap().get("open"));
                         openButton.setFocusable(false);
+                        openButton.addMouseListener(new MouseAdapter() {
+                        	public void mouseClicked(MouseEvent evt) {
+                        		openButtonMouseClicked(evt);
+                        	}
+                        });
                     }
                     {
                         saveButton = new JButton();
@@ -436,87 +454,12 @@ public class SNePSInterface extends SingleFrameApplication {
         	menuBar.add(jMenu2);
         	jMenu2.setName("jMenu2");
         	{
-        		jMenu3 = new JMenu();
-        		jMenu2.add(jMenu3);
-        		jMenu3.setName("jMenu3");
-        		{
-        			clearInferMenuItem = new JMenuItem();
-        			jMenu3.add(clearInferMenuItem);
-        			clearInferMenuItem.setName("clearInferMenuItem");
-        		}
-        		{
-        			clearInferAllMenuItem = new JMenuItem();
-        			jMenu3.add(clearInferAllMenuItem);
-        			clearInferAllMenuItem.setName("clearInferAllMenuItem");
-        		}
-        		{
-        			eraseMenuItem = new JMenuItem();
-        			jMenu3.add(eraseMenuItem);
-        			eraseMenuItem.setName("eraseMenuItem");
-        			eraseMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					eraseMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			silentEraseMenuItem = new JMenuItem();
-        			jMenu3.add(silentEraseMenuItem);
-        			silentEraseMenuItem.setName("silentEraseMenuItem");
-        			silentEraseMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					silentEraseMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			resetnetMenuItem = new JMenuItem();
-        			jMenu3.add(resetnetMenuItem);
-        			resetnetMenuItem.setName("resetnetMenuItem");
-        		}
-        	}
-        	{
-        		jMenu4 = new JMenu();
-        		jMenu2.add(jMenu4);
-        		jMenu4.setName("jMenu4");
-        		{
-        			dumpMenuItem = new JMenuItem();
-        			jMenu4.add(dumpMenuItem);
-        			dumpMenuItem.setName("dumpMenuItem");
-        			dumpMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					dumpMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			describeMenuItem = new JMenuItem();
-        			jMenu4.add(describeMenuItem);
-        			describeMenuItem.setName("describeMenuItem");
-        			describeMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					describeMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			fullDescribeMenuItem = new JMenuItem();
-        			jMenu4.add(fullDescribeMenuItem);
-        			fullDescribeMenuItem.setName("fullDescribeMenuItem");
-        			fullDescribeMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					fullDescribeMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        	}
-        	{
-        		jMenu5 = new JMenu();
-        		jMenu2.add(jMenu5);
-        		jMenu5.setName("jMenu5");
+        		relationsMenu = new JMenu();
+        		jMenu2.add(relationsMenu);
+        		relationsMenu.setName("relationsMenu");
         		{
         			defineMenuItem = new JMenuItem();
-        			jMenu5.add(defineMenuItem);
+        			relationsMenu.add(defineMenuItem);
         			defineMenuItem.setName("defineMenuItem");
         			defineMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
@@ -526,7 +469,7 @@ public class SNePSInterface extends SingleFrameApplication {
         		}
         		{
         			undefineMenuItem = new JMenuItem();
-        			jMenu5.add(undefineMenuItem);
+        			relationsMenu.add(undefineMenuItem);
         			undefineMenuItem.setName("undefineMenuItem");
         			undefineMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
@@ -536,47 +479,37 @@ public class SNePSInterface extends SingleFrameApplication {
         		}
         	}
         	{
-        		jMenu6 = new JMenu();
-        		jMenu2.add(jMenu6);
-        		jMenu6.setName("jMenu6");
+        		caseframesMenu = new JMenu();
+        		jMenu2.add(caseframesMenu);
+        		caseframesMenu.setName("caseframesMenu");
         		{
-        			assertMenuItem = new JMenuItem();
-        			jMenu6.add(assertMenuItem);
-        			assertMenuItem.setName("assertMenuItem");
-        			assertMenuItem.addActionListener(new ActionListener() {
+        			defineCaseframeMenuItem = new JMenuItem();
+        			caseframesMenu.add(defineCaseframeMenuItem);
+        			defineCaseframeMenuItem.setName("defineCaseframeMenuItem");
+        			defineCaseframeMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
-        					assertMenuItemActionPerformed(evt);
+        					defineCaseframeMenuItemActionPerformed(evt);
         				}
         			});
         		}
         		{
-        			addMenuItem = new JMenuItem();
-        			jMenu6.add(addMenuItem);
-        			addMenuItem.setName("addMenuItem");
-        			addMenuItem.addActionListener(new ActionListener() {
+        			undefineCaseframeMenuItem = new JMenuItem();
+        			caseframesMenu.add(undefineCaseframeMenuItem);
+        			undefineCaseframeMenuItem.setName("undefineCaseframeMenuItem");
+        			undefineCaseframeMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
-        					addMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			activateMenuItem = new JMenuItem();
-        			jMenu6.add(activateMenuItem);
-        			activateMenuItem.setName("activateMenuItem");
-        			activateMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					activateMenuItemActionPerformed(evt);
+        					undefineCaseframeMenuItemActionPerformed(evt);
         				}
         			});
         		}
         	}
         	{
-        		jMenu8 = new JMenu();
-        		jMenu2.add(jMenu8);
-        		jMenu8.setName("jMenu8");
+        		pathbasedInferenceMenu = new JMenu();
+        		jMenu2.add(pathbasedInferenceMenu);
+        		pathbasedInferenceMenu.setName("pathbasedInferenceMenu");
         		{
         			definePathMenuItem = new JMenuItem();
-        			jMenu8.add(definePathMenuItem);
+        			pathbasedInferenceMenu.add(definePathMenuItem);
         			definePathMenuItem.setName("definePathMenuItem");
         			definePathMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
@@ -586,7 +519,7 @@ public class SNePSInterface extends SingleFrameApplication {
         		}
         		{
         			undefinePathMenuItem = new JMenuItem();
-        			jMenu8.add(undefinePathMenuItem);
+        			pathbasedInferenceMenu.add(undefinePathMenuItem);
         			undefinePathMenuItem.setName("undefinePathMenuItem");
         			undefinePathMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
@@ -596,12 +529,12 @@ public class SNePSInterface extends SingleFrameApplication {
         		}
         	}
         	{
-        		jMenu9 = new JMenu();
-        		jMenu2.add(jMenu9);
-        		jMenu9.setName("jMenu9");
+        		contextsMenu = new JMenu();
+        		jMenu2.add(contextsMenu);
+        		contextsMenu.setName("contextsMenu");
         		{
         			setContextMenuItem = new JMenuItem();
-        			jMenu9.add(setContextMenuItem);
+        			contextsMenu.add(setContextMenuItem);
         			setContextMenuItem.setName("setContextMenuItem");
         			setContextMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
@@ -611,7 +544,7 @@ public class SNePSInterface extends SingleFrameApplication {
         		}
         		{
         			setDefaultContextMenuItem = new JMenuItem();
-        			jMenu9.add(setDefaultContextMenuItem);
+        			contextsMenu.add(setDefaultContextMenuItem);
         			setDefaultContextMenuItem.setName("setDefaultContextMenuItem");
         			setDefaultContextMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
@@ -621,7 +554,7 @@ public class SNePSInterface extends SingleFrameApplication {
         		}
         		{
         			addToContextMenuItem = new JMenuItem();
-        			jMenu9.add(addToContextMenuItem);
+        			contextsMenu.add(addToContextMenuItem);
         			addToContextMenuItem.setName("addToContextMenuItem");
         			addToContextMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
@@ -631,7 +564,7 @@ public class SNePSInterface extends SingleFrameApplication {
         		}
         		{
         			removeFromContextMenuItem = new JMenuItem();
-        			jMenu9.add(removeFromContextMenuItem);
+        			contextsMenu.add(removeFromContextMenuItem);
         			removeFromContextMenuItem.setName("removeFromContextMenuItem");
         			removeFromContextMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
@@ -641,7 +574,7 @@ public class SNePSInterface extends SingleFrameApplication {
         		}
         		{
         			describeContextMenuItem = new JMenuItem();
-        			jMenu9.add(describeContextMenuItem);
+        			contextsMenu.add(describeContextMenuItem);
         			describeContextMenuItem.setName("describeContextMenuItem");
         			describeContextMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
@@ -651,11 +584,596 @@ public class SNePSInterface extends SingleFrameApplication {
         		}
         		{
         			listHypothesesMenuItem = new JMenuItem();
-        			jMenu9.add(listHypothesesMenuItem);
+        			contextsMenu.add(listHypothesesMenuItem);
         			listHypothesesMenuItem.setName("listHypothesesMenuItem");
         			listHypothesesMenuItem.addActionListener(new ActionListener() {
         				public void actionPerformed(ActionEvent evt) {
         					listHypothesesMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        	}
+        	{
+        		buildingNetworksMenu = new JMenu();
+        		jMenu2.add(buildingNetworksMenu);
+        		buildingNetworksMenu.setName("buildingNetworksMenu");
+        		{
+        			assertMenuItem = new JMenuItem();
+        			buildingNetworksMenu.add(assertMenuItem);
+        			assertMenuItem.setName("assertMenuItem");
+        			assertMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					assertMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			addMenuItem = new JMenuItem();
+        			buildingNetworksMenu.add(addMenuItem);
+        			addMenuItem.setName("addMenuItem");
+        			addMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					addMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			activateMenuItem = new JMenuItem();
+        			buildingNetworksMenu.add(activateMenuItem);
+        			activateMenuItem.setName("activateMenuItem");
+        			activateMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					activateMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        	}
+        	{
+        		deletingInformationMenu = new JMenu();
+        		jMenu2.add(deletingInformationMenu);
+        		deletingInformationMenu.setName("deletingInformationMenu");
+        		{
+        			clearInferMenuItem = new JMenuItem();
+        			deletingInformationMenu.add(clearInferMenuItem);
+        			clearInferMenuItem.setName("clearInferMenuItem");
+        		}
+        		{
+        			clearInferAllMenuItem = new JMenuItem();
+        			deletingInformationMenu.add(clearInferAllMenuItem);
+        			clearInferAllMenuItem.setName("clearInferAllMenuItem");
+        		}
+        		{
+        			eraseMenuItem = new JMenuItem();
+        			deletingInformationMenu.add(eraseMenuItem);
+        			eraseMenuItem.setName("eraseMenuItem");
+        			eraseMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					eraseMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			silentEraseMenuItem = new JMenuItem();
+        			deletingInformationMenu.add(silentEraseMenuItem);
+        			silentEraseMenuItem.setName("silentEraseMenuItem");
+        			silentEraseMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					silentEraseMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			resetnetMenuItem = new JMenuItem();
+        			deletingInformationMenu.add(resetnetMenuItem);
+        			resetnetMenuItem.setName("resetnetMenuItem");
+        		}
+        	}
+        	{
+        		displayingInformationMenu = new JMenu();
+        		jMenu2.add(displayingInformationMenu);
+        		displayingInformationMenu.setName("displayingInformationMenu");
+        		{
+        			dumpMenuItem = new JMenuItem();
+        			displayingInformationMenu.add(dumpMenuItem);
+        			dumpMenuItem.setName("dumpMenuItem");
+        			dumpMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					dumpMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			describeMenuItem = new JMenuItem();
+        			displayingInformationMenu.add(describeMenuItem);
+        			describeMenuItem.setName("describeMenuItem");
+        			describeMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					describeMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			fullDescribeMenuItem = new JMenuItem();
+        			displayingInformationMenu.add(fullDescribeMenuItem);
+        			fullDescribeMenuItem.setName("fullDescribeMenuItem");
+        			fullDescribeMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					fullDescribeMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        	}
+        	{
+        		retrievingInformationMenu = new JMenu();
+        		jMenu2.add(retrievingInformationMenu);
+        		retrievingInformationMenu.setName("retrievingInformationMenu");
+        		{
+        			findMenuItem = new JMenuItem();
+        			retrievingInformationMenu.add(findMenuItem);
+        			findMenuItem.setName("findMenuItem");
+        			findMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					findMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			findAssertMenuItem = new JMenuItem();
+        			retrievingInformationMenu.add(findAssertMenuItem);
+        			findAssertMenuItem.setName("findAssertMenuItem");
+        			findAssertMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					findAssertMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			findConstantMenuItem = new JMenuItem();
+        			retrievingInformationMenu.add(findConstantMenuItem);
+        			findConstantMenuItem.setName("findConstantMenuItem");
+        			findConstantMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					findConstantMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			findBaseMenuItem = new JMenuItem();
+        			retrievingInformationMenu.add(findBaseMenuItem);
+        			findBaseMenuItem.setName("findBaseMenuItem");
+        			findBaseMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					findBaseMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			findVariableMenuItem = new JMenuItem();
+        			retrievingInformationMenu.add(findVariableMenuItem);
+        			findVariableMenuItem.setName("findVariableMenuItem");
+        			findVariableMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					findVariableMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			findPatternMenuItem = new JMenuItem();
+        			retrievingInformationMenu.add(findPatternMenuItem);
+        			findPatternMenuItem.setName("findPatternMenuItem");
+        			findPatternMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					findPatternMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			deduceMenuItem = new JMenuItem();
+        			retrievingInformationMenu.add(deduceMenuItem);
+        			deduceMenuItem.setName("deduceMenuItem");
+        			deduceMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					deduceMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			deduceTrueMenuItem = new JMenuItem();
+        			retrievingInformationMenu.add(deduceTrueMenuItem);
+        			deduceTrueMenuItem.setName("deduceTrueMenuItem");
+        			deduceTrueMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					deduceTrueMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			deduceFalseMenuItem = new JMenuItem();
+        			retrievingInformationMenu.add(deduceFalseMenuItem);
+        			deduceFalseMenuItem.setName("deduceFalseMenuItem");
+        			deduceFalseMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					deduceFalseMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			deduceWHMenuItem = new JMenuItem();
+        			retrievingInformationMenu.add(deduceWHMenuItem);
+        			deduceWHMenuItem.setName("deduceWHMenuItem");
+        			deduceWHMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					deduceWHMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			deduceWHNOTMenuItem = new JMenuItem();
+        			retrievingInformationMenu.add(deduceWHNOTMenuItem);
+        			deduceWHNOTMenuItem.setName("deduceWHNOTMenuItem");
+        			deduceWHNOTMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					deduceWHNOTMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        	}
+        	{
+        		connectivesMenu = new JMenu();
+        		jMenu2.add(connectivesMenu);
+        		connectivesMenu.setName("connectivesMenu");
+        		{
+        			andEntailmentMenuItem = new JMenuItem();
+        			connectivesMenu.add(andEntailmentMenuItem);
+        			andEntailmentMenuItem.setName("andEntailmentMenuItem");
+        			andEntailmentMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					andEntailmentMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			orEntailmentMenuItem = new JMenuItem();
+        			connectivesMenu.add(orEntailmentMenuItem);
+        			orEntailmentMenuItem.setName("orEntailmentMenuItem");
+        			orEntailmentMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					orEntailmentMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			numericalEntailmentMenuItem = new JMenuItem();
+        			connectivesMenu.add(numericalEntailmentMenuItem);
+        			numericalEntailmentMenuItem.setName("numericalEntailmentMenuItem");
+        			numericalEntailmentMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					numericalEntailmentMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			andOrMenuItem = new JMenuItem();
+        			connectivesMenu.add(andOrMenuItem);
+        			andOrMenuItem.setName("andOrMenuItem");
+        			andOrMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					andOrMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			threshMenuItem = new JMenuItem();
+        			connectivesMenu.add(threshMenuItem);
+        			threshMenuItem.setName("threshMenuItem");
+        			threshMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					threshMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        	}
+        	{
+        		quantifiersMenu = new JMenu();
+        		jMenu2.add(quantifiersMenu);
+        		quantifiersMenu.setName("quantifiersMenu");
+        		{
+        			universalQuantifierMenuItem = new JMenuItem();
+        			quantifiersMenu.add(universalQuantifierMenuItem);
+        			universalQuantifierMenuItem.setName("universalQuantifierMenuItem");
+        			universalQuantifierMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					universalQuantifierMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			numericalQuantifierMenuItem = new JMenuItem();
+        			quantifiersMenu.add(numericalQuantifierMenuItem);
+        			numericalQuantifierMenuItem.setName("numericalQuantifierMenuItem");
+        			numericalQuantifierMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					numericalQuantifierMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        	}
+        	{
+        		tracingInferenceMenu = new JMenu();
+        		jMenu2.add(tracingInferenceMenu);
+        		tracingInferenceMenu.setName("tracingInferenceMenu");
+        		{
+        			evTraceMenuItem = new JMenuItem();
+        			tracingInferenceMenu.add(evTraceMenuItem);
+        			evTraceMenuItem.setName("evTraceMenuItem");
+        			evTraceMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					evTraceMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			unevTraceMenuItem = new JMenuItem();
+        			tracingInferenceMenu.add(unevTraceMenuItem);
+        			unevTraceMenuItem.setName("unevTraceMenuItem");
+        			unevTraceMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					unevTraceMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			inTraceMenuItem = new JMenuItem();
+        			tracingInferenceMenu.add(inTraceMenuItem);
+        			inTraceMenuItem.setName("inTraceMenuItem");
+        			inTraceMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					inTraceMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			uninTraceMenuItem = new JMenuItem();
+        			tracingInferenceMenu.add(uninTraceMenuItem);
+        			uninTraceMenuItem.setName("uninTraceMenuItem");
+        			uninTraceMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					uninTraceMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			multiPrintRegsMenuItem = new JMenuItem();
+        			tracingInferenceMenu.add(multiPrintRegsMenuItem);
+        			multiPrintRegsMenuItem.setName("multiPrintRegsMenuItem");
+        			multiPrintRegsMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					multiPrintRegsMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        	}
+        	{
+        		actingMenu = new JMenu();
+        		jMenu2.add(actingMenu);
+        		actingMenu.setName("actingMenu");
+        		{
+        			performMenuItem = new JMenuItem();
+        			actingMenu.add(performMenuItem);
+        			performMenuItem.setName("performMenuItem");
+        			performMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					performMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			wheneverDoMenuItem = new JMenuItem();
+        			actingMenu.add(wheneverDoMenuItem);
+        			wheneverDoMenuItem.setName("wheneverDoMenuItem");
+        			wheneverDoMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					wheneverDoMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			whenDoMenuItem = new JMenuItem();
+        			actingMenu.add(whenDoMenuItem);
+        			whenDoMenuItem.setName("whenDoMenuItem");
+        			whenDoMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					whenDoMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			ifDoMenuItem = new JMenuItem();
+        			actingMenu.add(ifDoMenuItem);
+        			ifDoMenuItem.setName("ifDoMenuItem");
+        			ifDoMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					ifDoMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        	}
+        	{
+        		premitiveActsMenu = new JMenu();
+        		jMenu2.add(premitiveActsMenu);
+        		premitiveActsMenu.setName("premitiveActsMenu");
+        		{
+        			definePrimactionMenuItem = new JMenuItem();
+        			premitiveActsMenu.add(definePrimactionMenuItem);
+        			definePrimactionMenuItem.setName("definePrimactionMenuItem");
+        			definePrimactionMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					definePrimactionMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			mentalFunctionsMenu = new JMenu();
+        			premitiveActsMenu.add(mentalFunctionsMenu);
+        			mentalFunctionsMenu.setName("mentalFunctionsMenu");
+        			{
+        				believeMenuItem = new JMenuItem();
+        				mentalFunctionsMenu.add(believeMenuItem);
+        				believeMenuItem.setName("believeMenuItem");
+        				believeMenuItem.addActionListener(new ActionListener() {
+        					public void actionPerformed(ActionEvent evt) {
+        						believeMenuItemActionPerformed(evt);
+        					}
+        				});
+        			}
+        			{
+        				disbelieveMenuItem = new JMenuItem();
+        				mentalFunctionsMenu.add(disbelieveMenuItem);
+        				disbelieveMenuItem.setName("disbelieveMenuItem");
+        				disbelieveMenuItem.addActionListener(new ActionListener() {
+        					public void actionPerformed(ActionEvent evt) {
+        						disbelieveMenuItemActionPerformed(evt);
+        					}
+        				});
+        			}
+        		}
+        		{
+        			controlActsMenu = new JMenu();
+        			premitiveActsMenu.add(controlActsMenu);
+        			controlActsMenu.setName("controlActsMenu");
+        			{
+        				doAllMenuItem = new JMenuItem();
+        				controlActsMenu.add(doAllMenuItem);
+        				doAllMenuItem.setName("doAllMenuItem");
+        				doAllMenuItem.addActionListener(new ActionListener() {
+        					public void actionPerformed(ActionEvent evt) {
+        						doAllMenuItemActionPerformed(evt);
+        					}
+        				});
+        			}
+        			{
+        				doOneMenuItem = new JMenuItem();
+        				controlActsMenu.add(doOneMenuItem);
+        				doOneMenuItem.setName("doOneMenuItem");
+        				doOneMenuItem.addActionListener(new ActionListener() {
+        					public void actionPerformed(ActionEvent evt) {
+        						doOneMenuItemActionPerformed(evt);
+        					}
+        				});
+        			}
+        			{
+        				snsequenceMenuItem = new JMenuItem();
+        				controlActsMenu.add(snsequenceMenuItem);
+        				snsequenceMenuItem.setName("snsequenceMenuItem");
+        				snsequenceMenuItem.addActionListener(new ActionListener() {
+        					public void actionPerformed(ActionEvent evt) {
+        						snsequenceMenuItemActionPerformed(evt);
+        					}
+        				});
+        			}
+        			{
+        				snifMenuItem = new JMenuItem();
+        				controlActsMenu.add(snifMenuItem);
+        				snifMenuItem.setName("snifMenuItem");
+        				snifMenuItem.addActionListener(new ActionListener() {
+        					public void actionPerformed(ActionEvent evt) {
+        						snifMenuItemActionPerformed(evt);
+        					}
+        				});
+        			}
+        			{
+        				sniterateMenuItem = new JMenuItem();
+        				controlActsMenu.add(sniterateMenuItem);
+        				sniterateMenuItem.setName("sniterateMenuItem");
+        				sniterateMenuItem.addActionListener(new ActionListener() {
+        					public void actionPerformed(ActionEvent evt) {
+        						sniterateMenuItemActionPerformed(evt);
+        					}
+        				});
+        			}
+        			{
+        				withallMenuItem = new JMenuItem();
+        				controlActsMenu.add(withallMenuItem);
+        				withallMenuItem.setName("withallMenuItem");
+        				withallMenuItem.addActionListener(new ActionListener() {
+        					public void actionPerformed(ActionEvent evt) {
+        						withallMenuItemActionPerformed(evt);
+        					}
+        				});
+        			}
+        			{
+        				withsomeMenuItem = new JMenuItem();
+        				controlActsMenu.add(withsomeMenuItem);
+        				withsomeMenuItem.setName("withsomeMenuItem");
+        				withsomeMenuItem.addActionListener(new ActionListener() {
+        					public void actionPerformed(ActionEvent evt) {
+        						withsomeMenuItemActionPerformed(evt);
+        					}
+        				});
+        			}
+        		}
+        		{
+        			attachPrimActionMenuItem = new JMenuItem();
+        			premitiveActsMenu.add(attachPrimActionMenuItem);
+        			attachPrimActionMenuItem.setName("attachPrimActionMenuItem");
+        			attachPrimActionMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					attachPrimActionMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        	}
+        	{
+        		complexActsMenu = new JMenu();
+        		jMenu2.add(complexActsMenu);
+        		complexActsMenu.setName("complexActsMenu");
+        		{
+        			planActMenuItem = new JMenuItem();
+        			complexActsMenu.add(planActMenuItem);
+        			planActMenuItem.setName("planActMenuItem");
+        			planActMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					planActMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        	}
+        	{
+        		goalsMenu = new JMenu();
+        		jMenu2.add(goalsMenu);
+        		goalsMenu.setName("goalsMenu");
+        		{
+        			achieveMenuItem = new JMenuItem();
+        			goalsMenu.add(achieveMenuItem);
+        			achieveMenuItem.setName("achieveMenuItem");
+        			achieveMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					achieveMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        	}
+        	{
+        		preconditionsAndEffectsMenu = new JMenu();
+        		jMenu2.add(preconditionsAndEffectsMenu);
+        		preconditionsAndEffectsMenu.setName("preconditionsAndEffectsMenu");
+        		{
+        			actPreconditionMenuItem = new JMenuItem();
+        			preconditionsAndEffectsMenu.add(actPreconditionMenuItem);
+        			actPreconditionMenuItem.setName("actPreconditionMenuItem");
+        			actPreconditionMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					actPreconditionMenuItemActionPerformed(evt);
+        				}
+        			});
+        		}
+        		{
+        			actEffectMenuItem = new JMenuItem();
+        			preconditionsAndEffectsMenu.add(actEffectMenuItem);
+        			actEffectMenuItem.setName("actEffectMenuItem");
+        			actEffectMenuItem.addActionListener(new ActionListener() {
+        				public void actionPerformed(ActionEvent evt) {
+        					actEffectMenuItemActionPerformed(evt);
         				}
         			});
         		}
@@ -715,446 +1233,6 @@ public class SNePSInterface extends SingleFrameApplication {
         			});
         		}
         	}
-        	{
-        		jMenu12 = new JMenu();
-        		jMenu2.add(jMenu12);
-        		jMenu12.setName("jMenu12");
-        		{
-        			findMenuItem = new JMenuItem();
-        			jMenu12.add(findMenuItem);
-        			findMenuItem.setName("findMenuItem");
-        			findMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					findMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			findAssertMenuItem = new JMenuItem();
-        			jMenu12.add(findAssertMenuItem);
-        			findAssertMenuItem.setName("findAssertMenuItem");
-        			findAssertMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					findAssertMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			findConstantMenuItem = new JMenuItem();
-        			jMenu12.add(findConstantMenuItem);
-        			findConstantMenuItem.setName("findConstantMenuItem");
-        			findConstantMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					findConstantMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			findBaseMenuItem = new JMenuItem();
-        			jMenu12.add(findBaseMenuItem);
-        			findBaseMenuItem.setName("findBaseMenuItem");
-        			findBaseMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					findBaseMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			findVariableMenuItem = new JMenuItem();
-        			jMenu12.add(findVariableMenuItem);
-        			findVariableMenuItem.setName("findVariableMenuItem");
-        			findVariableMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					findVariableMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			findPatternMenuItem = new JMenuItem();
-        			jMenu12.add(findPatternMenuItem);
-        			findPatternMenuItem.setName("findPatternMenuItem");
-        			findPatternMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					findPatternMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			deduceMenuItem = new JMenuItem();
-        			jMenu12.add(deduceMenuItem);
-        			deduceMenuItem.setName("deduceMenuItem");
-        			deduceMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					deduceMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			deduceTrueMenuItem = new JMenuItem();
-        			jMenu12.add(deduceTrueMenuItem);
-        			deduceTrueMenuItem.setName("deduceTrueMenuItem");
-        			deduceTrueMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					deduceTrueMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			deduceFalseMenuItem = new JMenuItem();
-        			jMenu12.add(deduceFalseMenuItem);
-        			deduceFalseMenuItem.setName("deduceFalseMenuItem");
-        			deduceFalseMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					deduceFalseMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			deduceWHMenuItem = new JMenuItem();
-        			jMenu12.add(deduceWHMenuItem);
-        			deduceWHMenuItem.setName("deduceWHMenuItem");
-        			deduceWHMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					deduceWHMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			deduceWHNOTMenuItem = new JMenuItem();
-        			jMenu12.add(deduceWHNOTMenuItem);
-        			deduceWHNOTMenuItem.setName("deduceWHNOTMenuItem");
-        			deduceWHNOTMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					deduceWHNOTMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        	}
-        	{
-        		jMenu13 = new JMenu();
-        		jMenu2.add(jMenu13);
-        		jMenu13.setName("jMenu13");
-        		{
-        			andEntailmentMenuItem = new JMenuItem();
-        			jMenu13.add(andEntailmentMenuItem);
-        			andEntailmentMenuItem.setName("andEntailmentMenuItem");
-        			andEntailmentMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					andEntailmentMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			orEntailmentMenuItem = new JMenuItem();
-        			jMenu13.add(orEntailmentMenuItem);
-        			orEntailmentMenuItem.setName("orEntailmentMenuItem");
-        			orEntailmentMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					orEntailmentMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			numericalEntailmentMenuItem = new JMenuItem();
-        			jMenu13.add(numericalEntailmentMenuItem);
-        			numericalEntailmentMenuItem.setName("numericalEntailmentMenuItem");
-        			numericalEntailmentMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					numericalEntailmentMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			andOrMenuItem = new JMenuItem();
-        			jMenu13.add(andOrMenuItem);
-        			andOrMenuItem.setName("andOrMenuItem");
-        			andOrMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					andOrMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			threshMenuItem = new JMenuItem();
-        			jMenu13.add(threshMenuItem);
-        			threshMenuItem.setName("threshMenuItem");
-        			threshMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					threshMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        	}
-        	{
-        		jMenu14 = new JMenu();
-        		jMenu2.add(jMenu14);
-        		jMenu14.setName("jMenu14");
-        		{
-        			universalQuantifierMenuItem = new JMenuItem();
-        			jMenu14.add(universalQuantifierMenuItem);
-        			universalQuantifierMenuItem.setName("universalQuantifierMenuItem");
-        			universalQuantifierMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					universalQuantifierMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			numericalQuantifierMenuItem = new JMenuItem();
-        			jMenu14.add(numericalQuantifierMenuItem);
-        			numericalQuantifierMenuItem.setName("numericalQuantifierMenuItem");
-        			numericalQuantifierMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					numericalQuantifierMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        	}
-        	{
-        		jMenu15 = new JMenu();
-        		jMenu2.add(jMenu15);
-        		jMenu15.setName("jMenu15");
-        		{
-        			evTraceMenuItem = new JMenuItem();
-        			jMenu15.add(evTraceMenuItem);
-        			evTraceMenuItem.setName("evTraceMenuItem");
-        			evTraceMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					evTraceMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			unevTraceMenuItem = new JMenuItem();
-        			jMenu15.add(unevTraceMenuItem);
-        			unevTraceMenuItem.setName("unevTraceMenuItem");
-        			unevTraceMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					unevTraceMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			inTraceMenuItem = new JMenuItem();
-        			jMenu15.add(inTraceMenuItem);
-        			inTraceMenuItem.setName("inTraceMenuItem");
-        			inTraceMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					inTraceMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			uninTraceMenuItem = new JMenuItem();
-        			jMenu15.add(uninTraceMenuItem);
-        			uninTraceMenuItem.setName("uninTraceMenuItem");
-        			uninTraceMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					uninTraceMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			multiPrintRegsMenuItem = new JMenuItem();
-        			jMenu15.add(multiPrintRegsMenuItem);
-        			multiPrintRegsMenuItem.setName("multiPrintRegsMenuItem");
-        			multiPrintRegsMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					multiPrintRegsMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        	}
-        	{
-        		jMenu16 = new JMenu();
-        		jMenu2.add(jMenu16);
-        		jMenu16.setName("jMenu16");
-        		{
-        			wheneverDoMenuItem = new JMenuItem();
-        			jMenu16.add(wheneverDoMenuItem);
-        			wheneverDoMenuItem.setName("wheneverDoMenuItem");
-        			wheneverDoMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					wheneverDoMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			whenDoMenuItem = new JMenuItem();
-        			jMenu16.add(whenDoMenuItem);
-        			whenDoMenuItem.setName("whenDoMenuItem");
-        			whenDoMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					whenDoMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			ifDoMenuItem = new JMenuItem();
-        			jMenu16.add(ifDoMenuItem);
-        			ifDoMenuItem.setName("ifDoMenuItem");
-        			ifDoMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					ifDoMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        	}
-        	{
-        		jMenu17 = new JMenu();
-        		jMenu2.add(jMenu17);
-        		jMenu17.setName("jMenu17");
-        		{
-        			definePrimactionMenuItem = new JMenuItem();
-        			jMenu17.add(definePrimactionMenuItem);
-        			definePrimactionMenuItem.setName("definePrimactionMenuItem");
-        			definePrimactionMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					definePrimactionMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        		{
-        			jMenu18 = new JMenu();
-        			jMenu17.add(jMenu18);
-        			jMenu18.setName("jMenu18");
-        			{
-        				believeMenuItem = new JMenuItem();
-        				jMenu18.add(believeMenuItem);
-        				believeMenuItem.setName("believeMenuItem");
-        				believeMenuItem.addActionListener(new ActionListener() {
-        					public void actionPerformed(ActionEvent evt) {
-        						believeMenuItemActionPerformed(evt);
-        					}
-        				});
-        			}
-        			{
-        				disbelieveMenuItem = new JMenuItem();
-        				jMenu18.add(disbelieveMenuItem);
-        				disbelieveMenuItem.setName("disbelieveMenuItem");
-        				disbelieveMenuItem.addActionListener(new ActionListener() {
-        					public void actionPerformed(ActionEvent evt) {
-        						disbelieveMenuItemActionPerformed(evt);
-        					}
-        				});
-        			}
-        		}
-        		{
-        			jMenu19 = new JMenu();
-        			jMenu17.add(jMenu19);
-        			jMenu19.setName("jMenu19");
-        			{
-        				doAllMenuItem = new JMenuItem();
-        				jMenu19.add(doAllMenuItem);
-        				doAllMenuItem.setName("doAllMenuItem");
-        				doAllMenuItem.addActionListener(new ActionListener() {
-        					public void actionPerformed(ActionEvent evt) {
-        						doAllMenuItemActionPerformed(evt);
-        					}
-        				});
-        			}
-        			{
-        				doOneMenuItem = new JMenuItem();
-        				jMenu19.add(doOneMenuItem);
-        				doOneMenuItem.setName("doOneMenuItem");
-        				doOneMenuItem.addActionListener(new ActionListener() {
-        					public void actionPerformed(ActionEvent evt) {
-        						doOneMenuItemActionPerformed(evt);
-        					}
-        				});
-        			}
-        			{
-        				jMenuItem76 = new JMenuItem();
-        				jMenu19.add(jMenuItem76);
-        				jMenuItem76.setName("jMenuItem76");
-        			}
-        			{
-        				jMenuItem77 = new JMenuItem();
-        				jMenu19.add(jMenuItem77);
-        				jMenuItem77.setName("jMenuItem77");
-        			}
-        			{
-        				jMenuItem78 = new JMenuItem();
-        				jMenu19.add(jMenuItem78);
-        				jMenuItem78.setName("jMenuItem78");
-        			}
-        			{
-        				jMenuItem79 = new JMenuItem();
-        				jMenu19.add(jMenuItem79);
-        				jMenuItem79.setName("jMenuItem79");
-        			}
-        			{
-        				jMenuItem80 = new JMenuItem();
-        				jMenu19.add(jMenuItem80);
-        				jMenuItem80.setName("jMenuItem80");
-        			}
-        		}
-        		{
-        			attachPrimActionMenuItem = new JMenuItem();
-        			jMenu17.add(attachPrimActionMenuItem);
-        			attachPrimActionMenuItem.setName("attachPrimActionMenuItem");
-        			attachPrimActionMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					attachPrimActionMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        	}
-        	{
-        		jMenu20 = new JMenu();
-        		jMenu2.add(jMenu20);
-        		jMenu20.setName("jMenu20");
-        		{
-        			planActMenuItem = new JMenuItem();
-        			jMenu20.add(planActMenuItem);
-        			planActMenuItem.setName("planActMenuItem");
-        			planActMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					planActMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        	}
-        	{
-        		jMenu21 = new JMenu();
-        		jMenu2.add(jMenu21);
-        		jMenu21.setName("jMenu21");
-        		{
-        			achieveMenuItem = new JMenuItem();
-        			jMenu21.add(achieveMenuItem);
-        			achieveMenuItem.setName("achieveMenuItem");
-        		}
-        	}
-        	{
-        		jMenu22 = new JMenu();
-        		jMenu2.add(jMenu22);
-        		jMenu22.setName("jMenu22");
-        		{
-        			actPreconditionMenuItem = new JMenuItem();
-        			jMenu22.add(actPreconditionMenuItem);
-        			actPreconditionMenuItem.setName("actPreconditionMenuItem");
-        		}
-        		{
-        			actEffectMenuItem = new JMenuItem();
-        			jMenu22.add(actEffectMenuItem);
-        			actEffectMenuItem.setName("actEffectMenuItem");
-        		}
-        	}
-        	{
-        		jMenu23 = new JMenu();
-        		jMenu2.add(jMenu23);
-        		jMenu23.setName("jMenu23");
-        	}
-        	{
-        		jMenu24 = new JMenu();
-        		jMenu2.add(jMenu24);
-        		jMenu24.setName("jMenu24");
-        		{
-        			jMenuItem86 = new JMenuItem();
-        			jMenu24.add(jMenuItem86);
-        			jMenuItem86.setName("jMenuItem86");
-        		}
-        	}
         }
         {
         	jMenu1 = new JMenu();
@@ -1188,18 +1266,22 @@ public class SNePSInterface extends SingleFrameApplication {
     }
     
     private void assertButtonMouseClicked(MouseEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().assertMenuButton();
     }
     
     private void defineButtonMouseClicked(MouseEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().defineMenuButton();
     }
     
     private void showNetworkButtonMouseClicked(MouseEvent evt) {
-    	//sNePSULPanel1.jTabbedPane1.setSelectedComponent()
+    	sNePSULPanel1.getjTabbedPane1().setSelectedIndex(2);
+    	switchToVisualizeNetwork();
     }
     
     private void findButtonMouseClicked(MouseEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().findMenuButton();
     }
     
@@ -1208,253 +1290,571 @@ public class SNePSInterface extends SingleFrameApplication {
     }
     
     private void findMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().findMenuButton();
     }
     
     private void eraseMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().eraseMenuButton();
     }
     
     private void silentEraseMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().silentEraseMenuButton();
     }
     
     private void dumpMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().dumpMenuButton();
     }
     
     private void describeMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().describeMenuButton();
     }
     
     private void fullDescribeMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().fullDescribeMenuButton();
     }
     
     private void defineMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().defineMenuButton();
     }
     
     private void undefineMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().undefineMenuButton();
     }
     
     private void addMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().addMenuButton();
     }
     
     private void activateMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().activateMenuButton();
     }
     
     private void assertMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().assertMenuButton();
     }
     
     private void definePathMenuItemActionPerformed(ActionEvent evt) {
-    	sNePSULPanel1.getMenuDrivenCommands().defineMenuButton();
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().definePathMenuButton();
     }
     
     private void undefinePathMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().undefinePathMenuButton();
     }
     
     private void setContextMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().setContextMenuButton();
     }
     
     private void setDefaultContextMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().setDefaultContextMenuButton();
     }
     
     private void addToContextMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().addToContextMenuButton();
     }
     
     private void removeFromContextMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().removeFromContextMenuButton();
     }
     
     private void describeContextMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().describeContextMenuButton();
     }
     
     private void listHypothesesMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
     	sNePSULPanel1.getMenuDrivenCommands().listHypothesesMenuButton();
     }
     
     private void listNodesMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("listNodesMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for listNodesMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().listNodesMenuButton();
     }
     
     private void findAssertMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("findAssertMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for findAssertMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().findassertMenuButton();
     }
     
     private void findConstantMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("findConstantMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for findConstantMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().findconstantMenuButton();
     }
     
     private void findBaseMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("findBaseMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for findBaseMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().findbaseMenuButton();
     }
     
     private void findVariableMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("findVariableMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for findVariableMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().findvariableMenuButton();
     }
     
     private void findPatternMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("findPatternMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for findPatternMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().findpatternMenuButton();
     }
     
     private void deduceMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("deduceMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for deduceMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().deduceMenuButton();
     }
     
     private void deduceTrueMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("deduceTrueMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for deduceTrueMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().deducetrueMenuButton();
     }
     
     private void deduceFalseMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("deduceFalseMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for deduceFalseMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().deducefalseMenuButton();
     }
     
     private void deduceWHMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("deduceWHMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for deduceWHMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().deducewhMenuButton();
     }
     
     private void deduceWHNOTMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("deduceWHNOTMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for deduceWHNOTMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().deducewhnotMenuButton();
     }
     
     private void andEntailmentMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("andEntailmentMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for andEntailmentMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().andEntailmentMenuButton();
     }
     
     private void orEntailmentMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("orEntailmentMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for orEntailmentMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().orEntailmentMenuButton();
     }
     
     private void numericalEntailmentMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("numericalEntailmentMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for numericalEntailmentMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().numericalEntailmentMenuButton();
     }
     
     private void andOrMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("andOrMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for andOrMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().andOrMenuButton();
     }
     
     private void threshMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("threshMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for threshMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().threshMenuButton();
     }
     
     private void universalQuantifierMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("universalQuantifierMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for universalQuantifierMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().universalQunatifierMenuButton();
     }
     
     private void numericalQuantifierMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("numericalQuantifierMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for numericalQuantifierMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().numericalQuantifierMenuButton();
     }
     
     private void evTraceMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("evTraceMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for evTraceMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().evTraceMenuButton();
     }
     
     private void unevTraceMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("unevTraceMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for unevTraceMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().unevTraceMenuButton();
     }
     
     private void inTraceMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("inTraceMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for inTraceMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().inTraceMenuButton();
     }
     
     private void uninTraceMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("uninTraceMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for uninTraceMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().uninTraceMenuButton();
     }
     
     private void multiPrintRegsMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("multiPrintRegsMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for multiPrintRegsMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().multiPrintRegsMenuButton();
     }
     
+    private void performMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
+		sNePSULPanel1.getMenuDrivenCommands().performMenuButton();
+	}
+    
     private void wheneverDoMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("wheneverDoMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for wheneverDoMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().wheneverDoMenuButton();
     }
     
     private void whenDoMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("whenDoMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for whenDoMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().whenDoMenuButton();
     }
     
     private void ifDoMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("ifDoMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for ifDoMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().ifDoMenuButton();
     }
     
     private void definePrimactionMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("definePrimactionMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for definePrimactionMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().definePrimactionMenuButton();
     }
     
     private void attachPrimActionMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("attachPrimActionMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for attachPrimActionMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().attachPrimactionMenuButton();
     }
     
     private void believeMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("believeMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for believeMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().believeMenuButton();
     }
     
     private void disbelieveMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("disbelieveMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for disbelieveMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().disbeliveMenuButton();
     }
     
     private void doAllMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("doAllMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for doAllMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().doAllMenuButton();
     }
     
     private void doOneMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("doOneMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for doOneMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().doOneMenuButton();
     }
     
     private void planActMenuItemActionPerformed(ActionEvent evt) {
-    	System.out.println("planActMenuItem.actionPerformed, event="+evt);
-    	//TODO add your code for planActMenuItem.actionPerformed
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().actPlanMenuButton();
     }
     
+    private void snsequenceMenuItemActionPerformed(ActionEvent evt) {
+    	switchToCommandsTab();
+    	sNePSULPanel1.getMenuDrivenCommands().snsequenceMenuButton();
+	}
+	
+	private void snifMenuItemActionPerformed(ActionEvent evt) {
+		switchToCommandsTab();
+		sNePSULPanel1.getMenuDrivenCommands().snifMenuButton();
+	}
+	
+	private void sniterateMenuItemActionPerformed(ActionEvent evt) {
+		switchToCommandsTab();
+		sNePSULPanel1.getMenuDrivenCommands().sniterateMenuButton();
+	}
+	
+	private void withallMenuItemActionPerformed(ActionEvent evt) {
+		switchToCommandsTab();
+		sNePSULPanel1.getMenuDrivenCommands().withallMenuButton();
+	}
+	
+	private void withsomeMenuItemActionPerformed(ActionEvent evt) {
+		switchToCommandsTab();
+		sNePSULPanel1.getMenuDrivenCommands().withsomeMenuButton();
+	}
+	
+	private void achieveMenuItemActionPerformed(ActionEvent evt) {
+		switchToCommandsTab();
+		sNePSULPanel1.getMenuDrivenCommands().achieveMenuButton();
+	}
+	
+	private void actPreconditionMenuItemActionPerformed(ActionEvent evt) {
+		switchToCommandsTab();
+		sNePSULPanel1.getMenuDrivenCommands().actPreconditionMenuButton();
+	}
+	
+	private void actEffectMenuItemActionPerformed(ActionEvent evt) {
+		switchToCommandsTab();
+		sNePSULPanel1.getMenuDrivenCommands().actEffectMenuButton();
+	}
+	
+	private void defineCaseframeMenuItemActionPerformed(ActionEvent evt) {
+		switchToCommandsTab();
+		sNePSULPanel1.getMenuDrivenCommands().defineCaseFrameMenuButton();
+	}
+	
+	private void undefineCaseframeMenuItemActionPerformed(ActionEvent evt) {
+		switchToCommandsTab();
+		sNePSULPanel1.getMenuDrivenCommands().undefineCaseFrameMenuButton();
+	}
+    
+	private void switchToCommandsTab() {
+		sNePSULPanel1.getjTabbedPane1().setSelectedIndex(0);
+		
+		outputPanel1.setVisible(true);
+		tracingPanel1.setVisible(true);
+		
+		sNePSULPanel1.setBounds(156, 1, 815, 366);
+		sNePSULPanel1.getjTabbedPane1().setPreferredSize(new Dimension(815, 366));
+		sNePSULPanel1.getjTabbedPane1().getComponent(0).setPreferredSize(new Dimension(815, 366));
+		
+		sNePSULPanel1.getjTabbedPane1().getComponent(0).validate();
+		sNePSULPanel1.getjTabbedPane1().getComponent(0).repaint();
+		
+		sNePSULPanel1.getjTabbedPane1().validate();
+		sNePSULPanel1.getjTabbedPane1().repaint();
+		
+		sNePSULPanel1.validate();
+		sNePSULPanel1.repaint();
+    	
+    	this.getMainFrame().validate();
+		this.getMainFrame().repaint();
+		
+		previousTab = 0;
+	}
+	
+	private void switchToVisualizeNetwork() {
+		outputPanel1.setVisible(false);
+		tracingPanel1.setVisible(false);
+		
+		sNePSULPanel1.setBounds(156, 1, 815, 600);
+		sNePSULPanel1.getjTabbedPane1().setPreferredSize(new Dimension(815, 600));
+		sNePSULPanel1.getjTabbedPane1().getComponent(0).setPreferredSize(new Dimension(815, 600));
+		
+		((VisualizeNetworks)sNePSULPanel1.getjTabbedPane1().getComponent(2)).initGUI();
+		
+		sNePSULPanel1.getjTabbedPane1().getComponent(2).validate();
+		sNePSULPanel1.getjTabbedPane1().getComponent(2).repaint();
+		
+		sNePSULPanel1.getjTabbedPane1().validate();
+		sNePSULPanel1.getjTabbedPane1().repaint();
+		
+		sNePSULPanel1.validate();
+		sNePSULPanel1.repaint();
+    	
+    	this.getMainFrame().validate();
+		this.getMainFrame().repaint();
+		
+		previousTab = 2;
+	}
+	
     /**
      * Creates a new session
      * @param evt the event that was fired
      */
     private void newButtonActionPerformed(ActionEvent evt) {
     	Network network = new Network();
+    	this.network = network;
     	try {
+    		
+//    		Relation r1 = network.defineRelation("action", "single", null, 1);
+//    		Relation r2 = network.defineRelation("actObject", "single", null, 0);
+//    		Relation r3 = network.defineRelation("object1", "single", null, 1);
+//    		Relation r4 = network.defineRelation("object2", "single", null, 1);
+//    		Relation r5 = network.defineRelation("act", "single", null, 1);
+//    		Relation r6 = network.defineRelation("condition", "single", null, 1);
+//    		Relation r7 = network.defineRelation("plan", "single", null, 1);
+//    		Relation r8 = network.defineRelation("precondition", "single", null, 1);
+//    		Relation r9 = network.defineRelation("effect", "single", null, 1);
+//    		Relation r10 = network.defineRelation("goal", "single", null, 1);
+//    		Relation r11 = network.defineRelation("do", "single", null, 1);
+//    		Relation r12 = network.defineRelation("vars", "single", null, 1);
+//    		Relation r13 = network.defineRelation("suchthat", "single", null, 1);
+//    		
+//    		LinkedList<Relation> l = new LinkedList<Relation>();
+//    		l.add(r1);
+//    		l.add(r2);
+//    		
+//    		CaseFrame cf1 = network.defineCaseFrame("act", l);
+//    		
+//    		LinkedList<Relation> l2 = new LinkedList<Relation>();
+//    		l2.add(r3);
+//    		l2.add(r4);
+//    		
+//    		CaseFrame cf2 = network.defineCaseFrame("object", l2);
+//    		
+//    		LinkedList<Relation> l3 = new LinkedList<Relation>();
+//    		l3.add(r7);
+//    		l3.add(r5);
+//    		
+//    		CaseFrame plancf = network.defineCaseFrame("plan", l3);
+//    		
+//    		LinkedList<Relation> l4 = new LinkedList<Relation>();
+//    		l4.add(r8);
+//    		l4.add(r5);
+//    		
+//    		CaseFrame precf = network.defineCaseFrame("precondition", l4);
+//    		
+//    		LinkedList<Relation> l5 = new LinkedList<Relation>();
+//    		l5.add(r9);
+//    		l5.add(r5);
+//    		
+//    		CaseFrame effectcf = network.defineCaseFrame("effect", l5);
+//    		
+//    		LinkedList<Relation> l6 = new LinkedList<Relation>();
+//    		l6.add(r7);
+//    		l6.add(r10);
+//    		
+//    		CaseFrame planGoal = network.defineCaseFrame("goal", l6);
+//    		
+//    		LinkedList<Relation> l7 = new LinkedList<Relation>();
+//    		l7.add(r11);
+//    		l7.add(r12);
+//    		l7.add(r13);
+//    		
+//    		CaseFrame with = network.defineCaseFrame("with", l7);
+//    		
+//    		LinkedList<Relation> l8 = new LinkedList<Relation>();
+//    		l8.add(r5);
+//    		l8.add(r6);
+//    		
+//    		
+//    		CaseFrame guarded = network.defineCaseFrame("guardedact", l8);
+//    		
+//    	/*
+//    	 * Start Network
+//    	 */
+//    		
+//    		
+//    		Object[][] o8 = new Object[2][2];
+//    		 
+//    		
+//    		o8[0][0] = r1;
+//    		o8[1][0] = r2;
+//    		Node bn7 = network.build("mesh");
+//    		Node bn8 = network.build("Printdah");
+//    		o8[0][1] = bn7;
+//    		o8[1][1] = bn8;
+//    		
+//    		Act.attach(bn7,"tester");
+//    		
+//    		Node n6 = network.build(o8, cf1);
+//    		
+//    		Act a6 = new Act((MolecularNode) n6);
+//    		n6.setEntity(a6);
+//    		
+//    		a6.setPrimaction(true);
+//    		
+//    		Object[][] o5 = new Object[2][2];
+//    		 
+//    		
+//    		o5[0][0] = r1;
+//    		o5[1][0] = r2;
+//    		Node bn1 = network.build("DoAll");
+//    		o5[0][1] = bn1;
+//    		o5[1][1] = n6;
+//    		
+//    		Act.attach(bn1,"DoAll");
+//    		
+//    		Node n1 = network.build(o5, cf1);
+//    		
+//    		Act a1 = new Act((MolecularNode) n1);
+//    		n1.setEntity(a1);
+//    		
+//    		a1.setPrimaction(true);
+//    		
+//    		Object[][] o9 = new Object[2][2];
+//    		
+//    		o9[0][0] = r5;
+//    		o9[1][0] = r8;
+//    		Node bn3 = network.build("X");
+//    		o9[0][1] = n1;
+//    		o9[1][1] = bn3;
+//    		
+//    		Node n2 = network.build(o9, precf);
+//    		
+//    		Object[][] o11 = new Object[2][2];
+//    		
+//    		o11[0][0] = r5;
+//    		o11[1][0] = r9;
+//    		Node bn13 = network.build("Y");
+//    		o11[0][1] = n1;
+//    		o11[1][1] = bn13;
+//    		
+//    		Node n8 = network.build(o11, effectcf);
+//    		
+//    		
+//    		Object[][] o6 = new Object[2][2];
+//    		 
+//    		
+//    		o6[0][0] = r1;
+//    		o6[1][0] = r2;
+//    		Node bn4 = network.build("believe");
+//    		o6[0][1] = bn4;
+//    		o6[1][1] = bn3;
+//    		
+//    		Act.attach(bn4,"BELIEVE");
+//    		
+//    		Node n4 = network.build(o6, cf1);
+//    		
+//    		Act a2 = new Act((MolecularNode) n4);
+//    		n4.setEntity(a2);
+//    		
+//    		a2.setPrimaction(true);
+//    		
+//    		Object[][] o7 = new Object[2][2];
+//    		
+//    		o7[0][0] = r7;
+//    		o7[1][0] = r10;
+//    		o7[0][1] = n4;
+//    		o7[1][1] = bn3;
+//    		
+//    		Node n3 = network.build(o7, planGoal);
+//    		
+//    		Object[][] o13 = new Object[2][2];
+//    		 
+//    		
+//    		o13[0][0] = r1;
+//    		o13[1][0] = r2;
+//    		Node bn14 = network.build("believe#2");
+//    		o13[0][1] = bn14;
+//    		o13[1][1] = bn13;
+//    		
+//    		Act.attach(bn14,"BELIEVE");
+//    		
+//    		Node n10 = network.build(o13, cf1);
+//    		
+//    		Act a10 = new Act((MolecularNode) n10);
+//    		n10.setEntity(a10);
+//    		
+//    		a10.setPrimaction(true);
+//    		
+//    		Object[][] o12 = new Object[2][2];
+//    		
+//    		o12[0][0] = r7;
+//    		o12[1][0] = r10;
+//    		o12[0][1] = n10;
+//    		o12[1][1] = bn13;
+//    		
+//    		Node n9 = network.build(o12, planGoal);
+//    		
+//    		
+////    		test.conditions.add(bn3);
+//    				
+////    		a5.setAgenda("start");
+////    		Queue.stackPush(n5);
+////    		a5.performSNePS(n5, m);
+//    		
+//    		a1.setAgenda("start");
+//    		Queue.stackPush(n1);
+//    		a1.performSNePS(n1, network);
+    	
     		
     		//Acting
     		Relation r1 = network.defineRelation("action", "single", null, 1);
@@ -1481,27 +1881,27 @@ public class SNePSInterface extends SingleFrameApplication {
     		l2.add(r6);
     		
     		//Define the Relations
-        	Relation rr1 = network.defineRelation("member","entity","reduce",0);
-        	Relation rr2 = network.defineRelation("class","entity","reduce",0);
-        	Relation rr3 = network.defineRelation("object","entity","reduce",0);
-        	Relation rr4 = network.defineRelation("isa","entity","reduce",0);
-        	Relation rr5 = network.defineRelation("has","entity","reduce",0);
+        	Relation rr1 = network.defineRelation("member","Entity","reduce",0);
+        	Relation rr2 = network.defineRelation("class","Entity","reduce",0);
+        	Relation rr3 = network.defineRelation("object","Entity","reduce",0);
+        	Relation rr4 = network.defineRelation("isa","Entity","reduce",0);
+        	Relation rr5 = network.defineRelation("has","Entity","reduce",0);
         	
         	//Define the Case Frames
         	LinkedList<Relation> relations1 = new LinkedList<Relation>();
         	relations1.add(rr1);
         	relations1.add(rr2);
-        	CaseFrame caseframe1 = network.defineCaseFrame("entity", relations1);
+        	CaseFrame caseframe1 = network.defineCaseFrame("Entity", relations1);
         	
         	LinkedList<Relation> relations2 = new LinkedList<Relation>();
         	relations2.add(rr3);
         	relations2.add(rr4);
-        	CaseFrame caseframe2 = network.defineCaseFrame("entity", relations2);
+        	CaseFrame caseframe2 = network.defineCaseFrame("Entity", relations2);
         	
         	LinkedList<Relation> relations3 = new LinkedList<Relation>();
         	relations3.add(rr3);
         	relations3.add(rr5);
-        	CaseFrame caseframe3 = network.defineCaseFrame("entity", relations3);
+        	CaseFrame caseframe3 = network.defineCaseFrame("Entity", relations3);
         	
         	//Build Base Nodes
         	//Node node = network.build("Clyde");
@@ -1511,7 +1911,7 @@ public class SNePSInterface extends SingleFrameApplication {
         	Node node4 = network.build("canary");
         	Node node5 = network.build("Opus");
         	//Node node6 = network.build("bird");
-        	Node node7 = network.build("elephant");
+        	Node node7 = network.build("elephant"); 
         	Node node8 = network.build("animal");
         	Node node9 = network.build("circus elephant");
         	//Node node10 = network.build("elephant");
@@ -1681,50 +2081,80 @@ public class SNePSInterface extends SingleFrameApplication {
     	this.getMainFrame().validate();
     	this.getMainFrame().repaint();
     }
-    
-    /**
+
+	/**
      * Adjusts the interface depending on the chosen tab
      * @param evt the event that was fired
      */
     private void jTabbedPane1MouseClicked(MouseEvent evt) {
+    	int selectedIndex = sNePSULPanel1.getjTabbedPane1().getSelectedIndex();
     	Dimension dimension = new Dimension(815, 600);
-    	
-    	if (sNePSULPanel1.getjTabbedPane1().getSelectedIndex() == 1) {
-    		outputPanel1.setVisible(false);
-    		tracingPanel1.setVisible(false);
-    		
-    		sNePSULPanel1.setBounds(156, 1, 815, 600);
-    		sNePSULPanel1.getjTabbedPane1().setPreferredSize(dimension);
-    		sNePSULPanel1.getjTabbedPane1().getComponent(1).setPreferredSize(dimension);
-    		
-    		sNePSULPanel1.getjTabbedPane1().getComponent(1).validate();
-    		sNePSULPanel1.getjTabbedPane1().getComponent(1).repaint();
-    		
-    	} else if (sNePSULPanel1.getjTabbedPane1().getSelectedIndex() == 0) {
-    		outputPanel1.setVisible(true);
-    		tracingPanel1.setVisible(true);
-    		
-    		sNePSULPanel1.setBounds(156, 1, 815, 366);
-    		sNePSULPanel1.getjTabbedPane1().setPreferredSize(new Dimension(815, 366));
-    		sNePSULPanel1.getjTabbedPane1().getComponent(0).setPreferredSize(new Dimension(815, 366));
-    		
-    		sNePSULPanel1.getjTabbedPane1().getComponent(0).validate();
-    		sNePSULPanel1.getjTabbedPane1().getComponent(0).repaint();
-    		
-    	} else if (sNePSULPanel1.getjTabbedPane1().getSelectedIndex() == 2) {
-    		outputPanel1.setVisible(false);
-    		tracingPanel1.setVisible(false);
-    		
-    		sNePSULPanel1.setBounds(156, 1, 815, 600);
-    		sNePSULPanel1.getjTabbedPane1().setPreferredSize(dimension);
-    		sNePSULPanel1.getjTabbedPane1().getComponent(0).setPreferredSize(dimension);
-    		
-    		((VisualizeNetworks)sNePSULPanel1.getjTabbedPane1().getComponent(2)).initGUI();
-    		
-    		sNePSULPanel1.getjTabbedPane1().getComponent(2).validate();
-    		sNePSULPanel1.getjTabbedPane1().getComponent(2).repaint();
+    	if(evt.getClickCount() == 2 && selectedIndex == 2) {
+    		if(viewNetworkClickCount) {
+    			outputPanel1.setVisible(true);
+        		tracingPanel1.setVisible(true);
+        		
+        		((VisualizeNetworks)sNePSULPanel1.getjTabbedPane1().getComponent(2)).getVv().setPreferredSize(new Dimension(700,220));
+        		sNePSULPanel1.setBounds(156, 1, 815, 366);
+        		sNePSULPanel1.getjTabbedPane1().setPreferredSize(new Dimension(815, 366));
+        		sNePSULPanel1.getjTabbedPane1().getComponent(2).setPreferredSize(new Dimension(815, 366));
+        		
+        		sNePSULPanel1.getjTabbedPane1().getComponent(2).validate();
+        		sNePSULPanel1.getjTabbedPane1().getComponent(2).repaint();
+        		
+    			viewNetworkClickCount = false;
+    		} else {
+    			outputPanel1.setVisible(false);
+        		tracingPanel1.setVisible(false);
+        		
+        		((VisualizeNetworks)sNePSULPanel1.getjTabbedPane1().getComponent(2)).getVv().setPreferredSize(new Dimension(700,470));
+        		sNePSULPanel1.setBounds(156, 1, 815, 600);
+        		sNePSULPanel1.getjTabbedPane1().setPreferredSize(dimension);
+        		sNePSULPanel1.getjTabbedPane1().getComponent(2).setPreferredSize(dimension);
+        		
+        		sNePSULPanel1.getjTabbedPane1().getComponent(2).validate();
+        		sNePSULPanel1.getjTabbedPane1().getComponent(2).repaint();
+        		
+    			viewNetworkClickCount = true;
+    		}
+    	} else if(selectedIndex != previousTab && evt.getClickCount() == 1) {
+    		if (selectedIndex == 1) {
+        		outputPanel1.setVisible(false);
+        		tracingPanel1.setVisible(false);
+        		
+        		sNePSULPanel1.setBounds(156, 1, 815, 600);
+        		sNePSULPanel1.getjTabbedPane1().setPreferredSize(dimension);
+        		sNePSULPanel1.getjTabbedPane1().getComponent(1).setPreferredSize(dimension);
+        		
+        		sNePSULPanel1.getjTabbedPane1().getComponent(1).validate();
+        		sNePSULPanel1.getjTabbedPane1().getComponent(1).repaint();
+        		
+        	} else if (selectedIndex == 0) {
+        		outputPanel1.setVisible(true);
+        		tracingPanel1.setVisible(true);
+        		
+        		sNePSULPanel1.setBounds(156, 1, 815, 366);
+        		sNePSULPanel1.getjTabbedPane1().setPreferredSize(new Dimension(815, 366));
+        		sNePSULPanel1.getjTabbedPane1().getComponent(0).setPreferredSize(new Dimension(815, 366));
+        		
+        		sNePSULPanel1.getjTabbedPane1().getComponent(0).validate();
+        		sNePSULPanel1.getjTabbedPane1().getComponent(0).repaint();
+        		
+        	} else if (selectedIndex == 2) {
+        		outputPanel1.setVisible(false);
+        		tracingPanel1.setVisible(false);
+        		
+        		sNePSULPanel1.setBounds(156, 1, 815, 600);
+        		sNePSULPanel1.getjTabbedPane1().setPreferredSize(dimension);
+        		sNePSULPanel1.getjTabbedPane1().getComponent(0).setPreferredSize(dimension);
+        		
+        		((VisualizeNetworks)sNePSULPanel1.getjTabbedPane1().getComponent(2)).initGUI();
+        		
+        		sNePSULPanel1.getjTabbedPane1().getComponent(2).validate();
+        		sNePSULPanel1.getjTabbedPane1().getComponent(2).repaint();
+        	}
+    		previousTab = selectedIndex;
     	}
-
     	sNePSULPanel1.getjTabbedPane1().validate();
 		sNePSULPanel1.getjTabbedPane1().repaint();
 		
@@ -1736,7 +2166,8 @@ public class SNePSInterface extends SingleFrameApplication {
     }
     
     /**
-     * This method saves the drawn network or the visualized network depending on the tab that is selected
+     * This method saves the drawn network or the visualized network depending on the tab that is selected, it also saves the
+     * current network. The save button saves the corresponding option based on the current tab.
      * @param evt the event that was fired
      */
     private void saveButtonMouseClicked(MouseEvent evt) {
@@ -1754,7 +2185,52 @@ public class SNePSInterface extends SingleFrameApplication {
 	            File file = chooser.getSelectedFile();
 	            sNePSULPanel1.getVisualizeNetworks().writeJPEGImage(file);
 	        }
+		} else if (sNePSULPanel1.getjTabbedPane1().getSelectedIndex() == 0) {
+			JFileChooser chooser  = new JFileChooser();
+	        int option = chooser.showSaveDialog(this.getMainFrame());
+	        if(option == JFileChooser.APPROVE_OPTION) {
+	        	File file = chooser.getSelectedFile();
+				try {
+					FileOutputStream fos = new FileOutputStream(file);
+					ObjectOutputStream out = new ObjectOutputStream(fos);
+		        	out.writeObject(this.getNetwork());
+		        	out.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	        }
 		}
+	}
+    
+    private void openButtonMouseClicked(MouseEvent evt) {
+		JFileChooser chooser  = new JFileChooser();
+        int option = chooser.showOpenDialog(this.getMainFrame());
+        if(option == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+			try {
+				FileInputStream fis = new FileInputStream(file);
+				ObjectInputStream in = new ObjectInputStream(fis);
+				Network network = (Network) in.readObject();
+				in.close();
+				this.network = network;
+				sNePSULPanel1.getMenuDrivenCommands().setNetwork(network);
+		    	sNePSULPanel1.getVisualizeNetworks().setNetwork(network);
+		    	sNePSULPanel1.getDrawNetworks().setNetwork(network);
+		    	nodesTreePanel1.setNetwork(network);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			nodesTreePanel1.addTreeInfo();
+	    	nodesResult.setNetwork(network);
+	    	this.getMainFrame().validate();
+	    	this.getMainFrame().repaint();
+        }
 	}
     
     /**
@@ -1788,6 +2264,10 @@ public class SNePSInterface extends SingleFrameApplication {
     
     public TracingPanel getTracingPanel1() {
 		return tracingPanel1;
+	}
+    
+    public Network getNetwork() {
+		return network;
 	}
 
 	public static void main(String[] args) {

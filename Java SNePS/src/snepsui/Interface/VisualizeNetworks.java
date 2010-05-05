@@ -24,11 +24,9 @@ import javax.swing.JPanel;
 
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.ConstantTransformer;
-import org.w3c.dom.NodeList;
 
 import sneps.Cable;
 import sneps.CaseFrame;
-import sneps.CustomException;
 import sneps.MolecularNode;
 import sneps.Network;
 import sneps.Node;
@@ -59,7 +57,6 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 
     private Network network;
     private int id = 0;
-    
     
     /**
      * Transforms the color of each vertex depending of its type
@@ -455,9 +452,9 @@ public class VisualizeNetworks extends javax.swing.JPanel {
         vv.addKeyListener(graphMouse.getModeKeyListener());
 
         JComboBox modeBox = graphMouse.getModeComboBox();
+        graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
         modeBox.addItemListener(graphMouse.getModeListener());
-        graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
-
+      
         final ScalingControl scaler = new CrossoverScalingControl();
         
         vv.scaleToLayout(scaler);
@@ -650,7 +647,7 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 				public Integer transform(String v) {
 		            if (scale) {
 		            	int shapeSize = shape.transform(v);
-		            	if(shapeSize == 2) {
+		            	if(shapeSize == 2 || shapeSize == 1) {
 		            		return 20;
 		            	} else if (shapeSize == 3) {
 		            		return 30;
@@ -672,11 +669,6 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 		                return 1.0f;
 		            }
 				}});
-        }
-        
-		public void setStretching(boolean stretch)
-        {
-            this.stretch = stretch;
         }
         
         public void setScaling(boolean scale)
@@ -728,5 +720,13 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 
 	public void setNetwork(Network network) {
 		this.network = network;
+	}
+	
+	public VisualizationViewer<String, String> getVv() {
+		return vv;
+	}
+
+	public void setVv(VisualizationViewer<String, String> vv) {
+		this.vv = vv;
 	}
 }

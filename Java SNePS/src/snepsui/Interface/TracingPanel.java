@@ -2,9 +2,15 @@ package snepsui.Interface;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import org.jdesktop.application.Application;
 
@@ -42,15 +48,65 @@ public class TracingPanel extends javax.swing.JPanel {
 					jScrollPane1.setViewportView(jTextArea1);
 				}
 			}
+			redirectSystemStreams();
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
+	private void updateTextArea(final String text) {  
+		  SwingUtilities.invokeLater(new Runnable() {  
+		    public void run() {  
+		    	jTextArea1.append(text);  
+		    }  
+		  });  
+		}
+	
+	private void redirectSystemStreams() {  
+		  OutputStream out = new OutputStream() {  
+		    @Override  
+		    public void write(int b) throws IOException {  
+		      updateTextArea(String.valueOf((char) b));  
+		    }  
+		  
+		    @Override  
+		    public void write(byte[] b, int off, int len) throws IOException {  
+		      updateTextArea(new String(b, off, len));  
+		    }  
+		  
+		    @Override  
+		    public void write(byte[] b) throws IOException {  
+		      write(b, 0, b.length);  
+		    }  
+		  };  
+		  
+		  System.setOut(new PrintStream(out, true));  
+		  System.setErr(new PrintStream(out, true));  
+		}
+	
 	public void writeToTextArea(String text) {
 		jTextArea1.setSelectedTextColor(Color.BLACK);
 		jTextArea1.append(text);
+		
+		Timer timer = new Timer();
+		TimerTask timerTask = new TimerTask() {
+			int i = 0 ;
+			@Override
+			public void run() {
+				getText(i);
+				i++;
+			}
+		};
+		timer.schedule(timerTask, 60000, Long.MAX_VALUE);
+		
+		this.validate();
+		this.repaint();
+	}
+	
+	private void getText(int i) {
+		jTextArea1.append("Counter" + i + "\n");
+		System.out.println("Counter" + i);
 		this.validate();
 		this.repaint();
 	}

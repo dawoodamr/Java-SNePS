@@ -104,8 +104,8 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 					new DefaultComboBoxModel(
 							new String[] { "Relations", "Case Frames", "Reduction Inference", "Path-Based Inference", "Contexts", "Building Networks", 
 									"Deleting Information", "Displaying Information", "Retrieving Information", "Connectives", "Quantifiers", 
-									"Tracing Inference", "Acting", "Primitive Acts", "Complex Acts", "Goals", "Precondition and Effects", 
-									"Transformers","Defining New Commands", "Functions Returning Sets of Nodes or Unitpaths"});
+									"Tracing Inference", "Acting", "Primitive Acts", "Mental Acts", "Control Acts", "Complex Acts", "Goals",  
+									"Precondition and Effects", "Functions Returning Sets of Nodes or Unitpaths"});
 				commandMenusComboBox = new JComboBox();
 				this.add(commandMenusComboBox);
 				commandMenusComboBox.setModel(jComboBox2Model);
@@ -150,11 +150,6 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdCaseFrame(network, frame));
 		}
-		else if(commandMenusComboBox.getSelectedItem().equals("Reduction Inference")) {
-			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
-			dcbm.addElement("deduce");
-			commandsComboBox.setModel(dcbm);
-		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Path-Based Inference")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 			dcbm.addElement("define-path");
@@ -197,7 +192,6 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("dump");
 			dcbm.addElement("describe");
 			dcbm.addElement("full-describe");
-			dcbm.addElement("surface");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDump(network, frame));
@@ -233,11 +227,10 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		else if(commandMenusComboBox.getSelectedItem().equals("Quantifiers")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 			dcbm.addElement("Universal Quantifier");
-			dcbm.addElement("Skolem Function");
 			dcbm.addElement("Numerical Quantifier");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdUniversalQunatifier());
+			commandsPanel.add(new cmdUniversalQunatifier(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Tracing Inference")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -248,7 +241,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("multi::print-regs");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdEVTrace());
+			commandsPanel.add(new cmdEVTrace(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Acting")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -263,10 +256,29 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		else if(commandMenusComboBox.getSelectedItem().equals("Primitive Acts")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 			dcbm.addElement("define-primaction");
-			dcbm.addElement("do-all");
+			dcbm.addElement("attach-primaction");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDefinePrimaction(network));
+			commandsPanel.add(new cmdDefinePrimaction(network, frame));
+		} else if(commandMenusComboBox.getSelectedItem().equals("Mental Acts")) {
+			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
+			dcbm.addElement("believe");
+			dcbm.addElement("disbelive");
+			commandsComboBox.setModel(dcbm);
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdBelieve(network, frame));
+		} else if(commandMenusComboBox.getSelectedItem().equals("Control Acts")) {
+			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
+			dcbm.addElement("do-all");
+			dcbm.addElement("do-one");
+			dcbm.addElement("snsequence");
+			dcbm.addElement("snif");
+			dcbm.addElement("sniterate");
+			dcbm.addElement("withall");
+			dcbm.addElement("withsome");
+			commandsComboBox.setModel(dcbm);
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdDoAll(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Complex Acts")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -277,27 +289,18 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Goals")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
+			dcbm.addElement("achieve");
 			commandsComboBox.setModel(dcbm);
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdAchieve(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Preconditions and Effects")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 			dcbm.addElement("{<act, a>,<precondition, p>}");
 			dcbm.addElement("{<act, a>,<effect, p>}");
 			commandsComboBox.setModel(dcbm);
-		}
-		else if(commandMenusComboBox.getSelectedItem().equals("Transformers")) {
-			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
-			dcbm.addElement("apply-function-to-ns");
-			dcbm.addElement("java-list-to-ns");
-			dcbm.addElement("ns-to-java-list");
-			dcbm.addElement("node-to-java-object");
-			dcbm.addElement("java-object-to-node");
-			commandsComboBox.setModel(dcbm);
-		}
-		else if(commandMenusComboBox.getSelectedItem().equals("Defining New Commands")) {
-			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
-			dcbm.addElement("defsnepscom");
-			commandsComboBox.setModel(dcbm);
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdActPrecondition(network, frame));
 		}
 		else if(commandMenusComboBox.getSelectedItem().equals("Functions Returning Sets of Nodes or Unitpaths")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
@@ -312,393 +315,896 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement(">");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdListNodes());
+			commandsPanel.add(new cmdListNodes(network, frame));
 		}
 		this.repaint();
 		this.validate();
 	}
 
 	private void commandsComboBoxItemStateChanged(ItemEvent evt) {
+		
+		//define
 		if(commandsComboBox.getSelectedItem().equals("define")) {	
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDefine(network, frame));
 		}
+		//undefine
 		else if(commandsComboBox.getSelectedItem().equals("undefine")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdUndefine(network, frame));
 		}
+		//define-caseframe
 		else if(commandsComboBox.getSelectedItem().equals("define-caseframe")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdCaseFrame(network, frame));
 		}
+		//undefine-caseframe
 		else if(commandsComboBox.getSelectedItem().equals("undefine-caseframe")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdUndefineCaseFrame(network, frame));
 		}
+		//assert
 		else if(commandsComboBox.getSelectedItem().equals("assert")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdAssert(network, frame));
 		}
+		//add
 		else if(commandsComboBox.getSelectedItem().equals("add")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdAdd(network, frame));
 		}
+		//activate
 		else if(commandsComboBox.getSelectedItem().equals("activate")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdActivate(network, frame));
 		}
+		//erase
 		else if(commandsComboBox.getSelectedItem().equals("erase")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdErase(network));
 		}
+		//silent-erase
 		else if(commandsComboBox.getSelectedItem().equals("silent-erase")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdSilentErase(network));
 		}
+		//define-path
 		else if(commandsComboBox.getSelectedItem().equals("define-path")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDefinePath(network, frame));
 		}
+		//undefine-path
 		else if(commandsComboBox.getSelectedItem().equals("undefine-path")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdUndefinePath(network, frame));
 		}
+		//add-to-context
 		else if(commandsComboBox.getSelectedItem().equals("add-to-context")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdAddToContext(network, frame));
 		}
+		//set-context
 		else if(commandsComboBox.getSelectedItem().equals("set-context")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdSetContext(network, frame));
 		}
+		//set-default-context
 		else if(commandsComboBox.getSelectedItem().equals("set-default-context")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdSetDefaultContext());
+			commandsPanel.add(new cmdSetDefaultContext(network, frame));
 		}
+		//remove-from-context
 		else if(commandsComboBox.getSelectedItem().equals("remove-from-context")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdRemoveFromContext(network, frame));
 		}
+		//describe-context
 		else if(commandsComboBox.getSelectedItem().equals("describe-context")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDescribeContext(network));
+			commandsPanel.add(new cmdDescribeContext(network, frame));
 		}
+		//list-hypotheses
 		else if(commandsComboBox.getSelectedItem().equals("list-hypotheses")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdListHypotheses(network));
+			commandsPanel.add(new cmdListHypotheses(network, frame));
 		}
+		//list-nodes
+		else if(commandsComboBox.getSelectedItem().equals("list-nodes")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdListNodes(network, frame));
+		}
+		//dump
 		else if(commandsComboBox.getSelectedItem().equals("dump")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDump(network, frame));
 		}
+		//describe
 		else if(commandsComboBox.getSelectedItem().equals("describe")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDescribe(network, frame));
 		}
+		//full-describe
 		else if(commandsComboBox.getSelectedItem().equals("full-describe")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDescribe(network, frame));
 		}
+		//find
 		else if(commandsComboBox.getSelectedItem().equals("find")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdFind(network, frame));
 		}
+		//findassert
 		else if(commandsComboBox.getSelectedItem().equals("findassert")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdFindAssert(network, frame));
 		}
+		//findconstant
 		else if(commandsComboBox.getSelectedItem().equals("findconstant")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdFindConstant(network, frame));
 		}
+		//findbase
 		else if(commandsComboBox.getSelectedItem().equals("findbase")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdFindBase(network, frame));
 		}
+		//findvariable
 		else if(commandsComboBox.getSelectedItem().equals("findvariable")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdFindVariable(network, frame));
 		}
+		//findpattern
 		else if(commandsComboBox.getSelectedItem().equals("findpattern")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdFindPattern(network, frame));
 		}
+		//ev-trace
 		else if(commandsComboBox.getSelectedItem().equals("ev-trace")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdEVTrace());
+			commandsPanel.add(new cmdEVTrace(network, frame));
 		}
+		//unev-trace
 		else if(commandsComboBox.getSelectedItem().equals("unev-trace")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdUNEVTrace());
+			commandsPanel.add(new cmdUNEVTrace(network, frame));
 		}
+		//in-trace
 		else if(commandsComboBox.getSelectedItem().equals("in-trace")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdINTrace());
+			commandsPanel.add(new cmdINTrace(network, frame));
 		}
+		//unin-trace
 		else if(commandsComboBox.getSelectedItem().equals("unin-trace")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdUNINTrace());
+			commandsPanel.add(new cmdUNINTrace(network, frame));
 		}
+		//dcbm.addElement("multi::print-regs");
 		else if(commandsComboBox.getSelectedItem().equals("multi::print-regs")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdMultiPrintRegs());
+			commandsPanel.add(new cmdMultiPrintRegs(network, frame));
 		}
+		//deduce
 		else if(commandsComboBox.getSelectedItem().equals("deduce")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDeduce(network, frame));
 		}
+		//deducetrue
 		else if(commandsComboBox.getSelectedItem().equals("deducetrue")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDeduceTrue(network, frame));
 		}
+		//deducefalse
 		else if(commandsComboBox.getSelectedItem().equals("deducefalse")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDeduceFalse(network, frame));
 		}
+		//deducewh
 		else if(commandsComboBox.getSelectedItem().equals("deducewh")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDeduceWH(network, frame));
 		}
+		//deducewhnot
 		else if(commandsComboBox.getSelectedItem().equals("deducewhnot")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDeduceWHNOT(network, frame));
 		}
+		//perform
+		else if(commandsComboBox.getSelectedItem().equals("perform")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdPerform(network, frame));
+		}
+		//{<whenever, p>,<do, a>}
 		else if(commandsComboBox.getSelectedItem().equals("{<whenever, p>,<do, a>}")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdWheneverDo(network, frame));
 		}
+		//{<when, p>,<do, a>}
 		else if(commandsComboBox.getSelectedItem().equals("{<when, p>,<do, a>}")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdWhenDo(network, frame));
 		}
+		//{<if, p>,<do, a>}
 		else if(commandsComboBox.getSelectedItem().equals("{<if, p>,<do, a>}")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdIfDo(network, frame));
 		}
+		//believe
 		else if(commandsComboBox.getSelectedItem().equals("believe")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdBelieve(network, frame));
 		}
+		//disbelive
 		else if(commandsComboBox.getSelectedItem().equals("disbelieve")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDisbelieve(network, frame));
 		}
+		//do-all
 		else if(commandsComboBox.getSelectedItem().equals("do-all")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDoAll(network, frame));
 		}
+		//do-one
 		else if(commandsComboBox.getSelectedItem().equals("do-one")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDoOne(network, frame));
 		}
+		//snsequence
+		else if(commandsComboBox.getSelectedItem().equals("snsequence")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdSNSequence(network, frame));
+		}
+		//snif
+		else if(commandsComboBox.getSelectedItem().equals("snif")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdSnif(network, frame));
+		}
+		//sniterate
+		else if(commandsComboBox.getSelectedItem().equals("sniterate")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdSniterate(network, frame));
+		}
+		//withall
+		else if(commandsComboBox.getSelectedItem().equals("withall")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdWithAll(network, frame));
+		}
+		//withsome
+		else if(commandsComboBox.getSelectedItem().equals("withsome")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdWithSome(network, frame));
+		}
+		//{<plan, p>,<act, a>}
 		else if(commandsComboBox.getSelectedItem().equals("{<plan, p>,<act, a>}")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdDoOne(network, frame));
 		}
-		else if(commandsComboBox.getSelectedItem().equals("list-nodes")) {
-			commandsPanel.removeAll();
-			commandsPanel.add(new cmdListNodes());
-		}
+		//dcbm.addElement("Universal Quantifier");
 		else if(commandsComboBox.getSelectedItem().equals("Universal Quantifier")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdUniversalQunatifier());
+			commandsPanel.add(new cmdUniversalQunatifier(network, frame));
 		}
+		//Numerical Quantifier
+		else if(commandsComboBox.getSelectedItem().equals("Numerical Quantifier")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdNumericalQuantifier(network, frame));
+		}
+		//And-Entailment
 		else if(commandsComboBox.getSelectedItem().equals("And-Entailment")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdAndEntailment(network, frame));
 		}
+		//Or-Entailment
 		else if(commandsComboBox.getSelectedItem().equals("Or-Entailment")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdOrEntailment(network, frame));
 		}
+		//Numerical Entailment
 		else if(commandsComboBox.getSelectedItem().equals("Numerical Entailment")) {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdNumericalEntailment(network, frame));
 		}
+		//AndOr
+		else if(commandsComboBox.getSelectedItem().equals("AndOr")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdAndOr(network, frame));
+		}
+		//Thresh
+		else if(commandsComboBox.getSelectedItem().equals("Thresh")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdThresh(network, frame));
+		}
+		//define-primaction
 		else if(commandsComboBox.getSelectedItem().equals("define-primaction")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDefinePrimaction(network));
+			commandsPanel.add(new cmdDefinePrimaction(network, frame));
+		}
+		//attach-primaction
+		else if(commandsComboBox.getSelectedItem().equals("attach-primaction")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdAttachPrimaction(network, frame));
+		}
+		//achieve
+		else if(commandsComboBox.getSelectedItem().equals("achieve")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdAchieve(network, frame));
+		}
+		//{<act, a>,<precondition, p>}
+		else if(commandsComboBox.getSelectedItem().equals("{<act, a>,<precondition, p>}")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdActPrecondition(network, frame));
+		}
+		//{<act, a>,<effect, p>}
+		else if(commandsComboBox.getSelectedItem().equals("{<act, a>,<effect, p>}")) {
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdActEffect(network, frame));
 		}
 		this.repaint();
 		this.validate();
 	}
 	
 	public void assertMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdAssert(network, frame));
 		commandsComboBox.setSelectedItem("assert");
 		commandMenusComboBox.setSelectedItem("Building Networks");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdAssert(network, frame));
 		this.repaint();
 		this.validate();
 	}
 	
 	public void defineMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdDefine(network, frame));
 		commandsComboBox.setSelectedItem("define");
 		commandMenusComboBox.setSelectedItem("Relations");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDefine(network, frame));
 		this.repaint();
 		this.validate();
 	}
 	
 	public void findMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdFind(network, frame));
 		commandsComboBox.setSelectedItem("find");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdFind(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void eraseMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdErase(network));
 		commandsComboBox.setSelectedItem("erase");
 		commandMenusComboBox.setSelectedItem("Deleting Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdErase(network));
 		this.repaint();
 		this.validate();
 	}
 
 	public void silentEraseMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdSilentErase(network));
 		commandsComboBox.setSelectedItem("silent-erase");
 		commandMenusComboBox.setSelectedItem("Deleting Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdSilentErase(network));
 		this.repaint();
 		this.validate();
 	}
 
 	public void dumpMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdDump(network, frame));
 		commandsComboBox.setSelectedItem("dump");
 		commandMenusComboBox.setSelectedItem("Displaying Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDump(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void describeMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdDescribe(network, frame));
 		commandsComboBox.setSelectedItem("describe");
 		commandMenusComboBox.setSelectedItem("Displaying Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDescribe(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void fullDescribeMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdFullDescribe(network, frame));
 		commandsComboBox.setSelectedItem("full-describe");
 		commandMenusComboBox.setSelectedItem("Displaying Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdFullDescribe(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void undefineMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdUndefine(network, frame));
 		commandsComboBox.setSelectedItem("undefine");
 		commandMenusComboBox.setSelectedItem("Relations");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdUndefine(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void addMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdAdd(network, frame));
 		commandsComboBox.setSelectedItem("add");
 		commandMenusComboBox.setSelectedItem("Building Networks");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdAdd(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void activateMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdActivate(network, frame));
 		commandsComboBox.setSelectedItem("activate");
 		commandMenusComboBox.setSelectedItem("Building Networks");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdActivate(network, frame));
 		this.repaint();
 		this.validate();
 	}
-
-	public void undefinePathMenuButton() {
+	
+	public void definePathMenuButton() {
+		commandsComboBox.setSelectedItem("define-path");
+		commandMenusComboBox.setSelectedItem("Path-Based Inference");
 		commandsPanel.removeAll();
-		commandsPanel.add(new cmdUndefinePath(network, frame));
+		commandsPanel.add(new cmdDefinePath(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void undefinePathMenuButton() {
 		commandsComboBox.setSelectedItem("undefine-path");
 		commandMenusComboBox.setSelectedItem("Path-Based Inference");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdUndefinePath(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void setContextMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdSetContext(network, frame));
 		commandsComboBox.setSelectedItem("set-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdSetContext(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void setDefaultContextMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdSetDefaultContext());
 		commandsComboBox.setSelectedItem("set-default-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdSetDefaultContext(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void addToContextMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdAddToContext(network, frame));
 		commandsComboBox.setSelectedItem("set-to-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdAddToContext(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void removeFromContextMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdRemoveFromContext(network, frame));
 		commandsComboBox.setSelectedItem("remove-from-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdRemoveFromContext(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void describeContextMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdDescribeContext(network));
 		commandsComboBox.setSelectedItem("describe-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDescribeContext(network, frame));
 		this.repaint();
 		this.validate();
 	}
 
 	public void listHypothesesMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdListHypotheses(network));
 		commandsComboBox.setSelectedItem("list-hypothese");
 		commandMenusComboBox.setSelectedItem("Contexts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdListHypotheses(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void listNodesMenuButton() {
+		commandsComboBox.setSelectedItem("list-nodes");
+		commandMenusComboBox.setSelectedItem("Contexts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdListNodes(network, frame));
 		this.repaint();
 		this.validate();
 	}
 	
 	public void defineCaseFrameMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdCaseFrame(network, frame));
 		commandsComboBox.setSelectedItem("define-caseframe");
 		commandMenusComboBox.setSelectedItem("Case Frames");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdCaseFrame(network, frame));
 		this.repaint();
 		this.validate();
 	}
 	
 	public void undefineCaseFrameMenuButton() {
-		commandsPanel.removeAll();
-		commandsPanel.add(new cmdUndefineCaseFrame(network, frame));
 		commandsComboBox.setSelectedItem("undefine-caseframe");
 		commandMenusComboBox.setSelectedItem("Case Frames");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdUndefineCaseFrame(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void findassertMenuButton() {
+		commandsComboBox.setSelectedItem("findassert");
+		commandMenusComboBox.setSelectedItem("Retrieving Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdFindAssert(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void findpatternMenuButton() {
+		commandsComboBox.setSelectedItem("findpattern");
+		commandMenusComboBox.setSelectedItem("Retrieving Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdFindPattern(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void findbaseMenuButton() {
+		commandsComboBox.setSelectedItem("findbase");
+		commandMenusComboBox.setSelectedItem("Retrieving Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdFindBase(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void findconstantMenuButton() {
+		commandsComboBox.setSelectedItem("findconstant");
+		commandMenusComboBox.setSelectedItem("Retrieving Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdFindConstant(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void findvariableMenuButton() {
+		commandsComboBox.setSelectedItem("findvariable");
+		commandMenusComboBox.setSelectedItem("Retrieving Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdFindVariable(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void deduceMenuButton() {
+		commandsComboBox.setSelectedItem("deduce");
+		commandMenusComboBox.setSelectedItem("Retrieving Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDeduce(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void deducetrueMenuButton() {
+		commandsComboBox.setSelectedItem("deducetrue");
+		commandMenusComboBox.setSelectedItem("Retrieving Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDeduceTrue(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void deducefalseMenuButton() {
+		commandsComboBox.setSelectedItem("deducefalse");
+		commandMenusComboBox.setSelectedItem("Retrieving Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDeduceFalse(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void deducewhMenuButton() {
+		commandsComboBox.setSelectedItem("deducewh");
+		commandMenusComboBox.setSelectedItem("Retrieving Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDeduceWH(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void deducewhnotMenuButton() {
+		commandsComboBox.setSelectedItem("deducewhnot");
+		commandMenusComboBox.setSelectedItem("Retrieving Information");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDeduceWHNOT(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void andEntailmentMenuButton() {
+		commandsComboBox.setSelectedItem("And-Entailment");
+		commandMenusComboBox.setSelectedItem("Connectives");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdAndEntailment(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void orEntailmentMenuButton() {
+		commandsComboBox.setSelectedItem("Or-Entailment");
+		commandMenusComboBox.setSelectedItem("Connectives");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdOrEntailment(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void numericalEntailmentMenuButton() {
+		commandsComboBox.setSelectedItem("Numerical Entailment");
+		commandMenusComboBox.setSelectedItem("Connectives");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdNumericalEntailment(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void andOrMenuButton() {
+		commandsComboBox.setSelectedItem("AndOr");
+		commandMenusComboBox.setSelectedItem("Connectives");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdAndOr(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void threshMenuButton() {
+		commandsComboBox.setSelectedItem("Thresh");
+		commandMenusComboBox.setSelectedItem("Connectives");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdThresh(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void numericalQuantifierMenuButton() {
+		commandsComboBox.setSelectedItem("Numerical Quantifier");
+		commandMenusComboBox.setSelectedItem("Quantifiers");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdNumericalQuantifier(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void universalQunatifierMenuButton() {
+		commandsComboBox.setSelectedItem("Universal Qunatifier");
+		commandMenusComboBox.setSelectedItem("Quantifiers");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdUniversalQunatifier(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void unevTraceMenuButton() {
+		commandsComboBox.setSelectedItem("unev-trace");
+		commandMenusComboBox.setSelectedItem("Tracing Inference");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdUNEVTrace(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void uninTraceMenuButton() {
+		commandsComboBox.setSelectedItem("unin-trace");
+		commandMenusComboBox.setSelectedItem("Tracing Inference");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdUNINTrace(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void inTraceMenuButton() {
+		commandsComboBox.setSelectedItem("in-trace");
+		commandMenusComboBox.setSelectedItem("Tracing Inference");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdINTrace(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void evTraceMenuButton() {
+		commandsComboBox.setSelectedItem("in-trace");
+		commandMenusComboBox.setSelectedItem("Tracing Inference");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdEVTrace(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void multiPrintRegsMenuButton() {
+		commandsComboBox.setSelectedItem("multi::print-regs");
+		commandMenusComboBox.setSelectedItem("Tracing Inference");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdMultiPrintRegs(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void performMenuButton() {
+		commandsComboBox.setSelectedItem("perform");
+		commandMenusComboBox.setSelectedItem("Acting");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdPerform(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void wheneverDoMenuButton() {
+		commandsComboBox.setSelectedItem("{<whenever, p>,<do, a>}");
+		commandMenusComboBox.setSelectedItem("Acting");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdWheneverDo(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void whenDoMenuButton() {
+		commandsComboBox.setSelectedItem("{<when, p>,<do, a>}");
+		commandMenusComboBox.setSelectedItem("Acting");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdWhenDo(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void ifDoMenuButton() {
+		commandsComboBox.setSelectedItem("{<if, p>,<do, a>}");
+		commandMenusComboBox.setSelectedItem("Acting");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdIfDo(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void definePrimactionMenuButton() {
+		commandsComboBox.setSelectedItem("attach-primaction");
+		commandMenusComboBox.setSelectedItem("Primitive Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdAttachPrimaction(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void attachPrimactionMenuButton() {
+		commandsComboBox.setSelectedItem("define-primaction");
+		commandMenusComboBox.setSelectedItem("Primitive Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDefinePrimaction(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void believeMenuButton() {
+		commandsComboBox.setSelectedItem("believe");
+		commandMenusComboBox.setSelectedItem("Mental Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdBelieve(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void disbeliveMenuButton() {
+		commandsComboBox.setSelectedItem("disbelive");
+		commandMenusComboBox.setSelectedItem("Mental Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDisbelieve(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void doAllMenuButton() {
+		commandsComboBox.setSelectedItem("do-one");
+		commandMenusComboBox.setSelectedItem("Control Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDoAll(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void doOneMenuButton() {
+		commandsComboBox.setSelectedItem("do-all");
+		commandMenusComboBox.setSelectedItem("Control Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdDoOne(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void snsequenceMenuButton() {
+		commandsComboBox.setSelectedItem("snsequence");
+		commandMenusComboBox.setSelectedItem("Control Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdSNSequence(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void snifMenuButton() {
+		commandsComboBox.setSelectedItem("snif");
+		commandMenusComboBox.setSelectedItem("Control Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdSnif(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void sniterateMenuButton() {
+		commandsComboBox.setSelectedItem("sniterate");
+		commandMenusComboBox.setSelectedItem("Control Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdSniterate(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void withallMenuButton() {
+		commandsComboBox.setSelectedItem("withall");
+		commandMenusComboBox.setSelectedItem("Control Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdWithAll(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void withsomeMenuButton() {
+		commandsComboBox.setSelectedItem("withsome");
+		commandMenusComboBox.setSelectedItem("Control Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdWithSome(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void actPlanMenuButton() {
+		commandsComboBox.setSelectedItem("{<plan, p>,<act, a>}");
+		commandMenusComboBox.setSelectedItem("Complex Acts");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdActPlan(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void achieveMenuButton() {
+		commandsComboBox.setSelectedItem("achieve");
+		commandMenusComboBox.setSelectedItem("Goals");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdAchieve(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void actPreconditionMenuButton() {
+		commandsComboBox.setSelectedItem("{<act, a>,<precondition, p>}");
+		commandMenusComboBox.setSelectedItem("Preconditions and Effects");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdActPrecondition(network, frame));
+		this.repaint();
+		this.validate();
+	}
+	
+	public void actEffectMenuButton() {
+		commandsComboBox.setSelectedItem("{<act, a>,<effect, p>}");
+		commandMenusComboBox.setSelectedItem("Preconditions and Effects");
+		commandsPanel.removeAll();
+		commandsPanel.add(new cmdActEffect(network, frame));
 		this.repaint();
 		this.validate();
 	}
@@ -707,14 +1213,66 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	 * Displays all the information of a node
 	 * @param node the node that its information will be displayed
 	 */
+	public void nodeInfo(LinkedList<Node> nodes) {
+		LinkedList<Node> connectedNodes = new LinkedList<Node>();
+		
+		for(Node node : nodes) {
+			/*Print out node name*/
+			frame.getOutputPanel1().writeToTextArea("Node Name: " + node.getIdentifier() + newLine);
+			
+			/*Print out semantic class*/
+			node.getEntity();
+			
+			/*Print out cable*/
+			if(node instanceof MolecularNode) {
+				MolecularNode molNode = (MolecularNode) node;
+				LinkedList<Cable> cables = molNode.getCableSet().getCables();
+				
+				if(!cables.isEmpty()) {
+					frame.getOutputPanel1().writeToTextArea("Cable Set (Nodes pointing from " + node.getIdentifier() + "):" + newLine);
+					for(Cable item1 : cables) {
+						item1.getRelation();
+						LinkedList<Node> cableNodes = item1.getNodeSet().getNodes();
+						
+						for(Node item2 : cableNodes) {
+							frame.getOutputPanel1().writeToTextArea(item2.getIdentifier() + newLine);
+							connectedNodes.add(item2);
+						}
+					}
+				}
+			}
+			
+			/*Print out up cable*/
+			LinkedList<UpCable> nodeUpCables = node.getUpCableSet().getUpCables();
+			
+			if(!nodeUpCables.isEmpty()) {
+				frame.getOutputPanel1().writeToTextArea("Up Cable Set (Nodes pointing to " + node.getIdentifier() + "): " + newLine);
+				for(UpCable item3 : nodeUpCables) {
+					item3.getRelation();
+					LinkedList<Node> upCableNodes = item3.getNodeSet().getNodes();
+					
+					for(Node item4 : upCableNodes) {
+						frame.getOutputPanel1().writeToTextArea(item4.getIdentifier() + newLine);
+						connectedNodes.add(item4);
+					}
+				}
+			}
+			frame.getOutputPanel1().writeToTextArea(endLine);
+		}
+		
+		frame.getNodesResult().addNodes(connectedNodes);
+	}
+	
 	public void nodeInfo(Node node) {
 		LinkedList<Node> connectedNodes = new LinkedList<Node>();
 		
 		/*Print out node name*/
 		frame.getOutputPanel1().writeToTextArea("Node Name: " + node.getIdentifier() + newLine);
+		System.out.println("Node Name: " + node.getIdentifier());
 		
 		/*Print out semantic class*/
-		node.getEntity();
+		frame.getOutputPanel1().writeToTextArea("Semantic Class: "+ node.getEntity().getClass().getSimpleName() + newLine);
+		System.out.println("Semantic Class: "+ node.getEntity().getClass().getSimpleName());
 		
 		/*Print out cable*/
 		if(node instanceof MolecularNode) {
@@ -725,9 +1283,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 				frame.getOutputPanel1().writeToTextArea("Cable Set (Nodes pointing from " + node.getIdentifier() + "):" + newLine);
 				for(Cable item1 : cables) {
 					item1.getRelation();
-					LinkedList<Node> nodes = item1.getNodeSet().getNodes();
+					LinkedList<Node> cableNodes = item1.getNodeSet().getNodes();
 					
-					for(Node item2 : nodes) {
+					for(Node item2 : cableNodes) {
 						frame.getOutputPanel1().writeToTextArea(item2.getIdentifier() + newLine);
 						connectedNodes.add(item2);
 					}
@@ -742,9 +1300,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			frame.getOutputPanel1().writeToTextArea("Up Cable Set (Nodes pointing to " + node.getIdentifier() + "): " + newLine);
 			for(UpCable item3 : nodeUpCables) {
 				item3.getRelation();
-				LinkedList<Node> nodes = item3.getNodeSet().getNodes();
+				LinkedList<Node> upCableNodes = item3.getNodeSet().getNodes();
 				
-				for(Node item4 : nodes) {
+				for(Node item4 : upCableNodes) {
 					frame.getOutputPanel1().writeToTextArea(item4.getIdentifier() + newLine);
 					connectedNodes.add(item4);
 				}
@@ -752,6 +1310,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		}
 		
 		frame.getOutputPanel1().writeToTextArea(endLine);
+		System.out.println(endLine);
 		frame.getNodesResult().addNodes(connectedNodes);
 	}
 	
@@ -761,83 +1320,84 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	 * @return the created path string
 	 */
 	public String createPath(Path path) {
+		String pathString = "";
 		/*And*/
 		if(path instanceof AndPath) {
 			AndPath currentPath = (AndPath) path;
 			LinkedList<Path> paths = currentPath.getPaths();
-			String pathString = "(and ";
+			pathString = "(and ";
 			
-			for (int i = 0; i < paths.size(); i++) {
-				pathString += createPath(paths.get(i));
+			System.out.println(paths.size());
+			for (int i = 0; i < paths.size(); i++) {				
+				pathString += createPath(paths.get(i)) + " ";
 			}
 			
 			pathString += ")";
-			return pathString;
 		/*Compose*/	
 		} else if (path instanceof ComposePath) {
 			ComposePath currentPath = (ComposePath) path;
 			LinkedList<Path> paths = currentPath.getPaths();
-			String pathString = "(compose ";
+			pathString = "(compose ";
 			
+			System.out.println(paths.size());
 			for (int i = 0; i < paths.size(); i++) {
-				pathString += createPath(paths.get(i));
+				pathString += createPath(paths.get(i)) + " ";
 			}
 			
 			pathString += ")";
-			return pathString;
 		/*Converse*/
 		} else if (path instanceof ConversePath) {
 			ConversePath currentPath = (ConversePath) path;
-			return "(converse " + createPath(currentPath.getPath()) + ")";
+			pathString =  "(converse " + createPath(currentPath.getPath()) + ")";
 		/*DomainRestrict*/
 		} else if (path instanceof DomainRestrictPath) {
 			DomainRestrictPath currentPath = (DomainRestrictPath) path;
-			return "(domain-restrict (" + createPath(currentPath.getQ()) + currentPath.getNode().getIdentifier() 
-				+ ")" + createPath(currentPath.getP()) + ")";
+			pathString =  "(domain-restrict (" + createPath(currentPath.getQ()) + " " +  currentPath.getNode().getIdentifier() 
+				+ ") " + createPath(currentPath.getP()) + ")";
 		/*IrreflexiveRestrict*/
 		} else if (path instanceof IrreflexiveRestrictPath) {
 			IrreflexiveRestrictPath currentPath = (IrreflexiveRestrictPath) path;
-			return "(irreflexive-restrict " + createPath(currentPath.getPath()) + ")";
+			pathString =  "(irreflexive-restrict " + createPath(currentPath.getPath()) + ")";
 		/*KPlus*/
 		} else if (path instanceof KPlusPath) {
 			KPlusPath currentPath = (KPlusPath) path;
-			return "(kplus " + createPath(currentPath.getPath()) + ")";
+			pathString =  "(kplus " + createPath(currentPath.getPath()) + ")";
 		/*KStar*/
 		} else if (path instanceof KStarPath) {
 			KStarPath currentPath = (KStarPath) path;
-			return "(kstar " + createPath(currentPath.getPath()) + ")";
+			pathString =  "(kstar " + createPath(currentPath.getPath()) + ")";
 		/*Or*/
 		} else if (path instanceof OrPath) {
 			OrPath currentPath = (OrPath) path;
 			LinkedList<Path> paths = currentPath.getPaths();
-			String pathString = "(or ";
+			pathString = "(or ";
 			
+			System.out.println(paths.size());
 			for (int i = 0; i < paths.size(); i++) {
-				pathString += createPath(paths.get(i));
+				pathString += createPath(paths.get(i)) + " ";
 			}
 			
 			pathString += ")";
-			return pathString;
 		/*RangeRestrict*/
 		} else if (path instanceof RangeRestrictPath) {
 			RangeRestrictPath currentPath = (RangeRestrictPath) path;
-			return "(range-restrict " + createPath(currentPath.getP()) + "(" + createPath(currentPath.getQ()) 
+			pathString =  "(range-restrict " + createPath(currentPath.getP()) + "(" + createPath(currentPath.getQ()) + " "
 				+ currentPath.getNode().getIdentifier() + "))";
 		/*RelativeComplement*/
 		} else if (path instanceof RelativeComplementPath) {
 			RelativeComplementPath currentPath = (RelativeComplementPath) path;
-			return "(relative-complement " + createPath(currentPath.getP()) + createPath(currentPath.getQ()) + ")";
+			pathString =  "(relative-complement " + createPath(currentPath.getP()) + " " + createPath(currentPath.getQ()) + ")";
 		/*FUnitPath*/	
 		} else if (path instanceof FUnitPath) {
 			FUnitPath currentPath = (FUnitPath) path;
-			return currentPath.getRelationName();
+			pathString =  currentPath.getRelationName();
 		/*BUnitPath*/
 		} else if (path instanceof BUnitPath) {
 			BUnitPath currentPath = (BUnitPath) path;
-			return currentPath.getRelationName();
-		} else {
-			return "";
+			pathString =  currentPath.getRelationName() + "-";
 		}
+		System.out.println(pathString);
+		return pathString;
 	}
 	
 	public Point cascadePosition() {
