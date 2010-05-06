@@ -1029,7 +1029,10 @@ public class Network implements Serializable
 		Path path = (Path) array[index][0];
 		NodeSet nodeSet = (NodeSet) array[index][1];
 		
-		return findUnion(path,nodeSet).Intersection(findIntersection(array,++index));
+		if(index < array.length-1)
+			return findUnion(path,nodeSet).Intersection(findIntersection(array,++index));
+		else
+			return findUnion(path,nodeSet);
 	}
 	
 	/**
