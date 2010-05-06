@@ -30,4 +30,12 @@ public class RequestSet
 	{
 		return rs.get(x); 
 	}
+	
+	/**
+	 * Return the number of requests in the set
+	 */
+	public int cardinality()
+	{
+		return rs.size();
+	}
 }

@@ -14,9 +14,9 @@ public class Switch
 	/**
 	 *Creates new switch
 	 */
-	public Switch()
+	public Switch(Substitutions s)
 	{
-		s=new Substitutions();
+		this.s=s;
 	}
 	
 	/**

@@ -7,6 +7,7 @@
  */
 package snip.ds;
 
+import match.ds.Substitutions;
 import snebr.Context;
 import sneps.MolecularNode;
 import sneps.Node;
@@ -17,7 +18,7 @@ public class Process
 	private char name;
 	private String type;
 	private Node node;
-	private ReportSet knownInstsnces;
+	private ReportSet knownInstances;
 	private ReportSet reps;
 	private RequestSet reqs;
 	private ChannelsSet outGoing;
@@ -39,7 +40,7 @@ public class Process
 		name =n;
 		type=t;
 		this.node=node;
-		knownInstsnces=new ReportSet();
+		knownInstances=new ReportSet();
 		reps=new ReportSet();
 		reqs=new RequestSet();
 		outGoing=new ChannelsSet();
@@ -74,7 +75,7 @@ public class Process
 	 */
 	public ReportSet getSentReports()
 	{
-		return knownInstsnces;
+		return knownInstances;
 	}
 	
 	/**
@@ -83,7 +84,7 @@ public class Process
 	 */
 	public void addToSent(Report r)
 	{
-		knownInstsnces.putIn(r);
+		knownInstances.putIn(r);
 	}
 	
 	/**
@@ -150,7 +151,7 @@ public class Process
 	 */
 	public ContextRUIS addContextRUIS(Context c, char t)
 	{
-		ChannelsSet ctemp=consequentChannel.getConChannelsSet(c);
+		ChannelsSet ctemp=outGoing.getConChannelsSet(c);
 		ContextRUIS cr;
 		if(t=='s')
 			cr=new ContextRUIS(c,ctemp,'s');
@@ -172,9 +173,83 @@ public class Process
 	 */
 	public void sendReport(Report r, ChannelsSet c)
 	{
+		knownInstances.putIn(r);
 		for(int i=0;i<c.cardinality();i++)
 		{
 			c.getChannel(i).send(r);
 		}
+	}
+	
+	/**
+	 * When report is received put it in the report list
+	 * @param r Report
+	 */
+	public void receiveReport(Report r)
+	{
+		reps.putIn(r);
+	}
+	
+	/**
+	 * Return the request set
+	 * @return RequestSet
+	 */
+	public RequestSet getRequestSet()
+	{
+		return reqs;
+	}
+	
+	/**
+	 * Add a channel to the out going channels
+	 * @param c Channel
+	 */
+	public void addOutGoing(Channel c)
+	{
+		if(!outGoing.isMember(c))
+		{
+			sendKnown(c);
+			outGoing.putIn(c);
+		}
+	}
+	
+	/**
+	 * Send all known Instances in the channel c
+	 * @param c Channel
+	 */
+	public void sendKnown(Channel c)
+	{
+		for(int i=0;i<knownInstances.cardinality();i++)
+		{
+			Report r=knownInstances.getReport(i);
+			if(r.getContext()==c.getContext())
+			c.send(r);
+		}
+	}
+	
+	/**
+	 * Send requests to every node in the node set ns with the context c
+	 * @param ns NodeSet
+	 * @param c Context
+	 */
+	public void sendRequests(NodeSet ns,Context c)
+	{
+		for(int i=0;i<ns.getNodes().size();i++)
+		{
+			Node to=ns.getNodes().get(i);
+			Substitutions sub=match(node,to);
+			Substitutions[] sp=sub.split();
+			Filter f=new Filter(sp[0]);
+			Switch s=new Switch(sp[1]);
+			Destination d=new Destination(node);
+			Channel ch=new Channel(f,s,c,d,true);
+			inComing.putIn(ch);
+			//Request r=new Request(ch);
+			//to.getEntity().getProcess().addRequest(r);
+			//put it in low priority queue
+		}
+	}
+	
+	public Substitutions match(Node n1,Node n2)
+	{
+		return null;
 	}
 }

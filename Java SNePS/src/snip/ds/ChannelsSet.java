@@ -143,4 +143,21 @@ public class ChannelsSet
 		}
 		return res;
 	}
+	
+	/**
+	 * Check if the channel c is in the channels set or not
+	 * @param c Channel
+	 * @return true or false
+	 */
+	public boolean isMember(Channel c)
+	{
+		for(int i=0;i<ch.size();i++)
+		{
+			if(c.equivalent(ch.get(i)))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 }

@@ -16,9 +16,9 @@ public class Filter
 	/**
 	 *Creates new filter
 	 */
-	public Filter()
+	public Filter(Substitutions s)
 	{
-		s=new Substitutions();
+		this.s=s;
 	}
 	
 	/**
