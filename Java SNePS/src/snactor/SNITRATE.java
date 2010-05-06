@@ -74,8 +74,6 @@ public class SNITRATE extends Action
 		a.setAgenda("start");
 		a.setPriority("intend");
 		queue.stackPush(y);
-		//z = (MolecularNode) queue.stackPop();
-	//	System.out.println(((Act) z.getEntity()).getAgenda());
 	}
 
 	public void testConditions(Node x)

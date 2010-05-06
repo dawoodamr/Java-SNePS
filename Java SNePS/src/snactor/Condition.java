@@ -13,11 +13,7 @@ public class Condition
 
 public Condition()
 	
-	{ 
-	
-		
-		
-	}
+	{ }
 
 public Boolean testConditions(Node s)
 

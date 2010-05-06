@@ -99,7 +99,7 @@ public class Act extends Entity {
 
 	}
 
-	public static void excute(Node a,Network m) throws CustomException { 
+	public static void Intend(Node a,Network m) throws CustomException { 
 		
 		if (((Act) a.getEntity()).getAgenda().equals("start")) 
 		{
@@ -175,13 +175,13 @@ public class Act extends Entity {
 				scheduleBelieveEffects(((Act) a.getEntity()).getEffects(),m);
 			}
 			
-				((Act) a.getEntity()).setAgenda("excute");
+				((Act) a.getEntity()).setAgenda("intend");
 				Queue.stackPush(a);
 				
 		} 
 		else 
 			
-		if (((Act) a.getEntity()).getAgenda().equals("excute")) 
+		if (((Act) a.getEntity()).getAgenda().equals("intend")) 
 		{
 			
 			if (((Act) a.getEntity()).getPrimaction()) 
@@ -190,7 +190,7 @@ public class Act extends Entity {
 				((Act) a.getEntity()).setAgenda("done");
 			} 
 			else
-			{	
+			{
 				((Act) a.getEntity()).setReports(new LinkedList<Node>());
 				((Act) a.getEntity()).setAgenda("find-plans");
 				Queue.stackPush(a);
@@ -200,23 +200,30 @@ public class Act extends Entity {
 		else 
 		
 		if (((Act) a.getEntity()).getAgenda().equals("find-plans")) {
-			if (!reports.isEmpty())
-				((Act) a.getEntity()).setPlans(plans);
-			((Act) a.getEntity()).setReports(new LinkedList<Node>());
 			
-		} else if (((Act) a.getEntity()).getAgenda().equals("done"))
+			if (!reports.isEmpty())
+			{
+			((Act) a.getEntity()).setPlans(reports);
+			((Act) a.getEntity()).setReports(new LinkedList<Node>());
+			((Act) a.getEntity()).setAgenda("done");
+			Queue.stackPush(a);
+			schedulePlans(((Act) a.getEntity()).getPlans(),m);
+			}
+			else
+			{
+				System.out.println("No plans found, the act will be ignored!");
+			}
+		} 
+		else 
+			
+		if (((Act) a.getEntity()).getAgenda().equals("done"))
 		{
 			Queue.stackPop();
 		}
-		else
-		{
-			
-			System.out.println("No plans found!");
-
-		}
+		
 	}
 
-	private static void schedulePlans(LinkedList<Node> planList) throws CustomException
+	private static void schedulePlans(LinkedList<Node> planList, Network m) throws CustomException
 	{
 		
 		Node plan = planList.getFirst();
@@ -554,7 +561,7 @@ public class Act extends Entity {
 
 		while(!Queue.isEmpty())
 				{	
-				excute(n,m);
+				Intend(n,m);
 				performSNePS(Queue.stackPop(),m);
 					
 			}

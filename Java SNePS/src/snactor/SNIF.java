@@ -46,7 +46,6 @@ public class SNIF extends Action
 			{
 				
 				queueThenActs(ns);
-			//	((Act) n.getEntity()).setAgenda("done");
 			}
 		}
 	
@@ -64,8 +63,6 @@ public class SNIF extends Action
 
 	
 		queue.stackPush(y);
-		//z = (MolecularNode) queue.stackPop();
-		//System.out.println(((Act) z.getEntity()).getAgenda());
 		
 	}
 

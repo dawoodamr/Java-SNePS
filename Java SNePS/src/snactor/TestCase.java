@@ -6,12 +6,13 @@ import java.lang.reflect.*;
 
 import sneps.*;
 
+@SuppressWarnings("unused")
 public class TestCase
 {
 
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws CustomException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-		// Condition test = new Condition();
+		
 		Condition test = new Condition();
 		
 		Network m = new Network();
@@ -132,6 +133,16 @@ public class TestCase
 		
 		Node n2 = m.build(o9, precf);
 		
+		Object[][] o19 = new Object[2][2];
+		
+		o19[0][0] = r5;
+		o19[1][0] = r8;
+		Node bn31 = m.build("XX");
+		o19[0][1] = n1;
+		o19[1][1] = bn31;
+		
+		Node n21 = m.build(o19, precf);
+		
 		Object[][] o11 = new Object[2][2];
 		
 		o11[0][0] = r5;
@@ -160,6 +171,33 @@ public class TestCase
 		n4.setEntity(a2);
 		
 		a2.setPrimaction(true);
+		
+		Object[][] o16 = new Object[2][2];
+		 
+		
+		o16[0][0] = r1;
+		o16[1][0] = r2;
+		Node bn41 = m.build("believe#3");
+		o16[0][1] = bn41;
+		o16[1][1] = bn31;
+		
+		Act.attach(bn41,"BELIEVE");
+		
+		Node n14 = m.build(o16, cf1);
+		
+		Act a14 = new Act((MolecularNode) n14);
+		n14.setEntity(a14);
+		
+		a14.setPrimaction(true);
+		
+		Object[][] o17 = new Object[2][2];
+		
+		o17[0][0] = r7;
+		o17[1][0] = r10;
+		o17[0][1] = n14;
+		o17[1][1] = bn31;
+		
+		Node n13 = m.build(o17, planGoal);
 		
 		Object[][] o7 = new Object[2][2];
 		
@@ -198,7 +236,7 @@ public class TestCase
 		Node n9 = m.build(o12, planGoal);
 		
 		
-//		test.conditions.add(bn3);
+	//	test.conditions.add(bn31);
 				
 //		a5.setAgenda("start");
 //		Queue.stackPush(n5);

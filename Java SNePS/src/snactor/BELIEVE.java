@@ -16,10 +16,9 @@ public class BELIEVE extends Action
 		
 	}
 	
-	@SuppressWarnings({ })
 	public void Perform()
 	{
-		//System.out.println("7aram");
+		
 		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
 		LinkedList<Node> nodes = ((Act) n.getEntity()).getArrangedObjects();
 		
@@ -32,11 +31,8 @@ public class BELIEVE extends Action
 			{
 				believeProposition((Node) nodes.getFirst());
 				((Act) n.getEntity()).setAgenda("done");
-			//	System.out.println(((Node) nodes.getFirst()).getIdentifier());
-		}
 			
-		
-	
+			}
 	
 	}
 

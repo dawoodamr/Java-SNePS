@@ -24,8 +24,6 @@ public class DoOne extends Action
 		
 		((Act) nodes.getFirst().getEntity()).setAgenda("start");
 			queue.stackPush((Node) nodes.getFirst());
-		//	System.out.println(queue.stackPop().getIdentifier());
-		
 		
 	}
 
