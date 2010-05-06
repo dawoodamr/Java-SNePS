@@ -14,32 +14,36 @@ import sneps.Node;
 import sneps.NodeSet;
 import sneps.PatternNode;
 import sneps.VariableNode;
+import snip.ds.Channel;
 import snip.ds.ChannelsSet;
 import snip.ds.ContextRUIS;
 import snip.ds.FlagNode;
 import snip.ds.FlagNodeSet;
-import snip.ds.Process;
 import snip.ds.Report;
+import snip.ds.Request;
 import snip.ds.RuleUseInfo;
 import snip.ds.RuleUseInfoSet;
 
-public class AndEntailment
+public class AndEntailment extends Rule
 {
-	private Process p;
 	private boolean shareVars;
 	private int reportCounter;
+	private int requestCounter;
 	private int patternsNumber;
 	private int[] vars;
+	private NodeSet patternNodes;
+	
 	/**
 	 * Creating the andentailment process
 	 * @param node Node
 	 */
 	public AndEntailment(Node node)
 	{
-		p=new Process(node,'r',"AndEntailment");
+		super(node,"AndEntailment");
 		reportCounter=0;
-		NodeSet patternNodes =p.getNodeSet("ant");
-		shareVars=p.allShareVars(patternNodes);
+		requestCounter=0;
+		patternNodes =getProcess().getNodeSet("&ant");
+		shareVars=getProcess().allShareVars(patternNodes);
 		patternsNumber=patternNodes.getNodes().size();
 		PatternNode n =(PatternNode)patternNodes.getNodes().get(0);
 		if(shareVars)
@@ -61,11 +65,11 @@ public class AndEntailment
 	public ContextRUIS addContextRUIS(Context c)
 	{
 		if(shareVars)
-			return p.addContextRUIS(c,'s');
+			return getProcess().addContextRUIS(c,'s');
 		else
 		{
-			ContextRUIS cr=p.addContextRUIS(c,'p');
-			NodeSet patternNodes =p.getNodeSet("ant");
+			ContextRUIS cr=getProcess().addContextRUIS(c,'p');
+			NodeSet patternNodes =getProcess().getNodeSet("&ant");
 			int [] patsIds=new int [patternsNumber];
 			for(int i=0;i<patternsNumber;i++)
 			{
@@ -77,13 +81,13 @@ public class AndEntailment
 	}
 	
 	/**
-	 * Run the andentailment test
+	 * process the reports
 	 */
-	public void run()
+	public void processReports()
 	{
-		for(;reportCounter<p.getReportSet().cardinality();reportCounter++)
+		for(;reportCounter<getProcess().getReportSet().cardinality();reportCounter++)
 		{
-			Report r=p.getReportSet().getReport(reportCounter);
+			Report r=getProcess().getReportSet().getReport(reportCounter);
 			Context c=r.getContext();
 			RuleUseInfo rui=null;
 			RuleUseInfoSet res;
@@ -94,12 +98,12 @@ public class AndEntailment
 				FlagNodeSet fns=new FlagNodeSet();
 				fns.putIn(fn);
 				rui=new RuleUseInfo(r.getSubstitutions(),1,0,fns);
-				int pos=p.getCRS().getIndex(c);
+				int pos=getProcess().getCRS().getIndex(c);
 				ContextRUIS crtemp;
 				if(pos==-1)
 					crtemp=addContextRUIS(c);
 				else
-					crtemp=p.getCRS().getContextRUIS(pos);
+					crtemp=getProcess().getCRS().getContextRUIS(pos);
 				if(shareVars)
 				{
 					res=crtemp.getSindexing().insert(rui, vars);
@@ -115,15 +119,34 @@ public class AndEntailment
 					RuleUseInfo ruitemp=res.getRuleUseInfo(i);
 					if(ruitemp.getPosCount()==patternsNumber)
 					{
-						Report reply=new Report(ruitemp.getSub(),null,true,p.getNode()
+						Report reply=new Report(ruitemp.getSub(),null,true,getProcess().getNode()
 								,null,c);
 						ChannelsSet ctemp=crtemp.getChannels();
-						p.sendReport(reply,ctemp);
+						getProcess().sendReport(reply,ctemp);
 					}
 				}
 			}
 		}
 	}
 	
+	/**
+	 * process the requests
+	 */
+	public void processRequests()
+	{
+		for(;requestCounter<getProcess().getRequestSet().cardinality()
+			;requestCounter++)
+		{
+			Request r=getProcess().getRequestSet().getRequest(requestCounter);
+			Channel c=r.getChannel();
+			if(requestCounter==0)
+			{
+				getProcess().sendRequests(patternNodes,c.getContext());
+			}
+			else
+			getProcess().addOutGoing(c);
+			
+		}
+	}
 	
 }

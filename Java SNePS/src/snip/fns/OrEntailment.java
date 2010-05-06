@@ -8,14 +8,17 @@
 package snip.fns;
 
 import sneps.Node;
+import sneps.NodeSet;
+import snip.ds.Channel;
 import snip.ds.ChannelsSet;
-import snip.ds.Process;
 import snip.ds.Report;
+import snip.ds.Request;
 
-public class OrEntailment
+public class OrEntailment extends Rule
 {
-	Process p;
-	int reportCounter;
+	private int reportCounter;
+	private int requestCounter;
+	private NodeSet patternNodes;
 	
 	/**
 	 * Creating the orentailment process
@@ -23,25 +26,48 @@ public class OrEntailment
 	 */
 	public OrEntailment(Node node)
 	{
-		p=new Process(node,'r',"OrEntailment");
+		super(node,"OrEntailment");
 		reportCounter=0;
+		requestCounter=0;
+		patternNodes =getProcess().getNodeSet("ant");
 	}
 	
 	/**
-	 * Run the orentailment test 
+	 * process the reports
 	 */
-	public void run()
+	public void processReports()
 	{
-		for(;reportCounter<p.getReportSet().cardinality();reportCounter++)
+		for(;reportCounter<getProcess().getReportSet().cardinality();reportCounter++)
 		{
-			Report r=p.getReportSet().getReport(reportCounter);
+			Report r=getProcess().getReportSet().getReport(reportCounter);
 			if(r.getSign())
 			{
 				Report reply=new Report(r.getSubstitutions(),r.getSupport(),true
-						,p.getNode(),null,r.getContext());
-				ChannelsSet ctemp=p.getCQChannels().getConChannelsSet(r.getContext());
-				p.sendReport(reply,ctemp);
+						,getProcess().getNode(),null,r.getContext());
+				ChannelsSet ctemp=getProcess().getOutGoing()
+					.getConChannelsSet(r.getContext());
+				getProcess().sendReport(reply,ctemp);
 			}
+		}
+	}
+	
+	/**
+	 * process the requests
+	 */
+	public void processRequests()
+	{
+		for(;requestCounter<getProcess().getRequestSet().cardinality()
+			;requestCounter++)
+		{
+			Request r=getProcess().getRequestSet().getRequest(requestCounter);
+			Channel c=r.getChannel();
+			if(requestCounter==0)
+			{
+				getProcess().sendRequests(patternNodes,c.getContext());
+			}
+			else
+			getProcess().addOutGoing(c);
+			
 		}
 	}
 }
