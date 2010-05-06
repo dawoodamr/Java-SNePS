@@ -453,7 +453,7 @@ public class Network implements Serializable
 	 * @throws CustomException an exception will be thrown if the semantic type of the 
 	 * relation does not match the semantic type of the corresponding node in the array
 	 */
-	public Node build(Object[][] array,CaseFrame caseFrame)throws CustomException
+	public MolecularNode build(Object[][] array,CaseFrame caseFrame)throws CustomException
 	{
 		if(cableSetExists(array))
 			throw new CustomException("cable set already exists");
@@ -463,7 +463,7 @@ public class Network implements Serializable
 			return createMolNode(array,caseFrame);
 	}
 	
-	public boolean match(Node u,Node t,Substitutions r)
+	public boolean match(Node u,Node t,Substitutions r,Substitutions s)
 	{
 		System.out.println("match    >>>>> 1");
 		if(hERe(u,t,r,true))
@@ -568,7 +568,8 @@ public class Network implements Serializable
 				n2Others.removeNode(n2);
 				Substitutions s = new Substitutions();
 				s.getSub().addAll(rSub.getSub());
-				if(match(n1,n2,s))
+				Substitutions ss = new Substitutions();
+				if(match(n1,n2,s,ss))
 				{
 					if(setUnify(n1Others,n2Others,s,rightOrder))
 					{
@@ -687,7 +688,7 @@ public class Network implements Serializable
 			}else
 				break;
 		}
-		if(rSub.getBindingByVariable(path.peek()).getNode().equals(path.peek()))
+		if(path.lastElement().equals(path.firstElement()) && path.size()>1)
 		{
 			path.pop();
 		}
@@ -727,29 +728,38 @@ public class Network implements Serializable
 		return flag;
 	}
 	
-	public Node vERe(VariableNode u,Substitutions r,Substitutions s,NodeSet zSet)
+	public Node vERe(VariableNode u,Substitutions r,Substitutions s)
 	{
+		System.out.println("vere    >>>>> 1");
 		Node z = null;
 		Stack<VariableNode> path = source(u,r);
 		VariableNode v = path.pop();
 		if(! r.isBound(v))
 		{
+			System.out.println("vere    >>>>> 2");
 			z = v;
-			r.getBindingByVariable(v).setNode(v); // done
+			r.putIn(new Binding(v,v)); // done
 		}
-		else{
-			if(r.getBindingByVariable(v).getNode().getClass().getSimpleName().equals("BaseNode"))
+		else
+		{
+			System.out.println("vere    >>>>> 3");
+			if(r.getBindingByVariable(v).getNode().getClass().getSimpleName().equals("BaseNode")
+				|| r.getBindingByVariable(v).getNode().getClass().getSimpleName().equals("ClosedNode"))
 			{
+				System.out.println("vere    >>>>> 4");
 				z = r.getBindingByVariable(v).getNode();
 				if(! s.isBound(v))
 					s.putIn(new Binding(v,z));
 				s.getBindingByVariable(v).setNode(z);
+				v.setLoop(false);
 				r.getBindingByVariable(v).setNode(v); // done
 			}
-			else{
+			else
+			{
 				Node yy = r.getBindingByVariable(v).getNode();
-				if(yy.getClass().getSuperclass().getSimpleName().equals("MolecularNode"))
+				if(yy.getClass().getSimpleName().equals("PatternNode"))
 				{
+					System.out.println("vere    >>>>> 5");
 					MolecularNode y = (MolecularNode) yy;
 					r.getBindingByVariable(v).setNode(v); // done
 					v.setLoop(true);
@@ -757,26 +767,30 @@ public class Network implements Serializable
 					{
 						path.get(i).setLoop(true);
 					}
-					NodeSet tSet = new NodeSet();
-					if(termVERe(y,r,s,tSet) != null)
+					z = termVERe(y,r,s);
+					if(z == null)
 					{
-						z = tSet.getNodes().getFirst();
-						if(! s.isBound(v))
-							s.putIn(new Binding(v,z));
-						s.getBindingByVariable(v).setNode(z);
+						return null;
 					}
-					else{
-						if(v.isLoop())
-						{
-							v.setLoop(false);
-							return null;
-						}
-						else{
-							if(! s.isBound(v))
-								z = v;
-							else
-								z = s.getBindingByVariable(v).getNode();
-						}
+					if(! s.isBound(v))
+						s.putIn(new Binding(v,z));
+					s.getBindingByVariable(v).setNode(z);
+					v.setLoop(false);
+				}
+				else
+				{
+					if(v.isLoop())
+					{
+						System.out.println("vere    >>>>> 6");
+						v.setLoop(false);
+						return null;
+					}
+					else
+					{
+						if(! s.isBound(v))
+							z = v;
+						else
+							z = s.getBindingByVariable(v).getNode();
 					}
 				}
 			}
@@ -786,47 +800,113 @@ public class Network implements Serializable
 			if(! s.isBound(path.get(i)))
 				s.putIn(new Binding(path.get(i),z));
 			s.getBindingByVariable(path.get(i)).setNode(z);
+			v.setLoop(false);
 		}
 		
 		return z;
 	}
 	
-	public Node termVERe(MolecularNode t,Substitutions r,Substitutions s,NodeSet tSet)
+	public MolecularNode termVERe(MolecularNode t,Substitutions r,Substitutions s)
 	{
-		for(int i=0;i<t.getCableSet().getCables().size();i++)
+		System.out.println("termvere    >>>>> 1");
+		// list for pattern nodes substitutions
+		LinkedList<LinkedList<Object>> temp = new LinkedList<LinkedList<Object>>();
+		CableSet cs = t.getCableSet();
+		for(int i=0;i<cs.getCables().size();i++)
 		{
-			NodeSet nodeSet = t.getCableSet().getCables().get(i).getNodeSet();
-			for(int j=0;j<nodeSet.getNodes().size();j++)
+			Cable c = cs.getCables().get(i);
+			Relation rel = c.getRelation();
+			NodeSet ns = c.getNodeSet();
+			if(ns.getNodes().size() == 0)
 			{
-				Node n = nodeSet.getNodes().get(j);
-				if(n.getClass().getSimpleName().equals("VariableNode"))
+				LinkedList<Object> list = new LinkedList<Object>();
+				list.add(rel);
+				list.add(new NodeSet());
+				temp.add(list);
+				continue;
+			}
+			for(int j=0;j<ns.getNodes().size();j++)
+			{
+				Node n = ns.getNodes().get(j);
+				if(n.getClass().getSimpleName().equals("BaseNode") 
+						|| n.getClass().getSimpleName().equals("ClosedNode"))
 				{
-					VariableNode v = (VariableNode) n;
-					if(r.isBound(v) && r.getBindingByVariable(v).getNode().equals(v)) // if done
+					LinkedList<Object> list = new LinkedList<Object>();
+					list.add(rel);
+					list.add(n);
+					temp.add(list);
+				}
+				else
+				{
+					if(n.getClass().getSimpleName().equals("PatternNode"))
 					{
-						if(v.isLoop())
-						{
-							v.setLoop(false);
-							return null;
-						}	
+						LinkedList<Object> list = new LinkedList<Object>();
+						list.add(rel);
+						list.add(termVERe((MolecularNode) n,r,s));
+						temp.add(list);
 					}
-					else{
-						if(r.isBound(v))
+					else
+					{
+						if(n.getClass().getSimpleName().equals("VariableNode"))
 						{
-							NodeSet z = new NodeSet();
-							if(vERe(v,r,s,z) != null)
+							VariableNode v = (VariableNode) n;
+							// if done
+							if(r.isBound(v) && r.getBindingByVariable(v).getNode().equals(v))
 							{
-								s.getBindingByVariable(v).setNode(z.getNodes().getFirst());
+								if(v.isLoop())
+								{
+									return null;
+								}
+								else
+								{
+									// replace in t the subterm ti by s(ti)
+									LinkedList<Object> list = new LinkedList<Object>();
+									list.add(rel);
+									list.add(s.getBindingByVariable(v).getNode());
+									temp.add(list);
+								}
+							}
+							else
+							{
+								if(r.isBound(v))
+								{
+									LinkedList<Object> list = new LinkedList<Object>();
+									list.add(rel);
+									list.add(vERe(v,r,s));
+									temp.add(list);
+								}
 							}
 						}
 					}
 				}
-				else{
-					// if n is a functional term
-				}
 			}
 		}
-		return t;
+		// creating the array used in building
+		Object[][] array = new Object[temp.size()][2];
+		for(int i=0;i<array.length;i++)
+		{
+			LinkedList<Object> list = temp.get(i);
+			array[i][0] = list.get(0);
+			array[i][1] = list.get(1);
+		}
+		
+		// building the substitution node
+		MolecularNode molNode = null;
+		try
+		{
+			molNode = build(array,t.getCableSet().getCaseFrame());
+		} catch (CustomException e)
+		{
+			try
+			{
+				molNode = getMolecularNode(array);
+			}catch (CustomException e1)
+			{
+				e1.printStackTrace();
+			}
+		}
+		
+		return molNode;
 	}
 	
 	/**
@@ -1320,7 +1400,8 @@ public class Network implements Serializable
 		o4[3][1] = x5;
 		Node tdash = n.build(o4,caseFrame4);
 		Substitutions r = new Substitutions();
-		if(n.match(t,tdash,r))
+		Substitutions s = new Substitutions();
+		if(n.match(t,tdash,r,s))
 		{
 			System.out.println(r.getSub().size());
 			for(int i=0;i<r.getSub().size();i++)
@@ -1329,6 +1410,17 @@ public class Network implements Serializable
 				System.out.println(" "+((Node) r.getSub().get(i).getNode()).getIdentifier());
 			}
 		}
+		MolecularNode m = (MolecularNode) n.vERe((VariableNode) x1,r,s);
+		MolecularNode mm = (MolecularNode) n.vERe((VariableNode) x2,r,s);
+		MolecularNode mmm = (MolecularNode) n.vERe((VariableNode) x3,r,s);
+		System.out.println(m +"  "+mm+"  "+mmm);
+		System.out.println((n.vERe((VariableNode) x7,r,s)).getIdentifier());
+		System.out.println((n.vERe((VariableNode) x6,r,s)).getIdentifier());
+		System.out.println((n.vERe((VariableNode) x5,r,s)).getIdentifier());
+		System.out.println((n.vERe((VariableNode) x4,r,s)).getIdentifier());
+		System.out.println((n.vERe((VariableNode) x8,r,s)).getIdentifier());
+		System.out.println(mm.getCableSet().getCables().get(0).getNodeSet().getNodes().getFirst().getIdentifier());
+		System.out.println(mm.getCableSet().getCables().get(1).getNodeSet().getNodes().getFirst().getIdentifier());
 		/*VariableNode v1 = new VariableNode("V1");
 		VariableNode v2 = new VariableNode("V2");
 		VariableNode v3 = new VariableNode("V3");
