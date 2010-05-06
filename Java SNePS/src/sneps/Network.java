@@ -463,7 +463,7 @@ public class Network implements Serializable
 			return createMolNode(array,caseFrame);
 	}
 	
-	public boolean match(Node u,Node t,Substitutions r,Substitutions s)
+	public boolean unify(Node u,Node t,Substitutions r,Substitutions s)
 	{
 		System.out.println("match    >>>>> 1");
 		if(hERe(u,t,r,true))
@@ -569,7 +569,7 @@ public class Network implements Serializable
 				Substitutions s = new Substitutions();
 				s.getSub().addAll(rSub.getSub());
 				Substitutions ss = new Substitutions();
-				if(match(n1,n2,s,ss))
+				if(unify(n1,n2,s,ss))
 				{
 					if(setUnify(n1Others,n2Others,s,rightOrder))
 					{
@@ -1404,7 +1404,7 @@ public class Network implements Serializable
 		Node tdash = n.build(o4,caseFrame4);
 		Substitutions r = new Substitutions();
 		Substitutions s = new Substitutions();
-		if(n.match(t,tdash,r,s))
+		if(n.unify(t,tdash,r,s))
 		{
 			System.out.println(r.getSub().size());
 			for(int i=0;i<r.getSub().size();i++)
