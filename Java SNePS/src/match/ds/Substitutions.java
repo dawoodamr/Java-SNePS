@@ -375,4 +375,21 @@ public class Substitutions
 	{
 		return sub.get(x);
 	}
+	
+	
+	public Substitutions[] split()
+	{
+		Substitutions []res=new Substitutions[2];
+		for(int i=0;i<sub.size();i++)
+		{
+			Binding x=sub.get(i);
+			Node n=x.getNode();
+			String name=n.getClass().getName();
+			if(name.equals("BaseNode"))
+				res[0].putIn(x);
+			else
+				res[1].putIn(x);
+		}
+		return res;
+	}
 }
