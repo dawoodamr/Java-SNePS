@@ -13,6 +13,7 @@ import match.ds.Substitutions;
 public class Filter
 {
 	private Substitutions s;
+	
 	/**
 	 *Creates new filter
 	 */

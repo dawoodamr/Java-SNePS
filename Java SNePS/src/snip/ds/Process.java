@@ -122,6 +122,7 @@ public class Process
 	 */
 	public boolean allShareVars(NodeSet nodes)
 	{
+		//--------------------
 		return true;
 	}
 	

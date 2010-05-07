@@ -41,7 +41,7 @@ public class RuleUseInfoSet
 	
 	/**
 	 * Return the index of r in the rule use info set, if r is not in the rule use 
-	 * info set return -1
+	 * info set return -1 (used in Sindexing only)
 	 * @param r RuleUseInfo
 	 * @return int
 	 */

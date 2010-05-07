@@ -45,6 +45,7 @@ public class ReportSet
     		if(r.isEqual(rs.get(i)))
     		{
     			found=true;
+    			break;
     		}
     	}
     	if(!found)

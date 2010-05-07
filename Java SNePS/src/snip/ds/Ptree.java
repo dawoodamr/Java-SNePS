@@ -11,12 +11,13 @@ package snip.ds;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import sneps.NodeSet;
 import sneps.PatternNode;
 import sneps.VariableNode;
 
 public class Ptree
 {
-	/*private*/ TreeNode root;
+	private TreeNode root;
 	
 	/**
 	 * Create a new Ptree
@@ -30,14 +31,43 @@ public class Ptree
 	 * Build the ptree from nodes ids
 	 * @param nodes
 	 */
-	public void buildTree(int [] nodes)
+	public void buildTree(NodeSet pns)
 	{
+		PatternNode[] patns=new PatternNode[pns.getNodes().size()]; 
+		for(int i=0;i<patns.length;i++)
+		{
+			patns[i]=(PatternNode)pns.getNodes().get(i);
+		}
+		Vector<Vector<Integer>> patvar=getPatVar(patns);
+		Vector<Vector<Integer>> varpat=getVarPat(patvar);
+		int []patseq=getPatSeq(patvar, varpat);
 		Vector<TreeNode> tn=new Vector<TreeNode>();
-		for(int i=0;i<nodes.length;i++)
+		int [][]vars=new int [patseq.length][1];
+		for(int i=0;i<patseq.length;i++)
+		{
+			for(int j=0;j<patvar.size();j++)
+			{
+				Vector<Integer> pvtemp=patvar.get(j);
+				if(patseq[i]==pvtemp.get(0))
+				{
+					Vector<Integer> varstemp=new Vector<Integer>();
+					for(int k=1;k<pvtemp.size();k++)
+					{
+						varstemp.add(pvtemp.get(k));
+					}
+					vars[i]=new int [varstemp.size()];
+					for(int k=0;k<vars[i].length;k++)
+					{
+						vars[i][k]=varstemp.get(k);
+					}
+				}
+			}
+		}
+		for(int i=0;i<patns.length;i++)
 		{
 			int []x=new int [1];
-			x[0]=nodes[i];
-			tn.add(new TreeNode(x,null));
+			x[0]=patns[i].getId();
+			tn.add(new TreeNode(x,vars[i],null));
 		}
 		buildTree(tn,true);
 	}
@@ -48,7 +78,7 @@ public class Ptree
 	 * @param nodes2 nodes ids
 	 * @return true or false
 	 */
-	public boolean shareVars(int[] nodes1,int[] nodes2)
+	private boolean shareVars(int[] nodes1,int[] nodes2)
 	{
 		for(int i=0;i<nodes1.length;i++)
 		{
@@ -67,15 +97,32 @@ public class Ptree
 	 * @param x2 int[]
 	 * @return int[]
 	 */
-	public int[] union(int [] x1,int []x2)
+	private int[] union(int [] x1,int []x2)
 	{
-		int [] res=new int [x1.length+x2.length];
+		Vector<Integer> r=new Vector<Integer>();
+		for(int i=0;i<x1.length;i++)
+		{
+			r.add(x1[i]);
+		}
+		for(int i=0;i<x2.length;i++)
+		{
+			r.add(x2[i]);
+		}
+		for(int i=0;i<r.size();i++)
+		{
+			for(int j=i+1;j<r.size();j++)
+			{
+				if(r.get(i)==r.get(j))
+				{
+					r.remove(j);
+					j--;
+				}
+			}
+		}
+		int [] res=new int [r.size()];
 		for(int i=0;i<res.length;i++)
 		{
-			if(i<x1.length)
-				res[i]=x1[i];
-			else
-				res[i]=x2[i-x1.length];
+			res[i]=r.get(i);
 		}
 		return res;
 	}
@@ -86,7 +133,7 @@ public class Ptree
 	 * @param t number of nodes in the left side
 	 * @return boolean[]
 	 */
-	public boolean[] makeDir(int size,int t)
+	private boolean[] makeDir(int size,int t)
 	{
 		boolean[] res=new boolean[size];
 		for(int i=0;i<t;i++)
@@ -107,11 +154,14 @@ public class Ptree
 	{
 		if(tn.size()==2)
 		{
+			int []p1=tn.get(0).getPats();
+			int []p2=tn.get(1).getPats();
+			int []p=union(p1, p2);
+			boolean[] d=makeDir(p.length, p1.length);
 			int []v1=tn.get(0).getVars();
 			int []v2=tn.get(1).getVars();
 			int []v=union(v1, v2);
-			boolean[] d=makeDir(v.length, v1.length);
-			root=new TreeNode(v,d);
+			root=new TreeNode(p,v,d);
 			root.insertLeft(tn.get(0));
 			root.insertRight(tn.get(1));
 			return;
@@ -127,15 +177,23 @@ public class Ptree
 				{
 					if(shareVars(tn.get(i).getVars(), tn.get(i+1).getVars()))
 					{
-						int []v1=tn.get(i).getVars();
-						int []v2=tn.get(i+1).getVars();
+						int []p1=tn.get(i).getPats();
+						int []p2=tn.get(i+1).getPats();
+						int []p=union(p1, p2);
+						boolean[] d=makeDir(p.length, p1.length);
+						int []v1=tn.get(0).getVars();
+						int []v2=tn.get(1).getVars();
 						int []v=union(v1, v2);
-						boolean[] d=makeDir(v.length, v1.length);
-						TreeNode tmp=new TreeNode(v,d);
+						TreeNode tmp=new TreeNode(p,v,d);
 						tmp.insertLeft(tn.get(i));
 						tmp.insertRight(tn.get(i+1));
 						tntemp.add(tmp);
 						combined++;
+					}
+					else
+					{
+						tntemp.add(tn.get(i));
+						i--;
 					}
 				}
 				else
@@ -153,11 +211,14 @@ public class Ptree
 			{
 				if(i!=tn.size()-1)
 				{
-					int []v1=tn.get(i).getVars();
-					int []v2=tn.get(i+1).getVars();
+					int []p1=tn.get(i).getPats();
+					int []p2=tn.get(i+1).getPats();
+					int []p=union(p1, p2);
+					boolean[] d=makeDir(p.length, p1.length);
+					int []v1=tn.get(0).getVars();
+					int []v2=tn.get(1).getVars();
 					int []v=union(v1, v2);
-					boolean[] d=makeDir(v.length, v1.length);
-					TreeNode tmp=new TreeNode(v,d);
+					TreeNode tmp=new TreeNode(p,v,d);
 					tmp.insertLeft(tn.get(i));
 					tmp.insertRight(tn.get(i+1));
 					tntemp.add(tmp);
@@ -170,11 +231,14 @@ public class Ptree
 		}
 		if(tntemp.size()==2)
 		{
-			int []v1=tntemp.get(0).getVars();
-			int []v2=tntemp.get(1).getVars();
+			int []p1=tntemp.get(0).getPats();
+			int []p2=tntemp.get(1).getPats();
+			int []p=union(p1, p2);
+			boolean[] d=makeDir(p.length, p1.length);
+			int []v1=tn.get(0).getVars();
+			int []v2=tn.get(1).getVars();
 			int []v=union(v1, v2);
-			boolean[] d=makeDir(v.length, v1.length);
-			root=new TreeNode(v,d);
+			root=new TreeNode(p,v,d);
 			root.insertLeft(tntemp.get(0));
 			root.insertRight(tntemp.get(1));
 		}
@@ -208,8 +272,8 @@ public class Ptree
 	 */
 	private RuleUseInfoSet insertInTree(RuleUseInfo rui,int pat,TreeNode tn)
 	{
-		int []vars=tn.getVars();
-		if(vars.length==1)
+		int []pats=tn.getPats();
+		if(pats.length==1)
 		{
 			tn.insertRUI(rui);
 			return combine(rui,tn.getParent(),pat);
@@ -266,6 +330,7 @@ public class Ptree
 			}
 			if(temp.isNew())
 				return null;
+			tn.insertRUIS(temp);
 			return combine(temp,tn.getParent(),pattern);
 		}
 	}
@@ -277,7 +342,7 @@ public class Ptree
 	 * @param pns PatternNode []
 	 * @return Vector<Vector<Integer>>
 	 */
-	public Vector<Vector<Integer>> getPatVar(PatternNode [] pns)
+	private Vector<Vector<Integer>> getPatVar(PatternNode [] pns)
 	{
 		Vector<Vector<Integer>> res=new Vector<Vector<Integer>>();
 		for(int i=0;i<pns.length;i++)
@@ -300,7 +365,7 @@ public class Ptree
 	 * @param patvar Vector<Vector<Integer>>
 	 * @return Vector<Vector<Integer>>
 	 */
-	public Vector<Vector<Integer>> getVarPat(Vector<Vector<Integer>> patvar)
+	private Vector<Vector<Integer>> getVarPat(Vector<Vector<Integer>> patvar)
 	{
 		Vector<Vector<Integer>> res=new Vector<Vector<Integer>>();
 		Vector<Integer> pats=new Vector<Integer>();
@@ -352,7 +417,7 @@ public class Ptree
 	 * @param vp Vector<Vector<Integer>>
 	 * @return int []
 	 */
-	public int[]getPatSeq(Vector<Vector<Integer>> pv,Vector<Vector<Integer>> vp)
+	private int[]getPatSeq(Vector<Vector<Integer>> pv,Vector<Vector<Integer>> vp)
 	{
 		Vector<Integer> vars=new Vector<Integer>();
 		Vector<Integer> pats=new Vector<Integer>();
@@ -427,7 +492,7 @@ public class Ptree
 			vars.removeElement(var);
 			if(varuni.size()==vp.size())
 				varsdone=true;
-			if(pats.size()==vp.size())
+			if(pats.size()==pv.size())
 				break;
 		}
 		int[] res=new int[pats.size()];
@@ -437,4 +502,5 @@ public class Ptree
 		}
 		return res;
 	}
+	
 }

@@ -106,7 +106,7 @@ public class Channel
 	public boolean equivalent(Channel c)
 	{
 		return this.fil.isEqual(c.fil)&&this.swi.isEqual(c.swi)&&
-		this.des.isEqual(c.des)&&this.con==c.con;//--------context----------
+		this.des.isEqual(c.des)&&this.con==c.con;
 	}
 	
 	/**
@@ -126,11 +126,12 @@ public class Channel
 	}
 	
 	/**
-	 * Sends the report r over this channel (not final)
+	 * Sends the report r over this channel
 	 * @param r report
 	 */
 	public void send(Report r)
 	{
-		
+		r.setNode(des.getNode());
+		//des.getNode().getEntity().getProcess().receiveReport(r);
 	}
 }

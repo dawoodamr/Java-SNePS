@@ -13,6 +13,7 @@ import snebr.Context;
 public class ChannelsSet
 {
 	private Vector<Channel> ch;
+	
 	/**
 	 * Create new empty channels list
 	 */
@@ -45,7 +46,7 @@ public class ChannelsSet
 	 */
 	public Channel choose()
 	{
-		return ch.get(1);
+		return ch.get(0);
 	}
 	
 	/**
@@ -93,6 +94,7 @@ public class ChannelsSet
 			{
 				found = true;
 				c1=ch.get(i);
+				break;
 			}
 		}
 		if (!found)

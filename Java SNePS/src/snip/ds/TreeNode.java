@@ -11,6 +11,7 @@ package snip.ds;
 public class TreeNode
 {
 	private RuleUseInfoSet ruis;
+	private int []pats;
 	private int []vars;
 	private boolean []dir;
 	private TreeNode up;
@@ -20,13 +21,14 @@ public class TreeNode
 	/**
 	 * Create a new subtree with the parent up
 	 * (if up is null then this node is the root) 
-	 * @param v list of variables ids 
+	 * @param p list of patterns ids 
 	 * @param d list of directions
 	 * @param up TreeNode
 	 */
-	public TreeNode(int[] v,boolean []d)
+	public TreeNode(int[] p,int[]v,boolean []d)
 	{
 		ruis=new RuleUseInfoSet();
+		pats=p;
 		vars=v;
 		dir=d;
 		up=null;
@@ -41,6 +43,16 @@ public class TreeNode
 	public void insertRUI(RuleUseInfo rui)
 	{
 		ruis.putIn(rui);
+	}
+	
+	/**
+	 * Add ruis to the rule use info set of this node
+	 * @param ruis RuleUseInfoSet
+	 */
+	public void insertRUIS(RuleUseInfoSet ruis)
+	{
+		for(int i=0;i<ruis.cardinality();i++)
+		this.ruis.putIn(ruis.getRuleUseInfo(i));
 	}
 	
 	/**
@@ -102,12 +114,12 @@ public class TreeNode
 	}
 	
 	/**
-	 * Return the list of variables
+	 * Return the list of patterns
 	 * @return int[]
 	 */
-	public int[] getVars()
+	public int[] getPats()
 	{
-		return vars;
+		return pats;
 	}
 	
 	/**
@@ -127,12 +139,21 @@ public class TreeNode
 	public boolean getPatDir(int pat)
 	{
 		int i=0;
-		for(;i<vars.length;i++)
+		for(;i<pats.length;i++)
 		{
-			if(pat==vars[i])
+			if(pat==pats[i])
 				break;
 		}
 		return dir[i];
+	}
+	
+	/**
+	 * Return the list of variables
+	 * @return
+	 */
+	public int [] getVars()
+	{
+		return vars;
 	}
 	
 }

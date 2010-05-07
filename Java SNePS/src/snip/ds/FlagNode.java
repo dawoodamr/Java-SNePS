@@ -48,7 +48,8 @@ public class FlagNode
 	}
 	
 	/**
-	 * Return the flag of the flag node 
+	 * Return the flag of the flag node (1 is true, 2 is false, 3 is unknown and 4 is
+	 * requested)
 	 * @return Node
 	 */
 	public int getFlag()

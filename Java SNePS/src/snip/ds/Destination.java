@@ -12,6 +12,7 @@ import sneps.Node;
 public class Destination
 {
 	Node node;
+	
 	/**
 	 *Creates new destination
 	 */
@@ -19,6 +20,7 @@ public class Destination
 	{
 		node = n;
 	}
+	
 	/**
 	 * Check if this and d pointing to the same node
 	 * @param d destination

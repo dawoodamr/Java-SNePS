@@ -113,11 +113,7 @@ public class Report
 	{
 		if(this.s.isEqual(r.s)&& this.sup==r.sup && this.sign==r.sign)//---------support------
 		{
-			if(this.node==null&&r.node==null&&this.ct==null&&r.ct==null)
-			{
-				return true;
-			}
-			else if(this.node==r.node&&this.ct==r.ct)
+			if(this.node==r.node&&this.ct==r.ct)
 			{
 				return true;
 			}		
@@ -152,6 +148,15 @@ public class Report
 		if(ct==null)
 			return false;
 		return true;
+	}
+	
+	/**
+	 * Set the node of the report
+	 * @param n Node
+	 */
+	public void setNode(Node n)
+	{
+		node=n;
 	}
 
 }
