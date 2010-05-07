@@ -69,13 +69,7 @@ public class AndEntailment extends Rule
 		else
 		{
 			ContextRUIS cr=getProcess().addContextRUIS(c,'p');
-			NodeSet patternNodes =getProcess().getNodeSet("&ant");
-			int [] patsIds=new int [patternsNumber];
-			for(int i=0;i<patternsNumber;i++)
-			{
-				patsIds[i]=patternNodes.getNodes().get(i).getId();
-			}
-			cr.getPtree().buildTree(patsIds);
+			cr.getPtree().buildTree(patternNodes);
 			return cr;
 		}
 	}
@@ -119,8 +113,8 @@ public class AndEntailment extends Rule
 					RuleUseInfo ruitemp=res.getRuleUseInfo(i);
 					if(ruitemp.getPosCount()==patternsNumber)
 					{
-						Report reply=new Report(ruitemp.getSub(),null,true,getProcess().getNode()
-								,null,c);
+						Report reply=new Report(ruitemp.getSub(),null,true
+								,getProcess().getNode(),null,c);
 						ChannelsSet ctemp=crtemp.getChannels();
 						getProcess().sendReport(reply,ctemp);
 					}

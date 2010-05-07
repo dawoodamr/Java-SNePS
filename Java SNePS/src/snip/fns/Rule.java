@@ -1,5 +1,5 @@
 /**
- * @(#)AndEntailment.java
+ * @(#)Rule.java
  *
  *
  * @author Mohamed Karam Gabr
@@ -15,7 +15,7 @@ import snip.ds.Report;
 
 public class Rule extends Proposition
 {
-	private Process getProcess;
+	private Process p;
 	
 	/**
 	 * Create a new rule
@@ -25,7 +25,7 @@ public class Rule extends Proposition
 	public Rule(Node node,String name)
 	{
 		super(node);
-		getProcess=new Process(node,'r',name);
+		p=new Process(node,'r',name);
 	}
 	
 	/**
@@ -43,7 +43,7 @@ public class Rule extends Proposition
 	 */
 	public Process getProcess() 
 	{
-		return getProcess;
+		return p;
 	}
 	
 	/**

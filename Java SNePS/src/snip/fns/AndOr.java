@@ -99,6 +99,7 @@ public class AndOr extends Rule
 			if(!here)
 			{
 				rest[restIndex]=pns[i];
+				restIndex++;
 			}
 		}
 		ChannelsSet cq=crtemp.getChannels();

@@ -99,6 +99,7 @@ public class Thresh extends Rule
 			if(!here)
 			{
 				rest[restIndex]=pns[i];
+				restIndex++;
 			}
 		}
 		ChannelsSet cq=crtemp.getChannels();
