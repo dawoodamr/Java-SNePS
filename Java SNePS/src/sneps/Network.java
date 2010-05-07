@@ -593,6 +593,7 @@ public class Network implements Serializable
 		{
 			System.out.println("varhere    >>>>> 2  " + u.getIdentifier());
 			rSub.putIn(new Binding(u,t));
+			u.setRLoop(false);
 			System.out.println("size >>>>>>>>>>>>>>  "+rSub.getSub().size());
 			return true;
 		}
@@ -607,6 +608,7 @@ public class Network implements Serializable
 				if(! rSub.isBound(v))
 				{
 					rSub.putIn(new Binding(v,t));
+					v.setRLoop(false);
 					return true;
 				}
 				if(recurHERe(v,(Node) rSub.getBindingByVariable(v).getNode(),t,rSub,rightOrder))
@@ -619,6 +621,7 @@ public class Network implements Serializable
 			if(! rSub.isBound(tt))
 			{
 				rSub.putIn(new Binding(tt,u));
+				tt.setRLoop(false);
 				return true;
 			}
 			System.out.println("varhere    >>>>> 5");
@@ -687,6 +690,7 @@ public class Network implements Serializable
 			{
 				path.push((VariableNode) rSub.getBindingByVariable(v).getNode());
 				rSub.getBindingByVariable(v).setNode(v);
+				v.setRLoop(false);
 			}else
 				break;
 		}
@@ -705,8 +709,10 @@ public class Network implements Serializable
 			if(rSub.isBound(path.get(i)))
 			{
 				rSub.getBindingByVariable(path.get(i)).setNode(v);
+				path.get(i).setRLoop(false);
 			}else
 				rSub.putIn(new Binding(path.get(i),v));
+				path.get(i).setRLoop(false);
 		}
 	}
 	
@@ -714,19 +720,21 @@ public class Network implements Serializable
 	{
 		System.out.println("recurhere    >>>>> 1");
 		boolean flag = false;
-		v.setLoop(true);
+		v.setRLoop(true);
 		if(hERe(y,t,rSub,rightOrder))
 		{
 			if(rSub.isBound(v))
 			{
 				rSub.getBindingByVariable(v).setNode(y);
+				v.setRLoop(false);
 			}else
 			{
 				rSub.putIn(new Binding(v,y));
+				v.setRLoop(false);
 			}
 			flag = true;
 		}
-		v.setLoop(false);
+		v.setRLoop(false);
 		return flag;
 	}
 	
@@ -753,7 +761,7 @@ public class Network implements Serializable
 				if(! s.isBound(v))
 					s.putIn(new Binding(v,z));
 				s.getBindingByVariable(v).setNode(z);
-				v.setLoop(false);
+				v.setSLoop(false);
 				r.getBindingByVariable(v).setNode(v); // done
 			}
 			else
@@ -764,10 +772,10 @@ public class Network implements Serializable
 					System.out.println("vere    >>>>> 5");
 					MolecularNode y = (MolecularNode) yy;
 					r.getBindingByVariable(v).setNode(v); // done
-					v.setLoop(true);
+					v.setSLoop(true);
 					for(int i=0;i<path.size();i++)
 					{
-						path.get(i).setLoop(true);
+						path.get(i).setSLoop(true);
 					}
 					z = termVERe(y,r,s);
 					if(z == null)
@@ -777,14 +785,14 @@ public class Network implements Serializable
 					if(! s.isBound(v))
 						s.putIn(new Binding(v,z));
 					s.getBindingByVariable(v).setNode(z);
-					v.setLoop(false);
+					v.setSLoop(false);
 				}
 				else
 				{
-					if(v.isLoop())
+					if(v.isSLoop())
 					{
 						System.out.println("vere    >>>>> 6");
-						v.setLoop(false);
+						v.setSLoop(false);
 						return null;
 					}
 					else
@@ -802,7 +810,7 @@ public class Network implements Serializable
 			if(! s.isBound(path.get(i)))
 				s.putIn(new Binding(path.get(i),z));
 			s.getBindingByVariable(path.get(i)).setNode(z);
-			v.setLoop(false);
+			v.setSLoop(false);
 		}
 		
 		return z;
@@ -855,7 +863,7 @@ public class Network implements Serializable
 							// if done
 							if(r.isBound(v) && r.getBindingByVariable(v).getNode().equals(v))
 							{
-								if(v.isLoop())
+								if(v.isSLoop())
 								{
 									return null;
 								}

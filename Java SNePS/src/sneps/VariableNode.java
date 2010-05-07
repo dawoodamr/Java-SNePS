@@ -11,9 +11,14 @@ public class VariableNode extends Node
 {
 	
 	/**
-	 * the flag used in the unification of variables
+	 * the flag used in the unification of variables to show that there is a loop using r-pointer
 	 */
-	private boolean loop;
+	private boolean rLoop;
+	
+	/**
+	 * the flag used in the unification of variables to show that there is a loop using s-pointer
+	 */
+	private boolean sLoop;
 
 	/**
 	 * this constructor creates a new VariableNode with a new empty UpCableSet and
@@ -24,22 +29,40 @@ public class VariableNode extends Node
 	public VariableNode(String identifier)
 	{
 		super(identifier);
+		rLoop = false;
+		sLoop = false;
 	}
 
 	/**
-	 * @return the flag loop that is used in the unification
+	 * @return the flag loop that is used in the unification for r-pointer
 	 */
-	public boolean isLoop()
+	public boolean isRLoop()
 	{
-		return loop;
+		return rLoop;
 	}
 
 	/**
 	 * @param loop the value that the flag is set to
 	 */
-	public void setLoop(boolean loop)
+	public void setRLoop(boolean rloop)
 	{
-		this.loop = loop;
+		this.rLoop = rloop;
+	}
+	
+	/**
+	 * @return the flag loop that is used in the unification for s-pointer
+	 */
+	public boolean isSLoop()
+	{
+		return sLoop;
+	}
+
+	/**
+	 * @param loop the value that the flag is set to
+	 */
+	public void setSLoop(boolean sloop)
+	{
+		this.sLoop = sloop;
 	}
 	
 }
