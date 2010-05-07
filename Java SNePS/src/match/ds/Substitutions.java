@@ -69,15 +69,15 @@ public class Substitutions
     }
     
     /**
-	 *Check if the mvar is bound in this substitution list or not.
-	 *@param mv the mvar
+	 *Check if the variable node is bound in this substitution list or not.
+	 *@param mv the variable node
 	 *@return true if the mv is bound false otherwise
 	 */
     public boolean isBound(VariableNode mv) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
-    		if(sub.get(i).getVariable()==mv)//---------node-----------
+    		if(sub.get(i).getVariable()==mv)
     		{
     			return true;
     		}
@@ -86,15 +86,15 @@ public class Substitutions
     }
     
     /**
-	 *Check if the mnode is a value in this substitution list or not.
-	 *@param mn the mnode
+	 *Check if the node is a value in this substitution list or not.
+	 *@param mn the node
 	 *@return true if the mn is a value false otherwise
 	 */
     public boolean isValue(Node mn) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
-    		if(sub.get(i).getNode()==mn)//---------node-----------
+    		if(sub.get(i).getNode()==mn)
     		{
     			return true;
     		}
@@ -103,12 +103,12 @@ public class Substitutions
     }
     
     /**
-	 *Returns mvar of the mnode in the substitutions list if mnode is not in the 
-	 *substitutions list return null
-	 *@param mn is the mnode
-	 *@return mvar or null
+	 *Returns the variable node of the node in the substitutions list if node is 
+	 *not in the substitutions list return null
+	 *@param mn is the node
+	 *@return VariableNode or null
 	 */
-    public Object srcNode(Node mn) 
+    public VariableNode srcNode(Node mn) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
@@ -121,10 +121,10 @@ public class Substitutions
     }
     
     /**
-	 *Returns the binding witch have mv as its mvar or null if mv is not in the 
-	 *substitutions list
+	 *Returns the binding witch have mv as its variable node or null if mv is 
+	 *not in the substitutions list
 	 *@param mv mvar
-	 *@return binding or null
+	 *@return Binding or null
 	 */
     public Binding getBindingByVariable(VariableNode mv) 
     {
@@ -141,7 +141,7 @@ public class Substitutions
     /**
 	 *Returns the binding witch have mn as its node or null if mn is not in the 
 	 *substitutions list
-	 *@param mn mnode
+	 *@param mn node
 	 *@return binding or null
 	 */
     public Binding getBindingByNode(Node mn) 
@@ -161,7 +161,7 @@ public class Substitutions
 	 *@param mb the binding
 	 *@return true if mb exists in substitutions list false otherwise
 	 */
-    public boolean isMemb(Binding mb) 
+    public boolean isMember(Binding mb) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
@@ -232,14 +232,14 @@ public class Substitutions
     	Substitutions res=new Substitutions();
     	for(int i=0;i<this.sub.size();i++)
     	{
-    		if(!res.isMemb(this.sub.get(i)))
+    		if(!res.isMember(this.sub.get(i)))
     		{
     			res.putIn(this.sub.get(i));
     		}
     	}
     	for(int i=0;i<s.sub.size();i++)
     	{
-    		if(!res.isMemb(s.sub.get(i)))
+    		if(!res.isMember(s.sub.get(i)))
     		{
     			res.putIn(s.sub.get(i));
     		}
@@ -249,8 +249,8 @@ public class Substitutions
     
     /**
      * returns a substitutions list consisting of only those bindings 
-     * whose mvar are in ns
-     * @param ns array of mvar nodes
+     * whose variable node are in ns
+     * @param ns array of variable node nodes
      * @return substitutions list
      */
     public Substitutions restrict(VariableNode [] ns)
@@ -266,12 +266,12 @@ public class Substitutions
     }
     
     /**
-     * If mv is an mvar which is bound, then returns the mnode to which "mv" is 
+     * If mv is an variable node which is bound, then returns the node to which mv is 
      * bound  otherwise it returns null
-     * @param mv mvar
-     * @return mnode or null
+     * @param mv variable node
+     * @return node or null
      */
-    public Object term(VariableNode mv) 
+    public Node term(VariableNode mv) 
     {
     	for(int i=0;i<sub.size();i++)
     	{
@@ -293,8 +293,8 @@ public class Substitutions
     }
     
     /**
-     * Returns the first mbind in the substitutions list
-     * @return mbind
+     * Returns the first Binding in the substitutions list
+     * @return Binding
      */
     public Binding choose()
     {
@@ -322,7 +322,7 @@ public class Substitutions
 	 * @param n node
 	 * @return node
 	 */
-	public Object value(VariableNode n)
+	public Node value(VariableNode n)
 	{
 		Binding b = getBindingByVariable(n);
 		if(b==null)
@@ -332,8 +332,8 @@ public class Substitutions
 	
 	/**
 	 * Returns a new substitutions list with the binding of this added to them 
-	 * the Mbind m
-	 * @param m mbind
+	 * the Binding m
+	 * @param m Binding
 	 * @return Substitutions
 	 */
 	public Substitutions insert(Binding m)
@@ -349,8 +349,8 @@ public class Substitutions
 	
 	/**
 	 * Check if the substitutions list s is compatible to this or not
-	 * two lists are compatible if ever mvar in both are bound to the same mnode
-	 * and ever mnode in both are bound to the same mvar
+	 * two lists are compatible if ever variable node in both are bound to the same 
+	 * node and ever node in both are bound to the same variable node
 	 * @param s substitutions list
 	 * @return true or false
 	 */
@@ -376,7 +376,12 @@ public class Substitutions
 		return sub.get(x);
 	}
 	
-	
+	/**
+	 * Split the substitutions list into two parts. The first one is that bindings
+	 * with a base node as its node, and the second one is the rest of the 
+	 * substitutions list
+	 * @return
+	 */
 	public Substitutions[] split()
 	{
 		Substitutions []res=new Substitutions[2];

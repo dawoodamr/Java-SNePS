@@ -51,7 +51,8 @@ public class Binding
 	 */
     public boolean isEqual(Binding binding) 
     {
-    	if(this.getNode() == binding.getNode() && this.getVariable() == binding.getVariable())//------node-----
+    	if(this.getNode() == binding.getNode() && 
+    			this.getVariable() == binding.getVariable())
     		return true;
     			return false;
     }
@@ -64,6 +65,7 @@ public class Binding
     {
     	variable=m;
     }
+    
     /**
 	 *Set the value of the node of the binding with m
 	 *@param m the new node
