@@ -6,6 +6,7 @@
  * @version 1.00 2010/3/14
  */
 package snip.ds;
+import sneps.VariableNode;
 import match.ds.*;
 
 public class Switch
@@ -37,8 +38,9 @@ public class Switch
 	{
 		for(int i=0;i<this.s.cardinality();i++)
 		{
-			r.getSubstitutions().getBinding(i).setvariable(this.s.getBinding(i)
-					.getVariable());
+			r.getSubstitutions().getBindingByVariable(this.s.getBinding(i)
+					.getVariable()).setvariable((VariableNode)this.s.getBinding(i)
+							.getNode());
 		}
 	}
 }
