@@ -1,5 +1,7 @@
 package sneps;
 
+import snebr.Context;
+
 /**
  * a range restrict path is a path that is restricted by considering only nodes that are
  * resulted from following it if they can be used as start nodes to follow a path that will
@@ -41,13 +43,13 @@ public class RangeRestrictPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node)
+	public NodeSet follow(Node node,Context context)
 	{
 		NodeSet result = new NodeSet();
-		NodeSet ns = p.follow(node);
+		NodeSet ns = p.follow(node,context);
 		for(int i=0;i<ns.getNodes().size();i++)
 		{
-			NodeSet temp = q.follow(ns.getNodes().get(i));
+			NodeSet temp = q.follow(ns.getNodes().get(i),context);
 			if(temp.getNodes().contains(this.node))
 				result.addNode(ns.getNodes().get(i));
 		}
@@ -59,13 +61,13 @@ public class RangeRestrictPath extends Path
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node)
+	public NodeSet followConverse(Node node,Context context)
 	{
 		NodeSet result = new NodeSet();
-		NodeSet ns = p.followConverse(node);
+		NodeSet ns = p.followConverse(node,context);
 		for(int i=0;i<ns.getNodes().size();i++)
 		{
-			NodeSet temp = q.follow(ns.getNodes().get(i));
+			NodeSet temp = q.follow(ns.getNodes().get(i),context);
 			if(temp.getNodes().contains(this.node))
 				result.addNode(ns.getNodes().get(i));
 		}

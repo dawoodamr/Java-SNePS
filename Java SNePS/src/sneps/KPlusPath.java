@@ -2,6 +2,8 @@ package sneps;
 
 import java.util.LinkedList;
 
+import snebr.Context;
+
 /**
  * a kplus path is a path that is composed of its self one or more times.
  * 
@@ -36,19 +38,20 @@ public class KPlusPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node)
+	public NodeSet follow(Node node,Context context)
 	{
 		LinkedList<Node> nodes = new LinkedList<Node>();
 		NodeSet nodeSet = new NodeSet(nodes);
 		
-		return follow(nodeSet);
+		return follow(nodeSet,context);
 	}
 	
 	/**
 	 * @param ns the node set we want to follow the path starting at its nodes
+	 * @param context the context that propositions in this path are asserted in
 	 * @return a node set with the resulted nodes from following the path
 	 */
-	private NodeSet follow(NodeSet ns)
+	private NodeSet follow(NodeSet ns,Context context)
 	{
 		LinkedList<Node> res = new LinkedList<Node>();
 		res.addAll(ns.getNodes());
@@ -56,10 +59,10 @@ public class KPlusPath extends Path
 		for(int i=0;i<result.getNodes().size();i++)
 		{
 			// following the path for a node and adding the resulted nodes 
-			addWithNoRepeation(path.follow(result.getNodes().get(i)),result);
+			addWithNoRepeation(path.follow(result.getNodes().get(i),context),result);
 		}
 		if(wasChanged(ns,result))
-			return follow(result);
+			return follow(result,context);
 		
 		return result;
 	}
@@ -100,20 +103,21 @@ public class KPlusPath extends Path
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node)
+	public NodeSet followConverse(Node node,Context context)
 	{
 		LinkedList<Node> nodes = new LinkedList<Node>();
 		NodeSet nodeSet = new NodeSet(nodes);
 		
-		return followConverse(nodeSet);
+		return followConverse(nodeSet,context);
 	}
 	
 	/**
 	 * @param ns the node set we want to follow the converse of the path starting 
 	 * at its nodes
+	 * @param context the context that propositions in this path are asserted in
 	 * @return a node set with the resulted nodes from following the converse of the path
 	 */
-	private NodeSet followConverse(NodeSet ns)
+	private NodeSet followConverse(NodeSet ns,Context context)
 	{
 		LinkedList<Node> res = new LinkedList<Node>();
 		res.addAll(ns.getNodes());
@@ -121,10 +125,10 @@ public class KPlusPath extends Path
 		for(int i=0;i<result.getNodes().size();i++)
 		{
 			// following the path for a node and adding the resulted nodes 
-			addWithNoRepeation(path.followConverse(result.getNodes().get(i)),result);
+			addWithNoRepeation(path.followConverse(result.getNodes().get(i),context),result);
 		}
 		if(wasChanged(ns,result))
-			return followConverse(result);
+			return followConverse(result,context);
 		
 		return result;
 	}

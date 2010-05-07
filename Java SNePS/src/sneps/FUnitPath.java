@@ -1,5 +1,7 @@
 package sneps;
 
+import snebr.Context;
+
 /**
  * the FUnitPath (forward unit path) class is a path which is only a relation.
  * 
@@ -33,7 +35,7 @@ public class FUnitPath extends Path
 	 * @see ds.Path#follow(ds.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node)
+	public NodeSet follow(Node node,Context context)
 	{
 		NodeSet result = new NodeSet();
 		if(node.getClass().getSuperclass().getSimpleName().equals("MolecularNode"))
@@ -51,7 +53,7 @@ public class FUnitPath extends Path
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node)
+	public NodeSet followConverse(Node node,Context context)
 	{
 		NodeSet result = new NodeSet();
 		UpCableSet upCableSet = node.getUpCableSet();

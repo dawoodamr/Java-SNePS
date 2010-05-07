@@ -2,6 +2,8 @@ package sneps;
 
 import java.util.LinkedList;
 
+import snebr.Context;
+
 /**
  * an AndPath is a path that contains a list of paths. an AndPath may lead us to a node 
  * if and only if all the paths it contains will lead us to that node
@@ -36,26 +38,26 @@ public class AndPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node)
+	public NodeSet follow(Node node,Context context)
 	{
 		LinkedList<Path> rest = new LinkedList<Path>();
 		rest.addAll(this.paths);
 		Path p = rest.removeFirst();
 		AndPath andPath = new AndPath(rest);
-		return intersection(p.follow(node),andPath.follow(node));
+		return intersection(p.follow(node,context),andPath.follow(node,context));
 	}
 
 	/* (non-Javadoc)
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node)
+	public NodeSet followConverse(Node node,Context context)
 	{
 		LinkedList<Path> rest = new LinkedList<Path>();
 		rest.addAll(this.paths);
 		Path p = rest.removeLast();
 		AndPath andPath = new AndPath(rest);
-		return intersection(p.follow(node),andPath.follow(node));
+		return intersection(p.follow(node,context),andPath.follow(node,context));
 	}
 	
 	/**

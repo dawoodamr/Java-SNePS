@@ -1,5 +1,7 @@
 package sneps;
 
+import snebr.Context;
+
 /**
  * an irreflexive restrict path is a path that does not lead to the same start node
  * 
@@ -33,9 +35,9 @@ public class IrreflexiveRestrictPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node)
+	public NodeSet follow(Node node,Context context)
 	{
-		NodeSet ns = path.follow(node);
+		NodeSet ns = path.follow(node,context);
 		ns.getNodes().remove(node);
 		return ns;
 	}
@@ -44,9 +46,9 @@ public class IrreflexiveRestrictPath extends Path
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node)
+	public NodeSet followConverse(Node node,Context context)
 	{
-		NodeSet ns = path.followConverse(node);
+		NodeSet ns = path.followConverse(node,context);
 		ns.getNodes().remove(node);
 		return ns;
 	}

@@ -1,5 +1,7 @@
 package sneps;
 
+import snebr.Context;
+
 /**
  * a relative complement path is a path that consists of two paths where a destination node 
  * can be reached from following the first path and cannot be reached from following the 
@@ -35,10 +37,10 @@ public class RelativeComplementPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node)
+	public NodeSet follow(Node node,Context context)
 	{
-		NodeSet ns1 = p.follow(node);
-		NodeSet ns2 = q.follow(node);
+		NodeSet ns1 = p.follow(node,context);
+		NodeSet ns2 = q.follow(node,context);
 		ns1.getNodes().removeAll(ns2.getNodes());
 		return ns1;
 	}
@@ -47,10 +49,10 @@ public class RelativeComplementPath extends Path
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node)
+	public NodeSet followConverse(Node node,Context context)
 	{
-		NodeSet ns1 = p.followConverse(node);
-		NodeSet ns2 = q.followConverse(node);
+		NodeSet ns1 = p.followConverse(node,context);
+		NodeSet ns2 = q.followConverse(node,context);
 		ns1.getNodes().removeAll(ns2.getNodes());
 		return ns1;
 	}

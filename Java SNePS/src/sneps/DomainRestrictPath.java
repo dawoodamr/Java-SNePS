@@ -1,5 +1,7 @@
 package sneps;
 
+import snebr.Context;
+
 /**
  * a domain restrict path is a path that is restricted by another path that should lead to 
  * a specified node in order to be valid
@@ -64,12 +66,12 @@ public class DomainRestrictPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node)
+	public NodeSet follow(Node node,Context context)
 	{
 		NodeSet result = new NodeSet();
-		NodeSet ns = q.follow(node);
+		NodeSet ns = q.follow(node,context);
 		if(ns.getNodes().contains(this.node))
-			result = p.follow(node);
+			result = p.follow(node,context);
 		return result;
 	}
 
@@ -77,12 +79,12 @@ public class DomainRestrictPath extends Path
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node)
+	public NodeSet followConverse(Node node,Context context)
 	{
 		NodeSet result = new NodeSet();
-		NodeSet ns = q.follow(node);
+		NodeSet ns = q.follow(node,context);
 		if(ns.getNodes().contains(this.node))
-			result = p.followConverse(node);
+			result = p.followConverse(node,context);
 		return result;
 	}
 

@@ -1,5 +1,7 @@
 package sneps;
 
+import snebr.Context;
+
 /**
  * the converse path is a path that is reversed.It can be followed by following the converse
  * of that path. 
@@ -34,18 +36,18 @@ public class ConversePath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node)
+	public NodeSet follow(Node node,Context context)
 	{
-		return path.followConverse(node);
+		return path.followConverse(node,context);
 	}
 
 	/* (non-Javadoc)
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node)
+	public NodeSet followConverse(Node node,Context context)
 	{
-		return path.follow(node);
+		return path.follow(node,context);
 	}
 
 }

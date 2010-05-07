@@ -1,5 +1,7 @@
 package sneps;
 
+import snebr.Context;
+
 /**
  * the BUnitPath (backward unit path) class is the reverse of a path of only one relation. 
  * 
@@ -33,7 +35,7 @@ public class BUnitPath extends Path
 	 * @see ds.Path#follow(ds.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node)
+	public NodeSet follow(Node node,Context context)
 	{
 		NodeSet result = new NodeSet();
 		UpCableSet upCableSet = node.getUpCableSet();
@@ -48,7 +50,7 @@ public class BUnitPath extends Path
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node)
+	public NodeSet followConverse(Node node,Context context)
 	{
 		NodeSet result = new NodeSet();
 		if(node.getClass().getSuperclass().getSimpleName().equals("MolecularNode"))

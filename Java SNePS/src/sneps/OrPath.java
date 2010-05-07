@@ -2,6 +2,8 @@ package sneps;
 
 import java.util.LinkedList;
 
+import snebr.Context;
+
 /**
  * an OrPath is a path that contains list of paths. an OrPath will lead us to a destination 
  * node if one of the paths it contains will lead us to this node
@@ -36,26 +38,26 @@ public class OrPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node)
+	public NodeSet follow(Node node,Context context)
 	{
 		LinkedList<Path> rest = new LinkedList<Path>();
 		rest.addAll(paths);
 		Path p = rest.removeFirst();
 		OrPath orPath = new OrPath(rest);
-		return Union(p.follow(node),orPath.follow(node));
+		return Union(p.follow(node,context),orPath.follow(node,context));
 	}
 
 	/* (non-Javadoc)
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node)
+	public NodeSet followConverse(Node node,Context context)
 	{
 		LinkedList<Path> rest = new LinkedList<Path>();
 		rest.addAll(paths);
 		Path p = rest.removeLast();
 		OrPath orPath = new OrPath(rest);
-		return Union(p.followConverse(node),orPath.followConverse(node));
+		return Union(p.followConverse(node,context),orPath.followConverse(node,context));
 	}
 	
 	/**

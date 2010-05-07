@@ -6,6 +6,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Stack;
 
+import snebr.Context;
+
 import match.ds.*;
 
 /**
@@ -915,9 +917,9 @@ public class Network implements Serializable
 	 * from, in order to reach at least one node at each node set in all entries of the 
 	 * array 
 	 */
-	public NodeSet find(Object[][] array)
+	public NodeSet find(Object[][] array,Context context)
 	{
-		return findIntersection(array,0);
+		return findIntersection(array,context,0);
 	}
 	
 	/**
@@ -926,10 +928,10 @@ public class Network implements Serializable
 	 * in the array from, in order to reach at least one node at each node set in all
 	 * entries of the array 
 	 */
-	public NodeSet findConstant(Object[][] array)
+	public NodeSet findConstant(Object[][] array,Context context)
 	{
 		NodeSet result = new NodeSet();
-		NodeSet nodeSet = find(array);
+		NodeSet nodeSet = find(array,context);
 		LinkedList<Node> nodes = nodeSet.getNodes();
 		for(int i=0;i<nodes.size();i++)
 		{
@@ -945,10 +947,10 @@ public class Network implements Serializable
 	 * in the array from, in order to reach at least one node at each node set in all
 	 * entries of the array 
 	 */
-	public NodeSet findBase(Object[][] array)
+	public NodeSet findBase(Object[][] array,Context context)
 	{
 		NodeSet result = new NodeSet();
-		NodeSet nodeSet = find(array);
+		NodeSet nodeSet = find(array,context);
 		LinkedList<Node> nodes = nodeSet.getNodes();
 		for(int i=0;i<nodes.size();i++)
 		{
@@ -964,10 +966,10 @@ public class Network implements Serializable
 	 * in the array from, in order to reach at least one node at each node set in all
 	 * entries of the array 
 	 */
-	public NodeSet findVariable(Object[][] array)
+	public NodeSet findVariable(Object[][] array,Context context)
 	{
 		NodeSet result = new NodeSet();
-		NodeSet nodeSet = find(array);
+		NodeSet nodeSet = find(array,context);
 		LinkedList<Node> nodes = nodeSet.getNodes();
 		for(int i=0;i<nodes.size();i++)
 		{
@@ -983,10 +985,10 @@ public class Network implements Serializable
 	 * in the array from, in order to reach at least one node at each node set in all
 	 * entries of the array 
 	 */
-	public NodeSet findPattern(Object[][] array)
+	public NodeSet findPattern(Object[][] array,Context context)
 	{
 		NodeSet result = new NodeSet();
-		NodeSet nodeSet = find(array);
+		NodeSet nodeSet = find(array,context);
 		LinkedList<Node> nodes = nodeSet.getNodes();
 		for(int i=0;i<nodes.size();i++)
 		{
@@ -1003,7 +1005,7 @@ public class Network implements Serializable
 	 * get to one of the nodes in the specified node set
 	 */
 	@SuppressWarnings("unchecked")
-	private NodeSet findUnion(Path path,NodeSet nodeSet)
+	private NodeSet findUnion(Path path,NodeSet nodeSet,Context context)
 	{
 		LinkedList<Node> nodeList = (LinkedList<Node>) nodeSet.getNodes().clone();
 		if(nodeList.isEmpty())
@@ -1012,7 +1014,7 @@ public class Network implements Serializable
 		Node node = nodeList.removeFirst();
 		NodeSet ns = new NodeSet(nodeList);
 		
-		return path.followConverse(node).Union(findUnion(path,ns));
+		return path.followConverse(node,context).Union(findUnion(path,ns,context));
 	}
 	
 	/**
@@ -1021,7 +1023,7 @@ public class Network implements Serializable
 	 * @return the node set of nodes that we can start following those paths in the array
 	 * from, in order to reach at least one node of node sets at each path-nodeset pair. 
 	 */
-	private NodeSet findIntersection(Object[][] array,int index)
+	private NodeSet findIntersection(Object[][] array,Context context,int index)
 	{
 		if(index == array.length)
 			return new NodeSet();
@@ -1030,9 +1032,9 @@ public class Network implements Serializable
 		NodeSet nodeSet = (NodeSet) array[index][1];
 		
 		if(index < array.length-1)
-			return findUnion(path,nodeSet).Intersection(findIntersection(array,++index));
+			return findUnion(path,nodeSet,context).Intersection(findIntersection(array,context,++index));
 		else
-			return findUnion(path,nodeSet);
+			return findUnion(path,nodeSet,context);
 	}
 	
 	/**

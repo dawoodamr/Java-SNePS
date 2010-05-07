@@ -2,6 +2,8 @@ package sneps;
 
 import java.util.LinkedList;
 
+import snebr.Context;
+
 /**
  * a compose path is a path resulted from composing multiple paths.
  * 
@@ -35,7 +37,7 @@ public class ComposePath extends Path
 	 * @see ds.Path#follow(ds.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node)
+	public NodeSet follow(Node node,Context context)
 	{
 		if(! paths.isEmpty())
 		{
@@ -43,8 +45,8 @@ public class ComposePath extends Path
 			sublist.addAll(paths);
 			Path p = sublist.removeFirst();
 			ComposePath cPath = new ComposePath(sublist);
-			NodeSet temp = p.follow(node);
-			return follow(temp,cPath);
+			NodeSet temp = p.follow(node,context);
+			return follow(temp,context,cPath);
 		}
 		NodeSet r = new NodeSet();
 		r.addNode(node);
@@ -53,17 +55,19 @@ public class ComposePath extends Path
 	
 	/**
 	 * @param nodeSet a node set of nodes we want to follow the path from
+	 * @param context the context that we need to make sure that all proposition in this path
+	 * are asserted in
 	 * @param path the path we want to follow starting at nodes in the node set
 	 * @return the node set of the resulted nodes from following the path starting at
 	 * the specified node set
 	 */
-	private NodeSet follow(NodeSet nodeSet,Path path)
+	private NodeSet follow(NodeSet nodeSet,Context context,Path path)
 	{
 		NodeSet result = new NodeSet();
 		for(int i=0;i<nodeSet.getNodes().size();i++)
 		{
 			Node node = nodeSet.getNodes().get(i);
-			addWithNoRepeation(path.follow(node),result);
+			addWithNoRepeation(path.follow(node,context),result);
 		}
 		return result;
 	}
@@ -86,7 +90,7 @@ public class ComposePath extends Path
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node)
+	public NodeSet followConverse(Node node,Context context)
 	{
 		if(! paths.isEmpty())
 		{
@@ -94,8 +98,8 @@ public class ComposePath extends Path
 			sublist.addAll(paths);
 			Path p = sublist.removeLast();
 			ComposePath cPath = new ComposePath(sublist);
-			NodeSet temp = p.followConverse(node);
-			return followConverse(temp,cPath);
+			NodeSet temp = p.followConverse(node,context);
+			return followConverse(temp,context,cPath);
 		}
 		NodeSet r = new NodeSet();
 		r.addNode(node);
@@ -105,17 +109,19 @@ public class ComposePath extends Path
 	/**
 	 * @param nodeSet a node set of nodes we want to follow the converse of this path
 	 * starting at
+	 * @param context the context that we need to make sure that all proposition in this path
+	 * are asserted in
 	 * @param path the path we want to follow it starting at nodes in the node set
 	 * @return the node set of the resulted nodes from following the  converse of this 
 	 * path starting at the specified node set
 	 */
-	private NodeSet followConverse(NodeSet nodeSet,Path path)
+	private NodeSet followConverse(NodeSet nodeSet,Context context,Path path)
 	{
 		NodeSet result = new NodeSet();
 		for(int i=0;i<nodeSet.getNodes().size();i++)
 		{
 			Node node = nodeSet.getNodes().get(i);
-			addWithNoRepeation(path.followConverse(node),result);
+			addWithNoRepeation(path.followConverse(node,context),result);
 		}
 		return result;
 	}
