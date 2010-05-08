@@ -131,7 +131,18 @@ public class Channel
 	 */
 	public void send(Report r)
 	{
-		r.setNode(des.getNode());
-		//des.getNode().getEntity().getProcess().receiveReport(r);
+		if(fil.canPass(r))
+		{
+			if(des.getNode().getClass().getName().equals("VariableNode"))
+			{
+				//build a base node
+			}
+			else if(des.getNode().getClass().getName().equals("PatternNode"))
+			{
+				//build another node with the same caseframe
+			}
+			swi.switchReport(r);
+			//des.getNode().getEntity().getProcess().receiveReport(r);
+		}
 	}
 }

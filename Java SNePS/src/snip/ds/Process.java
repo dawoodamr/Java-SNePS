@@ -12,6 +12,7 @@ import snebr.Context;
 import sneps.MolecularNode;
 import sneps.Node;
 import sneps.NodeSet;
+import snip.fns.QueuesProcessor;
 
 public class Process
 {
@@ -27,6 +28,8 @@ public class Process
 	private boolean priority;//true for high false for low
 	private boolean uasbility;
 	private ContextRUISSet crs;
+	private QueuesProcessor qp;
+	private boolean first;
 	
 	/**
 	 * Create a new process
@@ -49,6 +52,7 @@ public class Process
 		priority=false;
 		uasbility=false;
 		crs=new ContextRUISSet();
+		first=false;
 	}
 	
 	/**
@@ -152,7 +156,7 @@ public class Process
 	 */
 	public ContextRUIS addContextRUIS(Context c, char t)
 	{
-		ChannelsSet ctemp=outGoing.getConChannelsSet(c);
+		ChannelsSet ctemp=consequentChannel.getConChannelsSet(c);
 		ContextRUIS cr;
 		if(t=='s')
 			cr=new ContextRUIS(c,ctemp,'s');
@@ -177,6 +181,7 @@ public class Process
 		knownInstances.putIn(r);
 		for(int i=0;i<c.cardinality();i++)
 		{
+			qp.addToHigh(c.getChannel(i).getDestination().getNode().getEntity());
 			c.getChannel(i).send(r);
 		}
 	}
@@ -209,6 +214,10 @@ public class Process
 		{
 			sendKnown(c);
 			outGoing.putIn(c);
+			if(name=='r')
+			{
+				consequentChannel.putIn(c);
+			}
 		}
 	}
 	
@@ -243,10 +252,38 @@ public class Process
 			Destination d=new Destination(node);
 			Channel ch=new Channel(f,s,c,d,true);
 			inComing.putIn(ch);
+			qp.addToLow(to.getEntity());
+			//to.getEntity().getProcess().setQueuesProcessor(qp);
 			//Request r=new Request(ch);
 			//to.getEntity().getProcess().addRequest(r);
-			//put it in low priority queue
 		}
+	}
+	
+	/**
+	 * Set the queues processor to q
+	 * @param q QueuesProcessor
+	 */
+	public void setQueuesProcessor(QueuesProcessor q)
+	{
+		qp=q;
+	}
+	
+	/**
+	 * Check if this node is the first one in the deduction or not
+	 * @return true or false
+	 */
+	public boolean getFirst()
+	{
+		return first;
+	}
+	
+	/**
+	 * Set this node to be the first in the deduction or not 
+	 * @param f true or false
+	 */
+	public void setFirst(boolean f)
+	{
+		first=f;
 	}
 	
 	public Substitutions match(Node n1,Node n2)
