@@ -87,4 +87,20 @@ public class PatternNode extends MolecularNode
 		
 	}
 	
+	/**
+	 * @param node the pattern node that will be compared to this one
+	 * @return true if it shares the same free variables with the given pattern node, and false otherwise
+	 */
+	public boolean haveSameFreeVariables(PatternNode patternNode)
+	{
+		LinkedList<VariableNode> l1 = patternNode.getFreeVariables();
+		if(l1.size() != this.freeVariables.size())
+			return false;
+		for(int i=0;i<l1.size();i++)
+		{
+			if(! this.freeVariables.contains(l1.get(i)))
+				return false;
+		}
+		return true;
+	}
 }
