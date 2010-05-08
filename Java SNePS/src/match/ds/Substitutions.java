@@ -397,4 +397,26 @@ public class Substitutions
 		}
 		return res;
 	}
+	
+	/**
+	 * Clear all Bindings from the substitutions list
+	 */
+	public void clear()
+	{
+		sub=new Vector<Binding>();
+	}
+	
+	/**
+	 * Insert s in this substitutions list
+	 * @param s
+	 */
+	public void insert(Substitutions s)
+	{
+		for(int i=0;i<s.cardinality();i++)
+		{
+			Binding b=s.sub.get(i);
+			if(!isMember(b))
+				putIn(b);
+		}
+	}
 }
