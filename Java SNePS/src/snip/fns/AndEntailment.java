@@ -84,7 +84,7 @@ public class AndEntailment extends Rule
 			Report r=getProcess().getReportSet().getReport(reportCounter);
 			Context c=r.getContext();
 			RuleUseInfo rui=null;
-			RuleUseInfoSet res;
+			RuleUseInfoSet res=null;
 			if(r.getSign())
 			{
 				FlagNode fn=new FlagNode((PatternNode)r.getSignature()
@@ -93,7 +93,7 @@ public class AndEntailment extends Rule
 				fns.putIn(fn);
 				rui=new RuleUseInfo(r.getSubstitutions(),1,0,fns);
 				int pos=getProcess().getCRS().getIndex(c);
-				ContextRUIS crtemp;
+				ContextRUIS crtemp=null;
 				if(pos==-1)
 					crtemp=addContextRUIS(c);
 				else

@@ -64,9 +64,12 @@ public class NonRule extends Proposition
 			Report r=getProcess().getReportSet().getReport(reportCounter);
 			Report reply=new Report(r.getSubstitutions(),r.getSupport(),r.getSign()
 					,getProcess().getNode(),null,r.getContext());
-			ChannelsSet ctemp=getProcess().getOutGoing()
-				.getConChannelsSet(r.getContext());
-			getProcess().sendReport(reply,ctemp);
+			if(!getProcess().getSentReports().isMember(reply))
+			{
+				ChannelsSet ctemp=getProcess().getOutGoing()
+					.getConChannelsSet(r.getContext());
+				getProcess().sendReport(reply,ctemp);
+			}
 		}
 	}
 	
@@ -77,28 +80,37 @@ public class NonRule extends Proposition
 	{
 		for(;requestCounter<getProcess().getRequestSet().cardinality()
 		;requestCounter++)
-	{
-		Request r=getProcess().getRequestSet().getRequest(requestCounter);
-		Channel c=r.getChannel();
-		if(requestCounter==0)
 		{
-			//get list of nodes from matching and send requests to them
-			UpCable up1=getProcess().getNode().getUpCableSet().getUpCable("cq");
-			UpCable up2=getProcess().getNode().getUpCableSet().getUpCable("arg");
-			if(up1!=null)
+			Request r=getProcess().getRequestSet().getRequest(requestCounter);
+			Channel c=r.getChannel();
+			if(requestCounter==0)
 			{
-				NodeSet n=up1.getNodeSet();
-				getProcess().sendRequests(n,c.getContext());
+				//get list of nodes from matching and send requests to them
+				UpCable up1=getProcess().getNode().getUpCableSet().getUpCable("cq");
+				UpCable up2=getProcess().getNode().getUpCableSet().getUpCable("arg");
+				if(up1!=null)
+				{
+					NodeSet n=up1.getNodeSet();
+					getProcess().sendRequests(n,c.getContext());
+				}
+				if(up2!=null)
+				{
+					NodeSet n=up2.getNodeSet();
+					getProcess().sendRequests(n,c.getContext());
+				}	
 			}
-			if(up2!=null)
-			{
-				NodeSet n=up2.getNodeSet();
-				getProcess().sendRequests(n,c.getContext());
-			}
-		}
-		else
-		getProcess().addOutGoing(c);
+			else
+				getProcess().addOutGoing(c);
 		
+		}
 	}
+	
+	/**
+	 * Run the non-rule
+	 */
+	public void run()
+	{
+		processReports();
+		processRequests();
 	}
 }

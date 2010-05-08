@@ -61,4 +61,13 @@ public class Rule extends Proposition
 	{
 		
 	}
+	
+	/**
+	 * Run the rule
+	 */
+	public void run()
+	{
+		processReports();
+		processRequests();
+	}
 }
