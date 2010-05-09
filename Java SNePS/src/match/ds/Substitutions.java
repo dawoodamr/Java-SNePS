@@ -419,4 +419,18 @@ public class Substitutions
 				putIn(b);
 		}
 	}
+	
+	/**
+	 * Print the substitutions list
+	 */
+	public String toString()
+	{
+		String res="";
+		for(int i=0;i<sub.size();i++)
+		{
+			res+=sub.get(i).getNode().getIdentifier()+" substitutes "+sub.get(i)
+			.getVariable().getIdentifier()+'\n';
+		}
+		return res;
+	}
 }
