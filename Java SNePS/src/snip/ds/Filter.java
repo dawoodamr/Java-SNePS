@@ -48,4 +48,12 @@ public class Filter
 		}
 		return true;
 	}
+	
+	/**
+	 * Print the filter
+	 */
+	public String toString()
+	{
+		return s.toString();
+	}
 }

@@ -43,4 +43,12 @@ public class Switch
 							.getNode());
 		}
 	}
+	
+	/**
+	 * Print the switch
+	 */
+	public String toString()
+	{
+		return s.toString();
+	}
 }

@@ -145,4 +145,11 @@ public class Channel
 			//des.getNode().getEntity().getProcess().receiveReport(r);
 		}
 	}
+	
+	public String toString()
+	{
+		String res="Channel opened to "+des.getNode().getIdentifier()+
+		" with the filter:\n"+ fil.toString()+"And the switch:\n"+swi.toString();
+		return res;
+	}
 }

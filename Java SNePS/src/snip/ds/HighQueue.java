@@ -40,6 +40,7 @@ public class HighQueue
 	public void add(Entity e)
 	{
 		q.add(e);
+		System.out.println(e.getNode().getIdentifier()+" is now in the high queue");
 	}
 	
 	/**
@@ -47,6 +48,8 @@ public class HighQueue
 	 */
 	public void dequeue()
 	{
-		//q.poll().run();
+		Entity e=q.poll();
+		System.out.println("Now processing "+ e.getNode().getIdentifier());
+		//e.run();
 	}
 }

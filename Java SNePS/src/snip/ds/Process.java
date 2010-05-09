@@ -217,6 +217,14 @@ public class Process
 			if(name=='r')
 			{
 				consequentChannel.putIn(c);
+				for(int i=0;i<crs.cardinality();i++)
+				{
+					ContextRUIS cr=crs.getContextRUIS(i);
+					if(cr.getContext()==c.getContext())
+					{
+						cr.addChannel(c);
+					}
+				}
 			}
 		}
 	}
@@ -251,6 +259,7 @@ public class Process
 			Switch s=new Switch(sp[1]);
 			Destination d=new Destination(node);
 			Channel ch=new Channel(f,s,c,d,true);
+			System.out.println(ch);
 			inComing.putIn(ch);
 			qp.addToLow(to.getEntity());
 			//to.getEntity().getProcess().setQueuesProcessor(qp);
