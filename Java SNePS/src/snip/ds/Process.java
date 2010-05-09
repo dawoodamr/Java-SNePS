@@ -12,6 +12,7 @@ import snebr.Context;
 import sneps.MolecularNode;
 import sneps.Node;
 import sneps.NodeSet;
+import sneps.PatternNode;
 import snip.fns.QueuesProcessor;
 
 public class Process
@@ -126,8 +127,17 @@ public class Process
 	 */
 	public boolean allShareVars(NodeSet nodes)
 	{
-		//--------------------
-		return true;
+		PatternNode n=(PatternNode)nodes.getNodes().get(0);
+		boolean res=true;
+		for(int i=1;i<nodes.getNodes().size();i++)
+		{
+			if(!n.haveSameFreeVariables((PatternNode)nodes.getNodes().get(i)))
+			{
+				res=false;
+				break;
+			}
+		}
+		return res;
 	}
 	
 	/**
