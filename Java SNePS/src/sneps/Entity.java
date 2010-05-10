@@ -1,5 +1,7 @@
 package sneps;
 
+import snip.ds.Process;
+
 /**
  * The super class of all semantic classes of Nodes.
  * 
@@ -30,6 +32,14 @@ public class Entity
 	public void setNode(Node node)
 	{
 		this.node = node;
+	}
+	
+	/**
+	 * @return a Process
+	 */
+	public Process getProcess()
+	{
+		return null;
 	}
 	
 }
