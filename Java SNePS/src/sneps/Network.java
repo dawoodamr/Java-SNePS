@@ -1546,7 +1546,7 @@ public class Network implements Serializable
 		Substitutions s = new Substitutions();
 		LinkedList<Substitutions> rr = new LinkedList<Substitutions>();
 		rr.add(r);
-		if(n.hERe(t,tdash,rr,true))
+		if(n.hERe(t,tdash,rr,true)) 
 		{
 			System.out.println("> "+rr.size());
 			for(int i=0;i<rr.size();i++)
