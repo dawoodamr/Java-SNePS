@@ -1,6 +1,10 @@
 package sneps;
 
+import java.util.Hashtable;
+import java.util.LinkedList;
+
 import snebr.Context;
+import snebr.Support;
 
 /**
  * an irreflexive restrict path is a path that does not lead to the same start node
@@ -35,22 +39,24 @@ public class IrreflexiveRestrictPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
 	{
-		NodeSet ns = path.follow(node,context);
-		ns.getNodes().remove(node);
-		return ns;
+		Hashtable<Node,LinkedList<Support>> res = path.follow(node,supports,context);
+		if(res.containsKey(node))
+			res.remove(node);
+		return res;
 	}
 
 	/* (non-Javadoc)
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
 	{
-		NodeSet ns = path.followConverse(node,context);
-		ns.getNodes().remove(node);
-		return ns;
+		Hashtable<Node,LinkedList<Support>> res = path.followConverse(node,supports,context);
+		if(res.containsKey(node))
+			res.remove(node);
+		return res;
 	}
 
 }

@@ -1,6 +1,11 @@
 package sneps;
 
+import java.util.Hashtable;
+import java.util.LinkedList;
+
 import snebr.Context;
+import snebr.Proposition;
+import snebr.Support;
 
 /**
  * This class is used to create a weird instance of Path that requires the proposition to be asserted
@@ -16,13 +21,17 @@ public class BangPath extends Path
 	 * @see sneps.Path#follow(sneps.Node, snebr.Context)
 	 */
 	@Override
-	public NodeSet follow(Node node, Context context)
+	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
 	{
-		NodeSet result = new NodeSet();
+		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
 		Entity e = node.getEntity();
 		if(e.getClass().getSimpleName().equals("Proposition") &&
 				context.getHypSet().getPropositionSet().contains(e))
-			result.addNode(node);
+		{
+			for(int i=0;i<supports.size();i++)
+				supports.get(i).addToOriginSet((Proposition) e);
+			result.put(node,supports);
+		}
 		
 		return result;
 	}
@@ -31,13 +40,17 @@ public class BangPath extends Path
 	 * @see sneps.Path#followConverse(sneps.Node, snebr.Context)
 	 */
 	@Override
-	public NodeSet followConverse(Node node, Context context)
+	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
 	{
-		NodeSet result = new NodeSet();
+		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
 		Entity e = node.getEntity();
 		if(e.getClass().getSimpleName().equals("Proposition") &&
 				context.getHypSet().getPropositionSet().contains(e))
-			result.addNode(node);
+		{
+			for(int i=0;i<supports.size();i++)
+				supports.get(i).addToOriginSet((Proposition) e);
+			result.put(node,supports);
+		}
 		
 		return result;
 	}

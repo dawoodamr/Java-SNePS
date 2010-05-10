@@ -1,6 +1,10 @@
 package sneps;
 
+import java.util.Hashtable;
+import java.util.LinkedList;
+
 import snebr.Context;
+import snebr.Support;
 
 /**
  * the BUnitPath (backward unit path) class is the reverse of a path of only one relation. 
@@ -35,33 +39,43 @@ public class BUnitPath extends Path
 	 * @see ds.Path#follow(ds.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
 	{
-		NodeSet result = new NodeSet();
+		Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node,LinkedList<Support>>();
 		UpCableSet upCableSet = node.getUpCableSet();
 		UpCable upCable = upCableSet.getUpCable(relationName);
 		if(upCable != null)
-			result.getNodes().addAll(upCable.getNodeSet().getNodes());
+		{
+			for(int i=0;i<upCable.getNodeSet().getNodes().size();i++)
+			{
+					h.put(upCable.getNodeSet().getNodes().get(i),supports);
+			}
+		}
 		
-		return result;
+		return h;
 	}
 
 	/* (non-Javadoc)
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
 	{
-		NodeSet result = new NodeSet();
+			Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node,LinkedList<Support>>();
 		if(node.getClass().getSuperclass().getSimpleName().equals("MolecularNode"))
 		{
 			MolecularNode mNode = (MolecularNode) node;
 			CableSet cableSet = mNode.getCableSet();
 			Cable cable = cableSet.getCable(relationName);
 			if(cable != null)
-				result.getNodes().addAll(cable.getNodeSet().getNodes());
+			{
+				for(int i=0;i<cable.getNodeSet().getNodes().size();i++)
+				{
+						h.put(cable.getNodeSet().getNodes().get(i),supports);
+				}
+			}
 		}
-		return result;
+		return h;
 	}
 
 }

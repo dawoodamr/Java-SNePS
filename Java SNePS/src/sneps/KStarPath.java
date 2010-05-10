@@ -1,8 +1,11 @@
 package sneps;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 
 import snebr.Context;
+import snebr.Support;
 
 /**
  * a kstar path is a path that is composed with itself zero or more times.
@@ -37,13 +40,12 @@ public class KStarPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
 	{
-		LinkedList<Node> nodes = new LinkedList<Node>();
-		nodes.add(node);
-		NodeSet nodeSet = new NodeSet(nodes);
+		Hashtable<Node,LinkedList<Support>> temp = new Hashtable<Node,LinkedList<Support>>();
+		temp.put(node,new LinkedList<Support>());
 		
-		return follow(nodeSet,context);
+		return follow(temp,context);
 	}
 	
 	/**
@@ -51,51 +53,48 @@ public class KStarPath extends Path
 	 * @param context the context that all propositions in this path are asserted in
 	 * @return a node set with the resulted nodes from following the path
 	 */
-	private NodeSet follow(NodeSet ns,Context context)
+	@SuppressWarnings("unchecked")
+	private Hashtable<Node,LinkedList<Support>> follow(Hashtable<Node,LinkedList<Support>> temp,Context context)
 	{
-		LinkedList<Node> res = new LinkedList<Node>();
-		res.addAll(ns.getNodes());
-		NodeSet result = new NodeSet(res);
-		for(int i=0;i<result.getNodes().size();i++)
+		Enumeration<Node> nodes = temp.keys();
+		Enumeration<LinkedList<Support>> lists = temp.elements();
+		Hashtable<Node,LinkedList<Support>> h = (Hashtable<Node,LinkedList<Support>>) temp.clone();
+		for(;nodes.hasMoreElements();)
 		{
+			LinkedList<Support> list = lists.nextElement();
 			// following the path for a node and adding the resulted nodes 
-			addWithNoRepeation(path.follow(result.getNodes().get(i),context),result);
+			Hashtable<Node,LinkedList<Support>> r = path.follow(nodes.nextElement(),list,context);
+			Enumeration<LinkedList<Support>> tl = r.elements();
+			for(Enumeration<Node> tn = r.keys();tn.hasMoreElements();)
+			{
+				LinkedList<Support> l = tl.nextElement();
+				Node node = tn.nextElement();
+				if(! temp.containsKey(node))
+					temp.put(node,l);
+				else
+					temp.get(node).addAll(l);
+			}
 		}
-		if(wasChanged(ns,result))
-			return follow(result,context);
+		if(wasChanged(h,temp))
+			return follow(temp,context);
 		
-		return result;
+		
+		return temp;
 	}
 	
 	/**
-	 * @param source the node set containing nodes we want to add to the other node set
-	 * @param destination the node set containing nodes we want to add the nodes to
-	 */
-	private void addWithNoRepeation(NodeSet source,NodeSet destination)
-	{
-		for(int i=0;i<source.getNodes().size();i++)
-		{
-			Node n = source.getNodes().get(i);
-			if(! destination.getNodes().contains(n))
-				destination.getNodes().add(n);
-		}
-	}
-	
-	/**
-	 * @param old the old node set
-	 * @param neu the new node set 
+	 * @param old the old hash table
+	 * @param neu the new hash table
 	 * @return true if the neu node set contains elements that does not exist in node set old
 	 */
-	private boolean wasChanged(NodeSet old,NodeSet neu)
+	private boolean wasChanged(Hashtable<Node,LinkedList<Support>> old,Hashtable<Node,LinkedList<Support>> neu)
 	{
-		LinkedList<Node> o = old.getNodes();
-		LinkedList<Node> n = neu.getNodes();
-		for(int i=0;i<n.size();i++)
+		Enumeration<Node> enneu = neu.keys();
+		for(;enneu.hasMoreElements();)
 		{
-			if(! o.contains(n.get(i)))
+			if(! old.containsKey(enneu.nextElement()))
 				return true;
 		}
-		
 		return false;
 	}
 
@@ -103,13 +102,12 @@ public class KStarPath extends Path
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
 	{
-		LinkedList<Node> nodes = new LinkedList<Node>();
-		nodes.add(node);
-		NodeSet nodeSet = new NodeSet(nodes);
+		Hashtable<Node,LinkedList<Support>> temp = new Hashtable<Node, LinkedList<Support>>();
+		temp.put(node,new LinkedList<Support>());
 		
-		return followConverse(nodeSet,context);
+		return followConverse(temp,context);
 	}
 	
 	/**
@@ -118,20 +116,33 @@ public class KStarPath extends Path
 	 * @param context the context that all propositions in this path are asserted in
 	 * @return a node set with the resulted nodes from following the converse of the path
 	 */
-	private NodeSet followConverse(NodeSet ns,Context context)
+	@SuppressWarnings("unchecked")
+	private Hashtable<Node,LinkedList<Support>> followConverse(Hashtable<Node,LinkedList<Support>> temp,Context context)
 	{
-		LinkedList<Node> res = new LinkedList<Node>();
-		res.addAll(ns.getNodes());
-		NodeSet result = new NodeSet(res);
-		for(int i=0;i<result.getNodes().size();i++)
+		Enumeration<Node> nodes = temp.keys();
+		Enumeration<LinkedList<Support>> lists = temp.elements();
+		Hashtable<Node,LinkedList<Support>> h = (Hashtable<Node,LinkedList<Support>>) temp.clone();
+		for(;nodes.hasMoreElements();)
 		{
+			LinkedList<Support> list = lists.nextElement();
 			// following the path for a node and adding the resulted nodes 
-			addWithNoRepeation(path.followConverse(result.getNodes().get(i),context),result);
+			Hashtable<Node,LinkedList<Support>> r = path.followConverse(nodes.nextElement(),list,context);
+			Enumeration<LinkedList<Support>> tl = r.elements();
+			for(Enumeration<Node> tn = r.keys();tn.hasMoreElements();)
+			{
+				LinkedList<Support> l = tl.nextElement();
+				Node node = tn.nextElement();
+				if(! temp.containsKey(node))
+					temp.put(node,l);
+				else
+					temp.get(node).addAll(l);
+			}
 		}
-		if(wasChanged(ns,result))
-			return followConverse(result,context);
+		if(wasChanged(h,temp))
+			return followConverse(temp,context);
 		
-		return result;
+		
+		return temp;
 	}
 
 }

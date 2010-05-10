@@ -1,8 +1,11 @@
 package sneps;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 
 import snebr.Context;
+import snebr.Support;
 
 /**
  * an AndPath is a path that contains a list of paths. an AndPath may lead us to a node 
@@ -38,47 +41,63 @@ public class AndPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
 	{
+		if(paths.isEmpty())
+			return new Hashtable<Node, LinkedList<Support>>();
 		LinkedList<Path> rest = new LinkedList<Path>();
 		rest.addAll(this.paths);
 		Path p = rest.removeFirst();
 		AndPath andPath = new AndPath(rest);
-		return intersection(p.follow(node,context),andPath.follow(node,context));
+		if(rest.size()>0)
+			return intersectionAnd(p.follow(node,supports,context),andPath.follow(node,supports,context));
+		else
+			return p.follow(node,supports,context);
 	}
 
 	/* (non-Javadoc)
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
 	{
+		if(paths.isEmpty())
+			return new Hashtable<Node, LinkedList<Support>>();
 		LinkedList<Path> rest = new LinkedList<Path>();
 		rest.addAll(this.paths);
-		Path p = rest.removeLast();
+		Path p = rest.removeFirst();
 		AndPath andPath = new AndPath(rest);
-		return intersection(p.follow(node,context),andPath.follow(node,context));
+		if(rest.size()>0)
+			return intersectionAnd(p.followConverse(node,supports,context),andPath.followConverse(node,supports,context));
+		else
+			return p.followConverse(node,supports,context);
 	}
 	
 	/**
-	 * this method gets the intersection between two node sets
+	 * returns the intersection between the two hash tables
 	 * 
-	 * @param ns1 the first node set
-	 * @param ns2 the second node set
+	 * @param ns1 the first hash table
+	 * @param ns2 the second hash table
 	 * @return the intersection nodes of those two node sets
 	 */
-	private NodeSet intersection(NodeSet ns1,NodeSet ns2)
+	private Hashtable<Node,LinkedList<Support>> intersectionAnd(Hashtable<Node,LinkedList<Support>> h1,Hashtable<Node,LinkedList<Support>> h2)
 	{
-		NodeSet result = new NodeSet();
-		LinkedList<Node> n1 = ns1.getNodes();
-		LinkedList<Node> n2 = ns2.getNodes();
-		for(int i=0;i<n1.size();i++)
+		Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node, LinkedList<Support>>();
+		Enumeration<LinkedList<Support>> lists1 = h1.elements();
+		Enumeration<Node> nodes1 = h1.keys();
+		for(;nodes1.hasMoreElements();)
 		{
-			if(n2.contains(n1.get(i)))
-				result.addNode(n1.get(i));
+			Node node = nodes1.nextElement();
+			LinkedList<Support> list = lists1.nextElement();
+			if(h2.containsKey(node))
+			{
+				LinkedList<Support> temp = h2.get(node);
+				permute(list,temp);
+				h.put(node,temp);
+			}
 		}
 		
-		return result;
+		return h;
 	}
 
 }

@@ -1,8 +1,11 @@
 package sneps;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 
 import snebr.Context;
+import snebr.Support;
 
 /**
  * a compose path is a path resulted from composing multiple paths.
@@ -37,7 +40,7 @@ public class ComposePath extends Path
 	 * @see ds.Path#follow(ds.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
 	{
 		if(! paths.isEmpty())
 		{
@@ -45,12 +48,10 @@ public class ComposePath extends Path
 			sublist.addAll(paths);
 			Path p = sublist.removeFirst();
 			ComposePath cPath = new ComposePath(sublist);
-			NodeSet temp = p.follow(node,context);
+			Hashtable<Node,LinkedList<Support>> temp = p.follow(node,supports,context);
 			return follow(temp,context,cPath);
 		}
-		NodeSet r = new NodeSet();
-		r.addNode(node);
-		return r;
+		return new Hashtable<Node,LinkedList<Support>>();
 	}
 	
 	/**
@@ -61,36 +62,37 @@ public class ComposePath extends Path
 	 * @return the node set of the resulted nodes from following the path starting at
 	 * the specified node set
 	 */
-	private NodeSet follow(NodeSet nodeSet,Context context,Path path)
+	private Hashtable<Node,LinkedList<Support>> follow(Hashtable<Node,LinkedList<Support>> temp,Context context,ComposePath path)
 	{
-		NodeSet result = new NodeSet();
-		for(int i=0;i<nodeSet.getNodes().size();i++)
+		if(path.getPaths().isEmpty())
+			return temp;
+		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
+		Enumeration<LinkedList<Support>> tl = temp.elements();
+		for(Enumeration<Node> tn = temp.keys();tn.hasMoreElements();)
 		{
-			Node node = nodeSet.getNodes().get(i);
-			addWithNoRepeation(path.follow(node,context),result);
+			LinkedList<Support> list = tl.nextElement();
+			Node node = tn.nextElement();
+			Hashtable<Node,LinkedList<Support>> h = path.follow(node,list,context);
+			Enumeration<LinkedList<Support>> el = h.elements();
+			for(Enumeration<Node> en = h.keys();en.hasMoreElements();)
+			{
+				Node n = en.nextElement();
+				LinkedList<Support> l = el.nextElement();
+				if(! result.containsKey(n))
+					{result.put(n,l);
+					}
+				else
+					result.get(n).addAll(l);
+			}
 		}
 		return result;
-	}
-	
-	/**
-	 * @param source the node set containing nodes we want to add to the other node set
-	 * @param destination the node set containing nodes we want to add the nodes to
-	 */
-	private void addWithNoRepeation(NodeSet source,NodeSet destination)
-	{
-		for(int i=0;i<source.getNodes().size();i++)
-		{
-			Node n = source.getNodes().get(i);
-			if(! destination.getNodes().contains(n))
-				destination.getNodes().add(n);
-		}
 	}
 
 	/* (non-Javadoc)
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
 	{
 		if(! paths.isEmpty())
 		{
@@ -98,12 +100,10 @@ public class ComposePath extends Path
 			sublist.addAll(paths);
 			Path p = sublist.removeLast();
 			ComposePath cPath = new ComposePath(sublist);
-			NodeSet temp = p.followConverse(node,context);
+			Hashtable<Node,LinkedList<Support>> temp = p.followConverse(node,supports,context);
 			return followConverse(temp,context,cPath);
 		}
-		NodeSet r = new NodeSet();
-		r.addNode(node);
-		return r;
+		return new Hashtable<Node,LinkedList<Support>>();
 	}
 	
 	/**
@@ -115,13 +115,25 @@ public class ComposePath extends Path
 	 * @return the node set of the resulted nodes from following the  converse of this 
 	 * path starting at the specified node set
 	 */
-	private NodeSet followConverse(NodeSet nodeSet,Context context,Path path)
+	private Hashtable<Node,LinkedList<Support>> followConverse(Hashtable<Node,LinkedList<Support>> temp,Context context,Path path)
 	{
-		NodeSet result = new NodeSet();
-		for(int i=0;i<nodeSet.getNodes().size();i++)
+		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
+		Enumeration<LinkedList<Support>> lists = temp.elements();
+		for(Enumeration<Node> tn = temp.keys();tn.hasMoreElements();)
 		{
-			Node node = nodeSet.getNodes().get(i);
-			addWithNoRepeation(path.followConverse(node,context),result);
+			Node node = tn.nextElement();
+			LinkedList<Support> list = lists.nextElement();
+			Hashtable<Node,LinkedList<Support>> h = path.followConverse(node,list,context);
+			Enumeration<LinkedList<Support>> el = h.elements();
+			for(Enumeration<Node> en = h.keys();en.hasMoreElements();)
+			{
+				Node n = en.nextElement();
+				LinkedList<Support> l = el.nextElement();
+				if(! result.containsKey(n))
+					result.put(n,l);
+				else
+					result.get(n).addAll(l);
+			}
 		}
 		return result;
 	}

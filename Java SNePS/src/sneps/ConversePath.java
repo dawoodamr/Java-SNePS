@@ -1,6 +1,10 @@
 package sneps;
 
+import java.util.Hashtable;
+import java.util.LinkedList;
+
 import snebr.Context;
+import snebr.Support;
 
 /**
  * the converse path is a path that is reversed.It can be followed by following the converse
@@ -36,18 +40,18 @@ public class ConversePath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
 	{
-		return path.followConverse(node,context);
+		return path.followConverse(node,supports,context);
 	}
 
 	/* (non-Javadoc)
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
 	{
-		return path.follow(node,context);
+		return path.follow(node,supports,context);
 	}
 
 }

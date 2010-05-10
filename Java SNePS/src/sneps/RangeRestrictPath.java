@@ -1,6 +1,11 @@
 package sneps;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.LinkedList;
+
 import snebr.Context;
+import snebr.Support;
 
 /**
  * a range restrict path is a path that is restricted by considering only nodes that are
@@ -39,42 +44,6 @@ public class RangeRestrictPath extends Path
 		this.node = node;
 	}
 
-	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node)
-	 */
-	@Override
-	public NodeSet follow(Node node,Context context)
-	{
-		NodeSet result = new NodeSet();
-		NodeSet ns = p.follow(node,context);
-		for(int i=0;i<ns.getNodes().size();i++)
-		{
-			NodeSet temp = q.follow(ns.getNodes().get(i),context);
-			if(temp.getNodes().contains(this.node))
-				result.addNode(ns.getNodes().get(i));
-		}
-		
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
-	 */
-	@Override
-	public NodeSet followConverse(Node node,Context context)
-	{
-		NodeSet result = new NodeSet();
-		NodeSet ns = p.followConverse(node,context);
-		for(int i=0;i<ns.getNodes().size();i++)
-		{
-			NodeSet temp = q.follow(ns.getNodes().get(i),context);
-			if(temp.getNodes().contains(this.node))
-				result.addNode(ns.getNodes().get(i));
-		}
-		
-		return result;
-	}
-
 	/**
 	 * @return the Path p
 	 */
@@ -97,6 +66,38 @@ public class RangeRestrictPath extends Path
 	public Node getNode()
 	{
 		return node;
+	}
+
+	/* (non-Javadoc)
+	 * @see sneps.Path#follow(sneps.Node)
+	 */
+	@Override
+	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
+	{
+		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
+		Hashtable<Node,LinkedList<Support>> h = p.follow(node,supports,context);
+		Enumeration<LinkedList<Support>> lists = h.elements();
+		for(Enumeration<Node> e = h.keys();e.hasMoreElements();)
+		{
+			Node n = e.nextElement();
+			LinkedList<Support> list = lists.nextElement();
+			Hashtable<Node,LinkedList<Support>> temp = q.follow(n,list,context);
+			if(temp.containsKey(this.node))
+			{
+				permute(temp.get(this.node),list);
+				result.put(n,list);
+			}
+		}
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see sneps.Path#followConverse(sneps.Node)
+	 */
+	@Override
+	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
+	{
+		return new DomainRestrictPath(q,node,p).follow(node,supports,context);
 	}
 
 }

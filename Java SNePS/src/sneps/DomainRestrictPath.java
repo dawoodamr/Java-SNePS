@@ -1,6 +1,11 @@
 package sneps;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.LinkedList;
+
 import snebr.Context;
+import snebr.Support;
 
 /**
  * a domain restrict path is a path that is restricted by another path that should lead to 
@@ -66,12 +71,21 @@ public class DomainRestrictPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
 	{
-		NodeSet result = new NodeSet();
-		NodeSet ns = q.follow(node,context);
-		if(ns.getNodes().contains(this.node))
-			result = p.follow(node,context);
+		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
+		Hashtable<Node,LinkedList<Support>> h = q.follow(node,supports,context);
+		LinkedList<Support> sup = new LinkedList<Support>();
+		if(h.containsKey(this.node))
+		{
+			result = p.follow(node,supports,context);
+			sup = h.get(this.node);
+		}
+		Enumeration<Node> nodes = result.keys();
+		for(;nodes.hasMoreElements();)
+		{
+			permute(sup,result.get(nodes.nextElement()));
+		}
 		return result;
 	}
 
@@ -79,13 +93,9 @@ public class DomainRestrictPath extends Path
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
 	{
-		NodeSet result = new NodeSet();
-		NodeSet ns = q.follow(node,context);
-		if(ns.getNodes().contains(this.node))
-			result = p.followConverse(node,context);
-		return result;
+		return new RangeRestrictPath(this.p,this.q,this.node).follow(node,supports,context);
 	}
 
 }

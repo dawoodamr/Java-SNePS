@@ -1,8 +1,11 @@
 package sneps;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.LinkedList;
 
 import snebr.Context;
+import snebr.Support;
 
 /**
  * an OrPath is a path that contains list of paths. an OrPath will lead us to a destination 
@@ -38,26 +41,30 @@ public class OrPath extends Path
 	 * @see sneps.Path#follow(sneps.Node)
 	 */
 	@Override
-	public NodeSet follow(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
 	{
+		if(paths.isEmpty())
+			return new Hashtable<Node, LinkedList<Support>>();
 		LinkedList<Path> rest = new LinkedList<Path>();
 		rest.addAll(paths);
 		Path p = rest.removeFirst();
 		OrPath orPath = new OrPath(rest);
-		return Union(p.follow(node,context),orPath.follow(node,context));
+		return UnionOr(p.follow(node,supports,context),orPath.follow(node,supports,context));
 	}
 
 	/* (non-Javadoc)
 	 * @see sneps.Path#followConverse(sneps.Node)
 	 */
 	@Override
-	public NodeSet followConverse(Node node,Context context)
+	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
 	{
+		if(paths.isEmpty())
+			return new Hashtable<Node, LinkedList<Support>>();
 		LinkedList<Path> rest = new LinkedList<Path>();
 		rest.addAll(paths);
-		Path p = rest.removeLast();
+		Path p = rest.removeFirst();
 		OrPath orPath = new OrPath(rest);
-		return Union(p.followConverse(node,context),orPath.followConverse(node,context));
+		return UnionOr(p.followConverse(node,supports,context),orPath.followConverse(node,supports,context));
 	}
 	
 	/**
@@ -67,26 +74,26 @@ public class OrPath extends Path
 	 * @param ns2 the second node set
 	 * @return the union of the two node sets
 	 */
-	private NodeSet Union(NodeSet ns1,NodeSet ns2)
+	private Hashtable<Node,LinkedList<Support>> UnionOr(Hashtable<Node,LinkedList<Support>> h1,Hashtable<Node,LinkedList<Support>> h2)
 	{
-		NodeSet result = new NodeSet();
-		result.getNodes().addAll(ns1.getNodes());
-		addWithNoRepeation(ns2,result);
-		return result;
-	}
-	
-	/**
-	 * @param source the node set containing nodes we want to add to the other node set
-	 * @param destination the node set containing nodes we want to add the nodes to
-	 */
-	private void addWithNoRepeation(NodeSet source,NodeSet destination)
-	{
-		for(int i=0;i<source.getNodes().size();i++)
+		Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node, LinkedList<Support>>();
+		Enumeration<LinkedList<Support>> list1 = h1.elements();
+		Enumeration<Node> nodes1 = h1.keys();
+		for(;nodes1.hasMoreElements();)
+			h.put(nodes1.nextElement(),list1.nextElement());
+		Enumeration<LinkedList<Support>> list2 = h2.elements();
+		Enumeration<Node> nodes2 = h2.keys();
+		for(;nodes2.hasMoreElements();)
 		{
-			Node n = source.getNodes().get(i);
-			if(! destination.getNodes().contains(n))
-				destination.getNodes().add(n);
+			LinkedList<Support> l = list2.nextElement();
+			Node node = nodes2.nextElement();
+			if(! h.containsKey(node))
+				h.put(node,l);
+			else
+				for(int i=0;i<l.size();i++)
+					h.get(node).add(l.get(i));
 		}
+		return h;
 	}
 
 }
