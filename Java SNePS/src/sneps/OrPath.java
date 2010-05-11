@@ -90,8 +90,7 @@ public class OrPath extends Path
 			if(! h.containsKey(node))
 				h.put(node,l);
 			else
-				for(int i=0;i<l.size();i++)
-					h.get(node).add(l.get(i));
+				h.get(node).addAll(l);
 		}
 		return h;
 	}
