@@ -82,7 +82,7 @@ public class ComposePath extends Path
 					{result.put(n,l);
 					}
 				else
-					result.get(n).addAll(l);
+					permute(l,result.get(n));
 			}
 		}
 		return result;
@@ -132,7 +132,7 @@ public class ComposePath extends Path
 				if(! result.containsKey(n))
 					result.put(n,l);
 				else
-					result.get(n).addAll(l);
+					permute(l,result.get(n));
 			}
 		}
 		return result;
