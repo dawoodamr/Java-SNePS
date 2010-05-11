@@ -72,7 +72,7 @@ public class KPlusPath extends Path
 				if(! temp.containsKey(node))
 					temp.put(node,l);
 				else
-					temp.get(node).addAll(l);
+					permute(l,temp.get(node));
 			}
 		}
 		if(wasChanged(h,temp))
@@ -118,7 +118,7 @@ public class KPlusPath extends Path
 				if(! temp.containsKey(node))
 					temp.put(node,l);
 				else
-					temp.get(node).addAll(l);
+					permute(l,temp.get(node));
 			}
 		}
 		if(wasChanged(h,temp))
