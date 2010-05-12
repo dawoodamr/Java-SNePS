@@ -45,7 +45,7 @@ public class NumericalEntailment extends Rule
 		requestCounter=0;
 		NodeSet minNode =getProcess().getNodeSet("thresh");
 		thresh=Integer.parseInt(minNode.getNodes().get(0).getIdentifier());
-		patternNodes =getProcess().getNodeSet("arg");
+		patternNodes =getProcess().getNodeSet("&ant");
 		shareVars=getProcess().allShareVars(patternNodes);
 		PatternNode n =(PatternNode)patternNodes.getNodes().get(0);
 		if(shareVars)
