@@ -14,6 +14,19 @@ public class Entity
 	 * the node that contains this entity
 	 */
 	private Node node;
+	
+	public Entity()
+	{
+		this.node = null;
+	}
+	
+	/**
+	 * @param node the node included in the entity
+	 */
+	public Entity(Node node)
+	{
+		this.node = node;
+	}
 
 	/**
 	 * @return the node that contains this entity

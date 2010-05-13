@@ -1,6 +1,7 @@
 package sneps;
 
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -815,23 +816,23 @@ public class Network implements Serializable
 	
 	public Node vERe(VariableNode u,Substitutions r,Substitutions s)
 	{
-		System.out.println("vere    >>>>> 1");
+		//System.out.println("vere    >>>>> 1");
 		Node z = null;
 		Stack<VariableNode> path = source(u,r);
 		VariableNode v = path.pop();
 		if(! r.isBound(v))
 		{
-			System.out.println("vere    >>>>> 2");
+			//System.out.println("vere    >>>>> 2");
 			z = v;
 			r.putIn(new Binding(v,v)); // done
 		}
 		else
 		{
-			System.out.println("vere    >>>>> 3");
+			//System.out.println("vere    >>>>> 3");
 			if(r.getBindingByVariable(v).getNode().getClass().getSimpleName().equals("BaseNode")
 				|| r.getBindingByVariable(v).getNode().getClass().getSimpleName().equals("ClosedNode"))
 			{
-				System.out.println("vere    >>>>> 4");
+			//	System.out.println("vere    >>>>> 4");
 				z = r.getBindingByVariable(v).getNode();
 				if(! s.isBound(v))
 					s.putIn(new Binding(v,z));
@@ -844,7 +845,7 @@ public class Network implements Serializable
 				Node yy = r.getBindingByVariable(v).getNode();
 				if(yy.getClass().getSimpleName().equals("PatternNode"))
 				{
-					System.out.println("vere    >>>>> 5");
+				//	System.out.println("vere    >>>>> 5");
 					MolecularNode y = (MolecularNode) yy;
 					r.getBindingByVariable(v).setNode(v); // done
 					v.setSLoop(true);
@@ -866,7 +867,7 @@ public class Network implements Serializable
 				{
 					if(v.isSLoop())
 					{
-						System.out.println("vere    >>>>> 6");
+					//	System.out.println("vere    >>>>> 6");
 						v.setSLoop(false);
 						return null;
 					}
@@ -893,7 +894,7 @@ public class Network implements Serializable
 	
 	public MolecularNode termVERe(MolecularNode t,Substitutions r,Substitutions s)
 	{
-		System.out.println("termvere    >>>>> 1");
+		//System.out.println("termvere    >>>>> 1");
 		// list for pattern nodes substitutions
 		LinkedList<LinkedList<Object>> temp = new LinkedList<LinkedList<Object>>();
 		CableSet cs = t.getCableSet();
@@ -1211,6 +1212,7 @@ public class Network implements Serializable
 	 * in this molecular node
 	 * @return the node that was just created
 	 */
+	@SuppressWarnings("unchecked")
 	private ClosedNode createMolNode(Object[][] array,CaseFrame caseFrame)
 	{
 		// creating the node
@@ -1223,6 +1225,15 @@ public class Network implements Serializable
 		CableSet cableSet = new CableSet(cables,caseFrame);
 		String molName = getNextMolName();
 		ClosedNode closedNode = new ClosedNode(molName,cableSet);
+		try {
+			Class c = Class.forName("sneps."+caseFrame.getSemanticClass());
+			Constructor con = c.getConstructor(new Class[] {Node.class});
+			Entity e = (Entity) con.newInstance(closedNode);
+			closedNode.setEntity(e);
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
 		this.nodes.put(molName,closedNode);
 		this.molecularNodes.get(caseFrame.getId()).addNode(closedNode);
 		
@@ -1444,7 +1455,7 @@ public class Network implements Serializable
 	{
 //		Relation r1 = new Relation("member","entity","reduce",0);
 //		Relation r2 = new Relation("class","entity","reduce",0);
-		Object[][] o4 = new Object[4][2];
+		Object[][] o4 = new Object[4][2];		   // creating the 2D arrays used in building nodes
 		Object[][] o3 = new Object[3][2];
 		Object[][] o2 = new Object[2][2];
 		/*o[0][0] = r1;
@@ -1457,8 +1468,8 @@ public class Network implements Serializable
 		o[2][1] = new BaseNode("zay");
 		o[0][1] = new BaseNode("amr");
 		o[1][1] = new BaseNode("human");*/
-		Network n = new Network();
-		Node x1 = n.buildVariableNode("x1");
+		Network n = new Network();								    // creating a new network 
+		Node x1 = n.buildVariableNode("x1");                        // building variable nodes
 		Node x2 = n.buildVariableNode("x2");
 		Node x3 = n.buildVariableNode("x3");
 		Node x4 = n.buildVariableNode("x4");
@@ -1467,9 +1478,9 @@ public class Network implements Serializable
 		Node x7 = n.buildVariableNode("x7");
 		Node x8 = n.buildVariableNode("x8");
 		Node x9 = n.buildVariableNode("x9");
-		Node a = n.build("a");
+		Node a = n.build("a");						                // building base node
 		Relation rr1 = n.defineRelation("r1","Entity","none",0);
-		Relation rr2 = n.defineRelation("r2","Entity","none",0);
+		Relation rr2 = n.defineRelation("r2","Entity","none",0);	// defining relations
 		Relation rr3 = n.defineRelation("r3","Entity","none",0);
 		Relation rr4 = n.defineRelation("r4","Entity","none",0);
 		LinkedList<Relation> l2 = new LinkedList<Relation>();
@@ -1484,7 +1495,7 @@ public class Network implements Serializable
 		l4.add(rr2);
 		l4.add(rr3);
 		l4.add(rr4);
-		CaseFrame caseFrame2 = n.defineCaseFrame("entity",l2);
+		CaseFrame caseFrame2 = n.defineCaseFrame("entity",l2);		  // defining case frames
 		CaseFrame caseFrame3 = n.defineCaseFrame("entity",l3);
 		CaseFrame caseFrame4 = n.defineCaseFrame("entity",l4);
 		o3[0][0] = rr1;
@@ -1493,7 +1504,7 @@ public class Network implements Serializable
 		o3[0][1] = x1;
 		o3[1][1] = x2;
 		o3[2][1] = x3;
-		Node h1 = n.build(o3,caseFrame3);
+		Node h1 = n.build(o3,caseFrame3);                            // building molecular nodes
 		o4[0][0] = rr1;
 		o4[1][0] = rr2;
 		o4[2][0] = rr3;
@@ -1502,7 +1513,7 @@ public class Network implements Serializable
 		o4[1][1] = x7;
 		o4[2][1] = x8;
 		o4[3][1] = x9;
-		Node h2 = n.build(o4,caseFrame3);// >>>>>>>>>>
+		Node h2 = n.build(o4,caseFrame3);
 		o4[0][0] = rr1;
 		o4[1][0] = rr2;
 		o4[2][0] = rr3;
@@ -1511,7 +1522,7 @@ public class Network implements Serializable
 		o4[1][1] = h2;
 		o4[2][1] = x3;
 		o4[3][1] = x6;
-		Node t = n.build(o4,caseFrame4);
+		PatternNode t = (PatternNode) n.build(o4,caseFrame4);
 		o2[0][0] = rr1;
 		o2[1][0] = rr2;
 		o2[0][1] = x4;
@@ -1541,14 +1552,14 @@ public class Network implements Serializable
 		o4[1][1] = h4;
 		o4[2][1] = g2;
 		o4[3][1] = x5;
-		Node tdash = n.build(o4,caseFrame4);
-		/*Substitutions r = new Substitutions();
+		PatternNode tdash = (PatternNode) n.build(o4,caseFrame4);
+		Substitutions r = new Substitutions();
 		Substitutions s = new Substitutions();
 		LinkedList<Substitutions> rr = new LinkedList<Substitutions>();
 		rr.add(r);
 		if(n.hERe(t,tdash,rr,true)) 
 		{
-			System.out.println("> "+rr.size());
+			/*System.out.println("> "+rr.size());
 			for(int i=0;i<rr.size();i++)
 			{
 				Substitutions x = rr.get(i);
@@ -1557,14 +1568,25 @@ public class Network implements Serializable
 					System.out.print(((Node) x.getBinding(j).getVariable()).getIdentifier());
 					System.out.println(" "+((Node) x.getBinding(j).getNode()).getIdentifier());
 				}
-			}
+				System.out.println("----");
+			}*/
 		}
 		for(int i=0;i<rr.size();i++)
 		{
-			Node node = n.vERe((VariableNode) x3,rr.get(i),s);
-			if(node != null)
-				System.out.println(node.getIdentifier());
-		}*/
+			LinkedList<VariableNode> list1 = t.getFreeVariables();
+			LinkedList<VariableNode> list2 = tdash.getFreeVariables();
+			if(n.termVERe(t,rr.get(i),s) != null)
+			{
+				for(int j=0;j<list1.size();j++)
+				{
+					System.out.println(list1.get(j).getIdentifier()+" "+ n.vERe(list1.get(j),rr.get(i),s).getIdentifier());
+				}
+				for(int j=0;j<list2.size();j++)
+				{
+					System.out.println(list2.get(j).getIdentifier()+" "+ n.vERe(list2.get(j),rr.get(i),s).getIdentifier());
+				}
+			}
+		}
 		/*Path f = new FUnitPath("r3");
 		Path b = new BUnitPath("r1");
 		Path kf = new KStarPath(f);

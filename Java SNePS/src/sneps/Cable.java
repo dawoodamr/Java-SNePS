@@ -1,5 +1,7 @@
 package sneps;
 
+import java.lang.reflect.Constructor;
+
 /**
  * A cable is a pair of two things: a Relation and a NodeSet.It describes the arcs 
  * going from a Node to some Nodes - that are in the NodeSet - with the same Relation.
@@ -44,6 +46,27 @@ public class Cable
 	public NodeSet getNodeSet()
 	{
 		return nodeSet;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void updateSemanticClasses()
+	{
+		for(int i=0;i<nodeSet.getNodes().size();i++)
+		{
+			Node n = nodeSet.getNodes().get(i);
+			if(n.getUpCableSet().isEmpty())
+			{
+				try {
+					Class c = Class.forName("sneps."+this.relation.getType());
+					Constructor con = c.getConstructor(new Class[] {Node.class});
+					Entity e = (Entity) con.newInstance(n);
+					n.setEntity(e);
+				} catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 }
