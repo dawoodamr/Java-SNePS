@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.SpecialAction;
-
 import sneps.Entity;
 import sneps.Node;
 import snebr.*;
@@ -57,7 +55,8 @@ public class Proposition extends Entity {
   }*/
   
 
- public void print()
+ @SuppressWarnings("unchecked")
+public void print()
  {    
 
  for (Iterator iterator = this.support.iterator(); iterator.hasNext();) {
