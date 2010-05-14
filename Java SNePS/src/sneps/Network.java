@@ -287,7 +287,8 @@ public class Network implements Serializable
 		else
 		{
 			caseFrames.put(caseFrame.getId(),caseFrame);
-			this.molecularNodes.put(caseFrame.getId(),new NodeSet());
+			if(! this.molecularNodes.containsKey(caseFrame.getId()))
+				this.molecularNodes.put(caseFrame.getId(),new NodeSet());
 		}
 		
 		return caseFrames.get(caseFrame.getId());
@@ -1479,10 +1480,10 @@ public class Network implements Serializable
 		Node x8 = n.buildVariableNode("x8");
 		Node x9 = n.buildVariableNode("x9");
 		Node a = n.build("a");						                // building base node
-		Relation rr1 = n.defineRelation("r1","Entity","none",0);
-		Relation rr2 = n.defineRelation("r2","Entity","none",0);	// defining relations
-		Relation rr3 = n.defineRelation("r3","Entity","none",0);
-		Relation rr4 = n.defineRelation("r4","Entity","none",0);
+		Relation rr1 = n.defineRelation("r1","Individual","none",0);
+		Relation rr2 = n.defineRelation("r2","Act","none",0);	// defining relations
+		Relation rr3 = n.defineRelation("r3","Act","none",0);
+		Relation rr4 = n.defineRelation("r4","Act","none",0);
 		LinkedList<Relation> l2 = new LinkedList<Relation>();
 		l2.add(rr1);
 		l2.add(rr2);
@@ -1495,9 +1496,9 @@ public class Network implements Serializable
 		l4.add(rr2);
 		l4.add(rr3);
 		l4.add(rr4);
-		CaseFrame caseFrame2 = n.defineCaseFrame("entity",l2);		  // defining case frames
-		CaseFrame caseFrame3 = n.defineCaseFrame("entity",l3);
-		CaseFrame caseFrame4 = n.defineCaseFrame("entity",l4);
+		CaseFrame caseFrame2 = n.defineCaseFrame("Entity",l2);		  // defining case frames
+		CaseFrame caseFrame3 = n.defineCaseFrame("Entity",l3);
+		CaseFrame caseFrame4 = n.defineCaseFrame("Entity",l4);
 		o3[0][0] = rr1;
 		o3[1][0] = rr2;
 		o3[2][0] = rr3;
@@ -1557,6 +1558,7 @@ public class Network implements Serializable
 		Substitutions s = new Substitutions();
 		LinkedList<Substitutions> rr = new LinkedList<Substitutions>();
 		rr.add(r);
+		System.out.println(x1.getEntity().getClass().getSimpleName());
 		if(n.hERe(t,tdash,rr,true)) 
 		{
 			/*System.out.println("> "+rr.size());

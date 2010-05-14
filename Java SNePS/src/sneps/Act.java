@@ -34,7 +34,10 @@ public class Act extends Entity {
 	static Condition test = new Condition();
 	
 	
-
+	public Act(Node node)
+	{
+		super(node);
+	}
 
 	
 	

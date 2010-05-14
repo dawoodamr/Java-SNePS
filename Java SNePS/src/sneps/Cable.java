@@ -30,6 +30,7 @@ public class Cable
 	{
 		this.relation = relation;
 		this.nodeSet = nodeSet;
+		this.updateSemanticClasses();
 	}
 
 	/**

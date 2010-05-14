@@ -7,5 +7,9 @@ package sneps;
 public class Individual extends Entity
 {
 
+	public Individual(Node node)
+	{
+		super(node);
+	}
 
 }
