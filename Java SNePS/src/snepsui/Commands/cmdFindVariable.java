@@ -551,13 +551,13 @@ public class cmdFindVariable extends javax.swing.JPanel {
 				array[i][1] = nodeset;
 			}
 			
-			NodeSet resultNodeSet = network.findVariable(array);
-			LinkedList<Node> resultnodes = resultNodeSet.getNodes();
-			if(resultnodes.isEmpty()) {
-				JOptionPane.showMessageDialog(this, "No nodes were found");
-			} else {
-				frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(resultnodes);
-			}
+//			NodeSet resultNodeSet = network.findVariable(array);
+//			LinkedList<Node> resultnodes = resultNodeSet.getNodes();
+//			if(resultnodes.isEmpty()) {
+//				JOptionPane.showMessageDialog(this, "No nodes were found");
+//			} else {
+//				frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(resultnodes);
+//			}
 			
 			pathModel.removeAllElements();
 			nodesetModel.removeAllElements();

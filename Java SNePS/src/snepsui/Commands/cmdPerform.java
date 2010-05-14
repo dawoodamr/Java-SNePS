@@ -5,10 +5,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.ActionMap;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -19,7 +25,10 @@ import javax.swing.JTextField;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import snactor.Act;
+import sneps.Entity;
 import sneps.Network;
+import sneps.Node;
 import snepsui.Interface.SNePSInterface;
 
 /**
@@ -36,23 +45,17 @@ import snepsui.Interface.SNePSInterface;
 */
 public class cmdPerform extends javax.swing.JPanel {
 	private JLabel performLabel;
-	private JLabel buildLabel;
 	private JScrollPane jScrollPane1;
+	private JComboBox nodesComboBox;
+	private JLabel Nodeset;
+	private JComboBox contextComboBox;
 	private JList nodesetList;
-	private JList relationList;
 	private JLabel nodesetLabel;
 	private JLabel relationLabel;
-	private JScrollPane jScrollPane3;
-	private JTextField nodesetTextField;
-	private JTextField relationTextField;
 	private JButton addButton;
 	private JButton doneButton;
 	private JButton infoButton;
-	private JButton buildButton;
 	private JLabel contextNameLabel;
-	private JRadioButton contextNameRadioButton1;
-	private JTextField contextNameTextField;
-	private JRadioButton contextNameRadioButton2;
 	private DefaultListModel relationModel;
 	private DefaultListModel nodesetModel;
 	private Network network;
@@ -92,47 +95,18 @@ public class cmdPerform extends javax.swing.JPanel {
 				performLabel = new JLabel();
 				this.add(performLabel);
 				performLabel.setName("performLabel");
-				performLabel.setBounds(12, 31, 55, 15);
-			}
-			{
-				buildLabel = new JLabel();
-				this.add(buildLabel);
-				buildLabel.setBounds(73, 31, 43, 15);
-				buildLabel.setName("buildLabel");
-			}
-			{
-				relationTextField = new JTextField();
-				this.add(relationTextField);
-				relationTextField.setBounds(115, 28, 170, 22);
-				relationTextField.setName("relationTextField");
+				performLabel.setBounds(174, 31, 55, 15);
 			}
 			{
 				jScrollPane1 = new JScrollPane();
 				this.add(jScrollPane1);
-				jScrollPane1.setBounds(115, 56, 171, 110);
-				{
-					relationModel = new DefaultListModel();
-					relationList = new JList();
-					jScrollPane1.setViewportView(relationList);
-					relationList.setModel(relationModel);
-					relationList.setBounds(85, 172, 168, 36);
-				}
-			}
-			{
-				nodesetTextField = new JTextField();
-				this.add(nodesetTextField);
-				nodesetTextField.setBounds(301, 28, 176, 22);
-			}
-			{
-				jScrollPane3 = new JScrollPane();
-				this.add(jScrollPane3);
-				jScrollPane3.setBounds(301, 56, 176, 107);
+				jScrollPane1.setBounds(245, 56, 188, 110);
 				{
 					nodesetModel = new DefaultListModel();
 					nodesetList = new JList();
-					jScrollPane3.setViewportView(nodesetList);
+					jScrollPane1.setViewportView(nodesetList);
 					nodesetList.setModel(nodesetModel);
-					nodesetList.setBounds(407, 174, 173, 36);
+					nodesetList.setBounds(59, 166, 180, 107);
 				}
 			}
 			{
@@ -164,7 +138,7 @@ public class cmdPerform extends javax.swing.JPanel {
 			{
 				addButton = new JButton();
 				this.add(addButton);
-				addButton.setBounds(489, 30, 16, 18);
+				addButton.setBounds(438, 30, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
 				addButton.addMouseListener(new MouseAdapter() {
@@ -174,46 +148,45 @@ public class cmdPerform extends javax.swing.JPanel {
 				});
 			}
 			{
-				buildButton = new JButton();
-				this.add(buildButton);
-				buildButton.setBounds(516, 29, 18, 20);
-				buildButton.setAction(getAppActionMap().get("build"));
-				buildButton.setFocusable(false);
-				buildButton.setToolTipText("build");
-				buildButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						buildButtonActionPerformed(evt);
-					}
-				});
-			}
-			{
-				contextNameRadioButton2 = new JRadioButton();
-				this.add(contextNameRadioButton2);
-				contextNameRadioButton2.setBounds(502, 133, 28, 29);
-				contextNameRadioButton2.setName("contextNameRadioButton2");
-				contextNameRadioButton2.addMouseListener(new MouseAdapter() {
-					public void mouseClicked(MouseEvent evt) {
-						//contextNameRadioButton2MouseClicked(evt);
-					}
-				});
-			}
-			{
-				contextNameTextField = new JTextField();
-				this.add(contextNameTextField);
-				contextNameTextField.setName("contextNameTextField");
-				contextNameTextField.setBounds(530, 139, 136, 23);
-			}
-			{
-				contextNameRadioButton1 = new JRadioButton();
-				this.add(contextNameRadioButton1);
-				contextNameRadioButton1.setName("contextNameRadioButton1");
-				contextNameRadioButton1.setBounds(502, 105, 123, 21);
-			}
-			{
 				contextNameLabel = new JLabel();
 				this.add(contextNameLabel);
 				contextNameLabel.setName("contextNameLabel");
-				contextNameLabel.setBounds(502, 74, 123, 21);
+				contextNameLabel.setBounds(483, 4, 123, 21);
+			}
+			{
+				ComboBoxModel contextComboBoxModel = new DefaultComboBoxModel();
+				contextComboBox = new JComboBox();
+				this.add(contextComboBox);
+				contextComboBox.setModel(contextComboBoxModel);
+				contextComboBox.setBounds(483, 30, 147, 22);
+			}
+			{
+				Nodeset = new JLabel();
+				this.add(Nodeset);
+				Nodeset.setBounds(247, 7, 79, 15);
+				Nodeset.setName("Nodeset");
+			}
+			{
+				DefaultComboBoxModel nodesComboBoxModel = new DefaultComboBoxModel();
+				
+				String str = "";
+				Hashtable<String, Node> nodes = network.getNodes();
+				Set<String> set = nodes.keySet();
+
+			    Iterator<String> itr = set.iterator();
+			    while (itr.hasNext()) {
+			      str = itr.next();
+			      Node node = nodes.get(str);
+			      Entity entity = node.getEntity();
+			      if (entity instanceof Act) {
+			    	  nodesComboBoxModel.addElement(node.getIdentifier()) ;
+			      }
+			    }
+			    
+				nodesComboBox = new JComboBox();
+				this.add(nodesComboBox);
+				nodesComboBox.setModel(nodesComboBoxModel);
+				nodesComboBox.setBounds(247, 27, 185, 22);
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {
@@ -221,18 +194,9 @@ public class cmdPerform extends javax.swing.JPanel {
 		}
 	}
 	
-	private void buildButtonActionPerformed(ActionEvent evt) {
-		JFrame popupFrame = new JFrame("Build");
-		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		popupFrame.getContentPane().add(new cmdBuild(network, frame));
-		popupFrame.pack();
-		popupFrame.setVisible(true);
-	}
-	
 	private void addButtonMouseClicked(MouseEvent evt) {
-		relationModel.addElement(relationTextField.getText());
-		nodesetModel.addElement(nodesetTextField.getText());
-		relationTextField.setText("");
-		nodesetTextField.setText("");
+		relationModel.addElement(nodesComboBox.getSelectedItem().toString());
+		nodesComboBox.setSelectedIndex(0);
+		validate();
 	}
 }

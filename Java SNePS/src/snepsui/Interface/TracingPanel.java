@@ -78,7 +78,7 @@ public class TracingPanel extends javax.swing.JPanel {
 		    }  
 		  };  
 		  
-		  System.setOut(new PrintStream(out, true));  
-		  System.setErr(new PrintStream(out, true));  
+		  System.setOut(new PrintStream(out, true));
+		  System.setErr(new PrintStream(out, true));
 	}
 }

@@ -3,10 +3,16 @@ package snepsui.Commands;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.ActionMap;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
@@ -17,6 +23,7 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.Network;
+import sneps.Relation;
 import snepsui.Interface.SNePSInterface;
 
 
@@ -34,9 +41,9 @@ import snepsui.Interface.SNePSInterface;
 */
 public class cmdDefinePrimaction extends javax.swing.JPanel {
 	private JLabel definePrimactionLabel;
-	private JTextField actionTextField;
 	private JScrollPane jScrollPane1;
-	private JTextField relationTextField;
+	private JComboBox relationComboBox;
+	private JComboBox actionComboBox;
 	private JList relationList;
 	private JTextArea formTextArea;
 	private JLabel formLabel;
@@ -85,11 +92,6 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
 				this.add(actionLabel);
 				actionLabel.setBounds(145, 16, 43, 15);
 				actionLabel.setName("actionLabel");
-			}
-			{
-				actionTextField = new JTextField();
-				this.add(actionTextField);
-				actionTextField.setBounds(145, 37, 145, 22);
 			}
 			{
 				relationLabel = new JLabel();
@@ -142,17 +144,34 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
 				addButton.setFocusable(false);
 				addButton.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent evt) {
-						relationModel.addElement(relationTextField.getText());
-						relationTextField.setText("");
+						relationModel.addElement(relationComboBox.getSelectedItem().toString());
+						relationComboBox.setSelectedIndex(0);
 						validate();
 					}
 				});
 			}
 			{
-				relationTextField = new JTextField();
-				this.add(relationTextField);
-				relationTextField.setBounds(309, 36, 159, 24);
-				relationTextField.setName("relationTextField");
+				ComboBoxModel actionComboBoxModel = new DefaultComboBoxModel();
+				actionComboBox = new JComboBox();
+				this.add(actionComboBox);
+				actionComboBox.setModel(actionComboBoxModel);
+				actionComboBox.setBounds(145, 36, 149, 22);
+			}
+			{	
+				DefaultComboBoxModel relationsComboBoxModel = new DefaultComboBoxModel();
+				String str = "";
+				Hashtable<String, Relation> relations = network.getRelations();
+				Set<String> set = relations.keySet();
+
+			    Iterator<String> itr = set.iterator();
+			    while (itr.hasNext()) {
+			      str = itr.next();
+			      relationsComboBoxModel.addElement(relations.get(str).getName()) ;
+			    }
+				relationComboBox = new JComboBox();
+				this.add(relationComboBox);
+				relationComboBox.setModel(relationsComboBoxModel);
+				relationComboBox.setBounds(309, 36, 159, 22);
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {

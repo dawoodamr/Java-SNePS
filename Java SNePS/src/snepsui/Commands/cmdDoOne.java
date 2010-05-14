@@ -3,8 +3,6 @@ package snepsui.Commands;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.Vector;
 
@@ -25,11 +23,8 @@ import javax.swing.table.TableCellEditor;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import sneps.CaseFrame;
-import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
-import sneps.Relation;
 import snepsui.Interface.SNePSInterface;
 
 /**
@@ -45,13 +40,11 @@ import snepsui.Interface.SNePSInterface;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class cmdDoOne extends javax.swing.JPanel {
-	private JLabel addLabel;
+	private JLabel assertLabel;
 	private JButton doneButton;
 	private JScrollPane jScrollPane1;
 	private JComboBox contextNameComboBox;
 	private JLabel buildLabel;
-	private JComboBox objectNumberComboBox;
-	private JLabel objectNumberLabel;
 	private JTable relationNodesetTable;
 	private JLabel contextNameLabel;
 	private JButton infoButton;
@@ -84,21 +77,16 @@ public class cmdDoOne extends javax.swing.JPanel {
 			setPreferredSize(new Dimension(690, 225));
 			this.setLayout(null);
 			{
-				addLabel = new JLabel();
-				this.add(addLabel);
-				addLabel.setName("addLabel");
-				addLabel.setBounds(6, 28, 68, 15);
+				assertLabel = new JLabel();
+				this.add(assertLabel);
+				assertLabel.setName("assertLabel");
+				assertLabel.setBounds(6, 28, 68, 15);
 			}
 			{
 				doneButton = new JButton();
 				this.add(doneButton);
 				doneButton.setBounds(314, 185, 77, 29);
 				doneButton.setName("doneButton");
-				doneButton.addMouseListener(new MouseAdapter() {
-					public void mouseClicked(MouseEvent evt) {
-						doneButtonMouseClicked(evt);
-					}
-				});
 			}
 			{
 				options = new JComboBox();
@@ -142,10 +130,22 @@ public class cmdDoOne extends javax.swing.JPanel {
 					};
 					jScrollPane1.setViewportView(relationNodesetTable);
 					relationNodesetTable.setModel(relationNodesetTableModel);
+					relationNodesetTable.setEditingRow(0);
 					
 					relationNodesetTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(relationTextField));
 					relationNodesetTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(nodesetTextField));
 					relationNodesetTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(options));
+					
+					Vector<Object> actionData = new Vector<Object>();
+					actionData.add("action");
+					actionData.add("do-one");
+					relationNodesetTableModel.addRow(actionData);
+					
+					Vector<Object> objectData = new Vector<Object>();
+					objectData.add("object1");
+					objectData.add("");
+					objectData.add("Choose Node Type");
+					relationNodesetTableModel.addRow(objectData);
 				}
 			}
 			{
@@ -161,29 +161,6 @@ public class cmdDoOne extends javax.swing.JPanel {
 				this.add(contextNameLabel);
 				contextNameLabel.setName("contextNameLabel");
 				contextNameLabel.setBounds(532, 25, 123, 21);
-			}
-			{
-				objectNumberLabel = new JLabel();
-				this.add(objectNumberLabel);
-				objectNumberLabel.setBounds(357, 28, 98, 15);
-				objectNumberLabel.setName("objectNumberLabel");
-			}
-			{
-				DefaultComboBoxModel objectNumberComboBoxModel = new DefaultComboBoxModel();
-				
-				for (int i = 1; i < 100; i++) {
-					objectNumberComboBoxModel.addElement(i);
-				}
-				
-				objectNumberComboBox = new JComboBox();
-				this.add(objectNumberComboBox);
-				objectNumberComboBox.setModel(objectNumberComboBoxModel);
-				objectNumberComboBox.setBounds(455, 24, 65, 22);
-				objectNumberComboBox.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						objectNumberComboBoxActionPerformed(evt);
-					}
-				});
 			}
 			{
 				buildLabel = new JLabel();
@@ -202,28 +179,6 @@ public class cmdDoOne extends javax.swing.JPanel {
 					.injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-	
-	private void objectNumberComboBoxActionPerformed(ActionEvent evt) {
-		
-		relationNodesetTableModel.getDataVector().clear();
-		
-		Vector<Object> actionData = new Vector<Object>();
-		//actionData.add(relations.getFirst());
-		actionData.add("action");
-		actionData.add("do-one");
-		relationNodesetTableModel.addRow(actionData);
-	
-		int numOfObjects = Integer.parseInt(objectNumberComboBox.getSelectedItem().toString());
-		
-		for (int i = 0; i < numOfObjects; i++) {
-			Vector<Object> objectData = new Vector<Object>();
-			//objectData.add(relations.getLast().getName() + (i+1));
-			objectData.add("object" + (i+1));
-			objectData.add("");
-			objectData.add("Choose Node Type");
-			relationNodesetTableModel.addRow(objectData);
 		}
 	}
 	
@@ -318,71 +273,6 @@ public class cmdDoOne extends javax.swing.JPanel {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-	}
-	
-	
-	
-	private void doneButtonMouseClicked(MouseEvent evt) {
-		LinkedList<Relation> relationlist = new LinkedList<Relation>();
-		LinkedList<Node> nodelist = new LinkedList<Node>();
-		
-		try {
-			for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
-				Vector< Object> currentDataVector = (Vector<Object>) relationNodesetTableModel.getDataVector().elementAt(i);
-				Relation relation = network.getRelation(currentDataVector.get(0).toString());
-				
-				String [] nodesetArray = currentDataVector.get(1).toString().split(",");
-				
-				for (int j = 0; j < nodesetArray.length; j++) {
-					try {
-						Node node = network.build(nodesetArray[j]);
-						if (node != null) {
-							JOptionPane.showMessageDialog(this,
-							"The node " + node.getIdentifier() + "was created successfully");
-						}
-						
-						System.out.println("Relation Name: " + relation.getName());
-						System.out.println("Node Name: " + node.getIdentifier());
-						relationlist.add(relation);
-						nodelist.add(node);
-						
-					} catch (CustomException e) {
-						JOptionPane.showMessageDialog(this,
-				    			  "The node " + nodesetArray[j].toString() + "already exits",
-				    			  "Error",
-				    			  JOptionPane.ERROR_MESSAGE);
-						e.printStackTrace();
-					}
-				}
-			}
-			
-			try {
-				Object[][] cableset = new Object[relationlist.size()][2];
-				
-				for(int i = 0; i < relationlist.size(); i++) {
-					cableset[i][0] = relationlist.get(i);
-					cableset[i][1] = nodelist.get(i);
-				}
-				
-				CaseFrame caseframe = network.getCaseFrame("Act");
-				System.out.println("Case Frame: " + caseframe.getId());
-				Node node = network.build(cableset, caseframe);
-				System.out.println("Created Node: "+ node.getIdentifier());
-				nodes.add(node);
-			} catch (CustomException e) {
-				JOptionPane.showMessageDialog(this,
-		    			  e.getMessage(),
-		    			  "Error",
-		    			  JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		frame.getNodesTreePanel1().initGUI();
-		frame.getMainFrame().validate();
-		frame.getMainFrame().repaint();
 	}
 	
 	public LinkedList<Node> getNodes() {

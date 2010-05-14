@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
+import java.util.Vector;
 
 import javax.swing.ActionMap;
 import javax.swing.ComboBoxModel;
@@ -121,18 +122,26 @@ public class cmdActPlan extends javax.swing.JPanel {
 					relationNodesetTableModel.addColumn("Relation");
 					relationNodesetTableModel.addColumn("Nodeset");
 					relationNodesetTableModel.addColumn("");
-					relationNodesetTable = new JTable() {
-						public boolean isCellEditable(int row, int column){  
-						    if(row == 0 && column == 2) return false;  
-						    return true;  
-						  }
-					};
+					relationNodesetTable = new JTable();
 					jScrollPane1.setViewportView(relationNodesetTable);
 					relationNodesetTable.setModel(relationNodesetTableModel);
+					relationNodesetTable.setEditingRow(0);
 					
 					relationNodesetTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(relationTextField));
 					relationNodesetTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(nodesetTextField));
 					relationNodesetTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(options));
+					
+					Vector<Object> actData = new Vector<Object>();
+					actData.add("act");
+					actData.add("");
+					actData.add("Choose Node Type");
+					relationNodesetTableModel.addRow(actData);
+					
+					Vector<Object> planData = new Vector<Object>();
+					planData.add("plan");
+					planData.add("");
+					planData.add("Choose Node Type");
+					relationNodesetTableModel.addRow(planData);
 				}
 			}
 			{

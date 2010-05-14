@@ -86,14 +86,13 @@ import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 /**
  * @author Alia Taher
  */
-public class DrawNetwork extends javax.swing.JPanel {
+public class TestDraw extends javax.swing.JPanel {
 
     private DirectedGraph<String, String> graph;
     private StaticLayout<String, String> layout;
     private VisualizationViewer<String, String> vv;
     private JComboBox caseframeComboBox;
     private JComboBox relationsComboBox;
-    private SNePSInterface frame;
     private Network network;
     private Hashtable<String, CaseFrame> molNodes;
     private Hashtable<String, Node> builtMolNodes;
@@ -158,8 +157,7 @@ public class DrawNetwork extends javax.swing.JPanel {
     /**
      * @param frame The main frame where all the panels are included which is SNePSInterface
      */
-    public DrawNetwork(SNePSInterface frame) {
-    	this.frame = frame;
+    public TestDraw() {
     	initGUI();
     }
     
@@ -193,33 +191,33 @@ public class DrawNetwork extends javax.swing.JPanel {
         
         vertexPaint = new Transformer<String,Paint>() {
         	public Paint transform(String vertex) {
-        		if(molNodes.containsKey(vertex)) {
-        			if(builtMolNodes.containsKey(vertex)) {
-        				Node node = builtMolNodes.get(vertex);
-        				if (node.getClass().getSimpleName().equals("PatternNode")) {
-    						return Color.blue;
-    					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
-    						return Color.yellow;
-    					}
-        			} else
-        				return Color.white;
-        		} else {
-        			for(Node node : nodesList) {
-        				if(node.getIdentifier().equals(vertex)) {
-        					if(node.getClass().getSimpleName().equals("BaseNode")) {
-        						return Color.green;
-        					} else if (node.getClass().getSimpleName().equals("VariableNode")) {
-        						return Color.gray;
-        					} else if (node.getClass().getSimpleName().equals("PatternNode")) {
-        						return Color.blue;
-        					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
-        						return Color.yellow;
-        					} else {
-        						return Color.magenta;
-        					}
-        				}
-            		}
-        		}
+//        		if(molNodes.containsKey(vertex)) {
+//        			if(builtMolNodes.containsKey(vertex)) {
+//        				Node node = builtMolNodes.get(vertex);
+//        				if (node.getClass().getSimpleName().equals("PatternNode")) {
+//    						return Color.blue;
+//    					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
+//    						return Color.yellow;
+//    					}
+//        			} else
+//        				return Color.white;
+//        		} else {
+//        			for(Node node : nodesList) {
+//        				if(node.getIdentifier().equals(vertex)) {
+//        					if(node.getClass().getSimpleName().equals("BaseNode")) {
+//        						return Color.green;
+//        					} else if (node.getClass().getSimpleName().equals("VariableNode")) {
+//        						return Color.gray;
+//        					} else if (node.getClass().getSimpleName().equals("PatternNode")) {
+//        						return Color.blue;
+//        					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
+//        						return Color.yellow;
+//        					} else {
+//        						return Color.magenta;
+//        					}
+//        				}
+//            		}
+//        		}
         		return Color.white;
 			}
         };        	
@@ -305,22 +303,8 @@ public class DrawNetwork extends javax.swing.JPanel {
         
         String path = "src/snepsui/Interface/resources/icons/";
         
-        JButton colors = new JButton(new ImageIcon(path + "colors.png"));
-        colors.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFrame popupFrame = new JFrame("Node Colors");
-				popupFrame.setLocation(450, 350);
-				popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				popupFrame.getContentPane().add(new NodeColors());
-				popupFrame.pack();
-				popupFrame.setResizable(false);
-				popupFrame.setVisible(true);
-			}
-		});
-        
 		JButton infoButton = new JButton(new ImageIcon(path + "info.png"));
+		infoButton.setBounds(710, 320, 16, 16);
 		infoButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -328,6 +312,7 @@ public class DrawNetwork extends javax.swing.JPanel {
         }});
 		
 		JButton resetbutton = new JButton(new ImageIcon(path + "resetnet.png"));
+		resetbutton.setBounds(710, 300, 16, 16);
 		resetbutton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -357,28 +342,16 @@ public class DrawNetwork extends javax.swing.JPanel {
         DefaultComboBoxModel caseframeComboBoxModel = new DefaultComboBoxModel(new String []{"define-caseframe","undefine-caseframe"});
         caseframeComboBox = new JComboBox();
         caseframeComboBox.setModel(caseframeComboBoxModel);
-        caseframeComboBox.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-            	addCaseFrameCommands(e);
-            }});
+      
         
         JLabel relationsLabel = new JLabel("Relations");
         DefaultComboBoxModel relationsComboBoxModel = new DefaultComboBoxModel(new String []{"define","undefine"});
         relationsComboBox = new JComboBox();
         relationsComboBox.setModel(relationsComboBoxModel);
-        relationsComboBox.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-            	addRelationCommands(e);
-            }});
+       
         
-        JPanel options = new JPanel(new GridLayout(3,1));
-        options.add(infoButton);
-        options.add(resetbutton);
-        options.add(colors);
-        this.add(options, BorderLayout.EAST);
-        
+        this.add(infoButton, BorderLayout.EAST);
+        this.add(resetbutton);
         JPanel controls = new JPanel();
         scaleGrid.add(plus);
         scaleGrid.add(minus);
@@ -522,7 +495,7 @@ public class DrawNetwork extends javax.swing.JPanel {
 			Point endPoint = vv.getMousePosition();
 			String endVertex = vv.getPickSupport().getVertex(layout, endPoint.getX(), endPoint.getY());
 			System.out.println("Predecessor: " + graph.isPredecessor(endVertex,picked));
-			if((!graph.isPredecessor(endVertex,picked)) && (!graph.isPredecessor(picked, endVertex))) {
+			if(!graph.isPredecessor(endVertex,picked)) {
 				//Connecting new node to already built Molecular Nodes
 				if (builtMolNodes.containsKey(picked)){
 			    	JOptionPane.showMessageDialog(getRootPane(), 
@@ -576,7 +549,7 @@ public class DrawNetwork extends javax.swing.JPanel {
 			    			JOptionPane.ERROR_MESSAGE);
 			    } else {
 			    	JOptionPane.showMessageDialog(getRootPane(), 
-			    			"Only Molecular Nodes can have outgoing relations",
+			    			"You can only connect a Molecular Node",
 			    			"Error",
 			    			JOptionPane.ERROR_MESSAGE);
 			    }
@@ -589,42 +562,7 @@ public class DrawNetwork extends javax.swing.JPanel {
 			return relation;
 		}
     }
-    
-    /**
-     * Gets the selected case frame command selected in the case frame combobox and puts it in a frame
-     * @param e the event that was fired
-     */
-    private void addCaseFrameCommands(ActionEvent e) {
-    	JFrame popupFrame = new JFrame("Case Frames");
-    	popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        if (caseframeComboBox.getSelectedItem().toString().equals("define-caseframe")) {
-        	popupFrame.getContentPane().add(new cmdCaseFrame(network, frame));
-        	popupFrame.pack();
-        	popupFrame.setVisible(true);
-        } else if (caseframeComboBox.getSelectedItem().toString().equals("undefine-caseframe")) {
-        	popupFrame.getContentPane().add(new cmdUndefineCaseFrame(network, frame));
-        	popupFrame.pack();
-        	popupFrame.setVisible(true);
-        }
-    }
-    
-    /**
-     * Gets the selected relation command selected in the relation combobox and puts it in a frame
-     * @param e the event that was fired
-     */
-    private void addRelationCommands(ActionEvent e) {
-    	JFrame popupFrame = new JFrame("Case Frames");
-    	popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        if (relationsComboBox.getSelectedItem().toString().equals("define")) {
-        	popupFrame.getContentPane().add(new cmdDefine(network, frame));
-        	popupFrame.pack();
-        	popupFrame.setVisible(true);
-        } else if (relationsComboBox.getSelectedItem().toString().equals("undefine")) {
-        	popupFrame.getContentPane().add(new cmdUndefine(network, frame));
-        	popupFrame.pack();
-    		popupFrame.setVisible(true);
-        }
-    }
+ 
     
     private final static class VertexShapeSizeAspect<String>
     extends AbstractVertexShapeTransformer <String>
@@ -644,13 +582,10 @@ public class DrawNetwork extends javax.swing.JPanel {
 				public Integer transform(String v) {
 		            if (scale) {
 		            	int shapeSize = shape.transform(v);
-		            	if(shapeSize == 2) {
-		            		return 20;
-		            	} else if (shapeSize == 3) {
-		            		return 30;
-		            	} else {
-		            		return shapeSize * 8;
-		            	}
+		            	if(shapeSize == 10) {
+		            		return 67;
+		            	} else 
+		            		return 35;
 		            }
 		            else
 		                return 20;
@@ -850,5 +785,55 @@ public class DrawNetwork extends javax.swing.JPanel {
 
 	public void setNetwork(Network network) {
 		this.network = network;
+	}
+	
+	public static void main(String[] args) {
+		Network network = new Network();
+		
+		try {
+			Relation relation1 = network.defineRelation("action", "Entity", "none", 0);
+			Relation relation2 = network.defineRelation("object1", "Entity", "none", 0);
+			Relation relation3 = network.defineRelation("actObject", "Entity", "none", 0);
+			Relation relation4 = network.defineRelation("object2", "Entity", "none", 0);
+			Relation relation5 = network.defineRelation("vars", "Entity", "none", 0);
+			Relation relation6 = network.defineRelation("suchthat", "Entity", "none", 0);
+			Relation relation7 = network.defineRelation("do", "Entity", "none", 0);
+			Relation relation8 = network.defineRelation("else", "Entity", "none", 0);
+			
+			LinkedList<Relation> relations1 = new LinkedList<Relation>();
+			relations1.add(relation1);
+			relations1.add(relation2);
+			
+			LinkedList<Relation> relations2 = new LinkedList<Relation>();
+			relations2.add(relation1);
+			relations2.add(relation3);
+			
+			LinkedList<Relation> relations3 = new LinkedList<Relation>();
+			relations3.add(relation2);
+			relations3.add(relation4);
+			
+			LinkedList<Relation> relations4 = new LinkedList<Relation>();
+			relations4.add(relation1);
+			relations4.add(relation5);
+			relations4.add(relation6);
+			relations4.add(relation7);
+			relations4.add(relation8);
+			
+			CaseFrame caseframe1 = network.defineCaseFrame("Entity", relations1);
+			CaseFrame caseframe2 = network.defineCaseFrame("Entity", relations2);
+			CaseFrame caseframe3 = network.defineCaseFrame("Entity", relations3);
+			CaseFrame caseframe4 = network.defineCaseFrame("Entity", relations4);
+			
+		} catch (CustomException e) {
+			// TODO: handle exception
+		}
+		
+		JFrame popupFrame = new JFrame("Draw");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		TestDraw td = new TestDraw();
+		td.setNetwork(network);
+		popupFrame.getContentPane().add(td);
+		popupFrame.pack();
+		popupFrame.setVisible(true);
 	}
 }

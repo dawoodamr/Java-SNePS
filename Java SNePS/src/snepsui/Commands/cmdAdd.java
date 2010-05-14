@@ -43,7 +43,9 @@ import sneps.Node;
 import sneps.Relation;
 import snepsui.Interface.SNePSInterface;
 import snip.fns.AndEntailment;
+import snip.fns.AndOr;
 import snip.fns.NumericalEntailment;
+import snip.fns.OrEntailment;
 import snip.fns.Thresh;
 
 /**
@@ -386,25 +388,25 @@ public class cmdAdd extends javax.swing.JPanel {
 				} else if (type.equals("Individual")) {
 					
 				} else if (type.equals("AndEntailment")) {
-//					if (entity instanceof AndEntailment) {
-//						return true;
-//					}
+					if (entity instanceof AndEntailment) {
+						return true;
+					}
 				} else if (type.equals("AndOr")) {
-//					if (entity instanceof AndOr) {
-//						return true;
-//					}
+					if (entity instanceof AndOr) {
+						return true;
+					}
 				} else if (type.equals("NumericalEntailment")) {
-//					if (entity instanceof NumericalEntailment) {
-//						return true;
-//					}
+					if (entity instanceof NumericalEntailment) {
+						return true;
+					}
 				} else if (type.equals("OrEntailment")) {
-//					if (entity instanceof OrEntailment) {
-//						
-//					}
+					if (entity instanceof OrEntailment) {
+						
+					}
 				} else if (type.equals("Thresh")) {
-//					if (entity instanceof Thresh) {
-//						return true;
-//					}
+					if (entity instanceof Thresh) {
+						return true;
+					}
 				} else if (type.equals("Act")) {
 					if (entity instanceof Act) {
 						return true;

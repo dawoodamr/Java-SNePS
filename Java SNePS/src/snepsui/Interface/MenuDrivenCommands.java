@@ -84,11 +84,11 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 							new String[] { "define", "undefine", "define-caseframe" , "undefine-caseframe", "deduce", "define-path",
 									 "undefine-path", "set-context", "set-default-context", "add-to-context", "remove-from-context",
 									 "list-context-names", "describe-context", "list-hypotheses", "build", "assert", "add", "activate", 
-									 "erase", "silent-erase", "resetnet", "clear-infer-all", "clear-infer", "dump", "describe",
-									 "full-describe", "show", "surface", "find", "findassert", "findconstant", "findbase", 
+									 "erase", "silent-erase", "dump", "describe",
+									 "full-describe", "find", "findassert", "findconstant", "findbase", 
 									 "findvariable", "findpatter", "deducetrue", "deducefalse", "deducewh", "deducewhnot",
 									 "And-Entailment", "Or-Entailment", "Numerrical Entailment", "AndOr", "Thresh", "Universal Quantifier",
-									 "Numerical Quantifier", "ev-trace", "unev-trace", "in-trace", "unin-trace", "multi::print-regs"});
+									 "Numerical-Quantifier", "ev-trace", "unev-trace", "in-trace", "unin-trace", "multi::print-regs"});
 				commandsComboBox = new JComboBox();
 				this.add(commandsComboBox);
 				commandsComboBox.setModel(jComboBox1Model);
@@ -102,10 +102,10 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			{
 				ComboBoxModel jComboBox2Model = 
 					new DefaultComboBoxModel(
-							new String[] { "Relations", "Case Frames", "Reduction Inference", "Path-Based Inference", "Contexts", "Building Networks", 
+							new String[] { "Relations", "Case Frames", "Contexts", "Building Networks", "Wire-based Inference", "Path-Based Inference", 
 									"Deleting Information", "Displaying Information", "Retrieving Information", "Connectives", "Quantifiers", 
 									"Tracing Inference", "Acting", "Primitive Acts", "Mental Acts", "Control Acts", "Complex Acts", "Goals",  
-									"Precondition and Effects", "Functions Returning Sets of Nodes or Unitpaths"});
+									"Preconditions and Effects"});
 				commandMenusComboBox = new JComboBox();
 				this.add(commandMenusComboBox);
 				commandMenusComboBox.setModel(jComboBox2Model);
@@ -204,6 +204,12 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("findbase");
 			dcbm.addElement("findvariable");
 			dcbm.addElement("findpattern");
+			commandsComboBox.setModel(dcbm);
+			commandsPanel.removeAll();
+			commandsPanel.add(new cmdFind(network, frame));
+		}
+		else if (commandMenusComboBox.getSelectedItem().equals("Wire-based Inference")) {
+			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 			dcbm.addElement("deduce");
 			dcbm.addElement("deducetrue");
 			dcbm.addElement("deducefalse");
@@ -211,8 +217,8 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			dcbm.addElement("deducewhnot");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdFind(network, frame));
-		}
+			commandsPanel.add(new cmdDeduce(network, frame));
+		} 
 		else if(commandMenusComboBox.getSelectedItem().equals("Connectives")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 			dcbm.addElement("And-Entailment");
@@ -263,7 +269,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		} else if(commandMenusComboBox.getSelectedItem().equals("Mental Acts")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 			dcbm.addElement("believe");
-			dcbm.addElement("disbelive");
+			dcbm.addElement("disbelieve");
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdBelieve(network, frame));
@@ -301,21 +307,6 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			commandsComboBox.setModel(dcbm);
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdActPrecondition(network, frame));
-		}
-		else if(commandMenusComboBox.getSelectedItem().equals("Functions Returning Sets of Nodes or Unitpaths")) {
-			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
-			dcbm.addElement("list-nodes");
-			dcbm.addElement("*");
-			dcbm.addElement("^");
-			dcbm.addElement("&");
-			dcbm.addElement("+");
-			dcbm.addElement("-");
-			dcbm.addElement("=");
-			dcbm.addElement("_");
-			dcbm.addElement(">");
-			commandsComboBox.setModel(dcbm);
-			commandsPanel.removeAll();
-			commandsPanel.add(new cmdListNodes(network, frame));
 		}
 		this.repaint();
 		this.validate();
@@ -426,7 +417,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		//full-describe
 		else if(commandsComboBox.getSelectedItem().equals("full-describe")) {
 			commandsPanel.removeAll();
-			commandsPanel.add(new cmdDescribe(network, frame));
+			commandsPanel.add(new cmdFullDescribe(network, frame));
 		}
 		//find
 		else if(commandsComboBox.getSelectedItem().equals("find")) {

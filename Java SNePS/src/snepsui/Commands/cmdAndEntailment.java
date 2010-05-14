@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
+import java.util.Vector;
 
 import javax.swing.ActionMap;
 import javax.swing.ComboBoxModel;
@@ -121,12 +122,26 @@ public class cmdAndEntailment extends javax.swing.JPanel {
 					relationNodesetTableModel.addColumn("Relation");
 					relationNodesetTableModel.addColumn("Nodeset");
 					relationNodesetTableModel.addColumn("");
+					relationNodesetTable = new JTable();
 					jScrollPane1.setViewportView(relationNodesetTable);
 					relationNodesetTable.setModel(relationNodesetTableModel);
+					relationNodesetTable.setEditingRow(0);
 					
 					relationNodesetTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(relationTextField));
 					relationNodesetTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(nodesetTextField));
 					relationNodesetTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(options));
+					
+					Vector<Object> antData = new Vector<Object>();
+					antData.add("&ant");
+					antData.add("");
+					antData.add("Choose Node Type");
+					relationNodesetTableModel.addRow(antData);
+					
+					Vector<Object> cqData = new Vector<Object>();
+					cqData.add("cq");
+					cqData.add("");
+					cqData.add("Choose Node Type");
+					relationNodesetTableModel.addRow(cqData);
 				}
 			}
 			{

@@ -59,7 +59,7 @@ public class NodesTreePanel extends javax.swing.JPanel {
 			{
 				jScrollPane1 = new JScrollPane();
 				this.add(jScrollPane1);
-				jScrollPane1.setPreferredSize(new java.awt.Dimension(139, 351));
+				jScrollPane1.setPreferredSize(new java.awt.Dimension(140, 368));
 				{
 					top = new DefaultMutableTreeNode("Network");
 					
@@ -71,10 +71,9 @@ public class NodesTreePanel extends javax.swing.JPanel {
 					top.add(caseframes);
 					
 					jTree1 = new JTree(top);
-					jScrollPane1.setViewportView(jTree1);
+					
 					jTree1.setRootVisible(true);
 					jTree1.setShowsRootHandles(true);
-					jTree1.setPreferredSize(new java.awt.Dimension(98, 308));
 					jTree1.addTreeSelectionListener(new TreeSelectionListener() {
 						public void valueChanged(TreeSelectionEvent evt) {
 							jTree1ValueChanged(evt);
@@ -83,11 +82,11 @@ public class NodesTreePanel extends javax.swing.JPanel {
 					
 					if(network!=null)
 						addTreeInfo();
+					jScrollPane1.setWheelScrollingEnabled(true);
+					jScrollPane1.setViewportView(jTree1);
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 
 	/**
@@ -142,92 +141,92 @@ public class NodesTreePanel extends javax.swing.JPanel {
 	 * @param evt the event that was fired on a tree selection
 	 */
 	private void jTree1ValueChanged(TreeSelectionEvent evt) {
-		DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent();
-		if(treeNode.getParent().toString().equals("Nodes")) {
-			try {
-				Node node = network.getNode(treeNode.toString());
-				frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(node);
-				
-				frame.getsNePSULPanel1().getVisualizeNetworks().removeAll();
-				frame.getsNePSULPanel1().getVisualizeNetworks().drawNode(node);
-				frame.getsNePSULPanel1().getjTabbedPane1().setSelectedIndex(2);
-				frame.getsNePSULPanel1().getVisualizeNetworks().validate();
-				frame.getsNePSULPanel1().getVisualizeNetworks().repaint();
-				frame.getsNePSULPanel1().setBounds(156, 1, 815, 366);
-				frame.getsNePSULPanel1().getjTabbedPane1().setPreferredSize(new Dimension(815, 366));
-				frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).setPreferredSize(new Dimension(815, 366));
-				frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).validate();
-				frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).repaint();
-				frame.getOutputPanel1().setVisible(true);
-				frame.getTracingPanel1().setVisible(true);
-				frame.getMainFrame().validate();
-				frame.getMainFrame().repaint();
-			} catch (CustomException e) {
-				e.printStackTrace();
-			}
-		} else if (treeNode.getParent().toString().equals("Relations")) {
-			try {
-				Relation relation = network.getRelation(treeNode.toString());
-				frame.getOutputPanel1().writeToTextArea("Relation Name: " + relation.getName() + newLine);
-				frame.getOutputPanel1().writeToTextArea("Relation Type: " + relation.getType() + newLine);
-				frame.getOutputPanel1().writeToTextArea("Relation Adjustability: " + relation.getAdjust() + newLine);
-				frame.getOutputPanel1().writeToTextArea("Relation Limit: " + relation.getLimit() + newLine);
-				String path = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(relation.getPath());
-				if(!path.isEmpty())
-					frame.getOutputPanel1().writeToTextArea("Relation Path: " + path + newLine);
-				
-				frame.getOutputPanel1().writeToTextArea(endLine);
-				
-				frame.getsNePSULPanel1().getVisualizeNetworks().removeAll();
-				frame.getsNePSULPanel1().getVisualizeNetworks().drawRelation(relation);
-				frame.getsNePSULPanel1().getjTabbedPane1().setSelectedIndex(2);
-				frame.getsNePSULPanel1().getVisualizeNetworks().validate();
-				frame.getsNePSULPanel1().getVisualizeNetworks().repaint();
-				frame.getsNePSULPanel1().setBounds(156, 1, 815, 366);
-				frame.getsNePSULPanel1().getjTabbedPane1().setPreferredSize(new Dimension(815, 366));
-				frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).setPreferredSize(new Dimension(815, 366));
-				frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).validate();
-				frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).repaint();
-				frame.getOutputPanel1().setVisible(true);
-				frame.getTracingPanel1().setVisible(true);
-				frame.getMainFrame().validate();
-				frame.getMainFrame().repaint();
-			} catch (CustomException e) {
-				e.printStackTrace();
-			}
-		} else if (treeNode.getParent().toString().equals("Case Frames")) {
-			try {
-				CaseFrame caseframe = network.getCaseFrame(treeNode.toString());
-				frame.getOutputPanel1().writeToTextArea("Case Frame ID: " + caseframe.getId() + newLine);
-				frame.getOutputPanel1().writeToTextArea("Case Frame Semantic Class: " + caseframe.getSemanticClass() + newLine);
-				
-				frame.getOutputPanel1().writeToTextArea("Case Frame Relations:" + newLine);
-				LinkedList<Relation> relations = caseframe.getRelations();
-				for(Relation relation : relations) {
-					frame.getOutputPanel1().writeToTextArea(relation.getName() + newLine);
+		try{
+			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent();
+			if(treeNode.getParent().toString().equals("Nodes")) {
+				try {
+					Node node = network.getNode(treeNode.toString());
+					frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(node);
+					
+					frame.getsNePSULPanel1().getVisualizeNetworks().removeAll();
+					frame.getsNePSULPanel1().getVisualizeNetworks().drawNode(node);
+					frame.getsNePSULPanel1().getjTabbedPane1().setSelectedIndex(2);
+					frame.getsNePSULPanel1().getVisualizeNetworks().validate();
+					frame.getsNePSULPanel1().getVisualizeNetworks().repaint();
+					frame.getsNePSULPanel1().setBounds(156, 1, 815, 366);
+					frame.getsNePSULPanel1().getjTabbedPane1().setPreferredSize(new Dimension(815, 366));
+					frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).setPreferredSize(new Dimension(815, 366));
+					frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).validate();
+					frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).repaint();
+					frame.getOutputPanel1().setVisible(true);
+					frame.getTracingPanel1().setVisible(true);
+					frame.getMainFrame().validate();
+					frame.getMainFrame().repaint();
+				} catch (CustomException e) {
+					//e.printStackTrace();
 				}
-				frame.getOutputPanel1().writeToTextArea(endLine);
-				
-				frame.getsNePSULPanel1().getVisualizeNetworks().removeAll();
-				frame.getsNePSULPanel1().getVisualizeNetworks().drawCaseFrame(caseframe);
-				frame.getsNePSULPanel1().getjTabbedPane1().setSelectedIndex(2);
-				frame.getsNePSULPanel1().getVisualizeNetworks().validate();
-				frame.getsNePSULPanel1().getVisualizeNetworks().repaint();
-				frame.getsNePSULPanel1().setBounds(156, 1, 815, 366);
-				frame.getsNePSULPanel1().getjTabbedPane1().setPreferredSize(new Dimension(815, 366));
-				frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).setPreferredSize(new Dimension(815, 366));
-				frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).validate();
-				frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).repaint();
-				frame.getOutputPanel1().setVisible(true);
-				frame.getTracingPanel1().setVisible(true);
-				frame.getMainFrame().validate();
-				frame.getMainFrame().repaint();
-			} catch (CustomException e) {
-				e.printStackTrace();
+			} else if (treeNode.getParent().toString().equals("Relations")) {
+				try {
+					Relation relation = network.getRelation(treeNode.toString());
+					frame.getOutputPanel1().writeToTextArea("Relation Name: " + relation.getName() + newLine);
+					frame.getOutputPanel1().writeToTextArea("Relation Type: " + relation.getType() + newLine);
+					frame.getOutputPanel1().writeToTextArea("Relation Adjustability: " + relation.getAdjust() + newLine);
+					frame.getOutputPanel1().writeToTextArea("Relation Limit: " + relation.getLimit() + newLine);
+					
+					if(relation.getPath() != null) {
+						String path = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(relation.getPath());
+						frame.getOutputPanel1().writeToTextArea("Relation Path: " + path + newLine);
+					}
+						
+					frame.getOutputPanel1().writeToTextArea(endLine);
+					
+					frame.getsNePSULPanel1().getVisualizeNetworks().removeAll();
+					frame.getsNePSULPanel1().getVisualizeNetworks().drawRelation(relation);
+					frame.getsNePSULPanel1().getjTabbedPane1().setSelectedIndex(2);
+					frame.getsNePSULPanel1().getVisualizeNetworks().validate();
+					frame.getsNePSULPanel1().getVisualizeNetworks().repaint();
+					frame.getsNePSULPanel1().setBounds(156, 1, 815, 366);
+					frame.getsNePSULPanel1().getjTabbedPane1().setPreferredSize(new Dimension(815, 366));
+					frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).setPreferredSize(new Dimension(815, 366));
+					frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).validate();
+					frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).repaint();
+					frame.getOutputPanel1().setVisible(true);
+					frame.getTracingPanel1().setVisible(true);
+					frame.getMainFrame().validate();
+					frame.getMainFrame().repaint();
+				} catch (CustomException e) {}
+			} else if (treeNode.getParent().toString().equals("Case Frames")) {
+				try {
+					CaseFrame caseframe = network.getCaseFrame(treeNode.toString());
+					frame.getOutputPanel1().writeToTextArea("Case Frame ID: " + caseframe.getId() + newLine);
+					frame.getOutputPanel1().writeToTextArea("Case Frame Semantic Class: " + caseframe.getSemanticClass() + newLine);
+					
+					frame.getOutputPanel1().writeToTextArea("Case Frame Relations:" + newLine);
+					LinkedList<Relation> relations = caseframe.getRelations();
+					for(Relation relation : relations) {
+						frame.getOutputPanel1().writeToTextArea(relation.getName() + newLine);
+					}
+					frame.getOutputPanel1().writeToTextArea(endLine);
+					
+					frame.getsNePSULPanel1().getVisualizeNetworks().removeAll();
+					frame.getsNePSULPanel1().getVisualizeNetworks().drawCaseFrame(caseframe);
+					frame.getsNePSULPanel1().getjTabbedPane1().setSelectedIndex(2);
+					frame.getsNePSULPanel1().getVisualizeNetworks().validate();
+					frame.getsNePSULPanel1().getVisualizeNetworks().repaint();
+					frame.getsNePSULPanel1().setBounds(156, 1, 815, 366);
+					frame.getsNePSULPanel1().getjTabbedPane1().setPreferredSize(new Dimension(815, 366));
+					frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).setPreferredSize(new Dimension(815, 366));
+					frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).validate();
+					frame.getsNePSULPanel1().getjTabbedPane1().getComponent(0).repaint();
+					frame.getOutputPanel1().setVisible(true);
+					frame.getTracingPanel1().setVisible(true);
+					frame.getMainFrame().validate();
+					frame.getMainFrame().repaint();
+				} catch (CustomException e) {}
+			} else {
+				return;
 			}
-		} else {
-			return;
-		}
+		} catch (Exception e) {}
 	}
 	
 	/**

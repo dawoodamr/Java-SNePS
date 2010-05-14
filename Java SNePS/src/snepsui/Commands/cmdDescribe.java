@@ -50,6 +50,8 @@ public class cmdDescribe extends javax.swing.JPanel {
 	private JButton doneButton;
 	private DefaultListModel nodesetModel;
 	private JScrollPane jScrollPane2;
+	private JButton assertButton;
+	private JButton findButton;
 	private JComboBox contextComboBox;
 	private JComboBox nodesComboBox;
 	private JButton infoButton;
@@ -71,6 +73,14 @@ public class cmdDescribe extends javax.swing.JPanel {
 	@Action
     public void info() {	
     }
+	
+	@Action
+	public void find() {
+	}
+	
+	@Action
+	public void assertAction() {
+	}
 	
 	private ActionMap getAppActionMap() {
         return Application.getInstance().getContext().getActionMap(this);
@@ -191,6 +201,30 @@ public class cmdDescribe extends javax.swing.JPanel {
 				contextComboBox.setModel(contextComboBoxModel);
 				contextComboBox.setBounds(414, 24, 139, 22);
 			}
+			{
+				findButton = new JButton();
+				this.add(findButton);
+				findButton.setAction(getAppActionMap().get("find"));
+				findButton.setBounds(381, 26, 18, 20);
+				findButton.setName("findButton");
+				findButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						findButtonActionPerformed(evt);
+					}
+				});
+			}
+			{
+				assertButton = new JButton();
+				this.add(assertButton);
+				assertButton.setAction(getAppActionMap().get("assertAction"));
+				assertButton.setBounds(358, 26, 18, 20);
+				assertButton.setName("assertButton");
+				assertButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						assertButtonActionPerformed(evt);
+					}
+				});
+			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -201,6 +235,22 @@ public class cmdDescribe extends javax.swing.JPanel {
 		JFrame popupFrame = new JFrame("Build");
 		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		popupFrame.getContentPane().add(new cmdBuild(network, frame));
+		popupFrame.pack();
+		popupFrame.setVisible(true);
+	}
+	
+	private void assertButtonActionPerformed(ActionEvent evt) {
+		JFrame popupFrame = new JFrame("Assert");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popupFrame.getContentPane().add(new cmdAssert(network, frame));
+		popupFrame.pack();
+		popupFrame.setVisible(true);
+	}
+	
+	private void findButtonActionPerformed(ActionEvent evt) {
+		JFrame popupFrame = new JFrame("Find");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popupFrame.getContentPane().add(new cmdFind(network, frame));
 		popupFrame.pack();
 		popupFrame.setVisible(true);
 	}

@@ -52,11 +52,7 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 	private JList nodesetList;
 	private JLabel contextNameLabel;
 	private JLabel nodesetLabel;
-	private JTextField nodesetTextField;
-	private JButton buildButton;
 	private Network network;
-	private JButton assertButton;
-	private JButton findButton;
 	private SNePSInterface frame;
 
 	public cmdRemoveFromContext(Network network, SNePSInterface frame) {
@@ -98,19 +94,19 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 				removeFromContextLabel = new JLabel();
 				this.add(removeFromContextLabel);
 				removeFromContextLabel.setName("removeFromContextLabel");
-				removeFromContextLabel.setBounds(7, 27, 142, 15);
+				removeFromContextLabel.setBounds(28, 27, 142, 15);
 			}
 			{
 				addButton = new JButton();
 				this.add(addButton);
-				addButton.setBounds(569, 27, 16, 18);
+				addButton.setBounds(562, 26, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
 				addButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent evt) {
-						nodesetListModel.addElement(nodesetTextField.getText());
-						nodesetTextField.setText("");
+						nodesetListModel.addElement(nodesetComboBox.getSelectedItem().toString());
+						nodesetComboBox.setSelectedIndex(0);
 						validate();
 					}
 				});
@@ -122,32 +118,28 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 				doneButton.setName("doneButton");
 			}
 			{
-				nodesetTextField = new JTextField();
-				this.add(nodesetTextField);
-				nodesetTextField.setBounds(435, 23, 122, 22);
-			}
-			{
 				nodesetLabel = new JLabel();
 				this.add(nodesetLabel);
-				nodesetLabel.setBounds(314, 4, 61, 15);
+				nodesetLabel.setBounds(337, 4, 61, 15);
 				nodesetLabel.setName("nodesetLabel");
 			}
 			{
 				contextNameLabel = new JLabel();
 				this.add(contextNameLabel);
-				contextNameLabel.setBounds(149, 4, 97, 15);
+				contextNameLabel.setBounds(177, 4, 97, 15);
 				contextNameLabel.setName("contextNameLabel");
 			}
 			{
 				jScrollPane2 = new JScrollPane();
 				this.add(jScrollPane2);
-				jScrollPane2.setBounds(314, 57, 243, 103);
+				jScrollPane2.setBounds(337, 57, 213, 103);
 				{
 					nodesetListModel = new DefaultListModel();
 					nodesetList = new JList();
 					jScrollPane2.setViewportView(nodesetList);
 					nodesetList.setModel(nodesetListModel);
-					nodesetList.setBounds(12, 185, 205, 100);
+					nodesetList.setBounds(37, 160, 240, 100);
+					nodesetList.setPreferredSize(new java.awt.Dimension(126, 43));
 				}
 			}
 			{
@@ -160,45 +152,6 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 			}
 			{
 				new ButtonGroup();
-			}
-			{
-				buildButton = new JButton();
-				this.add(buildButton);
-				buildButton.setBounds(590, 25, 18, 20);
-				buildButton.setAction(getAppActionMap().get("build"));
-				buildButton.setFocusable(false);
-				buildButton.setToolTipText("build");
-				buildButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						buildButtonActionPerformed(evt);
-					}
-				});
-			}
-			{
-				assertButton = new JButton();
-				this.add(assertButton);
-				assertButton.setBounds(613, 25, 18, 20);
-				assertButton.setAction(getAppActionMap().get("assertAction"));
-				assertButton.setFocusable(false);
-				assertButton.setToolTipText("assert");
-				assertButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						assertButtonActionPerformed(evt);
-					}
-				});
-			}
-			{
-				findButton = new JButton();
-				this.add(findButton);
-				findButton.setBounds(636, 25, 18, 20);
-				findButton.setAction(getAppActionMap().get("find"));
-				findButton.setFocusable(false);
-				findButton.setToolTipText("assert");
-				findButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						findButtonActionPerformed(evt);
-					}
-				});
 			}
 			{
 				DefaultComboBoxModel nodesetComboBoxModel = new DefaultComboBoxModel();
@@ -216,7 +169,7 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 				nodesetComboBox = new JComboBox();
 				this.add(nodesetComboBox);
 				nodesetComboBox.setModel(nodesetComboBoxModel);
-				nodesetComboBox.setBounds(314, 23, 115, 22);
+				nodesetComboBox.setBounds(337, 23, 213, 22);
 			}
 			{
 				ComboBoxModel contextComboBoxModel = 
@@ -224,37 +177,12 @@ public class cmdRemoveFromContext extends javax.swing.JPanel {
 				contextComboBox = new JComboBox();
 				this.add(contextComboBox);
 				contextComboBox.setModel(contextComboBoxModel);
-				contextComboBox.setBounds(149, 23, 148, 22);
+				contextComboBox.setBounds(177, 23, 148, 22);
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private void buildButtonActionPerformed(ActionEvent evt) {
-
-		JFrame popupFrame = new JFrame("Build");
-		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		popupFrame.getContentPane().add(new cmdBuild(network, frame));
-		popupFrame.pack();
-		popupFrame.setVisible(true);
-	}
-	
-	private void assertButtonActionPerformed(ActionEvent evt) {
-		JFrame popupFrame = new JFrame("Assert");
-		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		popupFrame.getContentPane().add(new cmdAssert(network, frame));
-		popupFrame.pack();
-		popupFrame.setVisible(true);
-	}
-	
-	private void findButtonActionPerformed(ActionEvent evt) {
-		JFrame popupFrame = new JFrame("Find");
-		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		popupFrame.getContentPane().add(new cmdFind(network, frame));
-		popupFrame.pack();
-		popupFrame.setVisible(true);
 	}
 }

@@ -8,8 +8,11 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -35,7 +38,7 @@ import snepsui.Interface.SNePSInterface;
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
 public class cmdDeduceFalse extends javax.swing.JPanel {
-	private JLabel deduceFalseLabel;
+	private JLabel deduceLabel;
 	private JTextField nodesetTextField;
 	private JButton addButton;
 	private JList nodesetList;
@@ -51,33 +54,37 @@ public class cmdDeduceFalse extends javax.swing.JPanel {
 	private JLabel nposLabel;
 	private JTextField numbTextField;
 	private JRadioButton numbRadioButton3;
+	private JButton assertButton;
+	private JButton findButton;
+	private JComboBox contextNameComboBox;
+	private JComboBox relationComboBox;
+	private JComboBox nodesComboBox;
 	private JRadioButton numbRadioButton2;
 	private JRadioButton numbRadioButton1;
-	private JRadioButton contextNameRadioButton1;
-	private JRadioButton contextNameRadioButton2;
-	private JTextField contextNameTextField;
 	private JLabel contextNameLabel;
 	private JButton infoButton;
 	private JList relationList;
 	private JLabel nodesetLabel;
 	private JLabel relationLabel;
-	private JTextField relationTextField;
 	private ButtonGroup group;
 	private JButton buildButton;
 	private Network network;
 	private SNePSInterface frame;
 
 	@Action
-	public void add() {
-	}
+	public void add() {}
 	
 	@Action
-	public void build() {
-	}
+	public void build() {}
 
 	@Action
-	public void info() {
-	}
+	public void info() {}
+	
+	@Action
+	public void find() {}
+	
+	@Action
+	public void assertAction() {}
 
 	private ActionMap getAppActionMap() {
 		return Application.getInstance().getContext().getActionMap(this);
@@ -95,28 +102,28 @@ public class cmdDeduceFalse extends javax.swing.JPanel {
 			setPreferredSize(new Dimension(690, 225));
 			this.setLayout(null);
 			{
-				deduceFalseLabel = new JLabel();
-				this.add(deduceFalseLabel);
-				deduceFalseLabel.setName("deduceFalseLabel");
-				deduceFalseLabel.setBounds(0, 28, 80, 15);
+				deduceLabel = new JLabel();
+				this.add(deduceLabel);
+				deduceLabel.setName("deduceLabel");
+				deduceLabel.setBounds(5, 28, 82, 15);
 			}
 			{
 				nodesetTextField = new JTextField();
 				this.add(nodesetTextField);
-				nodesetTextField.setBounds(281, 25, 192, 22);
+				nodesetTextField.setBounds(385, 25, 88, 22);
 			}
 			{
 				addButton = new JButton();
 				this.add(addButton);
-				addButton.setBounds(481, 27, 16, 18);
+				addButton.setBounds(475, 27, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
-				addButton.setFocusable(false);
 				addButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent evt) {
-						relationListModel.addElement(relationTextField.getText());
+						relationListModel.addElement(relationComboBox.getSelectedItem().toString());
 						nodesetListModel.addElement(nodesetTextField.getText());
-						relationTextField.setText("");
+						relationComboBox.setSelectedIndex(0);
+						nodesComboBox.setSelectedIndex(0);
 						nodesetTextField.setText("");
 						validate();
 					}
@@ -141,14 +148,9 @@ public class cmdDeduceFalse extends javax.swing.JPanel {
 				}
 			}
 			{
-				relationTextField = new JTextField();
-				this.add(relationTextField);
-				relationTextField.setBounds(80, 25, 189, 22);
-			}
-			{
 				relationLabel = new JLabel();
 				this.add(relationLabel);
-				relationLabel.setBounds(80, 4, 70, 15);
+				relationLabel.setBounds(92, 4, 70, 15);
 				relationLabel.setName("relationLabel");
 			}
 			{
@@ -160,21 +162,21 @@ public class cmdDeduceFalse extends javax.swing.JPanel {
 			{
 				jScrollPane2 = new JScrollPane();
 				this.add(jScrollPane2);
-				jScrollPane2.setBounds(79, 59, 189, 103);
+				jScrollPane2.setBounds(92, 59, 176, 103);
 				{
 					relationListModel = new DefaultListModel();
 					relationList = new JList();
 					jScrollPane2.setViewportView(relationList);
 					relationList.setModel(relationListModel);
-					relationList.setBounds(185, 73, 186, 100);
+					relationList.setBounds(79, 144, 186, 100);
+					relationList.setPreferredSize(new java.awt.Dimension(102, 68));
 				}
 			}
 			{
 				buildButton = new JButton();
 				this.add(buildButton);
-				buildButton.setBounds(502, 26, 18, 20);
+				buildButton.setBounds(496, 26, 18, 20);
 				buildButton.setAction(getAppActionMap().get("build"));
-				buildButton.setFocusable(false);
 				buildButton.setToolTipText("build");
 				buildButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -187,42 +189,16 @@ public class cmdDeduceFalse extends javax.swing.JPanel {
 				this.add(infoButton);
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
-				infoButton.setFocusable(false);
 				infoButton.setToolTipText("info");
 			}
 			{
 				contextNameLabel = new JLabel();
 				this.add(contextNameLabel);
 				contextNameLabel.setName("contextNameLabel");
-				contextNameLabel.setBounds(533, 2, 107, 19);
-			}
-			{
-				contextNameTextField = new JTextField();
-				this.add(contextNameTextField);
-				contextNameTextField.setBounds(555, 53, 129, 27);
-				contextNameTextField.setName("contextNameTextField");
-				contextNameTextField.setEditable(false);
-			}
-			{
-				contextNameRadioButton2 = new JRadioButton();
-				this.add(contextNameRadioButton2);
-				contextNameRadioButton2.setBounds(533, 52, 23, 26);
-				contextNameRadioButton2.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent evt) {
-						contextNameRadioButton2MouseClicked(evt);
-					}
-				});
-			}
-			{
-				contextNameRadioButton1 = new JRadioButton();
-				this.add(contextNameRadioButton1);
-				contextNameRadioButton1.setName("contextNameRadioButton1");
-				contextNameRadioButton1.setBounds(533, 24, 107, 23);
+				contextNameLabel.setBounds(533, 45, 107, 19);
 			}
 			{
 				group = new ButtonGroup();
-				group.add(contextNameRadioButton1);
 				{
 					numbLabel = new JLabel();
 					this.add(numbLabel);
@@ -291,20 +267,56 @@ public class cmdDeduceFalse extends javax.swing.JPanel {
 					nnegTextField.setBounds(656, 154, 28, 18);
 					nnegTextField.setEditable(false);
 				}
-				group.add(contextNameRadioButton2);
+				{
+					ComboBoxModel nodesComboBoxModel = new DefaultComboBoxModel();
+					nodesComboBox = new JComboBox();
+					this.add(nodesComboBox);
+					nodesComboBox.setModel(nodesComboBoxModel);
+					nodesComboBox.setBounds(281, 24, 98, 22);
+				}
+				{
+					ComboBoxModel relationComboBoxModel = new DefaultComboBoxModel();
+					relationComboBox = new JComboBox();
+					this.add(relationComboBox);
+					relationComboBox.setModel(relationComboBoxModel);
+					relationComboBox.setBounds(92, 24, 173, 23);
+				}
+				{
+					ComboBoxModel contextNameComboBoxModel = new DefaultComboBoxModel();
+					contextNameComboBox = new JComboBox();
+					this.add(contextNameComboBox);
+					contextNameComboBox.setModel(contextNameComboBoxModel);
+					contextNameComboBox.setBounds(533, 64, 151, 22);
+				}
+				{
+					findButton = new JButton();
+					this.add(findButton);
+					findButton.setAction(getAppActionMap().get("find"));
+					findButton.setName("findButton");
+					findButton.setBounds(540, 26, 18, 20);
+					findButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							findButtonActionPerformed(evt);
+						}
+					});
+				}
+				{
+					assertButton = new JButton();
+					this.add(assertButton);
+					assertButton.setAction(getAppActionMap().get("assertAction"));
+					assertButton.setName("assertButton");
+					assertButton.setBounds(519, 26, 18, 20);
+					assertButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							assertButtonActionPerformed(evt);
+						}
+					});
+				}
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	private void contextNameRadioButton2MouseClicked(MouseEvent evt) {
-		if (contextNameRadioButton2.isSelected()) {
-			nodesetTextField.setEditable(true);
-		} else {
-			nodesetTextField.setEditable(false);
 		}
 	}
 	
@@ -337,6 +349,22 @@ public class cmdDeduceFalse extends javax.swing.JPanel {
 		JFrame popupFrame = new JFrame("Build");
 		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		popupFrame.getContentPane().add(new cmdBuild(network, frame));
+		popupFrame.pack();
+		popupFrame.setVisible(true);
+	}
+	
+	private void assertButtonActionPerformed(ActionEvent evt) {
+		JFrame popupFrame = new JFrame("Assert");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popupFrame.getContentPane().add(new cmdAssert(network, frame));
+		popupFrame.pack();
+		popupFrame.setVisible(true);
+	}
+	
+	private void findButtonActionPerformed(ActionEvent evt) {
+		JFrame popupFrame = new JFrame("Find");
+		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		popupFrame.getContentPane().add(new cmdFind(network, frame));
 		popupFrame.pack();
 		popupFrame.setVisible(true);
 	}

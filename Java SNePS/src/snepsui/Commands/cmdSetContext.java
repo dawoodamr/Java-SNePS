@@ -5,6 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
@@ -16,6 +19,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -24,6 +28,7 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.Network;
+import sneps.Node;
 import snepsui.Interface.SNePSInterface;
 
 
@@ -148,7 +153,6 @@ public class cmdSetContext extends javax.swing.JPanel {
 					this.add(findButton);
 					findButton.setAction(getAppActionMap().get("find"));
 					findButton.setBounds(398, 26, 18, 20);
-					findButton.setName("findButton");
 					findButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							findButtonActionPerformed(evt);
@@ -160,7 +164,6 @@ public class cmdSetContext extends javax.swing.JPanel {
 					this.add(assertButton);
 					assertButton.setAction(getAppActionMap().get("assertAction"));
 					assertButton.setBounds(375, 26, 18, 20);
-					assertButton.setName("assertButton");
 					assertButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							assertButtonActionPerformed(evt);
@@ -172,7 +175,6 @@ public class cmdSetContext extends javax.swing.JPanel {
 					this.add(buildButton);
 					buildButton.setAction(getAppActionMap().get("build"));
 					buildButton.setBounds(352, 26, 18, 20);
-					buildButton.setName("buildButton");
 					buildButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							buildButtonActionPerformed(evt);
@@ -184,7 +186,6 @@ public class cmdSetContext extends javax.swing.JPanel {
 					this.add(addButton);
 					addButton.setAction(getAppActionMap().get("add"));
 					addButton.setBounds(331, 27, 16, 18);
-					addButton.setName("addButton");
 					addButton.addMouseListener(new MouseAdapter() {
 						public void mouseClicked(MouseEvent evt) {
 							nodesetListModel.addElement(nodesetTextField.getText());
@@ -199,11 +200,38 @@ public class cmdSetContext extends javax.swing.JPanel {
 					nodesetTextField.setBounds(202, 25, 117, 22);
 				}
 				{
-					ComboBoxModel nodesetComboBoxModel = new DefaultComboBoxModel();
+					DefaultComboBoxModel nodesetComboBoxModel = new DefaultComboBoxModel();
+					
+					String str = "";
+					Hashtable<String, Node> nodes = network.getNodes();
+					Set<String> set = nodes.keySet();
+
+				    Iterator<String> itr = set.iterator();
+				    while (itr.hasNext()) {
+				      str = itr.next();
+				      nodesetComboBoxModel.addElement(nodes.get(str).getIdentifier()) ;
+				    }
 					nodesetComboBox = new JComboBox();
 					this.add(nodesetComboBox);
 					nodesetComboBox.setModel(nodesetComboBoxModel);
 					nodesetComboBox.setBounds(88, 24, 108, 22);
+					nodesetComboBox.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							String nodes = nodesetTextField.getText();
+							if(nodes.contains(nodesetComboBox.getSelectedItem().toString())) {
+								if (nodes.isEmpty()) {
+									nodesetTextField.setText(nodesetComboBox.getSelectedItem().toString());
+								} else {
+									nodesetTextField.setText(nodes + "," + nodesetComboBox.getSelectedItem().toString());
+								}
+							} else {
+								JOptionPane.showMessageDialog(getRootPane(),
+										"The relation is already included in the case frame",
+										"Warning",
+										JOptionPane.WARNING_MESSAGE);
+							}
+						}
+					});
 				}
 				{
 					nodesetLabel = new JLabel();

@@ -18,8 +18,11 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.commons.collections15.Transformer;
@@ -94,264 +97,312 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 	}
 	
 	private void drawNetwork() {
-		Graph<String, String> graph = new DirectedSparseMultigraph<String, String>();
-		final LinkedList<Node> nodesList = new LinkedList<Node>();
-		
-		Hashtable<String, Node> nodes = network.getNodes();
-		String nodeString = ""; 
-		Set<String> set = nodes.keySet();
+		try {
+			Graph<String, String> graph = new DirectedSparseMultigraph<String, String>();
+			final LinkedList<Node> nodesList = new LinkedList<Node>();
+			
+			Hashtable<String, Node> nodes = network.getNodes();
+			String nodeString = ""; 
+			Set<String> set = nodes.keySet();
 
-	    Iterator<String> itr1 = set.iterator();
-	    while (itr1.hasNext()) {
-	    	nodeString = itr1.next();
-	    	Node node = nodes.get(nodeString);
-	    	String nodeName = node.getIdentifier();
-	    	System.out.println(node.getIdentifier());
-	    	System.out.println(nodeName);
-	    	graph.addVertex(nodeName);
-	    	nodesList.add(node);
-	    }
-	    
-	    Iterator<String> itr2 = set.iterator();
-	    while (itr2.hasNext()) {
-	    	nodeString = itr2.next();
-	    	Node node = nodes.get(nodeString);
-	    	UpCableSet upCableSet = node.getUpCableSet();
-	    	for (int i = 0; i < upCableSet.getUpCables().size(); i++) {
-	    		Relation relation = upCableSet.getUpCables().get(i).getRelation();
-		    	LinkedList<Node> nodeset = upCableSet.getUpCables().get(i).getNodeSet().getNodes();
-		    	for(Node item : nodeset) {
-		    		graph.addEdge(new RelationEdge(relation.getName()).toString(),item.getIdentifier(),node.getIdentifier());
-		    		System.out.println("Relation Name: " + relation.getName());
-		    		System.out.println("Node Name: " + node.getIdentifier());
-		    		System.out.println("Upcable Node: "+ item.getIdentifier());
+		    Iterator<String> itr1 = set.iterator();
+		    while (itr1.hasNext()) {
+		    	nodeString = itr1.next();
+		    	Node node = nodes.get(nodeString);
+		    	String nodeName = node.getIdentifier();
+		    	System.out.println(node.getIdentifier());
+		    	System.out.println(nodeName);
+		    	graph.addVertex(nodeName);
+		    	nodesList.add(node);
+		    }
+		    
+		    Iterator<String> itr2 = set.iterator();
+		    while (itr2.hasNext()) {
+		    	nodeString = itr2.next();
+		    	Node node = nodes.get(nodeString);
+		    	UpCableSet upCableSet = node.getUpCableSet();
+		    	for (int i = 0; i < upCableSet.getUpCables().size(); i++) {
+		    		Relation relation = upCableSet.getUpCables().get(i).getRelation();
+			    	LinkedList<Node> nodeset = upCableSet.getUpCables().get(i).getNodeSet().getNodes();
+			    	for(Node item : nodeset) {
+			    		graph.addEdge(new RelationEdge(relation.getName()).toString(),item.getIdentifier(),node.getIdentifier());
+			    		System.out.println("Relation Name: " + relation.getName());
+			    		System.out.println("Node Name: " + node.getIdentifier());
+			    		System.out.println("Upcable Node: "+ item.getIdentifier());
+			    	}
 		    	}
-	    	}
-	    }
-	    
-	    ISOMLayout<String, String> layout = new ISOMLayout<String,String>(graph);
-	    
-	    shape = new Transformer<String, Integer>() {
-	    	public Integer transform(String vertex) {
-	    		int stringLength = 0;
-	    		for(Node node : nodesList) {
-    				if(vertex.equals(node.getIdentifier())) {
-    					stringLength = node.getIdentifier().length();
-    				}
-        		}
-	    		return stringLength;
-	    	}
-		};
-        
-        vertexPaint = new Transformer<String,Paint>() {
-        	public Paint transform(String vertex) {
-        		for(Node node : nodesList) {
-    				if(node.getIdentifier().equals(vertex)) {
-    					if(node.getClass().getSimpleName().equals("BaseNode")) {
-    						return Color.green;
-    					} else if (node.getClass().getSimpleName().equals("VariableNode")) {
-    						return Color.gray;
-    					} else if (node.getClass().getSimpleName().equals("PatternNode")) {
-    						return Color.blue;
-    					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
-    						return Color.yellow;
-    					}
-    				}
-        		}
-        		return Color.magenta;
-        	}
-        };
-        
-        edgeLabel = new Transformer<String, String>() {
-        	public String transform(String edge) {
-        		return edge.substring(0, edge.indexOf(":"));
-        	}
-		};
-        
-        VertexShapeSizeAspect<String> vssa = new VertexShapeSizeAspect<String>(graph, shape);
-        
-        vv =  new VisualizationViewer<String,String>(layout, new Dimension(700,470));
-        
-        vv.setBackground(Color.white);
-        vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
-        vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
-        vv.getRenderContext().setEdgeLabelTransformer(edgeLabel);
-        vv.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
-        vv.setVertexToolTipTransformer(new ToStringLabeller<String>());
-        vv.getRenderContext().setArrowFillPaintTransformer(new ConstantTransformer(Color.lightGray));
-        vv.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
-        vv.getRenderContext().setVertexShapeTransformer(vssa);
-        vv.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer(0.5, 0.5));
-        vssa.setScaling(true);
-        
-        final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
-        this.add(panel);
-        
-        final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
+		    }
+		    
+		    ISOMLayout<String, String> layout = new ISOMLayout<String,String>(graph);
+		    
+		    shape = new Transformer<String, Integer>() {
+		    	public Integer transform(String vertex) {
+		    		int stringLength = 0;
+		    		for(Node node : nodesList) {
+	    				if(vertex.equals(node.getIdentifier())) {
+	    					stringLength = node.getIdentifier().length();
+	    				}
+	        		}
+		    		return stringLength;
+		    	}
+			};
+	        
+	        vertexPaint = new Transformer<String,Paint>() {
+	        	public Paint transform(String vertex) {
+	        		for(Node node : nodesList) {
+	    				if(node.getIdentifier().equals(vertex)) {
+	    					if(node.getClass().getSimpleName().equals("BaseNode")) {
+	    						return Color.green;
+	    					} else if (node.getClass().getSimpleName().equals("VariableNode")) {
+	    						return Color.gray;
+	    					} else if (node.getClass().getSimpleName().equals("PatternNode")) {
+	    						return Color.blue;
+	    					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
+	    						return Color.yellow;
+	    					}
+	    				}
+	        		}
+	        		return Color.magenta;
+	        	}
+	        };
+	        
+	        edgeLabel = new Transformer<String, String>() {
+	        	public String transform(String edge) {
+	        		return edge.substring(0, edge.indexOf(":"));
+	        	}
+			};
+	        
+	        VertexShapeSizeAspect<String> vssa = new VertexShapeSizeAspect<String>(graph, shape);
+	        
+	        vv =  new VisualizationViewer<String,String>(layout, new Dimension(700,470));
+	        
+	        vv.setBackground(Color.white);
+	        vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
+	        vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
+	        vv.getRenderContext().setEdgeLabelTransformer(edgeLabel);
+	        vv.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
+	        vv.setVertexToolTipTransformer(new ToStringLabeller<String>());
+	        vv.getRenderContext().setArrowFillPaintTransformer(new ConstantTransformer(Color.lightGray));
+	        vv.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
+	        vv.getRenderContext().setVertexShapeTransformer(vssa);
+	        vv.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer(0.5, 0.5));
+	        vssa.setScaling(true);
+	        
+	        final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
+	        this.add(panel);
+	        
+	        final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
 
-        vv.setGraphMouse(graphMouse);
-        vv.addKeyListener(graphMouse.getModeKeyListener());
+	        vv.setGraphMouse(graphMouse);
+	        vv.addKeyListener(graphMouse.getModeKeyListener());
 
-        JComboBox modeBox = graphMouse.getModeComboBox();
-        modeBox.addItemListener(graphMouse.getModeListener());
-        graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
+	        JComboBox modeBox = graphMouse.getModeComboBox();
+	        modeBox.addItemListener(graphMouse.getModeListener());
+	        graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
 
-        final ScalingControl scaler = new CrossoverScalingControl();
-        
-        vv.scaleToLayout(scaler);
+	        final ScalingControl scaler = new CrossoverScalingControl();
+	        
+	        vv.scaleToLayout(scaler);
 
-        JButton plus = new JButton("+");
-        plus.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                scaler.scale(vv, 1.1f, vv.getCenter());
-            }
-        });
-        JButton minus = new JButton("-");
-        minus.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                scaler.scale(vv, 1/1.1f, vv.getCenter());
-            }
-        });
+	        JButton plus = new JButton("+");
+	        plus.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	                scaler.scale(vv, 1.1f, vv.getCenter());
+	            }
+	        });
+	        JButton minus = new JButton("-");
+	        minus.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	                scaler.scale(vv, 1/1.1f, vv.getCenter());
+	            }
+	        });
+	        
+	        String path = "src/snepsui/Interface/resources/icons/";
+	        
+	        JButton colors = new JButton(new ImageIcon(path + "colors.png"));
+	        colors.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JFrame popupFrame = new JFrame("Node Colors");
+					popupFrame.setLocation(450, 350);
+					popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					popupFrame.getContentPane().add(new NodeColors());
+					popupFrame.pack();
+					popupFrame.setResizable(false);
+					popupFrame.setVisible(true);
+				}
+			});
 
-        JPanel scaleGrid = new JPanel(new GridLayout(1,0));
-        scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
+	        JPanel scaleGrid = new JPanel(new GridLayout(1,0));
+	        scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
 
-        JPanel controls = new JPanel();
-        scaleGrid.add(plus);
-        scaleGrid.add(minus);
-        controls.add(scaleGrid);
-        controls.add(modeBox);
-        this.add(controls, BorderLayout.SOUTH);
-        
-        this.validate();
-        this.repaint();
+	        JPanel controls = new JPanel();
+	        scaleGrid.add(plus);
+	        scaleGrid.add(minus);
+	        controls.add(scaleGrid);
+	        controls.add(modeBox);
+	        controls.add(colors);
+	        this.add(controls, BorderLayout.SOUTH);
+	        
+	        this.validate();
+	        this.repaint();
+		} catch (Exception e) {
+			
+		}
+		
 	}
 	
 	public void drawRelation(Relation relation) {
-		Graph<String, String> graph = new DirectedSparseMultigraph<String, String>();
-		final LinkedList<Node> nodesList = new LinkedList<Node>();
-		
-		Hashtable<String, Node> nodes = network.getNodes();
-		String nodeString = ""; 
-		Set<String> set = nodes.keySet();
+		try {
+			Graph<String, String> graph = new DirectedSparseMultigraph<String, String>();
+			final LinkedList<Node> nodesList = new LinkedList<Node>();
+			
+			Hashtable<String, Node> nodes = network.getNodes();
+			String nodeString = ""; 
+			Set<String> set = nodes.keySet();
 
-	    Iterator<String> itr1 = set.iterator();
-	    while (itr1.hasNext()) {
-	    	nodeString = itr1.next();
-	    	Node node = nodes.get(nodeString);
-	    	LinkedList<UpCable> upcables = node.getUpCableSet().getUpCables();
-	    	
-	    	for(UpCable upcable : upcables) {
-	    		if(upcable.getRelation().equals(relation)) {
-	    			nodesList.add(node);
-	    			LinkedList<Node> upcableNodes = upcable.getNodeSet().getNodes();
-	    			
-	    			for(Node upcableNode : upcableNodes) {
-	    				graph.addEdge(new RelationEdge(upcable.getRelation().getName()).toString(),
-	    						upcableNode.getIdentifier(), 
-	    						node.getIdentifier());
-	    				nodesList.add(upcableNode);
-	    			}
-	    		}
-	    	}
-	    }
-	    
-	    ISOMLayout<String, String> layout = new ISOMLayout<String,String>(graph);
-	    
-	    shape = new Transformer<String, Integer>() {
-	    	public Integer transform(String vertex) {
-	    		int stringLength = 0;
-	    		for(Node node : nodesList) {
-    				if(vertex.equals(node.getIdentifier())) {
-    					stringLength = node.getIdentifier().length();
-    				}
-        		}
-	    		return stringLength;
-	    	}
-		};
-        
-        vertexPaint = new Transformer<String,Paint>() {
-        	public Paint transform(String vertex) {
-        		for(Node node : nodesList) {
-    				if(node.getIdentifier().equals(vertex)) {
-    					if(node.getClass().getSimpleName().equals("BaseNode")) {
-    						return Color.green;
-    					} else if (node.getClass().getSimpleName().equals("VariableNode")) {
-    						return Color.gray;
-    					} else if (node.getClass().getSimpleName().equals("PatternNode")) {
-    						return Color.blue;
-    					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
-    						return Color.yellow;
-    					}
-    				}
-        		}
-        		return Color.magenta;
-        	}
-        };
-        
-        edgeLabel = new Transformer<String, String>() {
-        	public String transform(String edge) {
-        		return edge.substring(0, edge.indexOf(":"));
-        	}
-		};
-        
-        VertexShapeSizeAspect<String> vssa = new VertexShapeSizeAspect<String>(graph, shape);
-        
-        vv =  new VisualizationViewer<String,String>(layout, new Dimension(700,220));
-        
-        vv.setBackground(Color.white);
-        vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
-        vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
-        vv.getRenderContext().setEdgeLabelTransformer(edgeLabel);
-        vv.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
-        vv.setVertexToolTipTransformer(new ToStringLabeller<String>());
-        vv.getRenderContext().setArrowFillPaintTransformer(new ConstantTransformer(Color.lightGray));
-        vv.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
-        vv.getRenderContext().setVertexShapeTransformer(vssa);
-        vv.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer(0.5, 0.5));
-        vssa.setScaling(true);
-        
-        final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
-        this.add(panel);
-        
-        final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
+		    Iterator<String> itr1 = set.iterator();
+		    while (itr1.hasNext()) {
+		    	nodeString = itr1.next();
+		    	Node node = nodes.get(nodeString);
+		    	LinkedList<UpCable> upcables = node.getUpCableSet().getUpCables();
+		    	
+		    	for(UpCable upcable : upcables) {
+		    		if(upcable.getRelation().equals(relation)) {
+		    			nodesList.add(node);
+		    			LinkedList<Node> upcableNodes = upcable.getNodeSet().getNodes();
+		    			
+		    			for(Node upcableNode : upcableNodes) {
+		    				graph.addEdge(new RelationEdge(upcable.getRelation().getName()).toString(),
+		    						upcableNode.getIdentifier(), 
+		    						node.getIdentifier());
+		    				nodesList.add(upcableNode);
+		    			}
+		    		}
+		    	}
+		    }
+		    
+		    ISOMLayout<String, String> layout = new ISOMLayout<String,String>(graph);
+		    
+		    shape = new Transformer<String, Integer>() {
+		    	public Integer transform(String vertex) {
+		    		int stringLength = 0;
+		    		for(Node node : nodesList) {
+	    				if(vertex.equals(node.getIdentifier())) {
+	    					stringLength = node.getIdentifier().length();
+	    				}
+	        		}
+		    		return stringLength;
+		    	}
+			};
+	        
+	        vertexPaint = new Transformer<String,Paint>() {
+	        	public Paint transform(String vertex) {
+	        		for(Node node : nodesList) {
+	    				if(node.getIdentifier().equals(vertex)) {
+	    					if(node.getClass().getSimpleName().equals("BaseNode")) {
+	    						return Color.green;
+	    					} else if (node.getClass().getSimpleName().equals("VariableNode")) {
+	    						return Color.gray;
+	    					} else if (node.getClass().getSimpleName().equals("PatternNode")) {
+	    						return Color.blue;
+	    					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
+	    						return Color.yellow;
+	    					}
+	    				}
+	        		}
+	        		return Color.magenta;
+	        	}
+	        };
+	        
+	        edgeLabel = new Transformer<String, String>() {
+	        	public String transform(String edge) {
+	        		return edge.substring(0, edge.indexOf(":"));
+	        	}
+			};
+	        
+	        VertexShapeSizeAspect<String> vssa = new VertexShapeSizeAspect<String>(graph, shape);
+	        
+	        vv =  new VisualizationViewer<String,String>(layout, new Dimension(700,220));
+	        
+	        vv.setBackground(Color.white);
+	        vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
+	        vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
+	        vv.getRenderContext().setEdgeLabelTransformer(edgeLabel);
+	        vv.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
+	        vv.setVertexToolTipTransformer(new ToStringLabeller<String>());
+	        vv.getRenderContext().setArrowFillPaintTransformer(new ConstantTransformer(Color.lightGray));
+	        vv.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
+	        vv.getRenderContext().setVertexShapeTransformer(vssa);
+	        vv.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer(0.5, 0.5));
+	        vssa.setScaling(true);
+	        
+	        final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
+	        this.add(panel);
+	        
+	        final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
 
-        vv.setGraphMouse(graphMouse);
-        vv.addKeyListener(graphMouse.getModeKeyListener());
+	        vv.setGraphMouse(graphMouse);
+	        vv.addKeyListener(graphMouse.getModeKeyListener());
 
-        JComboBox modeBox = graphMouse.getModeComboBox();
-        modeBox.addItemListener(graphMouse.getModeListener());
-        graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
+	        JComboBox modeBox = graphMouse.getModeComboBox();
+	        modeBox.addItemListener(graphMouse.getModeListener());
+	        graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
 
-        final ScalingControl scaler = new CrossoverScalingControl();
-        
-        vv.scaleToLayout(scaler);
+	        final ScalingControl scaler = new CrossoverScalingControl();
+	        
+	        vv.scaleToLayout(scaler);
 
-        JButton plus = new JButton("+");
-        plus.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                scaler.scale(vv, 1.1f, vv.getCenter());
-            }
-        });
-        JButton minus = new JButton("-");
-        minus.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                scaler.scale(vv, 1/1.1f, vv.getCenter());
-            }
-        });
+	        JButton plus = new JButton("+");
+	        plus.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	                scaler.scale(vv, 1.1f, vv.getCenter());
+	            }
+	        });
+	        JButton minus = new JButton("-");
+	        minus.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	                scaler.scale(vv, 1/1.1f, vv.getCenter());
+	            }
+	        });
 
-        JPanel scaleGrid = new JPanel(new GridLayout(1,0));
-        scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
+	        JPanel scaleGrid = new JPanel(new GridLayout(1,0));
+	        scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
+	        
+	        String path = "src/snepsui/Interface/resources/icons/";
+	        
+	        JButton nodeColors = new JButton(new ImageIcon(path + "colors.png"));
+	        nodeColors.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JFrame popupFrame = new JFrame("Node Colors");
+					popupFrame.setLocation(450, 350);
+					popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					popupFrame.getContentPane().add(new NodeColors());
+					popupFrame.pack();
+					popupFrame.setResizable(false);
+					popupFrame.setVisible(true);
+				}
+			});
 
-        JPanel controls = new JPanel();
-        scaleGrid.add(plus);
-        scaleGrid.add(minus);
-        controls.add(scaleGrid);
-        controls.add(modeBox);
-        this.add(controls, BorderLayout.SOUTH);
-        
-        this.validate();
-        this.repaint();
+	        JPanel controls = new JPanel();
+	        scaleGrid.add(plus);
+	        scaleGrid.add(minus);
+	        controls.add(scaleGrid);
+	        controls.add(modeBox);
+	        controls.add(nodeColors);
+	        this.add(controls, BorderLayout.SOUTH);
+	        
+	        this.validate();
+	        this.repaint();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, 
+					"The relation " + relation.getName() + " is not used in the current network", 
+					"", 
+					JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 	
 	public void drawNode(Node node) {
@@ -471,6 +522,23 @@ public class VisualizeNetworks extends javax.swing.JPanel {
                 scaler.scale(vv, 1/1.1f, vv.getCenter());
             }
         });
+        
+        String path = "src/snepsui/Interface/resources/icons/";
+        
+        JButton colors = new JButton(new ImageIcon(path + "colors.png"));
+        colors.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFrame popupFrame = new JFrame("Node Colors");
+				popupFrame.setLocation(450, 350);
+				popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				popupFrame.getContentPane().add(new NodeColors());
+				popupFrame.pack();
+				popupFrame.setResizable(false);
+				popupFrame.setVisible(true);
+			}
+		});
 
         JPanel scaleGrid = new JPanel(new GridLayout(1,0));
         scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
@@ -480,6 +548,7 @@ public class VisualizeNetworks extends javax.swing.JPanel {
         scaleGrid.add(minus);
         controls.add(scaleGrid);
         controls.add(modeBox);
+        controls.add(colors);
         this.add(controls, BorderLayout.SOUTH);
         
         this.validate();
@@ -487,133 +556,158 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 	}
 	
 	public void drawCaseFrame(CaseFrame caseframe) {
-		Graph<String, String> graph = new DirectedSparseMultigraph<String, String>();
-		final LinkedList<Node> nodesList = new LinkedList<Node>();
-		
-		Hashtable<String, Node> nodes = network.getNodes();
-		String nodeString = ""; 
-		Set<String> set = nodes.keySet();
+		try {
+			Graph<String, String> graph = new DirectedSparseMultigraph<String, String>();
+			final LinkedList<Node> nodesList = new LinkedList<Node>();
+			
+			Hashtable<String, Node> nodes = network.getNodes();
+			String nodeString = ""; 
+			Set<String> set = nodes.keySet();
 
-	    Iterator<String> itr1 = set.iterator();
-	    while (itr1.hasNext()) {
-	    	nodeString = itr1.next();
-	    	Node node = nodes.get(nodeString);
-	    	
-	    	if(node instanceof MolecularNode) {
-				MolecularNode molNode = (MolecularNode) node;
-				if(molNode.getCableSet().getCaseFrame().equals(caseframe)) {
-					nodesList.add(node);
-					LinkedList<Cable> cables = molNode.getCableSet().getCables();
-					
-					for(Cable cable : cables) {
-						LinkedList<Node> cableNodes = cable.getNodeSet().getNodes();
-						String relation = cable.getRelation().getName();
+		    Iterator<String> itr1 = set.iterator();
+		    while (itr1.hasNext()) {
+		    	nodeString = itr1.next();
+		    	Node node = nodes.get(nodeString);
+		    	
+		    	if(node instanceof MolecularNode) {
+					MolecularNode molNode = (MolecularNode) node;
+					if(molNode.getCableSet().getCaseFrame().equals(caseframe)) {
+						nodesList.add(node);
+						LinkedList<Cable> cables = molNode.getCableSet().getCables();
 						
-						for(Node cableNode : cableNodes) {
-							graph.addEdge(new RelationEdge(relation).toString(), molNode.getIdentifier(), cableNode.getIdentifier());
-							nodesList.add(cableNode);
+						for(Cable cable : cables) {
+							LinkedList<Node> cableNodes = cable.getNodeSet().getNodes();
+							String relation = cable.getRelation().getName();
+							
+							for(Node cableNode : cableNodes) {
+								graph.addEdge(new RelationEdge(relation).toString(), molNode.getIdentifier(), cableNode.getIdentifier());
+								nodesList.add(cableNode);
+							}
 						}
 					}
 				}
-			}
-	    }
-	    
-	    ISOMLayout<String, String> layout = new ISOMLayout<String,String>(graph);
-	    
-	    shape = new Transformer<String, Integer>() {
-	    	public Integer transform(String vertex) {
-	    		int stringLength = 0;
-	    		for(Node node : nodesList) {
-    				if(vertex.equals(node.getIdentifier())) {
-    					stringLength = node.getIdentifier().length();
-    				}
-        		}
-	    		return stringLength;
-	    	}
-		};
-        
-        vertexPaint = new Transformer<String,Paint>() {
-        	public Paint transform(String vertex) {
-        		for(Node node : nodesList) {
-    				if(node.getIdentifier().equals(vertex)) {
-    					if(node.getClass().getSimpleName().equals("BaseNode")) {
-    						return Color.green;
-    					} else if (node.getClass().getSimpleName().equals("VariableNode")) {
-    						return Color.gray;
-    					} else if (node.getClass().getSimpleName().equals("PatternNode")) {
-    						return Color.blue;
-    					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
-    						return Color.yellow;
-    					}
-    				}
-        		}
-        		return Color.magenta;
-        	}
-        };
-        
-        edgeLabel = new Transformer<String, String>() {
-        	public String transform(String edge) {
-        		return edge.substring(0, edge.indexOf(":"));
-        	}
-		};
-        
-        VertexShapeSizeAspect<String> vssa = new VertexShapeSizeAspect<String>(graph, shape);
-        
-        vv =  new VisualizationViewer<String,String>(layout, new Dimension(700,220));
-        
-        vv.setBackground(Color.white);
-        vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
-        vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
-        vv.getRenderContext().setEdgeLabelTransformer(edgeLabel);
-        vv.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
-        vv.setVertexToolTipTransformer(new ToStringLabeller<String>());
-        vv.getRenderContext().setArrowFillPaintTransformer(new ConstantTransformer(Color.lightGray));
-        vv.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
-        vv.getRenderContext().setVertexShapeTransformer(vssa);
-        vv.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer(0.5, 0.5));
-        vssa.setScaling(true);
-        
-        final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
-        this.add(panel);
-        
-        final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
+		    }
+		    
+		    ISOMLayout<String, String> layout = new ISOMLayout<String,String>(graph);
+		    
+		    shape = new Transformer<String, Integer>() {
+		    	public Integer transform(String vertex) {
+		    		int stringLength = 0;
+		    		for(Node node : nodesList) {
+	    				if(vertex.equals(node.getIdentifier())) {
+	    					stringLength = node.getIdentifier().length();
+	    				}
+	        		}
+		    		return stringLength;
+		    	}
+			};
+	        
+	        vertexPaint = new Transformer<String,Paint>() {
+	        	public Paint transform(String vertex) {
+	        		for(Node node : nodesList) {
+	    				if(node.getIdentifier().equals(vertex)) {
+	    					if(node.getClass().getSimpleName().equals("BaseNode")) {
+	    						return Color.green;
+	    					} else if (node.getClass().getSimpleName().equals("VariableNode")) {
+	    						return Color.gray;
+	    					} else if (node.getClass().getSimpleName().equals("PatternNode")) {
+	    						return Color.blue;
+	    					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
+	    						return Color.yellow;
+	    					}
+	    				}
+	        		}
+	        		return Color.magenta;
+	        	}
+	        };
+	        
+	        edgeLabel = new Transformer<String, String>() {
+	        	public String transform(String edge) {
+	        		return edge.substring(0, edge.indexOf(":"));
+	        	}
+			};
+	        
+	        VertexShapeSizeAspect<String> vssa = new VertexShapeSizeAspect<String>(graph, shape);
+	        
+	        vv =  new VisualizationViewer<String,String>(layout, new Dimension(700,220));
+	        
+	        vv.setBackground(Color.white);
+	        vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
+	        vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
+	        vv.getRenderContext().setEdgeLabelTransformer(edgeLabel);
+	        vv.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
+	        vv.setVertexToolTipTransformer(new ToStringLabeller<String>());
+	        vv.getRenderContext().setArrowFillPaintTransformer(new ConstantTransformer(Color.lightGray));
+	        vv.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
+	        vv.getRenderContext().setVertexShapeTransformer(vssa);
+	        vv.getRenderContext().setEdgeLabelClosenessTransformer(new ConstantDirectionalEdgeValueTransformer(0.5, 0.5));
+	        vssa.setScaling(true);
+	        
+	        final GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
+	        this.add(panel);
+	        
+	        final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
 
-        vv.setGraphMouse(graphMouse);
-        vv.addKeyListener(graphMouse.getModeKeyListener());
+	        vv.setGraphMouse(graphMouse);
+	        vv.addKeyListener(graphMouse.getModeKeyListener());
 
-        JComboBox modeBox = graphMouse.getModeComboBox();
-        modeBox.addItemListener(graphMouse.getModeListener());
-        graphMouse.setMode(ModalGraphMouse.Mode.TRANSFORMING);
+	        JComboBox modeBox = graphMouse.getModeComboBox();
+	        modeBox.addItemListener(graphMouse.getModeListener());
+	        graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
 
-        final ScalingControl scaler = new CrossoverScalingControl();
-        
-        vv.scaleToLayout(scaler);
+	        final ScalingControl scaler = new CrossoverScalingControl();
+	        
+	        vv.scaleToLayout(scaler);
 
-        JButton plus = new JButton("+");
-        plus.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                scaler.scale(vv, 1.1f, vv.getCenter());
-            }
-        });
-        JButton minus = new JButton("-");
-        minus.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                scaler.scale(vv, 1/1.1f, vv.getCenter());
-            }
-        });
+	        JButton plus = new JButton("+");
+	        plus.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	                scaler.scale(vv, 1.1f, vv.getCenter());
+	            }
+	        });
+	        JButton minus = new JButton("-");
+	        minus.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	                scaler.scale(vv, 1/1.1f, vv.getCenter());
+	            }
+	        });
+	        
+	        String path = "src/snepsui/Interface/resources/icons/";
+	        
+	        JButton colors = new JButton(new ImageIcon(path + "colors.png"));
+	        colors.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JFrame popupFrame = new JFrame("Node Colors");
+					popupFrame.setLocation(450, 350);
+					popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					popupFrame.getContentPane().add(new NodeColors());
+					popupFrame.pack();
+					popupFrame.setResizable(false);
+					popupFrame.setVisible(true);
+				}
+			});
 
-        JPanel scaleGrid = new JPanel(new GridLayout(1,0));
-        scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
+	        JPanel scaleGrid = new JPanel(new GridLayout(1,0));
+	        scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
 
-        JPanel controls = new JPanel();
-        scaleGrid.add(plus);
-        scaleGrid.add(minus);
-        controls.add(scaleGrid);
-        controls.add(modeBox);
-        this.add(controls, BorderLayout.SOUTH);
-        
-        this.validate();
-        this.repaint();
+	        JPanel controls = new JPanel();
+	        scaleGrid.add(plus);
+	        scaleGrid.add(minus);
+	        controls.add(scaleGrid);
+	        controls.add(modeBox);
+	        controls.add(colors);
+	        this.add(controls, BorderLayout.SOUTH);
+	        
+	        this.validate();
+	        this.repaint();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, 
+					"The case frame " + caseframe.getId() + " is not used in the current network", 
+					"", 
+					JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 	
 	class RelationEdge {
@@ -709,9 +803,7 @@ public class VisualizeNetworks extends javax.swing.JPanel {
         
         try {
             ImageIO.write(bi, "jpeg", file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {}
     }
 	
 	public Network getNetwork() {

@@ -190,10 +190,17 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 				relationsComboBox.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						String relations = relationSetTextField.getText();
-						if (relations.isEmpty()) {
-							relationSetTextField.setText(relationsComboBox.getSelectedItem().toString());
+						if(relations.contains(relationsComboBox.getSelectedItem().toString())) {
+							if (relations.isEmpty()) {
+								relationSetTextField.setText(relationsComboBox.getSelectedItem().toString());
+							} else {
+								relationSetTextField.setText(relations + "," + relationsComboBox.getSelectedItem().toString());
+							}
 						} else {
-							relationSetTextField.setText(relations + "," + relationsComboBox.getSelectedItem().toString());
+							JOptionPane.showMessageDialog(getRootPane(),
+									"The relation is already included in the case frame",
+									"Warning",
+									JOptionPane.WARNING_MESSAGE);
 						}
 					}
 				});

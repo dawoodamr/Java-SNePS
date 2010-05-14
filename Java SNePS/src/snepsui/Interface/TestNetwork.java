@@ -147,6 +147,8 @@ public class TestNetwork extends JPanel{
     						return Color.blue;
     					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
     						return Color.yellow;
+    					} else if (node.getClass().getSimpleName().equals("Act")) {
+    						return Color.magenta;
     					}
     				}
         		}

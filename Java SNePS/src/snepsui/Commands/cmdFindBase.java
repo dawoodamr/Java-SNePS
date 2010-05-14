@@ -551,13 +551,13 @@ public class cmdFindBase extends javax.swing.JPanel {
 				array[i][1] = nodeset;
 			}
 			
-			NodeSet resultNodeSet = network.findBase(array);
-			LinkedList<Node> resultnodes = resultNodeSet.getNodes();
-			if(resultnodes.isEmpty()) {
-				JOptionPane.showMessageDialog(this, "No nodes were found");
-			} else {
-				frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(resultnodes);
-			}
+//			NodeSet resultNodeSet = network.findBase(array);
+//			LinkedList<Node> resultnodes = resultNodeSet.getNodes();
+//			if(resultnodes.isEmpty()) {
+//				JOptionPane.showMessageDialog(this, "No nodes were found");
+//			} else {
+//				frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(resultnodes);
+//			}
 			
 			pathModel.removeAllElements();
 			nodesetModel.removeAllElements();

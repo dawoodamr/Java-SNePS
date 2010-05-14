@@ -14,10 +14,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
@@ -25,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
@@ -34,10 +40,7 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
-import snactor.Act;
-import snactor.Queue;
 import sneps.CaseFrame;
-import sneps.MolecularNode;
 import sneps.Network;
 import sneps.Node;
 import sneps.Relation;
@@ -84,6 +87,15 @@ public class SNePSInterface extends SingleFrameApplication {
     private JMenuItem snifMenuItem;
     private JMenuItem snsequenceMenuItem;
     private JMenuItem doOneMenuItem;
+    private JMenuItem networkresetMenuItem;
+    private JCheckBoxMenuItem keepsomeinforCheckBoxMenuItem;
+    private JCheckBoxMenuItem relationresetCheckBoxMenuItem;
+    private JMenu resetnetrelationMenu;
+    private JMenuItem caseframesresteMenuItem;
+    private JMenuItem relationsresetMenuItem;
+    private JMenuItem nodesresetMenuItem;
+    private JMenu resetmenuMenu;
+    private JCheckBoxMenuItem tracingCheckBoxMenuItem;
     private JMenuItem undefineCaseframeMenuItem;
     private JMenuItem defineCaseframeMenuItem;
     private JMenu caseframesMenu;
@@ -128,16 +140,6 @@ public class SNePSInterface extends SingleFrameApplication {
     private JMenuItem fullDescribeMenuItem;
     private JMenuItem describeMenuItem;
     private JMenuItem dumpMenuItem;
-    private JMenuItem listNodesMenuItem;
-    private JMenuItem greaterThanMenuItem;
-    private JMenuItem underscoreMenuItem;
-    private JMenuItem equalMenuItem;
-    private JMenuItem minusMenuItem;
-    private JMenuItem plusMenuItem;
-    private JMenuItem jMenuItem34;
-    private JMenuItem jMenuItem33;
-    private JMenuItem asteriskMenuItem;
-    private JMenu jMenu11;
     private JMenuItem listHypothesesMenuItem;
     private JMenuItem describeContextMenuItem;
     private JMenuItem removeFromContextMenuItem;
@@ -148,13 +150,8 @@ public class SNePSInterface extends SingleFrameApplication {
     private JMenu contextsMenu;
     private JMenuItem definePathMenuItem;
     private JMenu pathbasedInferenceMenu;
-    private JCheckBoxMenuItem jCheckBoxMenuItem3;
-    private JMenuItem resetnetMenuItem;
     private JMenuItem silentEraseMenuItem;
     private JMenuItem eraseMenuItem;
-    private JCheckBoxMenuItem jCheckBoxMenuItem2;
-    private JCheckBoxMenuItem jCheckBoxMenuItem1;
-    private JMenu jMenu7;
     private JMenuItem activateMenuItem;
     private JMenuItem addMenuItem;
     private JMenuItem assertMenuItem;
@@ -373,6 +370,11 @@ public class SNePSInterface extends SingleFrameApplication {
                     	toolBar.add(resetnetButton);
                     	resetnetButton.setAction(getAppActionMap().get("resetnet"));
                     	resetnetButton.setFocusable(false);
+                    	resetnetButton.addMouseListener(new MouseAdapter() {
+                    		public void mouseClicked(MouseEvent evt) {
+                    			resetnetButtonMouseClicked(evt);
+                    		}
+                    	});
                     }
                     {
                     	showNetworkButton = new JButton();
@@ -663,9 +665,29 @@ public class SNePSInterface extends SingleFrameApplication {
         			});
         		}
         		{
-        			resetnetMenuItem = new JMenuItem();
-        			deletingInformationMenu.add(resetnetMenuItem);
-        			resetnetMenuItem.setName("resetnetMenuItem");
+        			resetmenuMenu = new JMenu();
+        			deletingInformationMenu.add(resetmenuMenu);
+        			resetmenuMenu.setName("resetmenuMenu");
+        			{
+        				nodesresetMenuItem = new JMenuItem();
+        				resetmenuMenu.add(nodesresetMenuItem);
+        				nodesresetMenuItem.setName("nodesresetMenuItem");
+        			}
+        			{
+        				relationsresetMenuItem = new JMenuItem();
+        				resetmenuMenu.add(relationsresetMenuItem);
+        				relationsresetMenuItem.setName("relationsresetMenuItem");
+        			}
+        			{
+        				caseframesresteMenuItem = new JMenuItem();
+        				resetmenuMenu.add(caseframesresteMenuItem);
+        				caseframesresteMenuItem.setName("caseframesresteMenuItem");
+        			}
+        			{
+        				networkresetMenuItem = new JMenuItem();
+        				resetmenuMenu.add(networkresetMenuItem);
+        				networkresetMenuItem.setName("networkresetMenuItem");
+        			}
         		}
         	}
         	{
@@ -1178,85 +1200,30 @@ public class SNePSInterface extends SingleFrameApplication {
         			});
         		}
         	}
-        	{
-        		jMenu11 = new JMenu();
-        		jMenu2.add(jMenu11);
-        		jMenu11.setName("jMenu11");
-        		{
-        			asteriskMenuItem = new JMenuItem();
-        			jMenu11.add(asteriskMenuItem);
-        			asteriskMenuItem.setName("asteriskMenuItem");
-        		}
-        		{
-        			jMenuItem33 = new JMenuItem();
-        			jMenu11.add(jMenuItem33);
-        			jMenuItem33.setName("jMenuItem33");
-        		}
-        		{
-        			jMenuItem34 = new JMenuItem();
-        			jMenu11.add(jMenuItem34);
-        			jMenuItem34.setName("jMenuItem34");
-        		}
-        		{
-        			plusMenuItem = new JMenuItem();
-        			jMenu11.add(plusMenuItem);
-        			plusMenuItem.setName("plusMenuItem");
-        		}
-        		{
-        			minusMenuItem = new JMenuItem();
-        			jMenu11.add(minusMenuItem);
-        			minusMenuItem.setName("minusMenuItem");
-        		}
-        		{
-        			equalMenuItem = new JMenuItem();
-        			jMenu11.add(equalMenuItem);
-        			equalMenuItem.setName("equalMenuItem");
-        		}
-        		{
-        			underscoreMenuItem = new JMenuItem();
-        			jMenu11.add(underscoreMenuItem);
-        			underscoreMenuItem.setName("underscoreMenuItem");
-        		}
-        		{
-        			greaterThanMenuItem = new JMenuItem();
-        			jMenu11.add(greaterThanMenuItem);
-        			greaterThanMenuItem.setName("greaterThanMenuItem");
-        		}
-        		{
-        			listNodesMenuItem = new JMenuItem();
-        			jMenu11.add(listNodesMenuItem);
-        			listNodesMenuItem.setName("listNodesMenuItem");
-        			listNodesMenuItem.addActionListener(new ActionListener() {
-        				public void actionPerformed(ActionEvent evt) {
-        					listNodesMenuItemActionPerformed(evt);
-        				}
-        			});
-        		}
-        	}
         }
         {
         	jMenu1 = new JMenu();
         	menuBar.add(jMenu1);
         	jMenu1.setName("jMenu1");
         	{
-        		jMenu7 = new JMenu();
-        		jMenu1.add(jMenu7);
-        		jMenu7.setName("jMenu7");
-        		{
-        			jCheckBoxMenuItem1 = new JCheckBoxMenuItem();
-        			jMenu7.add(jCheckBoxMenuItem1);
-        			jCheckBoxMenuItem1.setName("jCheckBoxMenuItem1");
-        		}
-        		{
-        			jCheckBoxMenuItem2 = new JCheckBoxMenuItem();
-        			jMenu7.add(jCheckBoxMenuItem2);
-        			jCheckBoxMenuItem2.setName("jCheckBoxMenuItem2");
-        		}
+        		tracingCheckBoxMenuItem = new JCheckBoxMenuItem();
+        		jMenu1.add(tracingCheckBoxMenuItem);
+        		tracingCheckBoxMenuItem.setName("tracingCheckBoxMenuItem");
         	}
         	{
-        		jCheckBoxMenuItem3 = new JCheckBoxMenuItem();
-        		jMenu1.add(jCheckBoxMenuItem3);
-        		jCheckBoxMenuItem3.setName("jCheckBoxMenuItem3");
+        		resetnetrelationMenu = new JMenu();
+        		jMenu1.add(resetnetrelationMenu);
+        		resetnetrelationMenu.setName("resetnetrelationMenu");
+        		{
+        			relationresetCheckBoxMenuItem = new JCheckBoxMenuItem();
+        			resetnetrelationMenu.add(relationresetCheckBoxMenuItem);
+        			relationresetCheckBoxMenuItem.setName("relationresetCheckBoxMenuItem");
+        		}
+        		{
+        			keepsomeinforCheckBoxMenuItem = new JCheckBoxMenuItem();
+        			resetnetrelationMenu.add(keepsomeinforCheckBoxMenuItem);
+        			keepsomeinforCheckBoxMenuItem.setName("keepsomeinforCheckBoxMenuItem");
+        		}
         	}
         }
         getMainFrame().setJMenuBar(menuBar);
@@ -1857,28 +1824,49 @@ public class SNePSInterface extends SingleFrameApplication {
     	
     		
     		//Acting
-    		Relation r1 = network.defineRelation("action", "single", null, 1);
-    		Relation r2 = network.defineRelation("actObject", "single", null, 0);
-    		Relation r3 = network.defineRelation("object1", "single", null, 1);
-    		Relation r4 = network.defineRelation("object2", "single", null, 0);
-    		Relation r5 = network.defineRelation("condition", "single", null, 1);
-    		Relation r6 = network.defineRelation("then", "single", null, 0);
+//    		Relation r1 = network.defineRelation("action", "single", "none", 1);
+//    		Relation r2 = network.defineRelation("actObject", "single", "none", 0);
+//    		Relation r3 = network.defineRelation("object1", "single", "none", 1);
+//    		Relation r4 = network.defineRelation("object2", "single", "none", 0);
+//    		Relation r5 = network.defineRelation("condition", "single", "none", 1);
+//    		Relation r6 = network.defineRelation("then", "single", "none", 0);
+    		
+    		
+    		Relation r7 = network.defineRelation("obj", "Entity", "none", 0);
+    		Relation r8 = network.defineRelation("lex", "Entity", "none", 0);
+    		Relation r9 = network.defineRelation("property", "Entity", "none", 0);
+    		Relation r10 = network.defineRelation("name", "Entity", "none", 0);
+    		
+    		LinkedList<Relation> l4 = new LinkedList<Relation>();
+    		l4.add(r7);
+    		l4.add(r10);
+    		
+    		LinkedList<Relation> l5 = new LinkedList<Relation>();
+    		l5.add(r7);
+    		l5.add(r9);
+    		
+    		LinkedList<Relation> l6 = new LinkedList<Relation>();
+    		l6.add(r8);
+    		
+    		CaseFrame cf3 = network.defineCaseFrame("Entity", l4);
+    		CaseFrame cf4 = network.defineCaseFrame("Entity", l5);
+    		CaseFrame cf5 = network.defineCaseFrame("Entity", l6);
     			
-    		LinkedList<Relation> l = new LinkedList<Relation>();
-    		l.add(r1);
-    		l.add(r2);
-    		
-    		CaseFrame cf1 = network.defineCaseFrame("act", l);
-    		
-    		LinkedList<Relation> l2 = new LinkedList<Relation>();
-    		l2.add(r3);
-    		l2.add(r4);
-    		
-    		CaseFrame cf2 = network.defineCaseFrame("object", l2);
-    		
-    		LinkedList<Relation> l3 = new LinkedList<Relation>();
-    		l2.add(r5);
-    		l2.add(r6);
+//    		LinkedList<Relation> l = new LinkedList<Relation>();
+//    		l.add(r1);
+//    		l.add(r2);
+//    		
+//    		CaseFrame cf1 = network.defineCaseFrame("act", l);
+//    		
+//    		LinkedList<Relation> l2 = new LinkedList<Relation>();
+//    		l2.add(r3);
+//    		l2.add(r4);
+//    		
+//    		CaseFrame cf2 = network.defineCaseFrame("object", l2);
+//    		
+//    		LinkedList<Relation> l3 = new LinkedList<Relation>();
+//    		l2.add(r5);
+//    		l2.add(r6);
     		
     		//Define the Relations
         	Relation rr1 = network.defineRelation("member","Entity","reduce",0);
@@ -1935,8 +1923,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o1[2][1] = node7;
         	
         	Node res1 = network.build(o1,caseframe1);
-        	System.out.println("Created Node: " + res1.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res1.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res1.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res1.getIdentifier()).getIdentifier());
         	
         	// 2)(assert member Tweety class canary)
         	Object[][] o2 = new Object[2][2];
@@ -1946,8 +1934,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o2[1][1] = node4;
         	
         	Node res2 = network.build(o2,caseframe1);
-        	System.out.println("Created Node: " + res2.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res2.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res2.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res2.getIdentifier()).getIdentifier());
         	
         	// 3) (assert member Opus class bird)
         	Object[][] o3 = new Object[2][2];
@@ -1957,8 +1945,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o3[1][1] = node14;
         	
         	Node res3 = network.build(o3,caseframe1);
-        	System.out.println("Created Node: " + res3.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res3.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res3.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res3.getIdentifier()).getIdentifier());
         	
         	// 4) (assert object elephant isa animal)
         	Object[][] o4 = new Object[2][2];
@@ -1968,8 +1956,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o4[1][1] = node8;
         	
         	Node res4 = network.build(o4,caseframe2);
-        	System.out.println("Created Node: " + res4.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res4.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res4.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res4.getIdentifier()).getIdentifier());
         	
         	// 5) (assert object circus\ elephant isa elephant)
         	Object[][] o5 = new Object[2][2];
@@ -1979,8 +1967,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o5[1][1] = node7;
         	
         	Node res5 = network.build(o5,caseframe2);
-        	System.out.println("Created Node: " + res5.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res5.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res5.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res5.getIdentifier()).getIdentifier());
         	
         	// 6) (assert object Dumbo isa circus\ elephant)
         	Object[][] o6 = new Object[2][2];
@@ -1990,8 +1978,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o6[1][1] = node9;
         	
         	Node res6 = network.build(o6,caseframe2);
-        	System.out.println("Created Node: " + res6.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res6.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res6.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res6.getIdentifier()).getIdentifier());
         	
         	// 7) (assert object Clyde isa animal)
         	Object[][] o7 = new Object[2][2];
@@ -2001,8 +1989,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o7[1][1] = node8;
         	
         	Node res7 = network.build(o7,caseframe2);
-        	System.out.println("Created Node: " + res7.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res7.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res7.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res7.getIdentifier()).getIdentifier());
         	
         	// 8) (assert object bird isa animal)
         	Object[][] o8 = new Object[2][2];
@@ -2012,8 +2000,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o8[1][1] = node8;
         	
         	Node res8 = network.build(o8,caseframe2);
-        	System.out.println("Created Node: " + res8.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res8.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res8.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res8.getIdentifier()).getIdentifier());
         	
         	// 9) (assert object Tweety isa bird)
         	Object[][] o9 = new Object[2][2];
@@ -2023,8 +2011,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o9[1][1] = node14;
         	
         	Node res9 = network.build(o9,caseframe2);
-        	System.out.println("Created Node: " + res9.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res9.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res9.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res9.getIdentifier()).getIdentifier());
         	
         	// 10) (assert object animal has head)
         	Object[][] o10 = new Object[2][2];
@@ -2034,8 +2022,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o10[1][1] = node16;
         	
         	Node res10 = network.build(o10,caseframe3);
-        	System.out.println("Created Node: " + res10.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res10.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res10.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res10.getIdentifier()).getIdentifier());
         	
         	// 11) (assert object head has mouth)
         	Object[][] o11 = new Object[2][2];
@@ -2045,8 +2033,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o11[1][1] = node17;
         	
         	Node res11 = network.build(o11,caseframe3);
-        	System.out.println("Created Node: " + res11.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res11.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res11.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res11.getIdentifier()).getIdentifier());
         	
         	// 12) (assert object elephant has trunk)
         	Object[][] o12 = new Object[2][2];
@@ -2056,8 +2044,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o12[1][1] = node18;
         	
         	Node res12 = network.build(o12,caseframe3);
-        	System.out.println("Created Node: " + res12.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res12.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res12.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res12.getIdentifier()).getIdentifier());
         	
         	// 13) (assert object trunk isa appendage)
         	Object[][] o13 = new Object[2][2];
@@ -2067,8 +2055,8 @@ public class SNePSInterface extends SingleFrameApplication {
         	o13[1][1] = node19;
         	
         	Node res13 = network.build(o13,caseframe2);
-        	System.out.println("Created Node: " + res13.getIdentifier());
-        	System.out.println("Network Nodes: " + network.getNodes().get(res13.getIdentifier()).getIdentifier());
+//        	System.out.println("Created Node: " + res13.getIdentifier());
+//        	System.out.println("Network Nodes: " + network.getNodes().get(res13.getIdentifier()).getIdentifier());
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
@@ -2205,27 +2193,27 @@ public class SNePSInterface extends SingleFrameApplication {
 	}
     
     private void openButtonMouseClicked(MouseEvent evt) {
-		JFileChooser chooser  = new JFileChooser();
-        int option = chooser.showOpenDialog(this.getMainFrame());
-        if(option == JFileChooser.APPROVE_OPTION) {
-            File file = chooser.getSelectedFile();
-			try {
-				FileInputStream fis = new FileInputStream(file);
-				ObjectInputStream in = new ObjectInputStream(fis);
-				Network network = (Network) in.readObject();
-				in.close();
-				this.network = network;
-				sNePSULPanel1.getMenuDrivenCommands().setNetwork(network);
-		    	sNePSULPanel1.getVisualizeNetworks().setNetwork(network);
-		    	sNePSULPanel1.getDrawNetworks().setNetwork(network);
-		    	nodesTreePanel1.setNetwork(network);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
+JFileChooser chooser  = new JFileChooser();
+int option = chooser.showOpenDialog(this.getMainFrame());
+if(option == JFileChooser.APPROVE_OPTION) {
+    File file = chooser.getSelectedFile();
+	try {
+		FileInputStream fis = new FileInputStream(file);
+		ObjectInputStream in = new ObjectInputStream(fis);
+		Network network = (Network) in.readObject();
+		in.close();
+		this.network = network;
+		sNePSULPanel1.getMenuDrivenCommands().setNetwork(network);
+    	sNePSULPanel1.getVisualizeNetworks().setNetwork(network);
+    	sNePSULPanel1.getDrawNetworks().setNetwork(network);
+    	nodesTreePanel1.setNetwork(network);
+	} catch (FileNotFoundException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		e.printStackTrace();
+	} catch (ClassNotFoundException e) {
+		e.printStackTrace();
+	}
 			nodesTreePanel1.addTreeInfo();
 	    	nodesResult.setNetwork(network);
 	    	this.getMainFrame().validate();
@@ -2273,4 +2261,73 @@ public class SNePSInterface extends SingleFrameApplication {
 	public static void main(String[] args) {
         launch(SNePSInterface.class, args);
     }
+	
+	private void resetnetButtonMouseClicked(MouseEvent evt) {
+		Icon icon = new ImageIcon();
+		Object[] possibilities = {"Nodes", "Relations", "Case Frames"};
+		
+		String result = (String)JOptionPane.showInputDialog(
+				getMainFrame(),
+				"Reset:",
+				"Reset Network",
+				JOptionPane.OK_OPTION,
+				icon,
+				possibilities,
+				"Nodes");
+		
+		if(result == "Nodes") {
+			while(true) {
+				LinkedList<Node> nodesList = new LinkedList<Node>();
+				Hashtable<String, Node> nodes = network.getNodes();
+				
+				if(nodes.isEmpty()) {
+					break;
+				}
+				
+				Set<String> nodesSet = nodes.keySet();
+				Iterator<String> nodesItr = nodesSet.iterator();
+				while (nodesItr.hasNext()) {
+					nodesList.add(nodes.get(nodesItr.next()));
+				}
+				
+				for (Node node : nodesList) {
+					if(node.getUpCableSet().getUpCables().isEmpty()) {
+						network.removeNode(node);
+					}
+				}
+			}
+  		} else if (result == "Relations") {
+  			LinkedList<Relation> relationsList = new LinkedList<Relation>();
+			Hashtable<String, Relation> relations = network.getRelations();
+			
+			Set<String> relationSet = relations.keySet();
+			Iterator<String> relationItr = relationSet.iterator();
+			while (relationItr.hasNext()) {
+				relationsList.add(relations.get(relationItr.next()));
+			}
+			
+			for (Relation relation : relationsList) {
+				network.undefineRelation(relation.getName());
+			}
+		} else if (result == "Case Frames") {
+			LinkedList<CaseFrame> caseframesList = new LinkedList<CaseFrame>();
+			Hashtable<String, CaseFrame> caseframes = network.getCaseFrames();
+			
+			Set<String> caseframesSet = caseframes.keySet();
+			Iterator<String> relationItr = caseframesSet.iterator();
+			while (relationItr.hasNext()) {
+				caseframesList.add(caseframes.get(relationItr.next()));
+			}
+			
+			for (CaseFrame caseframe : caseframesList) {
+				network.undefineCaseFrame(caseframe.getId());
+			}
+		} else {
+			return;
+		}
+		
+		nodesTreePanel1.initGUI();
+		nodesTreePanel1.validate();
+		nodesTreePanel1.repaint();
+	}
 }

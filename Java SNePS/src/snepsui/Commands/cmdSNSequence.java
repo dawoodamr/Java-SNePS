@@ -45,7 +45,7 @@ import snepsui.Interface.SNePSInterface;
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
 public class cmdSNSequence extends javax.swing.JPanel {
-	private JLabel addLabel;
+	private JLabel performLabel;
 	private JButton doneButton;
 	private JScrollPane jScrollPane1;
 	private JComboBox contextNameComboBox;
@@ -85,10 +85,10 @@ public class cmdSNSequence extends javax.swing.JPanel {
 			setPreferredSize(new Dimension(690, 225));
 			this.setLayout(null);
 			{
-				addLabel = new JLabel();
-				this.add(addLabel);
-				addLabel.setName("addLabel");
-				addLabel.setBounds(6, 28, 68, 15);
+				performLabel = new JLabel();
+				this.add(performLabel);
+				performLabel.setName("performLabel");
+				performLabel.setBounds(6, 28, 68, 15);
 			}
 			{
 				doneButton = new JButton();

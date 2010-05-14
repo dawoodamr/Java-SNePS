@@ -50,8 +50,6 @@ public class cmdAchieve extends javax.swing.JPanel {
 	private JScrollPane jScrollPane1;
 	private JComboBox contextNameComboBox;
 	private JLabel buildLabel;
-	private JComboBox objectNumberComboBox;
-	private JLabel objectNumberLabel;
 	private JTable relationNodesetTable;
 	private JLabel contextNameLabel;
 	private JButton infoButton;
@@ -142,10 +140,22 @@ public class cmdAchieve extends javax.swing.JPanel {
 					};
 					jScrollPane1.setViewportView(relationNodesetTable);
 					relationNodesetTable.setModel(relationNodesetTableModel);
+					relationNodesetTable.setEditingRow(0);
 					
 					relationNodesetTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(relationTextField));
 					relationNodesetTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(nodesetTextField));
 					relationNodesetTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(options));
+					
+					Vector<Object> actionData = new Vector<Object>();
+					actionData.add("action");
+					actionData.add("achieve");
+					relationNodesetTableModel.addRow(actionData);
+					
+					Vector<Object> objectData = new Vector<Object>();
+					objectData.add("object1");
+					objectData.add("");
+					objectData.add("Choose Node Type");
+					relationNodesetTableModel.addRow(objectData);
 				}
 			}
 			{
@@ -161,29 +171,6 @@ public class cmdAchieve extends javax.swing.JPanel {
 				this.add(contextNameLabel);
 				contextNameLabel.setName("contextNameLabel");
 				contextNameLabel.setBounds(532, 25, 123, 21);
-			}
-			{
-				objectNumberLabel = new JLabel();
-				this.add(objectNumberLabel);
-				objectNumberLabel.setBounds(357, 28, 98, 15);
-				objectNumberLabel.setName("objectNumberLabel");
-			}
-			{
-				DefaultComboBoxModel objectNumberComboBoxModel = new DefaultComboBoxModel();
-				
-				for (int i = 1; i < 100; i++) {
-					objectNumberComboBoxModel.addElement(i);
-				}
-				
-				objectNumberComboBox = new JComboBox();
-				this.add(objectNumberComboBox);
-				objectNumberComboBox.setModel(objectNumberComboBoxModel);
-				objectNumberComboBox.setBounds(455, 24, 65, 22);
-				objectNumberComboBox.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						objectNumberComboBoxActionPerformed(evt);
-					}
-				});
 			}
 			{
 				buildLabel = new JLabel();
@@ -202,28 +189,6 @@ public class cmdAchieve extends javax.swing.JPanel {
 					.injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-	
-	private void objectNumberComboBoxActionPerformed(ActionEvent evt) {
-		
-		relationNodesetTableModel.getDataVector().clear();
-		
-		Vector<Object> actionData = new Vector<Object>();
-		//actionData.add(relations.getFirst());
-		actionData.add("action");
-		actionData.add("achieve");
-		relationNodesetTableModel.addRow(actionData);
-	
-		int numOfObjects = Integer.parseInt(objectNumberComboBox.getSelectedItem().toString());
-		
-		for (int i = 0; i < numOfObjects; i++) {
-			Vector<Object> objectData = new Vector<Object>();
-			//objectData.add(relations.getLast().getName() + (i+1));
-			objectData.add("object" + (i+1));
-			objectData.add("");
-			objectData.add("Choose Node Type");
-			relationNodesetTableModel.addRow(objectData);
 		}
 	}
 	
@@ -417,7 +382,7 @@ public class cmdAchieve extends javax.swing.JPanel {
 			e.printStackTrace();
 		}
 		relationNodesetTableModel.getDataVector().removeAllElements();
-		objectNumberComboBox.setSelectedIndex(0);
+		//objectNumberComboBox.setSelectedIndex(0);
 		frame.getNodesTreePanel1().initGUI();
 		frame.getMainFrame().validate();
 		frame.getMainFrame().repaint();

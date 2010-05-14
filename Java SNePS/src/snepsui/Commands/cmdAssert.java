@@ -452,9 +452,9 @@ public class cmdAssert extends javax.swing.JPanel {
 			
 			relationNodesetTableModel.getDataVector().clear();
 			
-			frame.getNodesTreePanel1().addTreeInfo();
-			frame.getMainFrame().validate();
-			frame.getMainFrame().repaint();
+			frame.getNodesTreePanel1().initGUI();
+			frame.getNodesTreePanel1().validate();
+			frame.getNodesTreePanel1().repaint();
 			
 			if(windowFrame != null) {
 				windowFrame.dispose();

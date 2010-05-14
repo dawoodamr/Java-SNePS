@@ -1,20 +1,30 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.Vector;
 
 import javax.swing.ActionMap;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.Network;
+import sneps.Node;
 import snepsui.Interface.SNePSInterface;
 
 /**
@@ -29,160 +39,116 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
-public class cmdUniversalQunatifier extends javax.swing.JPanel {
-	private JLabel forallLabel;
+public class cmdUniversalQunatifier  extends javax.swing.JPanel {
 	private JLabel assertLabel;
-	private JLabel variableLabel;
-	private JScrollPane jScrollPane1;
-	private JList variablesList;
-	private JLabel antLabel;
-	private JScrollPane jScrollPane2;
-	private JButton buildButton2;
-	private JList cqList;
-	private JScrollPane jScrollPane3;
-	private JLabel cqLabel;
-	private JButton buildButton1;
-	private JTextField cqTextField;
-	private JList antList;
-	private JTextField antTextField;
-	private JTextField variablesTextField;
-	private JButton infoButton;
-	private JButton addButton;
 	private JButton doneButton;
+	private JScrollPane jScrollPane1;
+	private JComboBox contextNameComboBox;
+	private JLabel buildLabel;
+	private JTable relationNodesetTable;
+	private JLabel contextNameLabel;
+	private JButton infoButton;
 	private Network network;
+	private DefaultTableModel relationNodesetTableModel;
+	private JComboBox options;
+	private JTextField relationTextField;
+	private JTextField nodesetTextField;
+	private LinkedList<Node> nodes;
 	private SNePSInterface frame;
 
 	public cmdUniversalQunatifier(Network network, SNePSInterface frame) {
 		super();
 		this.frame = frame;
 		this.network = network;
+		nodes = new LinkedList<Node>();
 		initGUI();
 	}
-	
+
 	@Action
 	public void info() {
 	}
-	
-	@Action
-	public void build() {
-	}
-	
-	@Action
-	public void add() {
-	}
-	
+
 	private ActionMap getAppActionMap() {
 		return Application.getInstance().getContext().getActionMap(this);
 	}
-	
+
 	private void initGUI() {
 		try {
 			setPreferredSize(new Dimension(690, 225));
 			this.setLayout(null);
 			{
-				forallLabel = new JLabel();
-				this.add(forallLabel);
-				forallLabel.setName("forallLabel");
-				forallLabel.setBounds(58, 27, 35, 15);
-			}
-			{
 				assertLabel = new JLabel();
 				this.add(assertLabel);
-				assertLabel.setBounds(4, 27, 48, 15);
 				assertLabel.setName("assertLabel");
+				assertLabel.setBounds(6, 28, 68, 15);
 			}
 			{
-				addButton = new JButton();
-				this.add(addButton);
-				addButton.setBounds(243, 26, 16, 18);
-				addButton.setAction(getAppActionMap().get("add"));
-				addButton.setFocusable(false);
+				doneButton = new JButton();
+				this.add(doneButton);
+				doneButton.setBounds(314, 185, 77, 29);
+				doneButton.setName("doneButton");
 			}
 			{
-				variablesTextField = new JTextField();
-				this.add(variablesTextField);
-				variablesTextField.setBounds(105, 24, 121, 22);
+				options = new JComboBox();
+				DefaultComboBoxModel optionsComboBoxModel = new DefaultComboBoxModel();
+				optionsComboBoxModel.addElement("Choose Node Type");
+				optionsComboBoxModel.addElement("Base Node");
+				optionsComboBoxModel.addElement("build");
+				optionsComboBoxModel.addElement("find");
+				optionsComboBoxModel.addElement("assert");
+				options.setModel(optionsComboBoxModel);
+				options.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						optionsComboBoxActionPerformed(e);
+					}
+				});
 			}
 			{
-				variableLabel = new JLabel();
-				this.add(variableLabel);
-				variableLabel.setBounds(105, 3, 77, 15);
-				variableLabel.setName("variableLabel");
+				relationTextField = new JTextField();
+				relationTextField.setEditable(false);
+			}
+			{
+				nodesetTextField = new JTextField();
+				nodesetTextField.setEditable(false);
 			}
 			{
 				jScrollPane1 = new JScrollPane();
 				this.add(jScrollPane1);
-				jScrollPane1.setBounds(106, 58, 120, 116);
+				jScrollPane1.setBounds(80, 58, 440, 103);
 				{
-					ListModel jList1Model = new DefaultComboBoxModel();
-					variablesList = new JList();
-					jScrollPane1.setViewportView(variablesList);
-					variablesList.setModel(jList1Model);
-					variablesList.setBounds(145, 125, 117, 85);
+					relationNodesetTableModel = new DefaultTableModel();
+					relationNodesetTableModel.addColumn("Relation");
+					relationNodesetTableModel.addColumn("Nodeset");
+					relationNodesetTableModel.addColumn("");
+					relationNodesetTable = new JTable();
+					jScrollPane1.setViewportView(relationNodesetTable);
+					relationNodesetTable.setModel(relationNodesetTableModel);
+					relationNodesetTable.setEditingRow(0);
+					
+					relationNodesetTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(relationTextField));
+					relationNodesetTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(nodesetTextField));
+					relationNodesetTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(options));
+					
+					Vector<Object> forallData = new Vector<Object>();
+					forallData.add("forall");
+					forallData.add("");
+					forallData.add("Choose Node Type");
+					relationNodesetTableModel.addRow(forallData);
+					
+					Vector<Object> antData = new Vector<Object>();
+					antData.add("&ant");
+					antData.add("");
+					antData.add("Choose Node Type");
+					relationNodesetTableModel.addRow(antData);
+					
+					Vector<Object> cqData = new Vector<Object>();
+					cqData.add("cq");
+					cqData.add("");
+					cqData.add("Choose Node Type");
+					relationNodesetTableModel.addRow(cqData);
 				}
-			}
-			{
-				antTextField = new JTextField();
-				this.add(antTextField);
-				antTextField.setBounds(304, 24, 143, 22);
-			}
-			{
-				antLabel = new JLabel();
-				this.add(antLabel);
-				antLabel.setBounds(270, 27, 26, 15);
-				antLabel.setName("antLabel");
-			}
-			{
-				jScrollPane2 = new JScrollPane();
-				this.add(jScrollPane2);
-				jScrollPane2.setBounds(304, 58, 142, 115);
-				{
-					ListModel jList2Model = new DefaultComboBoxModel();
-					antList = new JList();
-					jScrollPane2.setViewportView(antList);
-					antList.setModel(jList2Model);
-					antList.setBounds(195, 96, 139, 118);
-					antList.setPreferredSize(new java.awt.Dimension(70, 112));
-				}
-			}
-			{
-				cqLabel = new JLabel();
-				this.add(cqLabel);
-				cqLabel.setBounds(483, 27, 19, 15);
-				cqLabel.setName("cqLabel");
-			}
-			{
-				buildButton1 = new JButton();
-				this.add(buildButton1);
-				buildButton1.setBounds(454, 25, 18, 20);
-				buildButton1.setAction(getAppActionMap().get("build"));
-				buildButton1.setFocusable(false);
-				buildButton1.setToolTipText("build");
-			}
-			{
-				cqTextField = new JTextField();
-				this.add(cqTextField);
-				cqTextField.setBounds(508, 24, 147, 22);
-			}
-			{
-				jScrollPane3 = new JScrollPane();
-				this.add(jScrollPane3);
-				jScrollPane3.setBounds(508, 59, 147, 114);
-				{
-					ListModel jList3Model = new DefaultComboBoxModel();
-					cqList = new JList();
-					jScrollPane3.setViewportView(cqList);
-					cqList.setModel(jList3Model);
-					cqList.setBounds(533, 23, 142, 111);
-				}
-			}
-			{
-				buildButton2 = new JButton();
-				this.add(buildButton2);
-				buildButton2.setBounds(661, 25, 18, 20);
-				buildButton2.setAction(getAppActionMap().get("build"));
-				buildButton2.setFocusable(false);
-				buildButton2.setToolTipText("build");
 			}
 			{
 				infoButton = new JButton();
@@ -193,15 +159,129 @@ public class cmdUniversalQunatifier extends javax.swing.JPanel {
 				infoButton.setToolTipText("info");
 			}
 			{
-				doneButton = new JButton();
-				this.add(doneButton);
-				doneButton.setBounds(314, 185, 77, 29);
-				doneButton.setName("doneButton");
+				contextNameLabel = new JLabel();
+				this.add(contextNameLabel);
+				contextNameLabel.setName("contextNameLabel");
+				contextNameLabel.setBounds(532, 25, 123, 21);
 			}
-			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
+			{
+				buildLabel = new JLabel();
+				this.add(buildLabel);
+				buildLabel.setBounds(80, 28, 49, 15);
+				buildLabel.setName("buildLabel");
+			}
+			{
+				ComboBoxModel contextNameComboBoxModel = new DefaultComboBoxModel();
+				contextNameComboBox = new JComboBox();
+				this.add(contextNameComboBox);
+				contextNameComboBox.setModel(contextNameComboBoxModel);
+				contextNameComboBox.setBounds(532, 58, 136, 22);
+			}
+			Application.getInstance().getContext().getResourceMap(getClass())
+					.injectComponents(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	private void optionsComboBoxActionPerformed(ActionEvent e) {
+		try {
+			int rowNumber = relationNodesetTable.getSelectedRow();
+			TableCellEditor cell = relationNodesetTable.getCellEditor(rowNumber, 2);
+			
+			if (cell.getCellEditorValue().equals("Base Node")) {
+				String nodeName = (String) JOptionPane.showInputDialog(
+						getRootPane(),
+						"Enter the name of the node:",
+						"Create a Node",
+						JOptionPane.PLAIN_MESSAGE);
+				
+				String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
+				
+				if(currentNodesetValue.isEmpty()) {
+					relationNodesetTableModel.setValueAt(nodeName, rowNumber, 1);
+		    	} else {
+		    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + nodeName, rowNumber, 1);
+		    	}
+				relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
+			} else if (cell.getCellEditorValue().equals("build")) {
+			    cmdBuild build = new cmdBuild(network, frame);
+				
+			    int result = JOptionPane.showConfirmDialog(  
+			    	    this, build, "title", JOptionPane.PLAIN_MESSAGE
+			    	);
+			    
+			    if (result == JOptionPane.OK_OPTION) {
+			    	LinkedList<Node> nodes = build.getNodes();
+				    for(Node item : nodes) {
+				    	System.out.println(item.getIdentifier());
+				    	
+				    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
+				    	
+				    	if(currentNodesetValue.isEmpty()) {
+				    		relationNodesetTableModel.setValueAt(item.getIdentifier(), rowNumber, 1);
+				    	} else {
+				    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + item.getIdentifier(), rowNumber, 1);
+				    	}
+				    }
+			    }
+			    relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
+			} else if (cell.getCellEditorValue().equals("assert")) {
+				cmdAssert assertPanel = new cmdAssert(network, frame);
+				
+			    int result = JOptionPane.showConfirmDialog(  
+			    	    this, assertPanel, "title", JOptionPane.PLAIN_MESSAGE
+			    	);
+			    
+			    if (result == JOptionPane.OK_OPTION) {
+			    	LinkedList<Node> nodes = assertPanel.getNodes();
+				    for(Node item : nodes) {
+				    	System.out.println(item.getIdentifier());
+				    	
+				    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
+				    	
+				    	if(currentNodesetValue.toString().isEmpty()) {
+				    		relationNodesetTableModel.setValueAt(item.getIdentifier(), rowNumber, 1);
+				    	} else {
+				    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + item.getIdentifier(), rowNumber, 1);
+				    	}
+				    }
+			    }
+			    relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
+			} else if (cell.getCellEditorValue().equals("find")) {
+				cmdFind assertPanel = new cmdFind(network, frame);
+				
+			    int result = JOptionPane.showConfirmDialog(  
+			    	    this, assertPanel, "title", JOptionPane.PLAIN_MESSAGE
+			    	);
+			    
+			    if (result == JOptionPane.OK_OPTION) {
+			    	LinkedList<Node> nodes = assertPanel.getNodes();
+				    for(Node item : nodes) {
+				    	System.out.println(item.getIdentifier());
+				    	
+				    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
+				    	
+				    	if(currentNodesetValue.isEmpty()) {
+				    		relationNodesetTableModel.setValueAt(item.getIdentifier(), rowNumber, 1);
+				    	} else {
+				    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + item.getIdentifier(), rowNumber, 1);
+				    	}
+				    }
+			    }
+			    relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
+			}
+			validate();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	public LinkedList<Node> getNodes() {
+		return nodes;
+	}
 
+	public void setNodes(LinkedList<Node> nodes) {
+		this.nodes = nodes;
+	}
 }
