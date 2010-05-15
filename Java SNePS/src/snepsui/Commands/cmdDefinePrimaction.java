@@ -42,8 +42,8 @@ import snepsui.Interface.SNePSInterface;
 public class cmdDefinePrimaction extends javax.swing.JPanel {
 	private JLabel definePrimactionLabel;
 	private JScrollPane jScrollPane1;
+	private JTextField actionTextField;
 	private JComboBox relationComboBox;
-	private JComboBox actionComboBox;
 	private JList relationList;
 	private JTextArea formTextArea;
 	private JLabel formLabel;
@@ -150,13 +150,6 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
 					}
 				});
 			}
-			{
-				ComboBoxModel actionComboBoxModel = new DefaultComboBoxModel();
-				actionComboBox = new JComboBox();
-				this.add(actionComboBox);
-				actionComboBox.setModel(actionComboBoxModel);
-				actionComboBox.setBounds(145, 36, 149, 22);
-			}
 			{	
 				DefaultComboBoxModel relationsComboBoxModel = new DefaultComboBoxModel();
 				String str = "";
@@ -172,6 +165,11 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
 				this.add(relationComboBox);
 				relationComboBox.setModel(relationsComboBoxModel);
 				relationComboBox.setBounds(309, 36, 159, 22);
+			}
+			{
+				actionTextField = new JTextField();
+				this.add(actionTextField);
+				actionTextField.setBounds(145, 37, 137, 22);
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
 		} catch (Exception e) {

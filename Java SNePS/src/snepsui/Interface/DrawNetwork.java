@@ -122,36 +122,30 @@ public class DrawNetwork extends javax.swing.JPanel {
         "<html>"+
         "<h3>All Modes:</h3>"+
         "<ul>"+
-        "<li>Right-click an empty area for <b>Create Vertex</b> popup"+
-        "<li>Right-click on a Vertex for <b>Delete Vertex</b> popup"+
-        "<li>Right-click on an Edge for <b>Delete Edge</b> popup"+
-        "<li>Mousewheel scales with a crossover value of 1.0.<p>"+
-        "     - scales the graph layout when the combined scale is greater than 1<p>"+
-        "     - scales the graph view when the combined scale is less than 1"+
+        "<li>Right-click an empty area for <b>Create Node</b> popup"+
+        "<li>Right-click on a Vertex for <b>Delete Node</b> popup"+
+        "<li>Right-click on an Edge for <b>Delete Relation</b> popup"+
 
         "</ul>"+
         "<h3>Editing Mode:</h3>"+
         "<ul>"+
-        "<li>Left-click an empty area to create a new Vertex"+
-        "<li>Left-click on a Vertex and drag to another Vertex to create a Directed Edge"+
+        "<li>Left-click an empty area to create a new Node"+
+        "<li>Left-click on a Node and drag to another Node to create a Directed Edge"+
         "</ul>"+
         "<h3>Picking Mode:</h3>"+
         "<ul>"+
-        "<li>Mouse1 on a Vertex selects the vertex"+
-        "<li>Mouse1 elsewhere unselects all Vertices"+
-        "<li>Mouse1+Shift on a Vertex adds/removes Vertex selection"+
-        "<li>Mouse1+drag on a Vertex moves all selected Vertices"+
-        "<li>Mouse1+drag elsewhere selects Vertices in a region"+
-        "<li>Mouse1+Shift+drag adds selection of Vertices in a new region"+
-        "<li>Mouse1+CTRL on a Vertex selects the vertex and centers the display on it"+
-        "<li>Mouse1 double-click on a vertex or edge allows you to edit the label"+
+        "<li>Left-click on a Node selects the vertex"+
+        "<li>Left-click elsewhere unselects all Nodes"+
+        "<li>Left-click+Shift on a Node adds/removes Node selection"+
+        "<li>Left-click+drag on a Node moves all selected Nodes"+
+        "<li>Left-click+drag elsewhere selects Nodes in a region"+
+        "<li>Left-click+CTRL on a Node selects the Node and centers the display on it"+
         "</ul>"+
         "<h3>Transforming Mode:</h3>"+
         "<ul>"+
-        "<li>Mouse1+drag pans the graph"+
-        "<li>Mouse1+Shift+drag rotates the graph"+
-        "<li>Mouse1+CTRL(or Command)+drag shears the graph"+
-        "<li>Mouse1 double-click on a vertex or edge allows you to edit the label"+
+        "<li>Left-click+drag pans the graph"+
+        "<li>Left-click+Shift+drag rotates the graph"+
+        "<li>Left-click+CTRL(or Command)+drag shears the graph"+
         "</ul>" +
         "</html>";
     
@@ -324,7 +318,7 @@ public class DrawNetwork extends javax.swing.JPanel {
 		infoButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(vv, instructions);
+                JOptionPane.showMessageDialog(vv, instructions, "Instructions", JOptionPane.INFORMATION_MESSAGE);
         }});
 		
 		JButton resetbutton = new JButton(new ImageIcon(path + "resetnet.png"));

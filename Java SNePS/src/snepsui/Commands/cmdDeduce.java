@@ -201,13 +201,13 @@ public class cmdDeduce extends javax.swing.JPanel {
 				{
 					numbLabel = new JLabel();
 					this.add(numbLabel);
-					numbLabel.setBounds(533, 92, 33, 15);
+					numbLabel.setBounds(533, 92, 69, 15);
 					numbLabel.setName("numbLabel");
 				}
 				{
 					numbRadioButton1 = new JRadioButton();
 					this.add(numbRadioButton1);
-					numbRadioButton1.setBounds(533, 111, 80, 19);
+					numbRadioButton1.setBounds(533, 111, 135, 19);
 					numbRadioButton1.setName("numbRadioButton1");
 					numbRadioButton1.setSelected(true);
 					numbRadioButton1.addMouseListener(new MouseAdapter() {
@@ -219,7 +219,7 @@ public class cmdDeduce extends javax.swing.JPanel {
 				{
 					numbRadioButton2 = new JRadioButton();
 					this.add(numbRadioButton2);
-					numbRadioButton2.setBounds(533, 131, 20, 17);
+					numbRadioButton2.setBounds(533, 131, 26, 17);
 					numbRadioButton2.addMouseListener(new MouseAdapter() {
 						public void mouseClicked(MouseEvent evt) {
 							numbRadioButton2MouseClicked(evt);
@@ -229,7 +229,7 @@ public class cmdDeduce extends javax.swing.JPanel {
 				{
 					numbRadioButton3 = new JRadioButton();
 					this.add(numbRadioButton3);
-					numbRadioButton3.setBounds(533, 155, 20, 17);
+					numbRadioButton3.setBounds(533, 155, 23, 17);
 					numbRadioButton3.addMouseListener(new MouseAdapter() {
 						public void mouseClicked(MouseEvent evt) {
 							numbRadioButton3MouseClicked(evt);
@@ -239,31 +239,31 @@ public class cmdDeduce extends javax.swing.JPanel {
 				{
 					numbTextField = new JTextField();
 					this.add(numbTextField);
-					numbTextField.setBounds(558, 133, 33, 16);
+					numbTextField.setBounds(570, 132, 43, 16);
 					numbTextField.setEditable(false);
 				}
 				{
 					nposLabel = new JLabel();
 					this.add(nposLabel);
-					nposLabel.setBounds(558, 155, 28, 15);
+					nposLabel.setBounds(567, 155, 40, 15);
 					nposLabel.setName("nposLabel");
 				}
 				{
 					nposTextField = new JTextField();
 					this.add(nposTextField);
-					nposTextField.setBounds(588, 154, 28, 18);
+					nposTextField.setBounds(614, 154, 28, 18);
 					nposTextField.setEditable(false);
 				}
 				{
 					nnegLabel = new JLabel();
 					this.add(nnegLabel);
-					nnegLabel.setBounds(622, 153, 28, 18);
+					nnegLabel.setBounds(566, 180, 41, 15);
 					nnegLabel.setName("nnegLabel");
 				}
 				{
 					nnegTextField = new JTextField();
 					this.add(nnegTextField);
-					nnegTextField.setBounds(656, 154, 28, 18);
+					nnegTextField.setBounds(614, 179, 28, 18);
 					nnegTextField.setEditable(false);
 				}
 				{
