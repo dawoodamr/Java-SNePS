@@ -82,8 +82,9 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 
 	public VisualizeNetworks() {
 		super();
-		if(network!=null)
+		if(network!=null) {
 			initGUI();
+		}
 	}
 	
 	public void initGUI() {
@@ -110,8 +111,8 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 		    	nodeString = itr1.next();
 		    	Node node = nodes.get(nodeString);
 		    	String nodeName = node.getIdentifier();
-		    	System.out.println(node.getIdentifier());
-		    	System.out.println(nodeName);
+		    	//System.out.println(node.getIdentifier());
+		    	//System.out.println(nodeName);
 		    	graph.addVertex(nodeName);
 		    	nodesList.add(node);
 		    }
@@ -126,9 +127,9 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 			    	LinkedList<Node> nodeset = upCableSet.getUpCables().get(i).getNodeSet().getNodes();
 			    	for(Node item : nodeset) {
 			    		graph.addEdge(new RelationEdge(relation.getName()).toString(),item.getIdentifier(),node.getIdentifier());
-			    		System.out.println("Relation Name: " + relation.getName());
-			    		System.out.println("Node Name: " + node.getIdentifier());
-			    		System.out.println("Upcable Node: "+ item.getIdentifier());
+//			    		System.out.println("Relation Name: " + relation.getName());
+//			    		System.out.println("Node Name: " + node.getIdentifier());
+//			    		System.out.println("Upcable Node: "+ item.getIdentifier());
 			    	}
 		    	}
 		    }

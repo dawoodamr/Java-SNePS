@@ -186,7 +186,7 @@ public class SNePSInterface extends SingleFrameApplication {
     private JButton showNetworkButton;
     private JToolBar toolBar;
     private ResultNodes nodesResult;
-    private int previousTab;
+    private int previousTab = 0;
     private boolean viewNetworkClickCount;
     private Network network;
 
@@ -306,7 +306,7 @@ public class SNePSInterface extends SingleFrameApplication {
                         newButton.setFocusable(false);
                         newButton.addActionListener(new ActionListener() {
                         	public void actionPerformed(ActionEvent evt) {
-                        		newButtonActionPerformed(evt);
+                        		newButtonActionPerformed();
                         	}
                         });
                     }
@@ -1625,7 +1625,7 @@ public class SNePSInterface extends SingleFrameApplication {
      * Creates a new session
      * @param evt the event that was fired
      */
-    private void newButtonActionPerformed(ActionEvent evt) {
+    public void newButtonActionPerformed() {
     	Network network = new Network();
     	this.network = network;
     	try {
@@ -2077,6 +2077,16 @@ public class SNePSInterface extends SingleFrameApplication {
     private void jTabbedPane1MouseClicked(MouseEvent evt) {
     	int selectedIndex = sNePSULPanel1.getjTabbedPane1().getSelectedIndex();
     	Dimension dimension = new Dimension(815, 600);
+    	if(network==null){
+    		int result = JOptionPane.showConfirmDialog(getMainFrame(), 
+    				"Do you want to start a new Session?", 
+    				"New Session", 
+    				JOptionPane.YES_NO_OPTION);
+    		if(result == JOptionPane.YES_OPTION) {
+    			newButtonActionPerformed();
+    		}
+    	}
+    	
     	if(evt.getClickCount() == 2 && selectedIndex == 2) {
     		if(viewNetworkClickCount) {
     			outputPanel1.setVisible(true);
@@ -2193,9 +2203,9 @@ public class SNePSInterface extends SingleFrameApplication {
 	}
     
     private void openButtonMouseClicked(MouseEvent evt) {
-JFileChooser chooser  = new JFileChooser();
-int option = chooser.showOpenDialog(this.getMainFrame());
-if(option == JFileChooser.APPROVE_OPTION) {
+	JFileChooser chooser  = new JFileChooser();
+	int option = chooser.showOpenDialog(this.getMainFrame());
+	if(option == JFileChooser.APPROVE_OPTION) {
     File file = chooser.getSelectedFile();
 	try {
 		FileInputStream fis = new FileInputStream(file);

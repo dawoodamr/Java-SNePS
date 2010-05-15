@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import snepsui.Commands.*;
@@ -134,7 +135,15 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	}
 	
 	private void commandMenusComboBoxActionPerformed(ActionEvent evt) {
-		if(commandMenusComboBox.getSelectedItem().equals("Relations")) {
+		if(network == null) {
+			int result = JOptionPane.showConfirmDialog(this, 
+    				"Do you want to start a new Session?", 
+    				"New Session", 
+    				JOptionPane.YES_NO_OPTION);
+    		if(result == JOptionPane.YES_OPTION) {
+    			frame.newButtonActionPerformed();
+    		}
+		} else if(commandMenusComboBox.getSelectedItem().equals("Relations")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 			dcbm.addElement("define");
 			dcbm.addElement("undefine");
@@ -1259,11 +1268,11 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		
 		/*Print out node name*/
 		frame.getOutputPanel1().writeToTextArea("Node Name: " + node.getIdentifier() + newLine);
-		System.out.println("Node Name: " + node.getIdentifier());
+		//System.out.println("Node Name: " + node.getIdentifier());
 		
 		/*Print out semantic class*/
 		frame.getOutputPanel1().writeToTextArea("Semantic Class: "+ node.getEntity().getClass().getSimpleName() + newLine);
-		System.out.println("Semantic Class: "+ node.getEntity().getClass().getSimpleName());
+		//System.out.println("Semantic Class: "+ node.getEntity().getClass().getSimpleName());
 		
 		/*Print out cable*/
 		if(node instanceof MolecularNode) {
@@ -1301,7 +1310,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		}
 		
 		frame.getOutputPanel1().writeToTextArea(endLine);
-		System.out.println(endLine);
+		//System.out.println(endLine);
 		frame.getNodesResult().addNodes(connectedNodes);
 	}
 	
@@ -1318,7 +1327,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			LinkedList<Path> paths = currentPath.getPaths();
 			pathString = "(and ";
 			
-			System.out.println(paths.size());
+			//System.out.println(paths.size());
 			for (int i = 0; i < paths.size(); i++) {				
 				pathString += createPath(paths.get(i)) + " ";
 			}
@@ -1330,7 +1339,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			LinkedList<Path> paths = currentPath.getPaths();
 			pathString = "(compose ";
 			
-			System.out.println(paths.size());
+			//System.out.println(paths.size());
 			for (int i = 0; i < paths.size(); i++) {
 				pathString += createPath(paths.get(i)) + " ";
 			}
@@ -1363,7 +1372,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			LinkedList<Path> paths = currentPath.getPaths();
 			pathString = "(or ";
 			
-			System.out.println(paths.size());
+			//System.out.println(paths.size());
 			for (int i = 0; i < paths.size(); i++) {
 				pathString += createPath(paths.get(i)) + " ";
 			}
@@ -1387,7 +1396,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			BUnitPath currentPath = (BUnitPath) path;
 			pathString =  currentPath.getRelationName() + "-";
 		}
-		System.out.println(pathString);
+		//System.out.println(pathString);
 		return pathString;
 	}
 	

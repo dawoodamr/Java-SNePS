@@ -515,7 +515,7 @@ public class DrawNetwork extends javax.swing.JPanel {
 			String picked = vv.getPickSupport().getVertex(layout, point.getX(), point.getY());
 			Point endPoint = vv.getMousePosition();
 			String endVertex = vv.getPickSupport().getVertex(layout, endPoint.getX(), endPoint.getY());
-			System.out.println("Predecessor: " + graph.isPredecessor(endVertex,picked));
+			//System.out.println("Predecessor: " + graph.isPredecessor(endVertex,picked));
 			if((!graph.isPredecessor(endVertex,picked)) && (!graph.isPredecessor(picked, endVertex))) {
 				//Connecting new node to already built Molecular Nodes
 				if (builtMolNodes.containsKey(picked)){
@@ -707,10 +707,10 @@ public class DrawNetwork extends javax.swing.JPanel {
                         	 builMolNode((java.lang.String)vertex);
                          }});
                 	}
-            		System.out.println(vertex);
-            		System.out.println(builtMolNodes.containsKey(vertex));
-            		if(builtMolNodes.contains(vertex))
-            			System.out.println(builtMolNodes.get(vertex).getIdentifier());
+            		//System.out.println(vertex);
+            		//System.out.println(builtMolNodes.containsKey(vertex));
+            		//if(builtMolNodes.contains(vertex))
+            			//System.out.println(builtMolNodes.get(vertex).getIdentifier());
             		if(builtMolNodes.containsKey(vertex)) {
             			popup.add(new AbstractAction("Assert") {
                             public void actionPerformed(ActionEvent e) {
@@ -729,7 +729,7 @@ public class DrawNetwork extends javax.swing.JPanel {
                     popup.add(new AbstractAction("Delete Node") {
                         public void actionPerformed(ActionEvent e) {
                             pickedVertexState.pick(vertex, false);
-                            System.out.println();
+                            //System.out.println();
                             try {
 								Node node = network.getNode(vertex.toString());
 								if(node.getUpCableSet().getUpCables().isEmpty()) {
