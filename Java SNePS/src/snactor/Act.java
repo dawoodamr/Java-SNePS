@@ -33,6 +33,7 @@ public class Act extends Entity {
 
 	static Condition test = new Condition();
 	
+	boolean flag = true;
 	
 
 
@@ -47,8 +48,11 @@ public class Act extends Entity {
 		this.preConditions = new LinkedList<Node>();
 		this.reports = new LinkedList<Node>();
 		getAction();
-		getObjects(getMainObject());
-
+		Node temp = getMainObject();
+		if(flag)
+		{
+		getObjects(temp);
+		}
 	}
 
 	public void getAction() {
@@ -71,6 +75,7 @@ public class Act extends Entity {
 					.getNodeSet().getNodes().getFirst();
 			return MainObject;
 		} else {
+			flag = false;
 			return null;
 		}
 
@@ -79,6 +84,7 @@ public class Act extends Entity {
 	public void getObjects(Node mainNode)
 
 	{
+		
 		if (mainNode.getClass().getSimpleName().equals("BaseNode")) {
 			addNode(mainNode);
 		} else {
@@ -99,6 +105,7 @@ public class Act extends Entity {
 
 	}
 
+	@SuppressWarnings("static-access")
 	public static void Intend(Node a,Network m) throws CustomException { 
 		
 		if (((Act) a.getEntity()).getAgenda().equals("start")) 
@@ -191,6 +198,7 @@ public class Act extends Entity {
 			} 
 			else
 			{
+				System.out.println("Trying to find plans for executing act: " + a.getIdentifier());
 				((Act) a.getEntity()).setReports(new LinkedList<Node>());
 				((Act) a.getEntity()).setAgenda("find-plans");
 				Queue.stackPush(a);
@@ -203,6 +211,7 @@ public class Act extends Entity {
 			
 			if (!reports.isEmpty())
 			{
+			System.out.println("Plan found for: "+ a.getIdentifier() +". "+ ((Act) a.getEntity()).getTheAction().getIdentifier() + ", executing act");
 			((Act) a.getEntity()).setPlans(reports);
 			((Act) a.getEntity()).setReports(new LinkedList<Node>());
 			((Act) a.getEntity()).setAgenda("done");
@@ -218,6 +227,7 @@ public class Act extends Entity {
 			
 		if (((Act) a.getEntity()).getAgenda().equals("done"))
 		{
+			//System.out.println(test.conditions.getLast().getIdentifier());
 			Queue.stackPop();
 		}
 		
@@ -271,7 +281,11 @@ public class Act extends Entity {
 
 	private static void scheduleBelieveEffects(LinkedList<Node> effectsList,Network m) throws CustomException 
 	{
-		
+//		for(int i=0; i<effectsList.size();i++)
+//		{
+//			test.conditions.add(effectsList.get(i));
+//			System.out.println(effectsList.get(i).getIdentifier());
+//		}
 		Relation r1 = m.getRelation("action");
 		Relation r2 = m.getRelation("actObject");
 		
@@ -286,18 +300,17 @@ public class Act extends Entity {
 			o20[0][1] = bn21;
 			o20[1][1] = effects.getFirst();
 
+		
 			try {
-				Act.attach(bn21,"Achieve");
+				Act.attach(bn21,"BELIEVE");
 			} catch (ClassNotFoundException e) {
-				
 				e.printStackTrace();
 			} catch (InstantiationException e) {
-
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-
 				e.printStackTrace();
 			}
+		
 
 			Node yy = m.build(o20,x);
 			
@@ -310,10 +323,7 @@ public class Act extends Entity {
 			
 			Queue.stackPush(yy);
 
-			performSNePS(yy,m);
 			
-			m.removeNode(yy);
-			m.removeNode(bn21);
 			}
 	
 
@@ -334,7 +344,7 @@ public class Act extends Entity {
 			Node bn21 = m.build((String)preConditions.getFirst().toString());
 			o20[0][1] = bn21;
 			o20[1][1] = preConditions.getFirst();
-
+			
 			try {
 				Act.attach(bn21,"Achieve");
 			} catch (ClassNotFoundException e) {
@@ -445,7 +455,6 @@ public class Act extends Entity {
 					if (((MolecularNode) nodess.getLast()).getCableSet()
 							.getCable("act").getNodeSet().getNodes().getFirst()
 							.getIdentifier().equals(a.getIdentifier())) {
-						//System.out.println(nodess.getLast().getIdentifier());
 						reports.add(((MolecularNode) nodess.getLast())
 								.getCableSet().getCable("precondition")
 								.getNodeSet().getNodes().getFirst());

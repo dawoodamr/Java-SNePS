@@ -20,7 +20,7 @@ public class tester extends Action
 	{
 		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
 		LinkedList nodes = ((Act) n.getEntity()).getArrangedObjects();
-	
+		
 		System.out.println(((Node) nodes.getFirst()).getIdentifier());
 
 	}

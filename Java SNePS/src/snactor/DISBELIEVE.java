@@ -16,9 +16,9 @@ public class DISBELIEVE extends Action
 		
 	}
 	
-	
 	public void Perform()
 	{
+		
 		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
 		LinkedList<Node> nodes = ((Act) n.getEntity()).getArrangedObjects();
 		
@@ -32,14 +32,12 @@ public class DISBELIEVE extends Action
 			{
 				
 				((Act) n.getEntity()).setAgenda("done");
-			//	System.out.println(((Node) nodes.getFirst()).getIdentifier());
-		}
 			
-		
-	
+			}
 	
 	}
-	@SuppressWarnings({ "static-access" })
+
+	@SuppressWarnings("static-access")
 	private void disbelieveProposition(Node n) 
 	{
 		

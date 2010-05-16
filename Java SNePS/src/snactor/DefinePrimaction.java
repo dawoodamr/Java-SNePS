@@ -5,7 +5,7 @@ import java.lang.reflect.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class AttachTrial2 {
+public class DefinePrimaction {
   
   static File targetDir;
   String mycode;
@@ -14,17 +14,18 @@ public class AttachTrial2 {
   
   public static void main(String[] args)
   {
-    new AttachTrial2();
+    new DefinePrimaction();
   }
   
-    AttachTrial2(){
+    DefinePrimaction(){
  
     JFrame frame = new JFrame("Class Editor");
-    frame.setBounds(300,50,700,700);
+    frame.setBounds(300,50,700,620);
 	frame.setLayout(null);
 	frame.setResizable(false);
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	frame.setVisible(true);
+	frame.setResizable(true);
 	
 	code = new JTextArea ("Enter Code");
 	frame.getContentPane().add(code);
@@ -39,91 +40,97 @@ public class AttachTrial2 {
 	 
    JButton button = new JButton("Recompile and Reload");
    frame.getContentPane().add(button);
+   button.setBounds(230,450,250,100); 
+   button.setVisible(true); 
     button.addActionListener(
       new ActionListener(){
         @SuppressWarnings("unchecked")
 		public void actionPerformed(ActionEvent e){
-          //System.out.println(mycode);
-
-     //      System.out.println(code.getText());
+      
            className = enterName.getText();
-   		   AttachTrial2.writeTheClassFile(code.getText());
+   		  
+           DefinePrimaction.writeTheClassFile(code.getText());
            
            try{
-            boolean compileStatus = compile(
-               "src" + File.separator + "snactor" + File.separator + className+".java");
+        	   
+            boolean compileStatus = compile("src" + File.separator + "snactor" + File.separator + className+".java");
       
-            if(compileStatus){
-              System.out.println("Compile complete");
+            if(compileStatus)
+            {
+              
+            System.out.println("Compile complete");
  
-              Class loadedClass = 
-                                reloadTheClass(className,
-                                                targetDir);
-           //  System.out.println("Class Loaded");
+              Class loadedClass = reloadTheClass(className,targetDir);
+         
               Object obj = loadedClass.newInstance();
               
-              Method methodObj =  loadedClass.getDeclaredMethod("theMethod", new Class[]{String.class,double.class});
+              Method methodObj =  loadedClass.getDeclaredMethod("Perform", new Class[]{String.class,double.class});
               
             
               @SuppressWarnings("unused")
-			String returnVal = (String)methodObj.invoke(
-                   obj,
-                   new Object[]{"Hello",new Double(10.1)});
-          //    System.out.println(returnVal);
+			String returnVal = (String)methodObj.invoke(obj,new Object[]{"Hello",new Double(10.1)});
+         
             }
-            else{
-              System.out.println(
-                               "Probable compiler error.");
+            else
+            {
+              System.out.println("Probable compiler error.");
             }
           
           }catch(Exception ex){
             ex.printStackTrace();
           }
    }});
-    button.setBounds(230,450,250,100); 
-//    button.setSize(,);
-    button.setVisible(true); 
+ 
   }
   
- static void writeTheClassFile(String theCode){
-    try{
+ static void writeTheClassFile(String theCode)
+ {
+    
+	 try
+	 {
       targetDir = new File(System.getProperty("user.dir")
                + File.separator + "src" + File.separator + "snactor" + File.separator);
-      if(!targetDir.exists()){
+      if(!targetDir.exists())
+      {
         targetDir.mkdir();
       }
-      DataOutputStream dataOut = new DataOutputStream(
-             new FileOutputStream("src" + File.separator + "snactor" + File.separator +
-                                        className+".java"));
+      DataOutputStream dataOut = new DataOutputStream(new FileOutputStream("src" 
+    		  + File.separator + "snactor" + File.separator + className+".java"));
                                         
       System.out.println("Writing the class file.");
+     
       dataOut.writeBytes(theCode);
       
       dataOut.close();
 
-    }catch(Exception e){
+    }
+	 catch(Exception e)
+	{
       e.printStackTrace();
-    }//end catch
+    }
   }
   
   @SuppressWarnings("unchecked")
 static Class reloadTheClass(String reloadableClass,File dir)
-    	{
+    {
          URL[] theUrl = null;
-    try{
-    	 URI uri = dir.toURI();                   
+    try
+    {
+   	 URI uri = dir.toURI();                   
       URL url = uri.toURL();
       theUrl = new URL[]{url};
-    }catch(Exception e){
+    }
+    catch(Exception e)
+    {
       e.printStackTrace();
     }
     
   Class theClass = null;
     
-    try {
-
-      ClassLoader classLoader = new URLClassLoader(theUrl);
-      theClass = classLoader.loadClass(reloadableClass);
+    try 
+    {
+    	ClassLoader classLoader = new URLClassLoader(theUrl);
+        theClass = classLoader.loadClass(reloadableClass);
     }
     catch (Exception e)
     {
@@ -137,8 +144,7 @@ private static boolean compile(String file) throws IOException
     System.out.println("Compiling " + file);
     Process p = Runtime.getRuntime().exec("javac " + file);
     
-       Thread myTimer = new Thread(
-                   new Timer(Thread.currentThread(),5000));
+   Thread myTimer = new Thread(new Timer(Thread.currentThread(),5000));
     myTimer.start();
     
     System.out.println("Waiting for completion");
@@ -173,6 +179,7 @@ class Timer implements Runnable{
     this.theCompilingThread = theCompilingThread;
     this.delay = delay;
   }
+  
   @SuppressWarnings("static-access")
 public void run(){
     try{

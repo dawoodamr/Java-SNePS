@@ -4,10 +4,11 @@ import sneps.*;
 
 
 import java.util.LinkedList;
+import java.util.Stack;
 
 public class SNSEQUENCE extends Action
 {
-	Queue temp;
+	Stack<Node> temp = new Stack<Node>();
 
 	public SNSEQUENCE(Node node)
 	{
@@ -26,14 +27,14 @@ public class SNSEQUENCE extends Action
 		{	
 			((Act) nodes.get(i).getEntity()).setAgenda("start");
 	
-			temp.stackPush((Node) nodes.get(i));
+			temp.push((Node) nodes.get(i));
 		
 		}
 		
 		for(int i=0;i<nodes.size();i++)
 		{	
 			
-			queue.stackPush(temp.stackPop());
+			queue.stackPush(temp.pop());
 			
 		}
 	

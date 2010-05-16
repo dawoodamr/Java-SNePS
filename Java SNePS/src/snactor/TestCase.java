@@ -86,17 +86,183 @@ public class TestCase
 	 */
 		
 		
+		Object[][] o99 = new Object[2][2];
+		 
+		o99[0][0] = r3;
+		o99[1][0] = r4;
+		Node bn991 = m.build("B");
+		Node bn992 = m.build("A");
+		o99[0][1] = bn991;
+		o99[1][1] = bn992;
+				
+		Node n99 = m.build(o99, cf2);
+		
+		Object[][] o98 = new Object[2][2];
+		 
+		o98[0][0] = r1;
+		o98[1][0] = r2;
+		Node bn981 = m.build("PUT#1");
+		o98[0][1] = bn981;
+		o98[1][1] = n99;
+		
+		Act.attach(bn981,"PUT");
+		
+		Node n98 = m.build(o98, cf1);
+		
+		Act a98 = new Act((MolecularNode) n98);
+		n98.setEntity(a98);
+		
+		a98.setPrimaction(true);
+		
+		Object[][] o97 = new Object[2][2];
+		 
+		o97[0][0] = r3;
+		o97[1][0] = r4;
+		Node bn971 = m.build("Table");
+		o97[0][1] = bn992;
+		o97[1][1] = bn971;
+				
+		Node n97 = m.build(o97, cf2);
+		
+		Object[][] o96 = new Object[2][2];
+		 
+		o96[0][0] = r1;
+		o96[1][0] = r2;
+		Node bn961 = m.build("PUT#2");
+		o96[0][1] = bn961;
+		o96[1][1] = n97;
+		Act.attach(bn961,"PUT");
+		
+		Node n96 = m.build(o96, cf1);
+		
+		Act a96 = new Act((MolecularNode) n96);
+		n96.setEntity(a96);
+		
+		a96.setPrimaction(true);
+		
+		Object[][] o95 = new Object[2][2];
+		 
+		o95[0][0] = r3;
+		o95[1][0] = r4;
+		o95[0][1] = n98;
+		o95[1][1] = n96;
+				
+		Node n95 = m.build(o95, cf2);
+		
+		Object[][] o94= new Object[2][2];
+		 
+		o94[0][0] = r1;
+		o94[1][0] = r2;
+		Node bn941 = m.build("PILE(SNSEQUENCE)");
+		o94[0][1] = bn941;
+		o94[1][1] = n95;
+		
+		Act.attach(bn941,"SNSEQUENCE");
+		
+		Node n94 = m.build(o94, cf1);
+		
+		Act a94 = new Act((MolecularNode) n94);
+		n94.setEntity(a94);
+		
+		a94.setPrimaction(true);
+		
+		Object[][] o93 = new Object[2][2];
+		
+		o93[0][0] = r5;
+		o93[1][0] = r8;
+		Node bn931 = m.build("Table is Clear");
+		o93[0][1] = n94;
+		o93[1][1] = bn931;
+		
+		Node n93 = m.build(o93, precf);
+		
+		Object[][] o92 = new Object[2][2];
+		 
+		
+		o92[0][0] = r1;
+		o92[1][0] = r2;
+		Node bn921 = m.build("Believe#1");
+		o92[0][1] = bn921;
+		o92[1][1] = bn931;
+		
+		Act.attach(bn921,"BELIEVE");
+		
+		Node n92 = m.build(o92, cf1);
+		
+		Act a92 = new Act((MolecularNode) n92);
+		n92.setEntity(a92);
+		
+		a92.setPrimaction(true);
+		
+		Object[][] o91 = new Object[2][2];
+		
+		o91[0][0] = r7;
+		o91[1][0] = r10;
+		o91[0][1] = n92;
+		o91[1][1] = bn931;
+		
+		Node n91 = m.build(o91, planGoal);
+		
+		
+		Object[][] o90 = new Object[2][2];
+		
+		o90[0][0] = r5;
+		o90[1][0] = r9;
+		Node bn901 = m.build("Table is not clear");
+		o90[0][1] = n94;
+		o90[1][1] = bn901;
+		
+		Node n90 = m.build(o90, effectcf);
+		
+		a94.setAgenda("start");
+		Queue.stackPush(n94);
+		a94.performSNePS(n94, m);
+		
+		
+	/*	Object[][] o20 = new Object[2][2];
+		 
+		
+		
+		o20[0][0] = r1;
+		o20[1][0] = r2;
+		Node bn91 = m.build("k1");
+		Node bn92 = m.build("ZZ");
+		o20[0][1] = bn91;
+		o20[1][1] = bn92;
+		
+		Act.attach(bn91,"DISBELIEVE");
+		
+		Node n20 = m.build(o20, cf1);
+		
+		Act a20 = new Act((MolecularNode) n20);
+		n20.setEntity(a20);
+		
+		a20.setPrimaction(true);
+		
+		Object[][] o18 = new Object[2][2];
+		 
+		
+		o18[0][0] = r5;
+		o18[1][0] = r6;
+		Node bn81 = m.build("Z");
+		o18[0][1] = n20;
+		o18[1][1] = bn81;
+		
+	//	Act.attach(bn71,"SNIF");
+		
+		Node n18 = m.build(o18, guarded);
+		
 		Object[][] o8 = new Object[2][2];
 		 
 		
 		o8[0][0] = r1;
 		o8[1][0] = r2;
 		Node bn7 = m.build("mesh");
-		Node bn8 = m.build("Printdah");
+	//	Node bn8 = m.build("Printdah");
 		o8[0][1] = bn7;
-		o8[1][1] = bn8;
+		o8[1][1] = n18;
 		
-		Act.attach(bn7,"tester");
+		Act.attach(bn7,"SNIF");
 		
 		Node n6 = m.build(o8, cf1);
 		
@@ -236,8 +402,8 @@ public class TestCase
 		Node n9 = m.build(o12, planGoal);
 		
 		
-	//	test.conditions.add(bn31);
-				
+		test.conditions.add(bn81);
+	//	test.conditions.add(bn92);		
 //		a5.setAgenda("start");
 //		Queue.stackPush(n5);
 //		a5.performSNePS(n5, m);
@@ -245,7 +411,9 @@ public class TestCase
 		a1.setAgenda("start");
 		Queue.stackPush(n1);
 		a1.performSNePS(n1, m);
-	
+		
+		*/
+		
 		
 	}
 	
