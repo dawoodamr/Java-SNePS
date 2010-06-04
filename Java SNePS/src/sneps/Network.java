@@ -214,7 +214,7 @@ public class Network implements Serializable
 				{
 					String r = ((Relation) array[counter][0]).getName();
 					NodeSet ns = ((Node) array[counter][1]).getUpCableSet().getUpCable(r).getNodeSet();
-					intersection.getNodes().addAll(ns.getNodes());
+					intersection.addAll(ns);
 					break;
 				}
 			}
@@ -229,7 +229,7 @@ public class Network implements Serializable
 					intersection = intersection.Intersection(ns1);
 				}
 			}
-			return (MolecularNode) intersection.getNodes().getFirst();
+			return (MolecularNode) intersection.getNode(0);
 		}
 	}
 	
@@ -334,18 +334,18 @@ public class Network implements Serializable
 			molecularNodes.get(m.getCableSet().getCaseFrame().getId()).removeNode(node);
 			CableSet cableSet = m.getCableSet();
 			// loop for cables
-			for(int i=0;i<cableSet.getCables().size();i++)
+			for(int i=0;i<cableSet.size();i++)
 			{
-				Cable cable = cableSet.getCables().get(i);
+				Cable cable = cableSet.getCable(i);
 				NodeSet ns = cable.getNodeSet();
 				//loop for nodes in the node set
-				for(int j=0;j<ns.getNodes().size();j++)
+				for(int j=0;j<ns.size();j++)
 				{
-					Node n = ns.getNodes().get(j);
+					Node n = ns.getNode(j);
 					// loop for UpCables
-					for(int k=0;k<n.getUpCableSet().getUpCables().size();k++)
+					for(int k=0;k<n.getUpCableSet().size();k++)
 					{
-						UpCable upCable = n.getUpCableSet().getUpCables().get(k);
+						UpCable upCable = n.getUpCableSet().getUpCable(k);
 						upCable.removeNode(node);
 						if(upCable.getNodeSet().isEmpty())
 							n.getUpCableSet().removeUpCable(upCable);
@@ -386,7 +386,7 @@ public class Network implements Serializable
 			return false;
 		UpCable upCable = upCableSet.getUpCable(relation);
 		NodeSet ns = upCable.getNodeSet();
-		result.getNodes().addAll(ns.getNodes());
+		result.addAll(ns);
 		
 		for(int i=counter;i<array.length;i++)
 		{
@@ -402,7 +402,7 @@ public class Network implements Serializable
 			result = result.Intersection(ns);
 		}
 		
-		if(result.getNodes().size() == 1)
+		if(result.size() == 1)
 			return true;
 		return false;
 	}
@@ -516,25 +516,25 @@ public class Network implements Serializable
 					if(t1.getCableSet().getCaseFrame() != t2.getCableSet().getCaseFrame())
 						return false;
 					// checking the node sets in the cables
-					for(int i=0;i<t1.getCableSet().getCables().size();i++)
+					for(int i=0;i<t1.getCableSet().size();i++)
 					{
 						System.out.println("here    >>>>> 6");
-						Relation r = t1.getCableSet().getCables().get(i).getRelation();
+						Relation r = t1.getCableSet().getCable(i).getRelation();
 						NodeSet ns1 = t1.getCableSet().getCable(r.getName()).getNodeSet();
 						NodeSet ns2 = t2.getCableSet().getCable(r.getName()).getNodeSet();
 						if(rightOrder && ((r.getAdjust().equals("reduce") &&
-							ns1.getNodes().size() > ns2.getNodes().size()) ||
+							ns1.size() > ns2.size()) ||
 							(r.getAdjust().equals("expand") &&
-							ns1.getNodes().size() < ns2.getNodes().size()) ||
+							ns1.size() < ns2.size()) ||
 							(r.getAdjust().equals("none") &&
-							ns1.getNodes().size() != ns2.getNodes().size())))
+							ns1.size() != ns2.size())))
 							return false;
 						if((!rightOrder) && ((r.getAdjust().equals("expand") &&
-								ns1.getNodes().size() > ns2.getNodes().size()) ||
+								ns1.size() > ns2.size()) ||
 								(r.getAdjust().equals("reduce") &&
-								ns1.getNodes().size() < ns2.getNodes().size()) ||
+								ns1.size() < ns2.size()) ||
 								(r.getAdjust().equals("none") &&
-								ns1.getNodes().size() != ns2.getNodes().size())))
+								ns1.size() != ns2.size())))
 								return false;
 						System.out.println("here    >>>>> 7");
 						if(setUnify(ns1,ns2,rList,rightOrder))
@@ -565,7 +565,7 @@ public class Network implements Serializable
 	public boolean setUnify(NodeSet ns1,NodeSet ns2,LinkedList<Substitutions> r,boolean rightOrder)
 	{
 		System.out.println("setunify    >>>>> 1");
-		if(ns1.getNodes().size() == 0 || ns2.getNodes().size() == 0)
+		if(ns1.size() == 0 || ns2.size() == 0)
 			return true;
 		boolean flag = false;
 		// loop for ns1
@@ -575,20 +575,20 @@ public class Network implements Serializable
 			Substitutions rSub = new Substitutions();
 			rSub.insert(r.get(0));
 			r.remove(0);
-			for(int i=0;i<ns1.getNodes().size();i++)
+			for(int i=0;i<ns1.size();i++)
 			{
 				System.out.println("setunify    >>>>> 2");
-				Node n1 = ns1.getNodes().get(i);
+				Node n1 = ns1.getNode(i);
 				NodeSet n1Others = new NodeSet();
-				n1Others.getNodes().addAll(ns1.getNodes());
+				n1Others.addAll(ns1);
 				n1Others.removeNode(n1);
 				// loop for ns2
-				for(int j=0;j<ns2.getNodes().size();j++)
+				for(int j=0;j<ns2.size();j++)
 				{
 					System.out.println("setunify    >>>>> 3");
-					Node n2 = ns2.getNodes().get(j);
+					Node n2 = ns2.getNode(j);
 					NodeSet n2Others = new NodeSet();
-					n2Others.getNodes().addAll(ns2.getNodes());
+					n2Others.addAll(ns2);
 					n2Others.removeNode(n2);
 					Substitutions s = new Substitutions();
 					for(int w=0;w<rSub.cardinality();w++)
@@ -899,12 +899,12 @@ public class Network implements Serializable
 		// list for pattern nodes substitutions
 		LinkedList<LinkedList<Object>> temp = new LinkedList<LinkedList<Object>>();
 		CableSet cs = t.getCableSet();
-		for(int i=0;i<cs.getCables().size();i++)
+		for(int i=0;i<cs.size();i++)
 		{
-			Cable c = cs.getCables().get(i);
+			Cable c = cs.getCable(i);
 			Relation rel = c.getRelation();
 			NodeSet ns = c.getNodeSet();
-			if(ns.getNodes().size() == 0)
+			if(ns.size() == 0)
 			{
 				LinkedList<Object> list = new LinkedList<Object>();
 				list.add(rel);
@@ -912,9 +912,9 @@ public class Network implements Serializable
 				temp.add(list);
 				continue;
 			}
-			for(int j=0;j<ns.getNodes().size();j++)
+			for(int j=0;j<ns.size();j++)
 			{
-				Node n = ns.getNodes().get(j);
+				Node n = ns.getNode(j);
 				if(n.getClass().getSimpleName().equals("BaseNode") 
 						|| n.getClass().getSimpleName().equals("ClosedNode"))
 				{
@@ -1098,20 +1098,20 @@ public class Network implements Serializable
 	 * @return a node set of nodes that we can start following the path from in order to
 	 * get to one of the nodes in the specified node set
 	 */
-	@SuppressWarnings("unchecked")
 	private Hashtable<Node,LinkedList<Support>> findUnion(Path path,NodeSet nodeSet,Context context)
 	{
 		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
 		
-		LinkedList<Node> nodeList = (LinkedList<Node>) nodeSet.getNodes().clone();
-		if(nodeList.isEmpty())
+		NodeSet nodeset = new NodeSet();
+		nodeset.addAll(nodeSet);
+		if(nodeset.isEmpty())
 			return new Hashtable<Node,LinkedList<Support>>();
 		
-		Node node = nodeList.removeFirst();
-		NodeSet ns = new NodeSet(nodeList);
+		Node node = nodeset.getNode(0);
+		nodeset.removeNode(node);
 		
 		Hashtable<Node,LinkedList<Support>> h1 = path.followConverse(node,new LinkedList<Support>(),context);
-		Hashtable<Node,LinkedList<Support>> h2 = findUnion(path,ns,context);
+		Hashtable<Node,LinkedList<Support>> h2 = findUnion(path,nodeset,context);
 		
 		result.putAll(h1);
 		for(Enumeration<Node> e = h2.keys();e.hasMoreElements();)
@@ -1239,12 +1239,12 @@ public class Network implements Serializable
 		this.molecularNodes.get(caseFrame.getId()).addNode(closedNode);
 		
 		// adding UpCables
-		for(int i=0;i<cableSet.getCables().size();i++)
+		for(int i=0;i<cableSet.size();i++)
 		{
-			Relation r = cableSet.getCables().get(i).getRelation();
-			for(int j=0;j<cableSet.getCables().get(i).getNodeSet().getNodes().size();j++)
+			Relation r = cableSet.getCable(i).getRelation();
+			for(int j=0;j<cableSet.getCable(i).getNodeSet().size();j++)
 			{
-				Node n = cableSet.getCables().get(i).getNodeSet().getNodes().get(j);
+				Node n = cableSet.getCable(i).getNodeSet().getNode(j);
 				if(! n.getUpCableSet().contains(r))
 					n.getUpCableSet().addUpCable(new UpCable(r));
 				n.getUpCableSet().getUpCable(r).addNode(closedNode);
@@ -1278,12 +1278,12 @@ public class Network implements Serializable
 		this.molecularNodes.get(caseFrame.getId()).addNode(patternNode);
 		
 		// adding UpCables
-		for(int i=0;i<cableSet.getCables().size();i++)
+		for(int i=0;i<cableSet.size();i++)
 		{
-			Relation r = cableSet.getCables().get(i).getRelation();
-			for(int j=0;j<cableSet.getCables().get(i).getNodeSet().getNodes().size();j++)
+			Relation r = cableSet.getCable(i).getRelation();
+			for(int j=0;j<cableSet.getCable(i).getNodeSet().size();j++)
 			{
-				Node n = cableSet.getCables().get(i).getNodeSet().getNodes().get(j);
+				Node n = cableSet.getCable(i).getNodeSet().getNode(j);
 				if(! n.getUpCableSet().contains(r))
 					n.getUpCableSet().addUpCable(new UpCable(r));
 				n.getUpCableSet().getUpCable(r).addNode(patternNode);
@@ -1317,7 +1317,7 @@ public class Network implements Serializable
 				if(r.equals((Relation) tempResult[j][0]))
 				{
 					NodeSet ns = (NodeSet) tempResult[j][1];
-					ns.getNodes().addAll(nos.getNodes());
+					ns.addAll(nos);
 					exists = true;
 					break;
 				}else
@@ -1327,7 +1327,7 @@ public class Network implements Serializable
 			{
 				exists = false;
 				NodeSet nodeSet = new NodeSet();
-				nodeSet.getNodes().addAll(nos.getNodes());
+				nodeSet.addAll(nos);
 				tempResult[relCount][0] = r;
 				tempResult[relCount][1] = nodeSet;
 				relCount++;

@@ -4,8 +4,7 @@ import java.util.LinkedList;
 
 /**
  * This class represents the cables going out of a Node along with the case frame of this
- * cable set.So we can say that a Node is a Cable set.once a cable is created it can never 
- * be changed.
+ * cable set. 
  * 
  * @author Amr Khaled Dawood 
  */
@@ -33,14 +32,6 @@ public class CableSet
 	}
 
 	/**
-	 * @return the list of Cables in this CableSet.
-	 */
-	public LinkedList<Cable> getCables()
-	{
-		return cables;
-	}
-
-	/**
 	 * @return the CaseFrame used in this CableSet.
 	 */
 	public CaseFrame getCaseFrame()
@@ -64,19 +55,43 @@ public class CableSet
 	}
 	
 	/**
+	 * gets the cable at the specified position
+	 * 
+	 * @param index the position of the Cable in the list of cables in this cable set
+	 * @return the cable at the specified position
+	 */
+	public Cable getCable(int index)
+	{
+		return this.cables.get(index); 
+	}
+	
+	/**
+	 * determines whether the cable set is empty or not
+	 * 
 	 * @return true if the list is empty and false if not
 	 */
 	public boolean isEmpty()
 	{
-		if(cables.size() == 0)
-			return true;
-		return false;
+		return this.cables.size() == 0;
 	}
 	
 	/**
-	 * @param relationName the name of the relation that we need to know whether the 
-	 * cable set contains or not
-	 * @return true if the relation exists in the cable set
+	 * gets the size of the list of cables in this cable set
+	 * 
+	 * @return the size of the cable list of this cable set
+	 */
+	public int size()
+	{
+		return this.cables.size();
+	}
+	
+	/**
+	 * determines whether a cable with the relation having the specified name 
+	 * exists in this cable set or not
+	 * 
+	 * @param relationName the name of the relation
+	 * @return true if the cable with the specified relation exists in the cable set,
+	 *  and false otherwise
 	 */
 	public boolean contains(String relationName)
 	{

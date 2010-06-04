@@ -1,11 +1,10 @@
 package sneps;
 
 /**
- * The Node is the main unit used in building the graph of the knowledge base.
- * Each Node has an identifier, an UpCableSet and  an Entity.
- * The class Node is the super class of all syntactic classes of Nodes.
- * The Node class is abstract so that we have to create subclasses to inherit from it
- * depending on the hierarchy of Node classes. 
+ * The Node is the main unit used in building the network of the knowledge base.
+ * Each Node has an id, an identifier, an upCableSet and  an entity.
+ * The class Node is the super class of all syntactic classes of nodes.
+ * The Node class is an abstract class. 
  * 
  * @author Amr Khaled Dawood
  */
@@ -13,34 +12,32 @@ public abstract class Node
 {
 	
 	/**
-	 * the counter used for counting the nodes created
+	 * The counter used for counting the nodes created
 	 */
 	private static int count = 1;
 	
 	/**
-	 * the id is like an index of the node
+	 * The id is like an index of the node
 	 */
 	private int id;
 	
 	/**
-	 * the identifier - name - of the node.No two nodes in the network have the same name.
+	 * The identifier - name - of the node
 	 */
 	private String identifier;
 
 	/**
-	 * the UpCableSet that contains information about the parents of this Node.
+	 * The UpCableSet that contains information about the parents of this Node.
 	 */
 	private UpCableSet upCableSet;
 	
 	/**
-	 * the instance of the semantic class of this Node.
+	 * The instance of the semantic class of this Node.
 	 */
 	private Entity entity;
 	
 	/**
 	 * @param identifier the name of the Node
-	 * @param upCableSet the UpCableSet that contains information about the parents of this Node
-	 * @param entity the instance of the semantic class that this Node belongs to
 	 */
 	public Node(String identifier)
 	{
@@ -53,7 +50,7 @@ public abstract class Node
 	}
 
 	/**
-	 * @return the id of the node that uniquely identifies it
+	 * @return the id of this node
 	 */
 	public int getId()
 	{
@@ -61,7 +58,7 @@ public abstract class Node
 	}
 
 	/**
-	 * @return the identifier - name - of this Node
+	 * @return the identifier of this node
 	 */
 	public String getIdentifier()
 	{
@@ -77,7 +74,7 @@ public abstract class Node
 	}
 
 	/**
-	 * @return the instance of the semantic class that this Node belongs to
+	 * @return the instance of the semantic class that this node belongs to
 	 */
 	public Entity getEntity()
 	{
@@ -85,6 +82,8 @@ public abstract class Node
 	}
 
 	/**
+	 * sets the entity of this node to the specified entity
+	 * 
 	 * @param entity the new instance of the semantic class to replace the older one
 	 */
 	public void setEntity(Entity entity)

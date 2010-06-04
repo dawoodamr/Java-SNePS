@@ -15,14 +15,11 @@ public class PatternNode extends MolecularNode
 {
 	
 	/**
-	 * A list of VariableNodes that are dominated by this PatternNode and are not quantified
+	 * A LinkedList of VariableNodes that are dominated by this PatternNode
 	 */
 	private LinkedList<VariableNode> freeVariables;
 
 	/**
-	 * This constructor creates a new PatternNode with the identifier and the CableSet 
-	 * specified and initializes the list of VariableNodes as an empty list.
-	 * 
 	 * @param identifier the name of the PatternNode
 	 * @param cableSet the CableSet of this PatternNode
 	 */
@@ -42,28 +39,28 @@ public class PatternNode extends MolecularNode
 	}
 	
 	/**
-	 * this method is used to update the list of free variables while creating the pattern node
+	 * Updates the list of free variables while creating the pattern node
 	 */
 	public void updateFreeVariables()
 	{
 		CableSet cableSet = this.getCableSet();
 		// looping over the cables
-		for(int i=0;i<cableSet.getCables().size();i++)
+		for(int i=0;i<cableSet.size();i++)
 		{
 			// getting the i'th cable
-			Cable cable = cableSet.getCables().get(i);
+			Cable cable = cableSet.getCable(i);
 			NodeSet nodeSet = cable.getNodeSet();
 			Relation relation = cable.getRelation();
-			for(int j=0;j<nodeSet.getNodes().size();j++)
+			for(int j=0;j<nodeSet.size();j++)
 			{
 				// if the node is variable
-				if(nodeSet.getNodes().get(j).getClass().getSimpleName().equals("VariableNode")
+				if(nodeSet.getNode(j).getClass().getSimpleName().equals("VariableNode")
 						&& ! relation.isQuantifier())
-					this.freeVariables.add((VariableNode) nodeSet.getNodes().get(j));
+					this.freeVariables.add((VariableNode) nodeSet.getNode(j));
 				// if the node is pattern
-				if(nodeSet.getNodes().get(j).getClass().getSimpleName().equals("PatternNode"))
+				if(nodeSet.getNode(j).getClass().getSimpleName().equals("PatternNode"))
 				{
-					PatternNode patternNode = (PatternNode) nodeSet.getNodes().get(j);
+					PatternNode patternNode = (PatternNode) nodeSet.getNode(j);
 					LinkedList<VariableNode> patFreeVars = new LinkedList<VariableNode>();
 					patFreeVars.addAll(patternNode.getFreeVariables());
 					// looping over free variables in the pattern node
@@ -71,10 +68,10 @@ public class PatternNode extends MolecularNode
 					{
 						VariableNode varNode = patFreeVars.get(k);
 						// looping over cables
-						for(int z=0;z<cableSet.getCables().size();z++)
+						for(int z=0;z<cableSet.size();z++)
 						{
-							Cable c = cableSet.getCables().get(z);
-							if(c.getNodeSet().getNodes().contains(varNode) 
+							Cable c = cableSet.getCable(z);
+							if(c.getNodeSet().contains(varNode) 
 									&& c.getRelation().isQuantifier())
 								patFreeVars.remove(varNode);
 						}
@@ -88,8 +85,10 @@ public class PatternNode extends MolecularNode
 	}
 	
 	/**
+	 * compares the free variables dominated by this node and the specified node
+	 * 
 	 * @param node the pattern node that will be compared to this one
-	 * @return true if it shares the same free variables with the given pattern node, and false otherwise
+	 * @return true if it shares the same free variables with this given pattern node, and false otherwise
 	 */
 	public boolean haveSameFreeVariables(PatternNode patternNode)
 	{

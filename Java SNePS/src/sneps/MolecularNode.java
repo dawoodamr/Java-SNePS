@@ -2,8 +2,8 @@ package sneps;
 
 /**
  * A MolecularNode is a Node that has a CableSet, therefore it has outgoing arcs and child 
- * Nodes. It's an abstract class which means before using it we have to extend it by other
- * classes to inherit all its attributes and methods.
+ * Nodes. It's an abstract class which means before using it, it should be extended using 
+ * another sub class.
  * 
  * @author Amr Khaled Dawood
  */
@@ -26,7 +26,7 @@ public abstract class MolecularNode extends Node
 	}
 
 	/**
-	 * @return the CableSet of the MolecularNode
+	 * @return the CableSet of this MolecularNode
 	 */
 	public CableSet getCableSet()
 	{

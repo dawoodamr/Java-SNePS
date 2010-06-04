@@ -1,7 +1,7 @@
 package sneps;
 
 /**
- * A VariableNode is a Node that has no outgoing arcs - but has incoming arcs probably - 
+ * A VariableNode is a Node that has no outgoing arcs - but probably has incoming arcs - 
  * and it is considered to be variable in the sense that it can be unified with other 
  * non-variable Nodes.
  * 
@@ -21,9 +21,6 @@ public class VariableNode extends Node
 	private boolean sLoop;
 
 	/**
-	 * this constructor creates a new VariableNode with a new empty UpCableSet and
-	 * a new instance of the semantic class
-	 * 
 	 * @param identifier the name of the VariableNode
 	 */
 	public VariableNode(String identifier)
@@ -42,6 +39,8 @@ public class VariableNode extends Node
 	}
 
 	/**
+	 * sets the rLoop to the value specified
+	 * 
 	 * @param loop the value that the flag is set to
 	 */
 	public void setRLoop(boolean rloop)
@@ -49,7 +48,7 @@ public class VariableNode extends Node
 		this.rLoop = rloop;
 	}
 	
-	/**
+	/** 
 	 * @return the flag loop that is used in the unification for s-pointer
 	 */
 	public boolean isSLoop()
@@ -58,6 +57,8 @@ public class VariableNode extends Node
 	}
 
 	/**
+	 * sets the sLoop tp the value specified
+	 * 
 	 * @param loop the value that the flag is set to
 	 */
 	public void setSLoop(boolean sloop)

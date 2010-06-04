@@ -3,9 +3,10 @@ package sneps;
 import java.util.LinkedList;
 
 /**
- * A case frame describes the skeleton of the node along with the Relations 
- * going out of it. No two case frames may contain exactly the same list of 
- * Relations in a knowledge base but they might have the same semantic class.
+ * A case frame describes the skeleton of the node by specifying the semantic 
+ * class along with the Relations going out of it. No two case frames may contain 
+ * exactly the same list of Relations in a knowledge base but they might have the 
+ * same semantic class.
  * Once a case frame is created it can never be changed.
  * 
  * @author Amr Khaled Dawood
@@ -14,23 +15,23 @@ public class CaseFrame
 {
 
 	/**
-	 * the name of the semantic class of the node that can have such a case frame
+	 * the name of the semantic class of the node that can implement such a case frame.
 	 */
 	private String semanticClass;
 	
 	/**
-	 * a list of Relations that should be included in this case frame
+	 * a list of Relations labeling arcs going out of the node implementing the case frame.
 	 */
 	private LinkedList<Relation> relations;
 	
 	/**
-	 * the id is a String obtained by concatenating all relations names in the case frame
-	 * in lexicographic order and separated by commas. no two case frames may have the same id
+	 * A String obtained by concatenating all relations names in the case frame ordered
+	 * in lexicographic order and separated by commas. No two case frames may have the same id.
 	 */
 	private String id;
 
 	/**
-	 * @param semanticClass the semantic type of the node that have this case frame
+	 * @param semanticClass the semantic type of the node implementing this case frame
 	 * @param relations a list of Relations that should be in the case frame
 	 */
 	public CaseFrame(String semanticClass,LinkedList<Relation> relations)
@@ -41,7 +42,7 @@ public class CaseFrame
 	}
 
 	/**
-	 * @return the semantic class of the node that could have such a case frame
+	 * @return the semantic class of this case frame
 	 */
 	public String getSemanticClass()
 	{
@@ -49,8 +50,7 @@ public class CaseFrame
 	}
 
 	/**
-	 * @return the list of Relations that should be going out of the node that 
-	 * has such a case frame.
+	 * @return the list of Relations of this case frame
 	 */
 	public LinkedList<Relation> getRelations()
 	{
@@ -58,8 +58,7 @@ public class CaseFrame
 	}
 	
 	/**
-	 * @return the id of the case frame that consists of names of the relations in this
-	 * case frame concatenated and separated by commas
+	 * @return the id of this case frame 
 	 */
 	public String getId()
 	{
@@ -75,7 +74,7 @@ public class CaseFrame
 	 * 
 	 * @param caseFrame another case frame
 	 * @return true if this case frame is adjustable to the specified case frame 
-	 * and false if it is not adjustable to it.
+	 * and false if not.
 	 */
 	public boolean isAdjustableTo(CaseFrame caseFrame)
 	{
@@ -109,11 +108,11 @@ public class CaseFrame
 	}
 	
 	/**
-	 * this method is used for quick-sorting the names of the relations in the list
-	 * given as a parameter for the method and returns them as a String resulted 
+	 * sorts the names of the relations in the list given as a parameter for the 
+	 * method using quick-sort algorithm and returns them as a String resulting
 	 * from concatenating these names separated by commas
 	 *  
-	 * @param r a linked list of relations that we want to sort its relation names and
+	 * @param r a linked list of relations that its relation names are to be sorted and
 	 * put them concatenated in a String
 	 * @return a String of the result of sorting the names of the relations in the list
 	 */
@@ -148,7 +147,7 @@ public class CaseFrame
 	}
 	
 	/**
-	 * This method sorts the items in the String array in lexicographic order and puts them
+	 * Sorts the items in the String array in lexicographic order and puts them
 	 * after sorting in a String separated by commas
 	 * @param r an array of Relations that we want to sort in lexicographic order by their
 	 * names
@@ -163,9 +162,9 @@ public class CaseFrame
 	}
 	
 	/**
-	 * @param arr the array of Relations to be sorted by quick sort algorithm
-	 * @param left the starting position of the items we want to sort
-	 * @param right the ending position of the items we want to sort
+	 * @param arr the array of Relations that is to be sorted by quick sort algorithm
+	 * @param left the starting position of the items that are to be sorted
+	 * @param right the ending position of the items that are to be sorted
 	 */
 	private void quickSort(Relation arr[],int left,int right)
 	{
@@ -177,7 +176,7 @@ public class CaseFrame
 	}
 	
 	/**
-	 * @param arr an array of Relations that we need to get the pivot for
+	 * @param arr an array of Relations that their pivot should be calculated
 	 * @param left the start position of the sorting
 	 * @param right the end position of the sorting
 	 * @return an int representing the pivot index in the array

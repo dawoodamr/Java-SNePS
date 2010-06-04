@@ -62,7 +62,7 @@ public class Act extends Entity {
 
 		NodeSet nodes = a.getNodeSet();
 
-		setTheAction(nodes.getNodes().getFirst());
+		setTheAction(nodes.getNode(0));
 
 	}
 
@@ -71,7 +71,7 @@ public class Act extends Entity {
 
 		if (m.getCableSet().contains("actObject")) {
 			Node MainObject = m.getCableSet().getCable("actObject")
-					.getNodeSet().getNodes().getFirst();
+					.getNodeSet().getNode(0);
 			return MainObject;
 		} else {
 			return null;
@@ -91,9 +91,9 @@ public class Act extends Entity {
 					&& m2.getCableSet().contains("object2")) {
 
 				addNode(m2.getCableSet().getCable("object1").getNodeSet()
-						.getNodes().getFirst());
+						.getNode(0));
 				getObjects(m2.getCableSet().getCable("object2").getNodeSet()
-						.getNodes().getFirst());
+						.getNode(0));
 			} else {
 				addNode(mainNode);
 			}
@@ -254,12 +254,12 @@ public class Act extends Entity {
 						&& ((MolecularNode) nodess.getLast()).getCableSet()
 								.contains("act")) {
 					if (((MolecularNode) nodess.getLast()).getCableSet()
-							.getCable("act").getNodeSet().getNodes().getFirst()
+							.getCable("act").getNodeSet().getNode(0)
 							.getIdentifier().equals(a.getIdentifier())) {
 						//System.out.println(nodess.getLast().getIdentifier());
 						reports.add(((MolecularNode) nodess.getLast())
 								.getCableSet().getCable("plan").getNodeSet()
-								.getNodes().getFirst());
+								.getNode(0));
 					}
 				}
 			}
@@ -387,11 +387,11 @@ public class Act extends Entity {
 						&& ((MolecularNode) nodess.getLast()).getCableSet()
 								.contains("act")) {
 					if (((MolecularNode) nodess.getLast()).getCableSet()
-							.getCable("act").getNodeSet().getNodes().getFirst()
+							.getCable("act").getNodeSet().getNode(0)
 							.getIdentifier().equals(a.getIdentifier())) {
 						reports.add(((MolecularNode) nodess.getLast())
 								.getCableSet().getCable("effect").getNodeSet()
-								.getNodes().getFirst());
+								.getNode(0));
 					}
 				}
 			}
@@ -446,12 +446,12 @@ public class Act extends Entity {
 								.contains("act")) {
 				
 					if (((MolecularNode) nodess.getLast()).getCableSet()
-							.getCable("act").getNodeSet().getNodes().getFirst()
+							.getCable("act").getNodeSet().getNode(0)
 							.getIdentifier().equals(a.getIdentifier())) {
 						//System.out.println(nodess.getLast().getIdentifier());
 						reports.add(((MolecularNode) nodess.getLast())
 								.getCableSet().getCable("precondition")
-								.getNodeSet().getNodes().getFirst());
+								.getNodeSet().getNode(0));
 					}
 				}
 			}
@@ -590,6 +590,7 @@ public class Act extends Entity {
 	}
 	}
 
+	
 	}
 
 

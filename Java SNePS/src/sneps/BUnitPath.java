@@ -46,9 +46,9 @@ public class BUnitPath extends Path
 		UpCable upCable = upCableSet.getUpCable(relationName);
 		if(upCable != null)
 		{
-			for(int i=0;i<upCable.getNodeSet().getNodes().size();i++)
+			for(int i=0;i<upCable.getNodeSet().size();i++)
 			{
-					h.put(upCable.getNodeSet().getNodes().get(i),supports);
+					h.put(upCable.getNodeSet().getNode(i),supports);
 			}
 		}
 		
@@ -69,9 +69,9 @@ public class BUnitPath extends Path
 			Cable cable = cableSet.getCable(relationName);
 			if(cable != null)
 			{
-				for(int i=0;i<cable.getNodeSet().getNodes().size();i++)
+				for(int i=0;i<cable.getNodeSet().size();i++)
 				{
-						h.put(cable.getNodeSet().getNodes().get(i),supports);
+						h.put(cable.getNodeSet().getNode(i),supports);
 				}
 			}
 		}

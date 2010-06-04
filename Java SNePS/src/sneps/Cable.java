@@ -3,28 +3,28 @@ package sneps;
 import java.lang.reflect.Constructor;
 
 /**
- * A cable is a pair of two things: a Relation and a NodeSet.It describes the arcs 
- * going from a Node to some Nodes - that are in the NodeSet - with the same Relation.
- * Once a Cable is created it can never be changed.
+ * A cable is a pair of two things: a Relation and a NodeSet. It describes the arcs 
+ * going from a Node to some Nodes - that are in the NodeSet - labeled by the same Relation.
+ * 
  * @author Amr Khaled Dawood 
  */
 public class Cable
 {
 	
 	/**
-	 *  The Relation on the arcs connecting the Node that has this Cable to other Nodes.
+	 *  The Relation labeling the arcs connected to nodes in the node set.
 	 */
 	private Relation relation;
 	
 	/**
 	 * The NodeSet that specifies the Nodes that are reachable from the parent node 
-	 * using the arcs labeled with the Relation called: relation.
+	 * using the arcs labeled by the Relation called: relation.
 	 */
 	private NodeSet nodeSet;
 	
 	/**
-	 * @param relation the Relation that labels the arcs of this Cable
-	 * @param nodeSet the NodeSet that specifies the Nodes reachable by the arcs in the Cable.
+	 * @param relation the Relation of this Cable
+	 * @param nodeSet the NodeSet that specifies the Nodes reachable by the cable.
 	 */
 	public Cable(Relation relation,NodeSet nodeSet)
 	{
@@ -49,12 +49,15 @@ public class Cable
 		return nodeSet;
 	}
 	
+	/**
+	 * updates the semantic classes of the new nodes in the node set.
+	 */
 	@SuppressWarnings("unchecked")
 	public void updateSemanticClasses()
 	{
-		for(int i=0;i<nodeSet.getNodes().size();i++)
+		for(int i=0;i<nodeSet.size();i++)
 		{
-			Node n = nodeSet.getNodes().get(i);
+			Node n = nodeSet.getNode(i);
 			if(n.getUpCableSet().isEmpty())
 			{
 				try {

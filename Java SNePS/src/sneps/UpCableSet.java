@@ -12,12 +12,12 @@ public class UpCableSet
 {
 	 
 	/**
-	 * A list of UpCables to be added to a Node to get information about the parent Nodes
+	 * A list of UpCables stored in a Node to keep information about the parent Nodes
 	 */
 	private LinkedList<UpCable> upCables;
 
 	/**
-	 * This constructor creates a new UpCableSet with a new empty list of UpCables
+	 * creates a new empty UpCableSet
 	 */
 	public UpCableSet()
 	{
@@ -25,24 +25,9 @@ public class UpCableSet
 	}
 
 	/**
-	 * @param upCables a list of UpCables to instantiate an UpCableSet with the elements 
-	 * in this list.
-	 */
-	public UpCableSet(LinkedList<UpCable> upCables)
-	{
-		this.upCables = upCables;
-	}
-	
-	/**
-	 * @return the list of UpCables
-	 */
-	public LinkedList<UpCable> getUpCables()
-	{
-		return upCables;
-	}
-
-	/**
-	 * @param upCable an UpCable to be added to the UpCableSet
+	 * adds the specified up cable to this up cable set
+	 * 
+	 * @param upCable an UpCable to be added to this UpCableSet
 	 */
 	public void addUpCable(UpCable upCable)
 	{
@@ -50,7 +35,9 @@ public class UpCableSet
 	}
 	
 	/**
-	 * @param upCable an UpCable to be removed from the UpCableSet
+	 * removes the specified up cable from this up cable set
+	 * 
+	 * @param upCable an UpCable to be removed from this UpCableSet
 	 */
 	public void removeUpCable(UpCable upCable)
 	{
@@ -58,22 +45,9 @@ public class UpCableSet
 	}
 	
 	/**
-	 * @param relation the Relation that labels the arcs of this UpCableSet
-	 * @return true if the UpCableSet contains an UpCable with this Relation 
-	 * and false if not.
-	 */
-	public boolean contains(Relation relation)
-	{
-		for(int i=0;i<this.upCables.size();i++)
-		{
-			if(this.upCables.get(i).getRelation().getName().equals(relation.getName()))
-				return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * @param relation the Relation that labels the arcs of an UpCable in the UpCableSet
+	 * gets the up cable with the specified relation
+	 * 
+	 * @param relation the Relation that labels the arcs of an UpCable in this UpCableSet
 	 * @return the UpCable that contains this Relation or null if not found.
 	 */
 	public UpCable getUpCable(Relation relation)
@@ -88,6 +62,8 @@ public class UpCableSet
 	}
 	
 	/**
+	 * gets the up cable with the relation that its name is specified
+	 * 
 	 * @param relationName the name of the relation that labels the arcs of the required
 	 * up cable
 	 * @return the up cable of the specified relation name
@@ -104,11 +80,51 @@ public class UpCableSet
 	}
 	
 	/**
-	 * @return true if the cable set has no cables inside 
+	 * gets the up cable at the specified position
+	 * 
+	 * @param index the position of the up cable
+	 * @return the up cable at the specified position
+	 */
+	public UpCable getUpCable(int index)
+	{
+		return this.upCables.get(index);
+	}
+	
+	/**
+	 * checks whether this up cable set is empty or not
+	 * 
+	 * @return true if this cable set is empty
 	 */
 	public boolean isEmpty()
 	{
 		return upCables.size() == 0;
+	}
+	
+	/**
+	 * gets the size of this up cable set
+	 * 
+	 * @return the size of this up cable set
+	 */
+	public int size()
+	{
+		return this.upCables.size();
+	}
+	
+	/**
+	 * checks whether this up cable set contains an up cable with the specified relatin or not
+	 * 
+	 * @param relation the Relation that labels the arcs of this UpCableSet
+	 * @return true if the UpCableSet contains an UpCable with this Relation, 
+	 * and false if not.
+	 */
+	public boolean contains(Relation relation)
+	{
+		for(int i=0;i<this.upCables.size();i++)
+		{
+			if(this.upCables.get(i).getRelation().getName().equals(relation.getName()))
+				return true;
+		}
+		return false;
 	}
 
 }

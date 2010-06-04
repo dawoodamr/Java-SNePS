@@ -1,7 +1,7 @@
 package sneps;
 
 /**
- * A Relation is a four-tuple name, type, adjust and limit.A Relation represents the 
+ * A relation is a five-tuple: name, type, adjust, limit, and path.A relation represents the 
  * arc connecting two nodes in the knowledge base.
  * 
  * @author Amr Khaled Dawood.
@@ -10,46 +10,43 @@ public class Relation
 {
 	
 	/**
-	 * This is the name of the Relation.
-	 * No two Relations in a knowledge base may have the same name.
+	 * The name of this relation.
+	 * No two relations in a knowledge base may have the same name.
 	 */
 	private String name;
 	
 	/**
-	 * This String represents the semantic type of the node that the Relation 
-	 * could be pointing at
+	 * The semantic type of the node pointed to by the relation.
 	 */
 	private String type;
 	
 	/**
-	 * This String represents the adjustability of the Relation which can hold
-	 * one of the following values:
-	 * "reduce" if the Relation can be reduced
-	 * "expand" if the Relation can be expanded
-	 * "none" if it is none of these
+	 * The adjustability of this relation which can hold one of the following values:
+	 * "reduce" if the relation is reducible,
+	 * "expand" if the relation is expandable, and 
+	 * "none" if it is neither.
 	 */
 	private String adjust;
 	
 	/**
-	 * This int represents the limit that the Relation can be reduced to or
-	 * expanded from. 
+	 * The limit that this Relation can be reduced to or expanded from. 
 	 */
 	private int limit;
 	
 	/**
-	 * this is the path that is defined for this relation
+	 * The path defined for this relation.
 	 */
 	private Path path;
 	
 	/**
-	 * this boolean is true if the relation is quantifier, and false otherwise
+	 * A boolean that is true if the relation is a quantifier one, and false otherwise.
 	 */
 	private boolean quantifier;
 	
 	/**
-	 * @param name the name of the Relation which is unique
-	 * @param type the semantic type of the node that the Relation can point to
-	 * @param adjust the adjustability of the Relation "reduce", "expand", or "none"
+	 * @param name the name of the relation
+	 * @param type the semantic type of the node pointed to by the relation
+	 * @param adjust the adjustability of the relation: "reduce", "expand", or "none"
 	 * @param limit the minimum number that the Relation can be reduced to or expanded from
 	 */
 	public Relation(String name,String type,String adjust,int limit)
@@ -59,11 +56,11 @@ public class Relation
 		this.adjust = adjust;
 		this.limit = limit;
 		this.path = null;
-		this.quantifier = false;
+		setQuantifier();
 	}
 
 	/**
-	 * @return the name of the Relation
+	 * @return the name of the relation
 	 */
 	public String getName()
 	{
@@ -71,7 +68,7 @@ public class Relation
 	}
 
 	/**
-	 * @return the semantic type of the node that the Relation can point to
+	 * @return the semantic type of the node pointed to by the relation
 	 */
 	public String getType()
 	{
@@ -79,7 +76,7 @@ public class Relation
 	}
 
 	/**
-	 * @return the adjustability of the Relation "reduce", "expand", or "none"
+	 * @return the adjustability of the relation: "reduce", "expand", or "none"
 	 */
 	public String getAdjust()
 	{
@@ -87,7 +84,7 @@ public class Relation
 	}
 
 	/**
-	 * @return the minimum number that the Relation can be reduced to or expanded from
+	 * @return the minimum number that the relation can be reduced to or expanded from
 	 */
 	public int getLimit()
 	{
@@ -103,7 +100,7 @@ public class Relation
 	}
 
 	/**
-	 * @param path the path that we need to define for this relation
+	 * @param path the path that is to be defined for this relation
 	 */
 	public void setPath(Path path)
 	{
@@ -111,7 +108,7 @@ public class Relation
 	}
 
 	/**
-	 * This method is used to determine whether the specified relation is a quantifier or not
+	 * determines whether this relation is a quantifier or not
 	 * 
 	 * @return true if the relation is a quantifier and false if not
 	 */
@@ -121,11 +118,16 @@ public class Relation
 	}
 
 	/**
-	 * this method sets the relation to be quantifier
+	 * updates the quantifier boolean according to the name
 	 */
 	public void setQuantifier()
 	{
-		this.quantifier = true;
+		if(name.equals("forall") || name.equals("min") || name.equals("max") || name.equals("thresh")
+				 || name.equals("threshmax") || name.equals("emin") || name.equals("emax")
+				 || name.equals("etot"))
+		{
+			this.quantifier = true;
+		}
 	}
 	
 }
