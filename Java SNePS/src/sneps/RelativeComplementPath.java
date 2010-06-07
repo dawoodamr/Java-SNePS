@@ -8,8 +8,8 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * a relative complement path is a path that consists of two paths where a destination node 
- * can be reached from following the first path and cannot be reached from following the 
+ * A relative complement path is a path that consists of two paths where a destination node 
+ * can be reached by following the first path, and cannot be reached by following the 
  * second path 
  * 
  * @author Amr Khaled Dawood
@@ -18,13 +18,13 @@ public class RelativeComplementPath extends Path
 {
 	
 	/**
-	 * the first path that will lead us to the nodes desired
+	 * the first path that will lead to the nodes reachable by the relative complement path
 	 */
 	private Path p;
 	
 	/**
-	 * the second path that will deside about which nodes to be removed from the obtained
-	 * node set from following the first path
+	 * the second path that will decide which nodes to be removed from the obtained
+	 * node set after following the first path
 	 */
 	private Path q;
 
@@ -39,7 +39,7 @@ public class RelativeComplementPath extends Path
 	}
 
 	/**
-	 * @return p which is the first Path
+	 * @return p which is the first Path of this relative complement path
 	 */
 	public Path getP()
 	{
@@ -47,7 +47,7 @@ public class RelativeComplementPath extends Path
 	}
 
 	/**
-	 * @return q which is the second Path
+	 * @return q which is the second Path of this relative complement path
 	 */
 	public Path getQ()
 	{
@@ -55,7 +55,7 @@ public class RelativeComplementPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
@@ -75,7 +75,7 @@ public class RelativeComplementPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)

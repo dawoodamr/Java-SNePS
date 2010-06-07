@@ -7,7 +7,7 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * an irreflexive restrict path is a path that does not lead to the same start node
+ * An irreflexive restrict path is a path that does not lead to the same start node
  * 
  * @author Amr Khaled Dawood
  */
@@ -15,12 +15,12 @@ public class IrreflexiveRestrictPath extends Path
 {
 	
 	/**
-	 * the path that leads to nodes other than the starting node
+	 * the path defined for the irreflexive restrict path
 	 */
 	private Path path;
 
 	/**
-	 * @param path the specified path that is irreflexive restrict
+	 * @param path the specified Path for the irreflexive restrict path
 	 */
 	public IrreflexiveRestrictPath(Path path)
 	{
@@ -28,7 +28,7 @@ public class IrreflexiveRestrictPath extends Path
 	}
 
 	/**
-	 * @return the path that leads to nodes other than the one that it starts at
+	 * @return a Path that is defined for this irreflexive restrict path
 	 */
 	public Path getPath()
 	{
@@ -36,7 +36,7 @@ public class IrreflexiveRestrictPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
@@ -48,7 +48,7 @@ public class IrreflexiveRestrictPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)

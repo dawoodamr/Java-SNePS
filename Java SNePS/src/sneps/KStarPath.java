@@ -8,7 +8,7 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * a kstar path is a path that is composed with itself zero or more times.
+ * A kstar path is a path that is composed with itself zero or more times.
  * 
  * @author Amr Khaled Dawood
  */
@@ -21,7 +21,7 @@ public class KStarPath extends Path
 	private Path path;
 
 	/**
-	 * @param path the path that the kstar path is composed of
+	 * @param path the Path that the kstar path is composed of
 	 */
 	public KStarPath(Path path)
 	{
@@ -37,7 +37,7 @@ public class KStarPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
@@ -49,9 +49,12 @@ public class KStarPath extends Path
 	}
 	
 	/**
-	 * @param ns the node set we want to follow the path starting at its nodes
-	 * @param context the context that all propositions in this path are asserted in
-	 * @return a node set with the resulted nodes from following the path
+	 * follows this path starting at nodes in the hash table temp in the given context
+	 * 
+	 * @param temp a Hashtable of nodes that following this path will start at along with their 
+	 * supports
+	 * @param context the context that propositions in this path are asserted in
+	 * @return a Hashtable of nodes and their supports resulted from following this path
 	 */
 	@SuppressWarnings("unchecked")
 	private Hashtable<Node,LinkedList<Support>> follow(Hashtable<Node,LinkedList<Support>> temp,Context context)
@@ -81,25 +84,9 @@ public class KStarPath extends Path
 		
 		return temp;
 	}
-	
-	/**
-	 * @param old the old hash table
-	 * @param neu the new hash table
-	 * @return true if the neu node set contains elements that does not exist in node set old
-	 */
-	private boolean wasChanged(Hashtable<Node,LinkedList<Support>> old,Hashtable<Node,LinkedList<Support>> neu)
-	{
-		Enumeration<Node> enneu = neu.keys();
-		for(;enneu.hasMoreElements();)
-		{
-			if(! old.containsKey(enneu.nextElement()))
-				return true;
-		}
-		return false;
-	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
@@ -111,10 +98,13 @@ public class KStarPath extends Path
 	}
 	
 	/**
-	 * @param ns the node set we want to follow the converse of the path starting 
-	 * at its nodes
-	 * @param context the context that all propositions in this path are asserted in
-	 * @return a node set with the resulted nodes from following the converse of the path
+	 * follows the converse of this path starting at nodes in the hash table temp in the given context
+	 * 
+	 * @param temp a Hashtable of nodes that following the converse of this path will start 
+	 * at along with their supports
+	 * @param context the context that propositions in this path are asserted in
+	 * @return a Hashtable of nodes and their supports resulted from following the converse of 
+	 * this path
 	 */
 	@SuppressWarnings("unchecked")
 	private Hashtable<Node,LinkedList<Support>> followConverse(Hashtable<Node,LinkedList<Support>> temp,Context context)
@@ -145,4 +135,21 @@ public class KStarPath extends Path
 		return temp;
 	}
 
+	/**
+	 * checks whether two hash tables contain the same nodes or not
+	 * 
+	 * @param old a Hashtable
+	 * @param neu another Hashtable
+	 * @return false if both hash tables contain the same nodes, and true otherwise
+	 */
+	private boolean wasChanged(Hashtable<Node,LinkedList<Support>> old,Hashtable<Node,LinkedList<Support>> neu)
+	{
+		Enumeration<Node> enneu = neu.keys();
+		for(;enneu.hasMoreElements();)
+		{
+			if(! old.containsKey(enneu.nextElement()))
+				return true;
+		}
+		return false;
+	}
 }

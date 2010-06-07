@@ -7,8 +7,8 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * the converse path is a path that is reversed.It can be followed by following the converse
- * of that path. 
+ * The converse path is a path that is reversed. It can be followed by following the converse
+ * of the path inside. 
  * 
  * @author Amr Khaled Dawood
  */
@@ -16,12 +16,12 @@ public class ConversePath extends Path
 {
 	
 	/**
-	 * the path that we need to follow its converse
+	 * the path that the conversion is applied to
 	 */
 	private Path path;
 	
 	/**
-	 * @param path the path that we need to get its converse
+	 * @param path a Path that its converse will be obtained by this converse path
 	 */
 	public ConversePath(Path path)
 	{
@@ -29,24 +29,24 @@ public class ConversePath extends Path
 	}
 
 	/**
-	 * @return the Path that we need to get its converse
+	 * @return a Path that its converse is obtained by this path
 	 */
 	public Path getPath()
 	{
 		return path;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
 	{
 		return path.followConverse(node,supports,context);
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)

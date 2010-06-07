@@ -7,7 +7,7 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * the BUnitPath (backward unit path) class is the reverse of a path of only one relation. 
+ * The BUnitPath (backward unit path) class represents the reverse of a path of only one relation. 
  * 
  * @author Amr Khaled Dawood
  */
@@ -20,7 +20,7 @@ public class BUnitPath extends Path
 	private String relationName;
 
 	/**
-	 * @param relationName the name of the relation that specifies this path
+	 * @param relationName a Strgin representing the name of the relation that specifies this path
 	 */
 	public BUnitPath(String relationName)
 	{
@@ -28,15 +28,15 @@ public class BUnitPath extends Path
 	}
 	
 	/**
-	 * @return the name of the relation that this BUnitPath is defined for
+	 * @return a String representing the name of the relation that this BUnitPath is defined for
 	 */
 	public String getRelationName()
 	{
 		return relationName;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see ds.Path#follow(ds.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
@@ -54,9 +54,9 @@ public class BUnitPath extends Path
 		
 		return h;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)

@@ -8,7 +8,7 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * a compose path is a path resulted from composing multiple paths.
+ * A compose path is a path resulted from the composition of multiple paths.
  * 
  * @author Amr Khaled Dawood
  */
@@ -29,15 +29,15 @@ public class ComposePath extends Path
 	}
 
 	/**
-	 * @return the list of Paths that are composed together
+	 * @return a LinkedList of Paths of this ComposePath
 	 */
 	public LinkedList<Path> getPaths()
 	{
 		return paths;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see ds.Path#follow(ds.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
@@ -55,12 +55,13 @@ public class ComposePath extends Path
 	}
 	
 	/**
-	 * @param nodeSet a node set of nodes we want to follow the path from
-	 * @param context the context that we need to make sure that all proposition in this path
-	 * are asserted in
-	 * @param path the path we want to follow starting at nodes in the node set
-	 * @return the node set of the resulted nodes from following the path starting at
-	 * the specified node set
+	 * follows the given path starting at all nodes that are indices of the given Hashtable 
+	 * 
+	 * @param temp a Hashtable of Nodes and their supports
+	 * @param context the context that the propositions along this path are asserted in
+	 * @param path the path that will be followed starting at nodes in the Hashtable
+	 * @return a Hashtable of Nodes and their supports that were resulted from following 
+	 * path starting at all nodes in the given Hashtable
 	 */
 	private Hashtable<Node,LinkedList<Support>> follow(Hashtable<Node,LinkedList<Support>> temp,Context context,ComposePath path)
 	{
@@ -87,9 +88,9 @@ public class ComposePath extends Path
 		}
 		return result;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
@@ -107,13 +108,14 @@ public class ComposePath extends Path
 	}
 	
 	/**
-	 * @param nodeSet a node set of nodes we want to follow the converse of this path
-	 * starting at
-	 * @param context the context that we need to make sure that all proposition in this path
-	 * are asserted in
-	 * @param path the path we want to follow it starting at nodes in the node set
-	 * @return the node set of the resulted nodes from following the  converse of this 
-	 * path starting at the specified node set
+	 * follows the converse of the given path starting at all nodes that are indices 
+	 * of the given Hashtable 
+	 * 
+	 * @param temp a Hashtable of Nodes and their supports
+	 * @param context the context that the propositions along this path are asserted in
+	 * @param path the path that its converse will be followed starting at nodes in the Hashtable
+	 * @return a Hashtable of Nodes and their supports that were resulted from following 
+	 * the converse of path starting at all nodes in the given Hashtable
 	 */
 	private Hashtable<Node,LinkedList<Support>> followConverse(Hashtable<Node,LinkedList<Support>> temp,Context context,Path path)
 	{

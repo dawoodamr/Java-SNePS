@@ -11,7 +11,8 @@ public class CustomException extends Exception
 	private static final long serialVersionUID = 6366822584036241415L;
 
 	/**
-	 * @param message the message that the CustomException saves for reporting the exception
+	 * @param message a String representing the message that the CustomException 
+	 * saves for reporting the exception
 	 */
 	public CustomException(String message)
 	{

@@ -15,13 +15,16 @@ public class Entity
 	 */
 	private Node node;
 	
+	/**
+	 * sets the node to null
+	 */
 	public Entity()
 	{
 		this.node = null;
 	}
 	
 	/**
-	 * @param node the node included in the entity
+	 * @param node a Node that contains this entity
 	 */
 	public Entity(Node node)
 	{
@@ -29,7 +32,7 @@ public class Entity
 	}
 
 	/**
-	 * @return the node that contains this entity
+	 * @return a Node that contains this entity
 	 */
 	public Node getNode()
 	{
@@ -37,10 +40,9 @@ public class Entity
 	}
 	
 	/**
-	 * this method is used after creating the entity in order to set the node that contains 
-	 * this entity
+	 * sets the node in this entity
 	 * 
-	 * @param node the node that contains the entity
+	 * @param node a Node that contains this entity
 	 */
 	public void setNode(Node node)
 	{

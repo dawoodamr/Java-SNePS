@@ -8,8 +8,8 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * an OrPath is a path that contains list of paths. an OrPath will lead us to a destination 
- * node if one of the paths it contains will lead us to this node
+ * An OrPath is a path that contains list of paths. An OrPath will lead to a destination 
+ * node if one of the paths it contains will lead to this node
  * 
  * @author Amr Khaled Dawood
  */
@@ -17,12 +17,12 @@ public class OrPath extends Path
 {
 	
 	/**
-	 * the list of paths for the OrPath
+	 * a LinkedList of paths for the OrPath
 	 */
 	private LinkedList<Path> paths;
 
 	/**
-	 * @param paths the list of paths for the OrPath
+	 * @param paths a LinkedList of paths for the OrPath
 	 */
 	public OrPath(LinkedList<Path> paths)
 	{
@@ -30,7 +30,7 @@ public class OrPath extends Path
 	}
 
 	/**
-	 * @return the list of Path that are used to create this OrPath
+	 * @return the LinkedList of Paths that are used to create this OrPath
 	 */
 	public LinkedList<Path> getPaths()
 	{
@@ -38,7 +38,7 @@ public class OrPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
@@ -53,7 +53,7 @@ public class OrPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
@@ -68,15 +68,15 @@ public class OrPath extends Path
 	}
 	
 	/**
-	 * this method gets the union of two node sets
+	 * gets the union of two Hashtables
 	 * 
-	 * @param ns1 the first node set
-	 * @param ns2 the second node set
-	 * @return the union of the two node sets
+	 * @param h1 the first Hashtable
+	 * @param h2 the second Hashtable
+	 * @return a Hashtable that is the union of the two Hashtables
 	 */
 	private Hashtable<Node,LinkedList<Support>> UnionOr(Hashtable<Node,LinkedList<Support>> h1,Hashtable<Node,LinkedList<Support>> h2)
 	{
-		Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node, LinkedList<Support>>();
+		Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node,LinkedList<Support>>();
 		Enumeration<LinkedList<Support>> list1 = h1.elements();
 		Enumeration<Node> nodes1 = h1.keys();
 		for(;nodes1.hasMoreElements();)

@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import snebr.*;
 
 /**
- * the Path class is the super class of all paths.It is an abstract class with only one
- * abstract method called follow.
+ * The Path class is the super class of all paths. It is an abstract class with containing two
+ * abstract method: follow and followConverse.
  * 
  * @author Amr Khaled Dawood
  */
@@ -15,29 +15,35 @@ public abstract class Path
 {
 	
 	/**
-	 * @param node the node that we want to follow the path from
-	 * @param context the Context that we want the nodes to be asserted in
-	 * @return a node set of nodes resulted from following the specified path starting 
-	 * with the specified node
+	 * follows the path starting at node and updates the given list of supports in the given context
+	 * 
+	 * @param node the node that a path will be followed starting at
+	 * @param supports a LinkedList of Supports of the given node
+	 * @param context the Context that propositions in this path are asserted in
+	 * @return a Hash table of nodes and their supports resulted from following the specified 
+	 * path starting with the given node
 	 */
 	public abstract Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context);
 	
 	/**
-	 * @param node the node we want to follow the converse of this path starting at
-	 * @param context the Context that we want the nodes to be asserted in
-	 * @return a node set of nodes resulted from following the converse of this path starting
-	 * at the specified node
+	 * follows the converse of the path starting at node and updates the given list of supports in the 
+	 * given context
+	 * 
+	 * @param node the node that a converse of a path will be followed starting at
+	 * @param supports a LinkedList of Supports of the given node
+	 * @param context the Context that propositions in the converse of this path are asserted in
+	 * @return a Hash table of nodes and their supports resulted from following the converse of 
+	 * the specified path starting with the given node
 	 */
 	public abstract Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context);
 
-
-	
 	/**
 	 * adds origin set of each support of the source to all origin sets of all supports of target
-	 * so that target will contain all possible permutations of supports of both of the sets
+	 * so that target will contain all possible combinations of supports of both of the sets
 	 * 
-	 * @param source the source list whose supports will be added to all supports in the target
-	 * @param target the target list that supports of the source will be added to all of its supports
+	 * @param source a LinkedList of supports whose supports will be added to all supports in the target
+	 * @param target a LinkedList of supports that supports of the source will be added to all of 
+	 * its supports
 	 */
 	@SuppressWarnings({ "unchecked" })
 	protected void permute(LinkedList<Support> source,LinkedList<Support> target)
@@ -58,4 +64,5 @@ public abstract class Path
 			rep++;
 		}
 	}
+	
 }

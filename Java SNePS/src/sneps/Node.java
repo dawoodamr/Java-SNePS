@@ -43,8 +43,7 @@ public abstract class Node
 	{
 		this.identifier = identifier;
 		this.upCableSet = new UpCableSet();
-		this.entity = new Entity();
-		this.entity.setNode(this);
+		this.entity = new Entity(this);
 		this.id = count;
 		count++;		
 	}

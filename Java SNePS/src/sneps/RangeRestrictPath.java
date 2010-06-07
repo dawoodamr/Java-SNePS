@@ -8,8 +8,8 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * a range restrict path is a path that is restricted by considering only nodes that are
- * resulted from following it if they can be used as start nodes to follow a path that will
+ * A range restrict path is a path that is restricted by considering only nodes that are
+ * resulted from following it, if they can be used as start nodes to follow a path that will
  * lead to a specific node
  * 
  * @author Amr Khaled Dawood
@@ -18,7 +18,7 @@ public class RangeRestrictPath extends Path
 {
 	
 	/**
-	 * the path
+	 * the path that leads to nodes reachable by this range restrict path
 	 */
 	private Path p;
 	
@@ -33,7 +33,7 @@ public class RangeRestrictPath extends Path
 	private Node node;
 
 	/**
-	 * @param p the path that we want to follow
+	 * @param p the path that will lead to nodes reachable by this range restrict path
 	 * @param q the restriction path
 	 * @param node the restriction destination node
 	 */
@@ -45,7 +45,7 @@ public class RangeRestrictPath extends Path
 	}
 
 	/**
-	 * @return the Path p
+	 * @return the Path p of this range restrict path
 	 */
 	public Path getP()
 	{
@@ -53,7 +53,7 @@ public class RangeRestrictPath extends Path
 	}
 
 	/**
-	 * @return q which is the restriction Path
+	 * @return q a Path which is the restriction Path
 	 */
 	public Path getQ()
 	{
@@ -61,7 +61,7 @@ public class RangeRestrictPath extends Path
 	}
 
 	/**
-	 * @return the node that restricts the destination
+	 * @return a Node that restricts the destination of path q
 	 */
 	public Node getNode()
 	{
@@ -69,7 +69,7 @@ public class RangeRestrictPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
@@ -92,7 +92,7 @@ public class RangeRestrictPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)

@@ -13,8 +13,8 @@ import snebr.Support;
 import match.ds.*;
 
 /**
- * The Network class is the main class for the network management system. this class 
- * contains relations, case frames as well as the nodes that the network consists of.
+ * The Network class is the main class for the network management system. This class 
+ * contains relations, case frames as well as the nodes that exist in the network.
  * 
  * @author Amr Khaled Dawood
  */
@@ -48,29 +48,42 @@ public class Network implements Serializable
 	
 	/**
 	 * the counter used for the names of closed molecular nodes.each closed molecular node is 
-	 * named by 'm' followed by a positive number, for example: "m12".
+	 * named by 'M' followed by a positive number, for example: "M12".
 	 */
 	private int molCounter;
 	
 	/**
 	 * the counter used for names of pattern molecular nodes. each pattern molecular node is
-	 * named by 'p' followed by a positive number, for example: "p10" 
+	 * named by 'P' followed by a positive number, for example: "P10" 
 	 */
 	private int patCounter;
 	
 	/**
+	 * the counter used for names of variable nodes. each variable node is
+	 * named by 'V' followed by a positive number, for example: "V4" 
+	 */
+	private int varCounter;
+	
+	/**
 	 * a list of numbers that the user used in naming nodes he created that look like 
-	 * names of closed molecular nodes names.this list is important in order to avoid 
+	 * names of closed molecular nodes' names.this list is important in order to avoid 
 	 * using them again.
 	 */
 	private LinkedList<Integer> userDefinedMolPostfix;
 	
 	/**
 	 * a list of numbers that the user used in naming nodes he created that look like 
-	 * names of pattern molecular nodes names.this list is important in order to avoid 
+	 * names of pattern molecular nodes' names.this list is important in order to avoid 
 	 * using them again.
 	 */
 	private LinkedList<Integer> userDefinedPatPostfix;
+	
+	/**
+	 * a list of numbers that the user used in naming nodes he created that look like 
+	 * names of variable nodes' names.this list is important in order to avoid 
+	 * using them again.
+	 */
+	private LinkedList<Integer> userDefinedVarPostfix;
 	
 	/**
 	 * the instance of the class Network(assuming a Network may have only one instance).
@@ -88,8 +101,10 @@ public class Network implements Serializable
 		relations = new Hashtable<String, Relation>();
 		userDefinedMolPostfix = new LinkedList<Integer>();
 		userDefinedPatPostfix = new LinkedList<Integer>();
+		userDefinedVarPostfix = new LinkedList<Integer>();
 		molCounter = 0;
 		patCounter = 0;
+		varCounter = 0;
 		instance = this;
 	}
 
@@ -149,6 +164,15 @@ public class Network implements Serializable
 	public LinkedList<Integer> getUserDefinedPatPostfix()
 	{
 		return userDefinedPatPostfix;
+	}
+	
+	/**
+	 * @return a LinkedList of Integers that the user used to name nodes that 
+	 * look like variable nodes' names
+	 */
+	public LinkedList<Integer> getUserDefinedVarPostfix()
+	{
+		return userDefinedVarPostfix;
 	}
 	
 	/**
@@ -412,19 +436,10 @@ public class Network implements Serializable
 	 * @return the variable node that was just created
 	 * @throws CustomException an exception is thrown if the node already exists
 	 */
-	public Node buildVariableNode(String identifier)throws CustomException
+	public Node buildVariableNode()
 	{
-		if(! nodes.containsKey(identifier))
-		{
-			nodes.put(identifier,new VariableNode(identifier));
-			if(isMolName(identifier)>-1)
-				userDefinedMolPostfix.add(new Integer(isMolName(identifier)));
-			if(isPatName(identifier)>-1)
-				userDefinedPatPostfix.add(new Integer(isPatName(identifier)));
-		}else
-			throw new CustomException("the node with this name already exists");
-		
-		return nodes.get(identifier);
+		VariableNode node = new VariableNode(getNextVarName());
+		return node;
 	}
 	
 	/**
@@ -442,6 +457,8 @@ public class Network implements Serializable
 				userDefinedMolPostfix.add(new Integer(isMolName(identifier)));
 			if(isPatName(identifier)>-1)
 				userDefinedPatPostfix.add(new Integer(isPatName(identifier)));
+			if(isVarName(identifier)>-1)
+				userDefinedVarPostfix.add(new Integer(isVarName(identifier)));
 		}else
 			throw new CustomException("the node with this name already exists");
 		
@@ -466,6 +483,129 @@ public class Network implements Serializable
 			return createPatNode(array,caseFrame);
 		else
 			return createMolNode(array,caseFrame);
+	}
+	
+	/**
+	 * Matches a given molecular node with nodes in the network that have the same case frame 
+	 * and returns a list of triples (the matching node, the source bindings and the target bindings
+	 * 
+	 * @param node a MolecularNode to match with nodes in the network
+	 * @return a LinkedList of 1D array of Objects of size 3 each. Index 0 in the array is the source 
+	 * node itself, index 1 is the source bindings, and index 2 is the target bindings.
+	 */
+	public LinkedList<Object[]> match(MolecularNode node)
+	{
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		
+		NodeSet ns = this.getMolecularNodes().get(node.getCableSet().getCaseFrame().getId());
+		for(int i=0;i<ns.size();i++)
+		{
+			MolecularNode m = (MolecularNode) ns.getNode(i);
+			if(m.equals(node))
+				continue;
+			LinkedList<Substitutions> rList = new LinkedList<Substitutions>();
+			rList.add(new Substitutions());
+			if(hERe(m,node,rList,true))
+			{
+				// vere
+				for(int j=0;j<rList.size();j++)
+				{
+					Substitutions r = rList.get(j);
+					Substitutions s = new Substitutions();
+					NodeSet ns1 = new NodeSet();
+					NodeSet ns2 = new NodeSet();
+					getVars(m,ns1);
+					getVars(node,ns2);
+					Substitutions sb = new Substitutions();
+					Substitutions tb = new Substitutions();
+					boolean flag = true;
+					for(int k=0;k<ns1.size();k++)
+					{
+						Node n = vERe((VariableNode) ns1.getNode(k),r,s);
+						if(n == null)
+						{
+							flag = false;
+						}else
+						{
+							sb.putIn(new Binding((VariableNode) ns1.getNode(k),n));
+						}
+					}
+					for(int k=0;k<ns2.size();k++)
+					{
+						Node n = vERe((VariableNode) ns2.getNode(k),r,s);
+						if(n == null)
+						{
+							flag = false;
+						}else
+						{
+							tb.putIn(new Binding((VariableNode) ns2.getNode(k),n));
+						}
+					}
+					if(flag)
+					{
+						Object[] o = new Object[3];
+						o[0] = m;
+						o[1] = sb;
+						o[2] = tb;
+						result.add(o);
+					}
+					/*if(termVERe(m,r,s) != null && termVERe(node,r,s) != null)
+					{
+						for(int k=0;k<s.cardinality();k++)
+						{
+							Binding b = s.getBinding(k);
+							if(ns1.contains(b.getVariable()))
+							{
+								sb.putIn(b);
+							}else
+							{
+								if(ns2.contains(b.getVariable()))
+								{
+									tb.putIn(b);
+								}
+							}
+						}
+						System.out.println("                 amr");
+						Object[] o = new Object[3];
+						o[0] = m;
+						o[1] = sb;
+						o[2] = tb;
+						result.add(o);
+					}*/
+				}
+				// separate and add to list
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * updates the nodeSet by adding to it the variables dominated by the given node
+	 * 
+	 * @param node a MolecularNode to get the Variables dominated by it
+	 * @param nodeSet a NodeSet to put the variables in
+	 */
+	public void getVars(MolecularNode node,NodeSet nodeSet)
+	{
+		CableSet cs = node.getCableSet();
+		for(int i=0;i<cs.size();i++)
+		{
+			Cable c = cs.getCable(i);
+			NodeSet ns = c.getNodeSet();
+			for(int j=0;j<ns.size();j++)
+			{
+				Node n = ns.getNode(j);
+				if(n.getClass().getSimpleName().equals("VariableNode"))
+				{
+					nodeSet.addNode(n);
+				}else
+				{
+					if(n.getClass().getSuperclass().getSimpleName().equals("MolecularNode"))
+						getVars((MolecularNode) n,nodeSet);
+				}
+			}
+		}
 	}
 	
 	public boolean hERe(Node u,Node t,LinkedList<Substitutions> rList,boolean rightOrder)
@@ -1102,16 +1242,18 @@ public class Network implements Serializable
 	{
 		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
 		
-		NodeSet nodeset = new NodeSet();
+		NodeSet nodeset= new NodeSet();
 		nodeset.addAll(nodeSet);
 		if(nodeset.isEmpty())
 			return new Hashtable<Node,LinkedList<Support>>();
 		
 		Node node = nodeset.getNode(0);
 		nodeset.removeNode(node);
+		NodeSet ns = new NodeSet();
+		ns.addAll(nodeset);
 		
 		Hashtable<Node,LinkedList<Support>> h1 = path.followConverse(node,new LinkedList<Support>(),context);
-		Hashtable<Node,LinkedList<Support>> h2 = findUnion(path,nodeset,context);
+		Hashtable<Node,LinkedList<Support>> h2 = findUnion(path,ns,context);
 		
 		result.putAll(h1);
 		for(Enumeration<Node> e = h2.keys();e.hasMoreElements();)
@@ -1385,6 +1527,26 @@ public class Network implements Serializable
 	}
 	
 	/**
+	 * @return a String representing the variable node name that we can create with it
+	 */
+	private String getNextVarName()
+	{
+		varCounter++;
+		String varName = "V";
+		for(int i=0;i<userDefinedVarPostfix.size();i++)
+		{
+			if(userDefinedVarPostfix.get(i).intValue() == varCounter)
+			{
+				varCounter++;
+				i=-1;
+			}
+		}
+		varName += ""+varCounter;
+		
+		return varName;
+	}
+	
+	/**
 	 * this method is used to get the number that follows the 'm' character if this 
 	 * string is similar to the name of a closed node in order to keep track of the 
 	 * names that the user used in defining nodes to maintain uniqueness of nodes names
@@ -1421,6 +1583,25 @@ public class Network implements Serializable
 		if(identifier.length()==1)
 			return -1;
 		if(identifier.charAt(0) != 'p' && identifier.charAt(0) != 'P')
+			return -1;
+		for(int i=1;i<identifier.length();i++)
+		{
+			if(! isInt(identifier.charAt(i)))
+				return -1;
+		}
+		return Integer.parseInt(identifier.substring(1,identifier.length()));
+	}
+	
+	/**
+	 * @param identifier a String to check whether it looks like variable name
+	 * @return an int of the number after the char 'v' if the identifier looks
+	 * like the variable name, and -1 otherwise
+	 */
+	private int isVarName(String identifier)
+	{
+		if(identifier.length()==1)
+			return -1;
+		if(identifier.charAt(0) != 'v' && identifier.charAt(0) != 'V')
 			return -1;
 		for(int i=1;i<identifier.length();i++)
 		{
@@ -1470,15 +1651,15 @@ public class Network implements Serializable
 		o[0][1] = new BaseNode("amr");
 		o[1][1] = new BaseNode("human");*/
 		Network n = new Network();								    // creating a new network 
-		Node x1 = n.buildVariableNode("x1");                        // building variable nodes
-		Node x2 = n.buildVariableNode("x2");
-		Node x3 = n.buildVariableNode("x3");
-		Node x4 = n.buildVariableNode("x4");
-		Node x5 = n.buildVariableNode("x5");
-		Node x6 = n.buildVariableNode("x6");
-		Node x7 = n.buildVariableNode("x7");
-		Node x8 = n.buildVariableNode("x8");
-		Node x9 = n.buildVariableNode("x9");
+		Node x1 = n.buildVariableNode();                        // building variable nodes
+		Node x2 = n.buildVariableNode();
+		Node x3 = n.buildVariableNode();
+		Node x4 = n.buildVariableNode();
+		Node x5 = n.buildVariableNode();
+		Node x6 = n.buildVariableNode();
+		Node x7 = n.buildVariableNode();
+		Node x8 = n.buildVariableNode();
+		Node x9 = n.buildVariableNode();
 		Node a = n.build("a");						                // building base node
 		Relation rr1 = n.defineRelation("r1","Individual","none",0);
 		Relation rr2 = n.defineRelation("r2","Act","none",0);	// defining relations
@@ -1554,14 +1735,30 @@ public class Network implements Serializable
 		o4[2][1] = g2;
 		o4[3][1] = x5;
 		PatternNode tdash = (PatternNode) n.build(o4,caseFrame4);
-		Substitutions r = new Substitutions();
-		Substitutions s = new Substitutions();
+		LinkedList<Object[]> l = n.match(tdash);
+		for(int i=0;i<l.size();i++)
+		{
+			Object[] o = l.get(i);
+			System.out.println(((Node)o[0]).getIdentifier()+ "   ");
+			for(int j=0;j<((Substitutions)o[1]).cardinality();j++)
+			{
+				Binding b = ((Substitutions)o[1]).getBinding(j);
+				System.out.println(b.getVariable().getIdentifier()+" "+b.getNode().getIdentifier());
+			}
+			for(int j=0;j<((Substitutions)o[2]).cardinality();j++)
+			{
+				Binding b = ((Substitutions)o[2]).getBinding(j);
+				System.out.println(b.getVariable().getIdentifier()+" "+b.getNode().getIdentifier());
+			}
+		}
+		t.getClass();
+		/*Substitutions r = new Substitutions();
 		LinkedList<Substitutions> rr = new LinkedList<Substitutions>();
 		rr.add(r);
 		System.out.println(x1.getEntity().getClass().getSimpleName());
 		if(n.hERe(t,tdash,rr,true)) 
 		{
-			/*System.out.println("> "+rr.size());
+			System.out.println("> "+rr.size());
 			for(int i=0;i<rr.size();i++)
 			{
 				Substitutions x = rr.get(i);
@@ -1571,9 +1768,9 @@ public class Network implements Serializable
 					System.out.println(" "+((Node) x.getBinding(j).getNode()).getIdentifier());
 				}
 				System.out.println("----");
-			}*/
-		}
-		for(int i=0;i<rr.size();i++)
+			}
+		}*/
+		/*for(int i=0;i<rr.size();i++)
 		{
 			LinkedList<VariableNode> list1 = t.getFreeVariables();
 			LinkedList<VariableNode> list2 = tdash.getFreeVariables();
@@ -1588,7 +1785,7 @@ public class Network implements Serializable
 					System.out.println(list2.get(j).getIdentifier()+" "+ n.vERe(list2.get(j),rr.get(i),s).getIdentifier());
 				}
 			}
-		}
+		}*/
 		/*Path f = new FUnitPath("r3");
 		Path b = new BUnitPath("r1");
 		Path kf = new KStarPath(f);

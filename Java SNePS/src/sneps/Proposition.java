@@ -15,8 +15,7 @@ public class Proposition extends Entity {
 
 	
 	public Proposition(Node node,Set<Support> support) {
-		super();
-		super.setNode(node);
+		super(node);
 		this.support = support;
 	}
 	public Proposition(Node node)

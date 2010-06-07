@@ -7,7 +7,7 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * the FUnitPath (forward unit path) class is a path which is only a relation.
+ * The FUnitPath (forward unit path) class is a path which is only a relation.
  * 
  * @author Amr Khaled Dawood
  */
@@ -20,7 +20,8 @@ public class FUnitPath extends Path
 	private String relationName;
 	
 	/**
-	 * @param relationName the name of the relation that identifies this unit path
+	 * @param relationName a String representing the name of the relation that identifies 
+	 * this unit path
 	 */
 	public FUnitPath(String relationName)
 	{
@@ -28,7 +29,7 @@ public class FUnitPath extends Path
 	}
 
 	/**
-	 * @return the name of the relation that this FUnitPath is defined for
+	 * @return a String representing the name of the relation that this FUnitPath is defined for
 	 */
 	public String getRelationName()
 	{
@@ -36,7 +37,7 @@ public class FUnitPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see ds.Path#follow(ds.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
@@ -59,7 +60,7 @@ public class FUnitPath extends Path
 	}
 	
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)

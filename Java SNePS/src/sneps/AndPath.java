@@ -8,8 +8,8 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * an AndPath is a path that contains a list of paths. an AndPath may lead us to a node 
- * if and only if all the paths it contains will lead us to that node
+ * An AndPath is a path that contains a list of paths. An AndPath may lead to a node 
+ * if and only if all the paths it contains will lead to that node
  * 
  * @author Amr Khaled Dawood
  */
@@ -22,7 +22,7 @@ public class AndPath extends Path
 	private LinkedList<Path> paths;
 
 	/**
-	 * @param paths the list of paths of this AndPath
+	 * @param paths a LinkedList of paths for the AndPath
 	 */
 	public AndPath(LinkedList<Path> paths)
 	{
@@ -30,15 +30,15 @@ public class AndPath extends Path
 	}
 
 	/**
-	 * @return the list of Paths that are used to create this AndPath
+	 * @return a LinkedList of Paths that are used to create this AndPath
 	 */
 	public LinkedList<Path> getPaths()
 	{
 		return paths;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
@@ -54,9 +54,9 @@ public class AndPath extends Path
 		else
 			return p.follow(node,supports,context);
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
@@ -76,13 +76,14 @@ public class AndPath extends Path
 	/**
 	 * returns the intersection between the two hash tables
 	 * 
-	 * @param ns1 the first hash table
-	 * @param ns2 the second hash table
-	 * @return the intersection nodes of those two node sets
+	 * @param ns1 a Hashtable of Nodes and Supports
+	 * @param ns2 a Hashtable of Nodes and Supports
+	 * @return a Hashtable of Nodes and their Supports resulting from the intersection of 
+	 * the two given Hashtables
 	 */
 	private Hashtable<Node,LinkedList<Support>> intersectionAnd(Hashtable<Node,LinkedList<Support>> h1,Hashtable<Node,LinkedList<Support>> h2)
 	{
-		Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node, LinkedList<Support>>();
+		Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node,LinkedList<Support>>();
 		Enumeration<LinkedList<Support>> lists1 = h1.elements();
 		Enumeration<Node> nodes1 = h1.keys();
 		for(;nodes1.hasMoreElements();)

@@ -8,8 +8,8 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * a domain restrict path is a path that is restricted by another path that should lead to 
- * a specified node in order to be valid
+ * A domain restrict path is a path that is restricted by another path that should lead to 
+ * a specified node
  * 
  * @author Amr Khaled Dawood
  */
@@ -22,12 +22,12 @@ public class DomainRestrictPath extends Path
 	private Path q;
 	
 	/**
-	 * the node that should be reached from the q path in order to make the p path valid
+	 * the node that should be reached by following path q in order to make the p path valid
 	 */
 	private Node node;
 	
 	/**
-	 * the path that we will follow to reach nodes if it is valid 
+	 * the path that will be followed to reach nodes reachable by this path if it is valid 
 	 */
 	private Path p;
 
@@ -44,7 +44,7 @@ public class DomainRestrictPath extends Path
 	}
 
 	/**
-	 * @return the restriction Path
+	 * @return a Path that is the restriction of this path
 	 */
 	public Path getQ()
 	{
@@ -52,7 +52,7 @@ public class DomainRestrictPath extends Path
 	}
 
 	/**
-	 * @return the node that restricts the destination for the Path q
+	 * @return a Node that restricts the destination for the Path q of this path
 	 */
 	public Node getNode()
 	{
@@ -60,7 +60,7 @@ public class DomainRestrictPath extends Path
 	}
 
 	/**
-	 * @return the path that should be followed
+	 * @return a Path that should be followed for this path
 	 */
 	public Path getP()
 	{
@@ -68,7 +68,7 @@ public class DomainRestrictPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
@@ -90,7 +90,7 @@ public class DomainRestrictPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)

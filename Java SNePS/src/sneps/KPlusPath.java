@@ -8,7 +8,7 @@ import snebr.Context;
 import snebr.Support;
 
 /**
- * a kplus path is a path that is composed of its self one or more times.
+ * A kplus path is a path that is composed with itself one or more times.
  * 
  * @author Amr Khaled Dawood
  */
@@ -16,16 +16,15 @@ public class KPlusPath extends Path
 {
 	
 	/**
-	 * the path that the kplus path is composed of it.
+	 * the path that is composed with itself to obtain the kplus path
 	 */
 	private Path path;
 
 	/**
-	 * @param path the path that the kplus path is composed of
+	 * @param path the Path that the kplus path is composed of
 	 */
 	public KPlusPath(Path path)
 	{
-		super();
 		this.path = path;
 	}
 
@@ -38,7 +37,7 @@ public class KPlusPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node)
+	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
@@ -49,9 +48,12 @@ public class KPlusPath extends Path
 	}
 	
 	/**
-	 * @param ns the node set we want to follow the path starting at its nodes
+	 * follows this path starting at nodes in the hash table temp in the given context
+	 * 
+	 * @param temp a Hashtable of nodes that following this path will start at along with their 
+	 * supports
 	 * @param context the context that propositions in this path are asserted in
-	 * @return a node set with the resulted nodes from following the path
+	 * @return a Hashtable of nodes and their supports resulted from following this path
 	 */
 	@SuppressWarnings("unchecked")
 	private Hashtable<Node,LinkedList<Support>> follow(Hashtable<Node,LinkedList<Support>> temp,Context context)
@@ -83,7 +85,7 @@ public class KPlusPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node)
+	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
 	 */
 	@Override
 	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
@@ -94,10 +96,13 @@ public class KPlusPath extends Path
 	}
 	
 	/**
-	 * @param ns the node set we want to follow the converse of the path starting 
-	 * at its nodes
+	 * follows the converse of this path starting at nodes in the hash table temp in the given context
+	 * 
+	 * @param temp a Hashtable of nodes that following the converse of this path will start 
+	 * at along with their supports
 	 * @param context the context that propositions in this path are asserted in
-	 * @return a node set with the resulted nodes from following the converse of the path
+	 * @return a Hashtable of nodes and their supports resulted from following the converse of 
+	 * this path
 	 */
 	@SuppressWarnings("unchecked")
 	private Hashtable<Node,LinkedList<Support>> followConverse(Hashtable<Node,LinkedList<Support>> temp,Context context)
@@ -129,9 +134,11 @@ public class KPlusPath extends Path
 	}
 	
 	/**
-	 * @param old the old hash table
-	 * @param neu the new hash table
-	 * @return true if the neu node set contains elements that does not exist in node set old
+	 * checks whether two hash tables contain the same nodes or not
+	 * 
+	 * @param old a Hashtable
+	 * @param neu another Hashtable
+	 * @return false if both hash tables contain the same nodes, and true otherwise
 	 */
 	private boolean wasChanged(Hashtable<Node,LinkedList<Support>> old,Hashtable<Node,LinkedList<Support>> neu)
 	{
