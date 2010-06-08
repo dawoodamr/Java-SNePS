@@ -191,10 +191,13 @@ public class Process
 	public void sendReport(Report r, ChannelsSet c)
 	{
 		knownInstances.putIn(r);
-		for(int i=0;i<c.cardinality();i++)
+		if(!first)
 		{
-			qp.addToHigh(c.getChannel(i).getDestination().getNode().getEntity());
-			c.getChannel(i).send(r);
+			for(int i=0;i<c.cardinality();i++)
+			{
+				qp.addToHigh(c.getChannel(i).getDestination().getNode().getEntity());
+				c.getChannel(i).send(r);
+			}
 		}
 	}
 	
