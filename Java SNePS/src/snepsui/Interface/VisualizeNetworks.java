@@ -113,16 +113,32 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 		    }
 		    
 		    Iterator<String> itr2 = set.iterator();
+//		    while (itr2.hasNext()) {
+//		    	nodeString = itr2.next();
+//		    	Node node = nodes.get(nodeString);
+//		    	UpCableSet upCableSet = node.getUpCableSet();
+//		    	for (int i = 0; i < upCableSet.getUpCables().size(); i++) {
+//		    		Relation relation = upCableSet.getUpCables().get(i).getRelation();
+//			    	LinkedList<Node> nodeset = upCableSet.getUpCables().get(i).getNodeSet().getNodes();
+//			    	for(Node item : nodeset) {
+//			    		graph.addEdge(new RelationEdge(relation.getName()).toString(),item.getIdentifier(),node.getIdentifier());
+//			    	}
+//		    	}
+//		    }
+		    
 		    while (itr2.hasNext()) {
 		    	nodeString = itr2.next();
 		    	Node node = nodes.get(nodeString);
 		    	UpCableSet upCableSet = node.getUpCableSet();
-		    	for (int i = 0; i < upCableSet.getUpCables().size(); i++) {
-		    		Relation relation = upCableSet.getUpCables().get(i).getRelation();
-			    	LinkedList<Node> nodeset = upCableSet.getUpCables().get(i).getNodeSet().getNodes();
-			    	for(Node item : nodeset) {
-			    		graph.addEdge(new RelationEdge(relation.getName()).toString(),item.getIdentifier(),node.getIdentifier());
-			    	}
+		    	
+		    	for (int i = 0; i < upCableSet.size(); i++) {
+		    		UpCable upcable = upCableSet.getUpCable(i);
+		    		Relation relation = upcable.getRelation();
+		    		
+		    		for (int j = 0; j < upcable.getNodeSet().size(); j ++) {
+		    			Node item = upcable.getNodeSet().getNode(j);
+		    			graph.addEdge(new RelationEdge(relation.getName()).toString(),item.getIdentifier(),node.getIdentifier());
+		    		}
 		    	}
 		    }
 		    
@@ -259,14 +275,29 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 		    while (itr1.hasNext()) {
 		    	nodeString = itr1.next();
 		    	Node node = nodes.get(nodeString);
-		    	LinkedList<UpCable> upcables = node.getUpCableSet().getUpCables();
+//		    	LinkedList<UpCable> upcables = node.getUpCableSet().getUpCables();
+//		    	
+//		    	for(UpCable upcable : upcables) {
+//		    		if(upcable.getRelation().equals(relation)) {
+//		    			nodesList.add(node);
+//		    			LinkedList<Node> upcableNodes = upcable.getNodeSet().getNodes();
+//		    			
+//		    			for(Node upcableNode : upcableNodes) {
+//		    				graph.addEdge(new RelationEdge(upcable.getRelation().getName()).toString(),
+//		    						upcableNode.getIdentifier(), 
+//		    						node.getIdentifier());
+//		    				nodesList.add(upcableNode);
+//		    			}
+//		    		}
+//		    	}
 		    	
-		    	for(UpCable upcable : upcables) {
+		    	for (int i = 0; i < node.getUpCableSet().size(); i++) {
+		    		UpCable upcable = node.getUpCableSet().getUpCable(i);
 		    		if(upcable.getRelation().equals(relation)) {
 		    			nodesList.add(node);
-		    			LinkedList<Node> upcableNodes = upcable.getNodeSet().getNodes();
 		    			
-		    			for(Node upcableNode : upcableNodes) {
+		    			for(int j = 0; j < upcable.getNodeSet().size(); j++) {
+		    				Node upcableNode = upcable.getNodeSet().getNode(j);
 		    				graph.addEdge(new RelationEdge(upcable.getRelation().getName()).toString(),
 		    						upcableNode.getIdentifier(), 
 		    						node.getIdentifier());
@@ -406,27 +437,50 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 		graph.addVertex(nodeName);
 		nodesList.add(node);
 		
-		LinkedList<UpCable> upcables = node.getUpCableSet().getUpCables();
+//		LinkedList<UpCable> upcables = node.getUpCableSet().getUpCables();
+//		
+//		for(UpCable upcable : upcables) {
+//			LinkedList<Node> upcableNodes = upcable.getNodeSet().getNodes();
+//			String relation = upcable.getRelation().getName();
+//			
+//			for(Node upcableNode : upcableNodes) {
+//				graph.addEdge(new RelationEdge(relation).toString(), upcableNode.getIdentifier(), nodeName);
+//				nodesList.add(upcableNode);
+//			}
+//		}
 		
-		for(UpCable upcable : upcables) {
-			LinkedList<Node> upcableNodes = upcable.getNodeSet().getNodes();
+		for (int i = 0; i < node.getUpCableSet().size(); i++) {
+			UpCable upcable = node.getUpCableSet().getUpCable(i);
 			String relation = upcable.getRelation().getName();
 			
-			for(Node upcableNode : upcableNodes) {
+			for (int j = 0; j < upcable.getNodeSet().size(); j++) {
+				Node upcableNode = upcable.getNodeSet().getNode(j);
 				graph.addEdge(new RelationEdge(relation).toString(), upcableNode.getIdentifier(), nodeName);
 				nodesList.add(upcableNode);
 			}
+			
 		}
 		
 		if(node instanceof MolecularNode) {
 			MolecularNode molNode = (MolecularNode) node;
-			LinkedList<Cable> cables = molNode.getCableSet().getCables();
+//			LinkedList<Cable> cables = molNode.getCableSet().getCables();
+//			
+//			for(Cable cable : cables) {
+//				LinkedList<Node> cableNodes = cable.getNodeSet().getNodes();
+//				String relation = cable.getRelation().getName();
+//				
+//				for(Node cableNode : cableNodes) {
+//					graph.addEdge(new RelationEdge(relation).toString(), nodeName, cableNode.getIdentifier());
+//					nodesList.add(cableNode);
+//				}
+//			}
 			
-			for(Cable cable : cables) {
-				LinkedList<Node> cableNodes = cable.getNodeSet().getNodes();
+			for (int i = 0; i < molNode.getCableSet().size(); i++) {
+				Cable cable = molNode.getCableSet().getCable(i);
 				String relation = cable.getRelation().getName();
 				
-				for(Node cableNode : cableNodes) {
+				for(int j = 0; j < cable.getNodeSet().size(); j++) {
+					Node cableNode = cable.getNodeSet().getNode(j);
 					graph.addEdge(new RelationEdge(relation).toString(), nodeName, cableNode.getIdentifier());
 					nodesList.add(cableNode);
 				}
@@ -566,13 +620,25 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 					MolecularNode molNode = (MolecularNode) node;
 					if(molNode.getCableSet().getCaseFrame().equals(caseframe)) {
 						nodesList.add(node);
-						LinkedList<Cable> cables = molNode.getCableSet().getCables();
+//						LinkedList<Cable> cables = molNode.getCableSet().getCables();
+//						
+//						for(Cable cable : cables) {
+//							LinkedList<Node> cableNodes = cable.getNodeSet().getNodes();
+//							String relation = cable.getRelation().getName();
+//							
+//							for(Node cableNode : cableNodes) {
+//								graph.addEdge(new RelationEdge(relation).toString(), molNode.getIdentifier(), cableNode.getIdentifier());
+//								nodesList.add(cableNode);
+//							}
+//						}
 						
-						for(Cable cable : cables) {
-							LinkedList<Node> cableNodes = cable.getNodeSet().getNodes();
+						
+						for (int i = 0; i < molNode.getCableSet().size(); i++) {
+							Cable cable = molNode.getCableSet().getCable(i);
 							String relation = cable.getRelation().getName();
 							
-							for(Node cableNode : cableNodes) {
+							for (int j = 0; j < cable.getNodeSet().size(); j++) {
+								Node cableNode = cable.getNodeSet().getNode(j);
 								graph.addEdge(new RelationEdge(relation).toString(), molNode.getIdentifier(), cableNode.getIdentifier());
 								nodesList.add(cableNode);
 							}

@@ -2127,7 +2127,7 @@ public class SNePSInterface extends SingleFrameApplication {
 				}
 				
 				for (Node node : nodesList) {
-					if(node.getUpCableSet().getUpCables().isEmpty()) {
+					if(node.getUpCableSet().size() == 0) {
 						network.removeNode(node);
 					}
 				}

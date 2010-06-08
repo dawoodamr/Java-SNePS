@@ -383,7 +383,7 @@ public class cmdNumericalEntailment extends javax.swing.JPanel {
 					Object object = nodelist.get(i);
 					if(object instanceof Node) {
 						Node node = (Node) object;
-						if(node.getUpCableSet().getUpCables().isEmpty()) {
+						if(node.getUpCableSet().size() == 0) {
 							network.removeNode(node);
 						}
 					} else if (object instanceof NodeSet) {

@@ -14,6 +14,7 @@ import sneps.CustomException;
 import sneps.MolecularNode;
 import sneps.Network;
 import sneps.Node;
+import sneps.Relation;
 import sneps.UpCable;
 
 /**
@@ -32,6 +33,7 @@ import sneps.UpCable;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class ResultNodes extends javax.swing.JPanel {
 	private JScrollPane jScrollPane1;
 	private JList nodeList;
@@ -98,32 +100,56 @@ public class ResultNodes extends javax.swing.JPanel {
 			//Print out cable
 			if(node instanceof MolecularNode) {
 				MolecularNode molNode = (MolecularNode) network.getNode(node.getIdentifier());
-				LinkedList<Cable> cables = molNode.getCableSet().getCables();
+//				LinkedList<Cable> cables = molNode.getCableSet().getCables();
+//				
+//				if(!cables.isEmpty()) {
+//					frame.getOutputPanel1().writeToTextArea("Cable Set (Nodes pointing from " + node.getIdentifier() + "):" + newLine);
+//					for(Cable item1 : cables) {
+//						item1.getRelation();
+//						LinkedList<Node> nodes = item1.getNodeSet().getNodes();
+//						
+//						for(Node item2 : nodes) {
+//							frame.getOutputPanel1().writeToTextArea(item2.getIdentifier() + newLine);
+//						}
+//					}
+//				}
 				
-				if(!cables.isEmpty()) {
+				if(molNode.getCableSet().size() != 0) {
 					frame.getOutputPanel1().writeToTextArea("Cable Set (Nodes pointing from " + node.getIdentifier() + "):" + newLine);
-					for(Cable item1 : cables) {
-						item1.getRelation();
-						LinkedList<Node> nodes = item1.getNodeSet().getNodes();
-						
-						for(Node item2 : nodes) {
-							frame.getOutputPanel1().writeToTextArea(item2.getIdentifier() + newLine);
+					for(int i = 0; i < molNode.getCableSet().size(); i++) {
+						Cable cable = molNode.getCableSet().getCable(i);
+						Relation relation = cable.getRelation();
+						for(int j = 0; j < cable.getNodeSet().size(); j++) {
+							Node cableNode = cable.getNodeSet().getNode(j);
+							frame.getOutputPanel1().writeToTextArea(cableNode.getIdentifier() + newLine);
 						}
 					}
 				}
 			}
 			
 			//Print out up cable
-			LinkedList<UpCable> nodeUpCables = node.getUpCableSet().getUpCables();
+//			LinkedList<UpCable> nodeUpCables = node.getUpCableSet().getUpCables();
+//			
+//			if(!nodeUpCables.isEmpty()) {
+//				frame.getOutputPanel1().writeToTextArea("Up Cable Set (Nodes pointing to " + node.getIdentifier() + "): " + newLine);
+//				for(UpCable item3 : nodeUpCables) {
+//					item3.getRelation();
+//					LinkedList<Node> nodes = item3.getNodeSet().getNodes();
+//					
+//					for(Node item4 : nodes) {
+//						frame.getOutputPanel1().writeToTextArea(item4.getIdentifier() + newLine);
+//					}
+//				}
+//			}
 			
-			if(!nodeUpCables.isEmpty()) {
-				frame.getOutputPanel1().writeToTextArea("Up Cable Set (Nodes pointing to " + node.getIdentifier() + "): " + newLine);
-				for(UpCable item3 : nodeUpCables) {
-					item3.getRelation();
-					LinkedList<Node> nodes = item3.getNodeSet().getNodes();
-					
-					for(Node item4 : nodes) {
-						frame.getOutputPanel1().writeToTextArea(item4.getIdentifier() + newLine);
+			if(node.getUpCableSet().size() != 0) {
+				frame.getOutputPanel1().writeToTextArea("Up Cable Set (Nodes pointing to " + node.getIdentifier() + "):" + newLine);
+				for(int i = 0; i < node.getUpCableSet().size(); i++) {
+					UpCable upcable = node.getUpCableSet().getUpCable(i);
+					Relation relation = upcable.getRelation();
+					for(int j = 0; j < upcable.getNodeSet().size(); j++) {
+						Node upcableNode = upcable.getNodeSet().getNode(j);
+						frame.getOutputPanel1().writeToTextArea(upcableNode.getIdentifier() + newLine);
 					}
 				}
 			}

@@ -435,30 +435,8 @@ public class TestDraw extends javax.swing.JPanel {
 					}
 						
 				} else if (s.equals("Variable Node")) {
-					boolean flag = true;
-					
-					while(flag) {
-						nodeName = (String)JOptionPane.showInputDialog(
-								getRootPane(),
-								"Node Name:",
-								"Create a Variable Node",
-								JOptionPane.PLAIN_MESSAGE);
-						if(nodeName.equals(JOptionPane.CANCEL_OPTION)) {
-							return null;
-						} else {
-							if(nodeName.startsWith("$")) {
-								Node node = network.buildVariableNode(nodeName);
-								nodesList.add(node);
-								flag = false;
-							}	
-							else {
-								JOptionPane.showMessageDialog(getRootPane(),
-						    			  "A variabel node has to start with the sign $",
-						    			  "Error",
-						    			  JOptionPane.ERROR_MESSAGE);
-							}
-						}
-					}
+					Node node = network.buildVariableNode();
+					nodesList.add(node);
 				}
 			} catch (NullPointerException e) {}
 			catch (CustomException e) {
@@ -669,7 +647,7 @@ public class TestDraw extends javax.swing.JPanel {
                             System.out.println();
                             try {
 								Node node = network.getNode(vertex.toString());
-								if(node.getUpCableSet().getUpCables().isEmpty()) {
+								if(node.getUpCableSet().size() == 0) {
 									network.removeNode(node);
 									graph.removeVertex(vertex);
 								} else {

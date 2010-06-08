@@ -190,7 +190,7 @@ public class cmdSilentErase extends javax.swing.JPanel {
 	private void addButtonMouseClicked(MouseEvent evt) {
 		try {
 			Node node = network.getNode(nodesetComboBox.getSelectedItem().toString());
-			if(node.getUpCableSet().getUpCables().isEmpty()) {
+			if(node.getUpCableSet().size() == 0) {
 				nodesetModel.addElement(nodesetComboBox.getSelectedItem().toString());
 				nodesetComboBox.setSelectedIndex(0);
 				validate();

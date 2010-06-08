@@ -548,14 +548,13 @@ public class cmdFindConstant extends javax.swing.JPanel {
 			Object [][] array = new Object[listModelPaths.size()][2];
 			for(int i = 0; i < listModelPaths.size(); i++) {
 				String [] nodeArray = nodesetModel.get(i).toString().split(",");
-				LinkedList<Node> nodelist = new LinkedList<Node>();
+				NodeSet nodeset = new NodeSet();
 				
 				for(int j = 0; j < nodeArray.length; j++) {
-					nodelist.add(network.getNode(nodeArray[j]));
+					nodeset.addNode(network.getNode(nodeArray[j]));
 				}
 				
 				Path path = listModelPaths.get(i);
-				NodeSet nodeset = new NodeSet(nodelist);
 				
 				array[i][0] = path;
 				array[i][1] = nodeset;

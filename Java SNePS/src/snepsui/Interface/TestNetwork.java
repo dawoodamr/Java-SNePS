@@ -27,6 +27,7 @@ import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
 import sneps.Relation;
+import sneps.UpCable;
 import sneps.UpCableSet;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
@@ -102,19 +103,35 @@ public class TestNetwork extends JPanel{
 	    }
 	    
 	    Iterator<String> itr2 = set.iterator();
+//	    while (itr2.hasNext()) {
+//	    	nodeString = itr2.next();
+//	    	Node node = nodes.get(nodeString);
+//	    	UpCableSet upCableSet = node.getUpCableSet();
+//	    	for (int i = 0; i < upCableSet.getUpCables().size(); i++) {
+//	    		Relation relation = upCableSet.getUpCables().get(i).getRelation();
+//		    	LinkedList<Node> nodeset = upCableSet.getUpCables().get(i).getNodeSet().getNodes();
+//		    	for(Node item : nodeset) {
+//		    		graph.addEdge(new RelationEdge(relation.getName()).toString(),item.getIdentifier(),node.getIdentifier());
+//		    		System.out.println("Relation Name: " + relation.getName());
+//		    		System.out.println("Node Name: " + node.getIdentifier());
+//		    		System.out.println("Upcable Node: "+ item.getIdentifier());
+//		    	}
+//	    	}
+//	    }
+	    
 	    while (itr2.hasNext()) {
 	    	nodeString = itr2.next();
 	    	Node node = nodes.get(nodeString);
 	    	UpCableSet upCableSet = node.getUpCableSet();
-	    	for (int i = 0; i < upCableSet.getUpCables().size(); i++) {
-	    		Relation relation = upCableSet.getUpCables().get(i).getRelation();
-		    	LinkedList<Node> nodeset = upCableSet.getUpCables().get(i).getNodeSet().getNodes();
-		    	for(Node item : nodeset) {
-		    		graph.addEdge(new RelationEdge(relation.getName()).toString(),item.getIdentifier(),node.getIdentifier());
-		    		System.out.println("Relation Name: " + relation.getName());
-		    		System.out.println("Node Name: " + node.getIdentifier());
-		    		System.out.println("Upcable Node: "+ item.getIdentifier());
-		    	}
+	    	
+	    	for (int i = 0; i < upCableSet.size(); i++) {
+	    		UpCable upcable = upCableSet.getUpCable(i);
+	    		Relation relation = upcable.getRelation();
+	    		
+	    		for (int j = 0; j < upcable.getNodeSet().size(); j ++) {
+	    			Node item = upcable.getNodeSet().getNode(j);
+	    			graph.addEdge(new RelationEdge(relation.getName()).toString(),item.getIdentifier(),node.getIdentifier());
+	    		}
 	    	}
 	    }
 	    
