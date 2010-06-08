@@ -13,7 +13,7 @@ import sneps.Node;
 import snip.ds.Process;
 import snip.ds.Report;
 
-public class Rule extends Proposition
+public abstract class Rule extends Proposition
 {
 	private Process p;
 	
