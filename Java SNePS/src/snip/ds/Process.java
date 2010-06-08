@@ -127,11 +127,11 @@ public class Process
 	 */
 	public boolean allShareVars(NodeSet nodes)
 	{
-		PatternNode n=(PatternNode)nodes.getNodes().get(0);
+		PatternNode n=(PatternNode)nodes.getNode(0);
 		boolean res=true;
-		for(int i=1;i<nodes.getNodes().size();i++)
+		for(int i=1;i<nodes.size();i++)
 		{
-			if(!n.haveSameFreeVariables((PatternNode)nodes.getNodes().get(i)))
+			if(!n.haveSameFreeVariables((PatternNode)nodes.getNode(i)))
 			{
 				res=false;
 				break;
@@ -260,9 +260,9 @@ public class Process
 	 */
 	public void sendRequests(NodeSet ns,Context c)
 	{
-		for(int i=0;i<ns.getNodes().size();i++)
+		for(int i=0;i<ns.size();i++)
 		{
-			Node to=ns.getNodes().get(i);
+			Node to=ns.getNode(i);
 			Substitutions sub=match(node,to);
 			Substitutions[] sp=sub.split();
 			Filter f=new Filter(sp[0]);

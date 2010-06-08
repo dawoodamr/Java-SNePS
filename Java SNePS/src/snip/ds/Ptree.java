@@ -33,10 +33,10 @@ public class Ptree
 	 */
 	public void buildTree(NodeSet pns)
 	{
-		PatternNode[] patns=new PatternNode[pns.getNodes().size()]; 
+		PatternNode[] patns=new PatternNode[pns.size()]; 
 		for(int i=0;i<patns.length;i++)
 		{
-			patns[i]=(PatternNode)pns.getNodes().get(i);
+			patns[i]=(PatternNode)pns.getNode(i);
 		}
 		Vector<Vector<Integer>> patvar=getPatVar(patns);
 		Vector<Vector<Integer>> varpat=getVarPat(patvar);
