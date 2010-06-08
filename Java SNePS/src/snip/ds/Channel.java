@@ -8,6 +8,8 @@
 package snip.ds;
 
 import snebr.Context;
+import sneps.MolecularNode;
+import sneps.Network;
 
 public class Channel
 {
@@ -133,16 +135,11 @@ public class Channel
 	{
 		if(fil.canPass(r))
 		{
-			if(des.getNode().getClass().getName().equals("VariableNode"))
-			{
-				//build a base node
-			}
-			else if(des.getNode().getClass().getName().equals("PatternNode"))
-			{
-				//build another node with the same caseframe
-			}
 			swi.switchReport(r);
-			//des.getNode().getEntity().getProcess().receiveReport(r);
+			Network n=Network.getInstance();
+			n.termVERe((MolecularNode)des.getNode(),r.getSubstitutions()
+					,r.getSubstitutions());
+			des.getNode().getEntity().getProcess().receiveReport(r);
 		}
 	}
 	
