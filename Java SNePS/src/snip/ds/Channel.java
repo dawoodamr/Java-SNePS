@@ -137,8 +137,9 @@ public class Channel
 		{
 			swi.switchReport(r);
 			Network n=Network.getInstance();
-			n.termVERe((MolecularNode)des.getNode(),r.getSubstitutions()
-					,r.getSubstitutions());
+			MolecularNode res=n.termVERe((MolecularNode)des.getNode()
+					,r.getSubstitutions(),r.getSubstitutions());
+			r.setNode(res);
 			des.getNode().getEntity().getProcess().receiveReport(r);
 		}
 	}
