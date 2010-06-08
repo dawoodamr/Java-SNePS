@@ -1816,7 +1816,7 @@ public class Network implements Serializable
 			}
 		}*/
 		
-		/*Path f = new FUnitPath("r3");
+		Path f = new FUnitPath("r3");
 		Path b = new BUnitPath("r1");
 		Path kf = new KStarPath(f);
 		Path kb = new KStarPath(b);
@@ -1824,18 +1824,14 @@ public class Network implements Serializable
 		l.add(kb);
 		l.add(kf);
 		Path c = new ComposePath(l);
-		LinkedList<Path> l1 = new LinkedList<Path>();
-		l1.add(c);
-		l1.add(f);
-		Path or = new AndPath(l1);
 		Object[][] o = new Object[1][2];
-		o[0][0] = kb;
+		o[0][0] = c;
 		NodeSet ns = new NodeSet();
-		ns.addNode(h1);
+		ns.addNode(x3);
 		o[0][1] = ns;
 		Hashtable<Node,LinkedList<Support>> h = n.find(o,null);
 		for(Enumeration<Node> e = h.keys();e.hasMoreElements();)
-			System.out.println(e.nextElement().getIdentifier());*/
+			System.out.println(e.nextElement().getIdentifier());
 		/*Hashtable<String,LinkedList<String>> h = new Hashtable<String, LinkedList<String>>();
 		LinkedList<String> l = new LinkedList<String>();
 		h.put("amr",l);
