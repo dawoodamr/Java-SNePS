@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,12 +28,15 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
 import sneps.AndPath;
 import sneps.BUnitPath;
+import sneps.BangPath;
 import sneps.ComposePath;
 import sneps.ConversePath;
 import sneps.CustomException;
@@ -59,6 +63,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdDefinePath extends javax.swing.JPanel {
 	private JLabel definePathLabel;
 	private JLabel pathLabel;
@@ -70,6 +78,7 @@ public class cmdDefinePath extends javax.swing.JPanel {
 	private DefaultListModel pathModel;
 	private JScrollPane jScrollPane1;
 	private JScrollPane jScrollPane2;
+	private JButton removeButton;
 	private JTextField pathTextField;
 	private JComboBox relationComboBox;
 	private JButton addButton;
@@ -83,6 +92,12 @@ public class cmdDefinePath extends javax.swing.JPanel {
 	
 	@Action
     public void add() {}
+	
+	@Action
+    public void remove() {}
+	
+	@Action
+    public void path() {}
 	
 	@Action
     public void info() {}
@@ -113,9 +128,14 @@ public class cmdDefinePath extends javax.swing.JPanel {
 			{
 				addButton = new JButton();
 				this.add(addButton);
-				addButton.setBounds(572, 33, 16, 18);
+				addButton.setBounds(572, 31, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
+				addButton.setFocusable(false);
+				addButton.setFocusPainted(false);
+				addButton.setBorderPainted(false);
+				addButton.setContentAreaFilled(false);
+				addButton.setMargin(new Insets(0,0,0,0));
 				addButton.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent evt) {
 						addButtonMouseClicked(evt);
@@ -144,6 +164,12 @@ public class cmdDefinePath extends javax.swing.JPanel {
 					jScrollPane1.setViewportView(pathList);
 					pathList.setModel(pathModel);
 					pathList.setBounds(316, 179, 256, 81);
+					pathList.addListSelectionListener(new ListSelectionListener() {
+						public void valueChanged(ListSelectionEvent evt) {
+							int selected = pathList.getSelectedIndex();
+							relationList.setSelectedIndex(selected);
+						}
+					});
 				}
 			}
 			{
@@ -168,6 +194,12 @@ public class cmdDefinePath extends javax.swing.JPanel {
 					jScrollPane2.setViewportView(relationList);
 					relationList.setModel(relationModel);
 					relationList.setBounds(64, 196, 186, 82);
+					relationList.addListSelectionListener(new ListSelectionListener() {
+						public void valueChanged(ListSelectionEvent evt) {
+							int selected = relationList.getSelectedIndex();
+							pathList.setSelectedIndex(selected);
+						}
+					});
 				}
 			}
 			{
@@ -176,6 +208,10 @@ public class cmdDefinePath extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -183,7 +219,7 @@ public class cmdDefinePath extends javax.swing.JPanel {
 					new DefaultComboBoxModel(
 							new String[] {"converse", "compose", "kstar", "kplus", "or", "and", "not",
 									"relative-complement", "irreflexive-restrict", "exception", "domain-restrict", 
-									"range-restrict", "unitpath", "unitpath-"});
+									"range-restrict", "unitpath", "unitpath-", "!"});
 				pathComboBox = new JComboBox();
 				this.add(pathComboBox);
 				pathComboBox.setModel(pathComboBoxModel);
@@ -199,8 +235,9 @@ public class cmdDefinePath extends javax.swing.JPanel {
 			{
 				pathButton = new JButton();
 				this.add(pathButton);
-				pathButton.setBounds(593, 31, 40, 22);
+				pathButton.setBounds(593, 31, 16, 18);
 				pathButton.setName("pathButton");
+				pathButton.setAction(getAppActionMap().get("path"));
 				pathButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						pathButtonActionPerformed(evt);
@@ -240,10 +277,23 @@ public class cmdDefinePath extends javax.swing.JPanel {
 					}
 				});
 			}
+			{
+				removeButton = new JButton();
+				this.add(removeButton);
+				removeButton.setAction(getAppActionMap().get("remove"));
+				removeButton.setBounds(572, 64, 16, 18);
+				removeButton.setFocusPainted(false);
+				removeButton.setBorderPainted(false);
+				removeButton.setContentAreaFilled(false);
+				removeButton.setMargin(new Insets(0,0,0,0));
+				removeButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						removeButtonMouseClicked(evt);
+					}
+				});
+			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void pathButtonActionPerformed(ActionEvent evt) {
@@ -260,9 +310,13 @@ public class cmdDefinePath extends javax.swing.JPanel {
 			
 			@Override
 			public void windowClosed(WindowEvent e) {
+				System.out.println("Path Type: " + pathPanel.getResultPath().getClass().getSimpleName());
 				paths.add(pathPanel.getResultPath());
 				
 				String currentPath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(pathPanel.getResultPath());
+				
+				System.out.println("Current Path: " + currentPath);
+				
 				if(pathTextField.getText().isEmpty()) {
 					pathTextField.setText(currentPath);
 				} else {
@@ -283,36 +337,41 @@ public class cmdDefinePath extends javax.swing.JPanel {
 						"Choose a path type",
 						"Error",
 						JOptionPane.ERROR_MESSAGE);
+			} else if (pathTextField.getText().isEmpty()) {
+				JOptionPane.showMessageDialog(this, 
+						"There are no paths included in the selected path",
+						"Error",
+						JOptionPane.ERROR_MESSAGE);
 			} else {
 				//Add Relation
 				Relation relation = network.getRelation(relationComboBox.getSelectedItem().toString());
-				relationModel.addElement(relation.getName());
+				LinkedList<Path> currentPath = paths;
 	
 				//Add Path
 				String pathType = pathComboBox.getSelectedItem().toString();
 				if (pathType.equals("converse")) {
-					Path path = new ConversePath(paths.getFirst());
+					Path path = new ConversePath(currentPath.getFirst());
 					listModelPaths.add(path);
 				} else if (pathType.equals("compose")) {
-					Path path = new ComposePath(paths);
+					Path path = new ComposePath(currentPath);
 					listModelPaths.add(path);
 				} else if (pathType.equals("kstar")) {
-					Path path = new KStarPath(paths.getFirst());
+					Path path = new KStarPath(currentPath.getFirst());
 					listModelPaths.add(path);
 				} else if (pathType.equals("kplus")) {
-					Path path = new KPlusPath(paths.getFirst());
+					Path path = new KPlusPath(currentPath.getFirst());
 					listModelPaths.add(path);
 				} else if (pathType.equals("or")) {
-					Path path = new OrPath(paths);
+					Path path = new OrPath(currentPath);
 					listModelPaths.add(path);
 				} else if (pathType.equals("and")) {
-					Path path = new AndPath(paths);
+					Path path = new AndPath(currentPath);
 					listModelPaths.add(path);
 				} else if (pathType.equals("relative-complement")) {
-					Path path = new RelativeComplementPath(paths.get(0), paths.get(1));
+					Path path = new RelativeComplementPath(currentPath.get(0), currentPath.get(1));
 					listModelPaths.add(path);
 				} else if (pathType.equals("irreflexive-restrict")) {
-					Path path = new IrreflexiveRestrictPath(paths.getFirst());
+					Path path = new IrreflexiveRestrictPath(currentPath.getFirst());
 					listModelPaths.add(path);
 				} else if (pathType.equals("domain-restrict")) {
 					//Path path = new DomainRestrictPath(q, node, p);
@@ -324,19 +383,21 @@ public class cmdDefinePath extends javax.swing.JPanel {
 				
 				//Add the path to the List
 				String completePath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(listModelPaths.getLast());
-				pathModel.addElement(completePath);
 				
-				//Reset TestField
-				pathTextField.setText("");
-				
-				//Delete previous paths
-				for(int i = 0; i < paths.size(); i++) {
-					paths.remove(i);
+				if(pathModel.contains(completePath) && relationModel.contains(relation.getName())) {
+					JOptionPane.showMessageDialog(this, 
+							"The path is already defined in the list",
+							"Error",
+							JOptionPane.ERROR_MESSAGE);
+				} else {
+					pathModel.addElement(completePath);
+					relationModel.addElement(relation.getName());
+					
+					//Reset TextField
+					pathTextField.setText("");
 				}
 			}
-		} catch (CustomException e) {
-			e.printStackTrace();
-		}
+		} catch (CustomException e) {}
 	}
 	
 	private void doneButtonMouseClicked(MouseEvent evt) {
@@ -357,9 +418,7 @@ public class cmdDefinePath extends javax.swing.JPanel {
 				listModelPaths.remove(i);
 			}
 			
-		} catch (CustomException e) {
-			e.printStackTrace();
-		}
+		} catch (CustomException e) {}
 	}
 	
 	private void pathComboBoxActionPerformed(ActionEvent evt) {
@@ -402,9 +461,7 @@ public class cmdDefinePath extends javax.swing.JPanel {
 						String previousPath = pathTextField.getText();
 						pathTextField.setText(previousPath + ", " + relation);
 					}
-				} catch (CustomException e) {
-					e.printStackTrace();
-				}
+				} catch (CustomException e) {}
 			} else if (pathComboBox.getSelectedItem().toString().equals("unitpath-")) {
 				try {
 					Path path = new BUnitPath(network.getRelation(relation).getName());
@@ -416,12 +473,28 @@ public class cmdDefinePath extends javax.swing.JPanel {
 						String previousPath = pathTextField.getText();
 						pathTextField.setText(previousPath + ", " + relation + "-");
 					}
-				} catch (CustomException e) {
-					e.printStackTrace();
-				}
+				} catch (CustomException e) {}
+			}
+		} else if (pathComboBox.getSelectedItem().toString().equals("!")) {
+			Path path = new BangPath();
+			paths.add(path);
+			
+			if(pathTextField.getText().isEmpty()) {
+				pathTextField.setText("!");
+			} else {
+				String previousPath = pathTextField.getText();
+				pathTextField.setText(previousPath + ", " + "!");
 			}
 		} else {
 			return;
 		}
+	}
+	
+	private void removeButtonMouseClicked(MouseEvent evt) {
+		int selected = relationList.getSelectedIndex();
+		
+		relationModel.remove(selected);
+		pathModel.remove(selected);
+		listModelPaths.remove(selected);
 	}
 }

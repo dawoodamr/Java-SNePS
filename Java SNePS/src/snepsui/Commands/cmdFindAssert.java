@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +36,7 @@ import org.jdesktop.application.Application;
 
 import sneps.AndPath;
 import sneps.BUnitPath;
+import sneps.BangPath;
 import sneps.ComposePath;
 import sneps.ConversePath;
 import sneps.CustomException;
@@ -64,6 +66,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdFindAssert extends javax.swing.JPanel {
 	private JLabel findLabel;
 	private JButton addButton;
@@ -96,19 +102,16 @@ public class cmdFindAssert extends javax.swing.JPanel {
 	private LinkedList<Path> paths;
 	
 	@Action
-    public void add() {
-    	
-    }
+    public void add() {}
 	
 	@Action
-    public void build() {
-    	
-    }
+    public void build() {}
 	
 	@Action
-    public void info() {
-    	
-    }
+    public void info() {}
+	
+	@Action
+    public void path() {}
 	
 	private ActionMap getAppActionMap() {
         return Application.getInstance().getContext().getActionMap(this);
@@ -186,6 +189,10 @@ public class cmdFindAssert extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -323,8 +330,9 @@ public class cmdFindAssert extends javax.swing.JPanel {
 			{
 				pathButton = new JButton();
 				this.add(pathButton);
-				pathButton.setBounds(314, 53, 23, 19);
+				pathButton.setBounds(314, 53, 16, 18);
 				pathButton.setName("pathButton");
+				pathButton.setAction(getAppActionMap().get("path"));
 				pathButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						pathButtonActionPerformed(evt);
@@ -332,9 +340,7 @@ public class cmdFindAssert extends javax.swing.JPanel {
 				});
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void buildButtonActionPerformed(ActionEvent evt) {
@@ -371,29 +377,31 @@ public class cmdFindAssert extends javax.swing.JPanel {
 		
 					//Add Path
 					String pathType = pathComboBox.getSelectedItem().toString();
+					LinkedList<Path> currentPaths = paths;
+					
 					if (pathType.equals("converse")) {
-						Path path = new ConversePath(paths.getFirst());
+						Path path = new ConversePath(currentPaths.getFirst());
 						listModelPaths.add(path);
 					} else if (pathType.equals("compose")) {
-						Path path = new ComposePath(paths);
+						Path path = new ComposePath(currentPaths);
 						listModelPaths.add(path);
 					} else if (pathType.equals("kstar")) {
-						Path path = new KStarPath(paths.getFirst());
+						Path path = new KStarPath(currentPaths.getFirst());
 						listModelPaths.add(path);
 					} else if (pathType.equals("kplus")) {
-						Path path = new KPlusPath(paths.getFirst());
+						Path path = new KPlusPath(currentPaths.getFirst());
 						listModelPaths.add(path);
 					} else if (pathType.equals("or")) {
-						Path path = new OrPath(paths);
+						Path path = new OrPath(currentPaths);
 						listModelPaths.add(path);
 					} else if (pathType.equals("and")) {
-						Path path = new AndPath(paths);
+						Path path = new AndPath(currentPaths);
 						listModelPaths.add(path);
 					} else if (pathType.equals("relative-complement")) {
-						Path path = new RelativeComplementPath(paths.get(0), paths.get(1));
+						Path path = new RelativeComplementPath(currentPaths.get(0), currentPaths.get(1));
 						listModelPaths.add(path);
 					} else if (pathType.equals("irreflexive-restrict")) {
-						Path path = new IrreflexiveRestrictPath(paths.getFirst());
+						Path path = new IrreflexiveRestrictPath(currentPaths.getFirst());
 						listModelPaths.add(path);
 					} else if (pathType.equals("domain-restrict")) {
 						//Path path = new DomainRestrictPath(q, node, p);
@@ -409,14 +417,10 @@ public class cmdFindAssert extends javax.swing.JPanel {
 					
 					//Reset TestField
 					pathTextField.setText("");
-					
-					//Delete previous paths
-					for(int i = 0; i < paths.size(); i++) {
-						paths.remove(i);
-					}
 				}
 			}
 			
+			paths = new LinkedList<Path>();
 			nodesetModel.addElement(nodesetTextField.getText());
 			nodesetTextField.setText("");
 		} catch (CustomException e) {
@@ -494,9 +498,7 @@ public class cmdFindAssert extends javax.swing.JPanel {
 						String previousPath = pathTextField.getText();
 						pathTextField.setText(previousPath + ", " + relation);
 					}
-				} catch (CustomException e) {
-					e.printStackTrace();
-				}
+				} catch (CustomException e) {}
 			} else if (pathComboBox.getSelectedItem().toString().equals("unitpath-")) {
 				try {
 					Path path = new BUnitPath(network.getRelation(relation).getName());
@@ -508,9 +510,17 @@ public class cmdFindAssert extends javax.swing.JPanel {
 						String previousPath = pathTextField.getText();
 						pathTextField.setText(previousPath + ", " + relation + "-");
 					}
-				} catch (CustomException e) {
-					e.printStackTrace();
-				}
+				} catch (CustomException e) {}
+			}
+		} else if (pathComboBox.getSelectedItem().toString().equals("!")) {
+			Path path = new BangPath();
+			paths.add(path);
+			
+			if(pathTextField.getText().isEmpty()) {
+				pathTextField.setText("!");
+			} else {
+				String previousPath = pathTextField.getText();
+				pathTextField.setText(previousPath + ", " + "!");
 			}
 		} else {
 			return;
@@ -561,8 +571,6 @@ public class cmdFindAssert extends javax.swing.JPanel {
 			
 			pathModel.removeAllElements();
 			nodesetModel.removeAllElements();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 }

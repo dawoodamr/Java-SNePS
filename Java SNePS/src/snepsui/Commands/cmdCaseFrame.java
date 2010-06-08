@@ -1,8 +1,11 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Hashtable;
@@ -21,6 +24,8 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
@@ -44,12 +49,17 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdCaseFrame extends javax.swing.JPanel {
 	private JComboBox semanticClassComboBox;
 	private JLabel semanticClassLabel;
 	private JLabel caseFrameLabel;
 	private JScrollPane jScrollPane1;
 	private JScrollPane jScrollPane2;
+	private JButton removeButton;
 	private JTextField relationSetTextField;
 	private JComboBox relationsComboBox;
 	private JList relationsList;
@@ -64,12 +74,13 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 	private SNePSInterface frame;
 
 	@Action
-	public void info() {
-	}
+	public void info() {}
 	
 	@Action
-	public void add() {
-	}
+	public void remove() {}
+	
+	@Action
+	public void add() {}
 
 	private ActionMap getAppActionMap() {
 		return Application.getInstance().getContext().getActionMap(this);
@@ -117,6 +128,10 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -136,6 +151,10 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 				addButton.setBounds(623, 50, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
+				addButton.setFocusPainted(false);
+				addButton.setBorderPainted(false);
+				addButton.setContentAreaFilled(false);
+				addButton.setMargin(new Insets(0,0,0,0));
 				addButton.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent evt) {
 						addButtonMouseClicked(evt);
@@ -151,6 +170,12 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 					semanticClassList = new JList();
 					jScrollPane1.setViewportView(semanticClassList);
 					semanticClassList.setModel(semanticClassModel);
+					semanticClassList.addListSelectionListener(new ListSelectionListener() {
+						public void valueChanged(ListSelectionEvent evt) {
+							int selected = semanticClassList.getSelectedIndex();
+							relationsList.setSelectedIndex(selected);
+						}
+					});
 				}
 			}
 			{
@@ -163,6 +188,12 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 					jScrollPane2.setViewportView(relationsList);
 					relationsList.setModel(relationsModel);
 					relationsList.setBounds(363, 144, 161, 85);
+					relationsList.addListSelectionListener(new ListSelectionListener() {
+						public void valueChanged(ListSelectionEvent evt) {
+							int selected = relationsList.getSelectedIndex();
+							semanticClassList.setSelectedIndex(selected);
+						}
+					});
 				}
 			}
 			{
@@ -190,7 +221,7 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 				relationsComboBox.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						String relations = relationSetTextField.getText();
-						if(relations.contains(relationsComboBox.getSelectedItem().toString())) {
+						if(!relations.contains(relationsComboBox.getSelectedItem().toString())) {
 							if (relations.isEmpty()) {
 								relationSetTextField.setText(relationsComboBox.getSelectedItem().toString());
 							} else {
@@ -205,10 +236,24 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 					}
 				});
 			}
+			{
+				removeButton = new JButton();
+				this.add(removeButton);
+				removeButton.setAction(getAppActionMap().get("remove"));
+				removeButton.setToolTipText("remove");
+				removeButton.setBounds(623, 85, 16, 18);
+				removeButton.setFocusPainted(false);
+				removeButton.setBorderPainted(false);
+				removeButton.setContentAreaFilled(false);
+				removeButton.setMargin(new Insets(0,0,0,0));
+				removeButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						removeButtonMouseClicked(evt);
+					}
+				});
+			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 
 	public Network getNetwork() {
@@ -226,11 +271,15 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 					"Please specify the relations included in the case frame, the relation field cannot be empty",
 					"Warning",
 					JOptionPane.WARNING_MESSAGE);
+		} else if (relationsModel.contains(relationSetTextField.getText())) {
+			JOptionPane.showMessageDialog(this,
+					"The case frame is already included in the list",
+					"Warning",
+					JOptionPane.WARNING_MESSAGE);
 		} else {
 			semanticClassModel.addElement(semanticClassComboBox.getSelectedItem().toString());
 			semanticClassComboBox.setSelectedIndex(0);
 			relationsModel.addElement(relationSetTextField.getText());
-			relationsComboBox.setSelectedIndex(0);
 			relationSetTextField.setText("");
 			validate();
 		}
@@ -244,10 +293,7 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 			for (int j = 0; j < array.length; j++) {
 				try {
 					relationList.add(network.getRelation(array[j]));
-				} catch (CustomException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				} catch (CustomException e) {}
 			}
 				
 			try {
@@ -264,7 +310,6 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 		    			  "Case frame number " + i + " already exists",
 		    			  "Error",
 		    			  JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
 			}
 		}
 		
@@ -277,5 +322,14 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 		frame.getNodesTreePanel1().initGUI();
 		frame.getNodesTreePanel1().validate();
 		frame.getNodesTreePanel1().repaint();
+	}
+	
+	private void removeButtonMouseClicked(MouseEvent evt) {
+		try {
+			int selected = semanticClassList.getSelectedIndex();
+			relationsModel.remove(selected);
+			semanticClassModel.remove(selected);
+		} catch (Exception e) {}
+		
 	}
 }

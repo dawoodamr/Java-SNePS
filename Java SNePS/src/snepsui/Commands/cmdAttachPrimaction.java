@@ -1,8 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -12,11 +11,9 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.ListModel;
 
 import org.jdesktop.application.Action;
@@ -38,6 +35,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdAttachPrimaction extends javax.swing.JPanel {
 	private JLabel buildLabel2;
 	private JLabel wheneverLabel;
@@ -113,6 +114,10 @@ public class cmdAttachPrimaction extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -218,8 +223,6 @@ public class cmdAttachPrimaction extends javax.swing.JPanel {
 				actionLabel.setName("actionLabel");
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 }

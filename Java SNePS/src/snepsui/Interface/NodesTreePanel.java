@@ -162,9 +162,7 @@ public class NodesTreePanel extends javax.swing.JPanel {
 					frame.getTracingPanel1().setVisible(true);
 					frame.getMainFrame().validate();
 					frame.getMainFrame().repaint();
-				} catch (CustomException e) {
-					//e.printStackTrace();
-				}
+				} catch (CustomException e) {}
 			} else if (treeNode.getParent().toString().equals("Relations")) {
 				try {
 					Relation relation = network.getRelation(treeNode.toString());

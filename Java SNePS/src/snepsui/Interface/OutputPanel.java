@@ -18,6 +18,10 @@ import javax.swing.JTextArea;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class OutputPanel extends javax.swing.JPanel {
 	private JScrollPane jScrollPane1;
 	private JTextArea jTextArea1;
@@ -40,9 +44,7 @@ public class OutputPanel extends javax.swing.JPanel {
 					jScrollPane1.setViewportView(jTextArea1);
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	public void writeToTextArea(String text) {

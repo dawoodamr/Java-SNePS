@@ -1,8 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Hashtable;
@@ -15,12 +14,9 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
@@ -43,6 +39,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdPerform extends javax.swing.JPanel {
 	private JLabel performLabel;
 	private JScrollPane jScrollPane1;
@@ -133,6 +133,10 @@ public class cmdPerform extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -189,9 +193,7 @@ public class cmdPerform extends javax.swing.JPanel {
 				nodesComboBox.setBounds(247, 27, 185, 22);
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void addButtonMouseClicked(MouseEvent evt) {

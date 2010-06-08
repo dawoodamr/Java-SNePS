@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Paint;
 import java.awt.Point;
 import java.awt.Shape;
@@ -118,6 +119,9 @@ public class DrawNetwork extends javax.swing.JPanel {
      */
     private Transformer<String, String> edgeLabel;
     
+    /**
+     * The instruction on how to use the mouse actions
+     */
     String instructions =
         "<html>"+
         "<h3>All Modes:</h3>"+
@@ -157,6 +161,9 @@ public class DrawNetwork extends javax.swing.JPanel {
     	initGUI();
     }
     
+    /**
+     * Initializes the components in the DrawNetwork panel
+     */
     private void initGUI() {
     	nodesList = new LinkedList<Node>();
     	molNodes = new Hashtable<String, CaseFrame>();
@@ -279,38 +286,44 @@ public class DrawNetwork extends javax.swing.JPanel {
         final ScalingControl scaler = new CrossoverScalingControl();
         
         vv.scaleToLayout(scaler);
+        
+        String path = "src/snepsui/Interface/resources/icons/";
 
-        JButton plus = new JButton("+");
+        JButton plus = new JButton();
+        plus.setIcon(new ImageIcon(path + "zoom_in.png"));
+        plus.setSize(18, 18);
+        plus.setFocusPainted(false);
+        plus.setBorderPainted(false);
+        plus.setContentAreaFilled(false);
+        plus.setMargin(new Insets(0,0,0,0));
         plus.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 scaler.scale(vv, 1.1f, vv.getCenter());
             }
         });
         
-        JButton minus = new JButton("-");
+        JButton minus = new JButton();
+        minus.setIcon(new ImageIcon(path + "zoom_out.png"));
+        minus.setSize(18, 18);
+        minus.setFocusPainted(false);
+        minus.setBorderPainted(false);
+        minus.setContentAreaFilled(false);
+        minus.setMargin(new Insets(0,0,0,0));
         minus.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 scaler.scale(vv, 1/1.1f, vv.getCenter());
             }
         });
 
-        JPanel scaleGrid = new JPanel(new GridLayout(1,0));
+        JPanel scaleGrid = new JPanel(new GridLayout(1,2));
         scaleGrid.setBorder(BorderFactory.createTitledBorder("Zoom"));
-        
-        String path = "src/snepsui/Interface/resources/icons/";
         
         JButton colors = new JButton(new ImageIcon(path + "colors.png"));
         colors.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFrame popupFrame = new JFrame("Node Colors");
-				popupFrame.setLocation(450, 350);
-				popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				popupFrame.getContentPane().add(new NodeColors());
-				popupFrame.pack();
-				popupFrame.setResizable(false);
-				popupFrame.setVisible(true);
+				JOptionPane.showMessageDialog(getRootPane(), new NodeColors());
 			}
 		});
         
@@ -318,17 +331,24 @@ public class DrawNetwork extends javax.swing.JPanel {
 		infoButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(vv, instructions, "Instructions", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(vv, 
+                		instructions, 
+                		"Instructions", 
+                		JOptionPane.INFORMATION_MESSAGE,
+                		new ImageIcon("src/snepsui/Interface/resources/icons/info.png"));
         }});
 		
-		JButton resetbutton = new JButton(new ImageIcon(path + "resetnet.png"));
+		JButton resetbutton = new JButton(new ImageIcon(path + "refresh.png"));
 		resetbutton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+            	ImageIcon icon = new ImageIcon("src/snepsui/Interface/resources/icons/info.png");
                 int result = JOptionPane.showConfirmDialog(vv,
                 		"Are you sure you want to reset the drawing area?",
                 		"Reset",
-                		JOptionPane.YES_NO_OPTION);
+                		JOptionPane.YES_NO_OPTION,
+                		JOptionPane.QUESTION_MESSAGE,
+                		icon);
                 if(result == JOptionPane.YES_OPTION) {
                 	builtMolNodes.clear();
                 	molNodes.clear();
@@ -454,9 +474,7 @@ public class DrawNetwork extends javax.swing.JPanel {
 					nodeName = "m"+m;
 					try{
 						molNodes.put(nodeName, network.getCaseFrame(caseframe));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					} catch (Exception e) {}
 						
 				} else if (s.equals("Variable Node")) {
 					boolean flag = true;
@@ -707,10 +725,6 @@ public class DrawNetwork extends javax.swing.JPanel {
                         	 builMolNode((java.lang.String)vertex);
                          }});
                 	}
-            		//System.out.println(vertex);
-            		//System.out.println(builtMolNodes.containsKey(vertex));
-            		//if(builtMolNodes.contains(vertex))
-            			//System.out.println(builtMolNodes.get(vertex).getIdentifier());
             		if(builtMolNodes.containsKey(vertex)) {
             			popup.add(new AbstractAction("Assert") {
                             public void actionPerformed(ActionEvent e) {
@@ -729,7 +743,6 @@ public class DrawNetwork extends javax.swing.JPanel {
                     popup.add(new AbstractAction("Delete Node") {
                         public void actionPerformed(ActionEvent e) {
                             pickedVertexState.pick(vertex, false);
-                            //System.out.println();
                             try {
 								Node node = network.getNode(vertex.toString());
 								if(node.getUpCableSet().getUpCables().isEmpty()) {
@@ -804,7 +817,6 @@ public class DrawNetwork extends javax.swing.JPanel {
 			 String nodeName = (String) node.getIdentifier();
 				
 			 nodesList.add(node);
-			 //molNodes.remove(vertex);
 			 builtMolNodes.put((java.lang.String)vertex, node);
 			
 			 Transformer<String, java.lang.String> vs = vv.getRenderContext().getVertexLabelTransformer();
@@ -816,7 +828,7 @@ public class DrawNetwork extends javax.swing.JPanel {
 					 vv.repaint();
 				 }
 			 }
-			} catch (CustomException e1) {}
+		} catch (CustomException e1) {}
     }
     
     /**
@@ -838,10 +850,18 @@ public class DrawNetwork extends javax.swing.JPanel {
         } catch (Exception e) {}
     }
     
+    /**
+	 * Gets the current Network
+	 * @return the current Network
+	 */
     public Network getNetwork() {
 		return network;
 	}
-
+    
+    /**
+	 * Sets the current Network to the given Network
+	 * @param network the network to be set as the current Network
+	 */
 	public void setNetwork(Network network) {
 		this.network = network;
 	}

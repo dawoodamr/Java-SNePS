@@ -1,14 +1,24 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.ActionMap;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -39,13 +49,19 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdDefinePrimaction extends javax.swing.JPanel {
 	private JLabel definePrimactionLabel;
 	private JScrollPane jScrollPane1;
+	private JScrollPane jScrollPane2;
+	private JTextArea formTextArea;
+	private JTextField classNameTextField;
 	private JTextField actionTextField;
 	private JComboBox relationComboBox;
 	private JList relationList;
-	private JTextArea formTextArea;
 	private JLabel formLabel;
 	private JLabel relationLabel;
 	private JLabel actionLabel;
@@ -55,6 +71,8 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
 	private DefaultListModel relationModel;
 	private Network network;
 	private SNePSInterface frame;
+	private static File targetDir;
+	private static String className;
 
 	@Action
     public void add() {
@@ -114,13 +132,8 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
 			{
 				formLabel = new JLabel();
 				this.add(formLabel);
-				formLabel.setBounds(511, 16, 43, 15);
+				formLabel.setBounds(501, 16, 43, 15);
 				formLabel.setName("formLabel");
-			}
-			{
-				formTextArea = new JTextArea();
-				this.add(formTextArea);
-				formTextArea.setBounds(510, 37, 168, 129);
 			}
 			{
 				infoButton = new JButton();
@@ -128,6 +141,10 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -135,13 +152,22 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
 				this.add(doneButton);
 				doneButton.setBounds(314, 185, 77, 29);
 				doneButton.setName("doneButton");
+				doneButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						doneButtonActionPerformed(evt);
+					}
+				});
 			}
 			{
 				addButton = new JButton();
 				this.add(addButton);
-				addButton.setBounds(480, 39, 16, 18);
+				addButton.setBounds(474, 39, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
+				addButton.setFocusPainted(false);
+				addButton.setBorderPainted(false);
+				addButton.setContentAreaFilled(false);
+				addButton.setMargin(new Insets(0,0,0,0));
 				addButton.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent evt) {
 						relationModel.addElement(relationComboBox.getSelectedItem().toString());
@@ -171,10 +197,145 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
 				this.add(actionTextField);
 				actionTextField.setBounds(145, 37, 137, 22);
 			}
+			{
+				classNameTextField = new JTextField();
+				this.add(classNameTextField);
+				classNameTextField.setBounds(501, 37, 177, 22);
+			}
+			{
+				jScrollPane2 = new JScrollPane();
+				this.add(jScrollPane2);
+				jScrollPane2.setBounds(501, 65, 177, 101);
+				{
+					formTextArea = new JTextArea();
+					formTextArea.setTabSize(3);
+					jScrollPane2.setViewportView(formTextArea);
+				}
+			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
+	}
+	
+	static void writeTheClassFile(String theCode) {
+	    try {
+	      targetDir = new File(System.getProperty("user.dir")
+	               + File.separator + "src" + File.separator + "snactor" + File.separator);
+	      
+	      if (!targetDir.exists()) {
+	    	  targetDir.mkdir();
+	      }
+	      
+	      DataOutputStream dataOut = new DataOutputStream(
+	             new FileOutputStream("src" + File.separator + "snactor" + File.separator +
+	                                        className+".java"));
+	                                        
+	      System.out.println("Writing the class file.");
+	      dataOut.writeBytes(theCode);
+	      
+	      dataOut.close();
+
+	    } catch(Exception e) {}  
+	}
+	
+	@SuppressWarnings("unchecked")
+	static Class reloadTheClass(String reloadableClass,File dir)
+	{
+		URL[] theUrl = null;
+		
+		try {
+			URI uri = dir.toURI();                   
+			URL url = uri.toURL();
+			theUrl = new URL[]{url};
+		} catch(Exception e){}
+
+		Class theClass = null;
+
+		try {
+			ClassLoader classLoader = new URLClassLoader(theUrl);
+			theClass = classLoader.loadClass(reloadableClass);
+		} catch (Exception e) {}
+		return theClass; 
 	}
 
+	private static boolean compile(String file) throws IOException
+	{
+		System.out.println("Compiling " + file);
+		Process p = Runtime.getRuntime().exec("javac " + file);
+
+		Thread myTimer = new Thread(
+               new Timer(Thread.currentThread(),5000));
+		myTimer.start();
+
+		System.out.println("Waiting for completion");
+
+		try {
+			p.waitFor();
+		  
+			if(myTimer.isAlive()){
+				myTimer.interrupt();
+			}
+		} catch(InterruptedException e){
+			System.out.println("Compilation timeout error.");
+			p.destroy();
+			return false;
+		}
+
+		return p.exitValue() == 0;
+	}
+	
+	private void doneButtonActionPerformed(ActionEvent evt) {
+		className = classNameTextField.getText();
+		writeTheClassFile(formTextArea.getText());
+        
+        try {
+        	boolean compileStatus = compile(
+            "src" + File.separator + "snactor" + File.separator + className+".java");
+   
+        	if(compileStatus){
+        		System.out.println("Compile complete");
+
+        		Class loadedClass = 
+                             reloadTheClass(className,
+                                             targetDir);
+        
+        		Object obj = loadedClass.newInstance();
+           
+        		Method methodObj =  loadedClass.getDeclaredMethod("theMethod", 
+        				new Class[]{String.class,double.class});
+           
+         
+           
+				String returnVal = (String)methodObj.invoke( obj,
+						new Object[]{"Hello",new Double(10.1)});
+			} else {
+				System.out.println("Probable compiler error.");
+			}
+       
+       } catch (Exception ex) {}
+   }
 }
+
+class Timer implements Runnable{
+	Thread theCompilingThread;
+	int delay;
+
+	Timer(Thread theCompilingThread, int delay) { 
+		this.theCompilingThread = theCompilingThread;
+		this.delay = delay;
+	}
+	
+	@SuppressWarnings("static-access")
+	public void run(){
+		try{
+			Thread.currentThread().sleep(delay);
+		}catch(InterruptedException e){
+			return;
+		}
+
+		theCompilingThread.interrupt();
+	}
+}
+
+
+
+

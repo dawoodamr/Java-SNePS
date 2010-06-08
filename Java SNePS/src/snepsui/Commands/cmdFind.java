@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,8 +34,11 @@ import javax.swing.JTextField;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import snebr.Context;
+import snebr.Support;
 import sneps.AndPath;
 import sneps.BUnitPath;
+import sneps.BangPath;
 import sneps.ComposePath;
 import sneps.ConversePath;
 import sneps.CustomException;
@@ -64,6 +68,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdFind extends javax.swing.JPanel {
 	private JLabel findLabel;
 	private JButton addButton;
@@ -94,21 +102,19 @@ public class cmdFind extends javax.swing.JPanel {
 	private SNePSInterface frame;
 	private LinkedList<Path> listModelPaths;
 	private LinkedList<Path> paths;
+	private JFrame windowFrame;
 	
 	@Action
-    public void add() {
-    	
-    }
+    public void add() {}
 	
 	@Action
-    public void build() {
-    	
-    }
+    public void build() {}
 	
 	@Action
-    public void info() {
-    	
-    }
+    public void info() {}
+	
+	@Action
+    public void path() {}
 	
 	private ActionMap getAppActionMap() {
         return Application.getInstance().getContext().getActionMap(this);
@@ -120,6 +126,16 @@ public class cmdFind extends javax.swing.JPanel {
 		paths = new LinkedList<Path>();
 		this.frame = frame;
 		this.network = network;
+		initGUI();
+	}
+	
+	public cmdFind(Network network, SNePSInterface frame, JFrame windowFrame) {
+		super();
+		listModelPaths = new LinkedList<Path>();
+		paths = new LinkedList<Path>();
+		this.frame = frame;
+		this.network = network;
+		this.windowFrame = windowFrame;
 		initGUI();
 	}
 	
@@ -186,6 +202,10 @@ public class cmdFind extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -225,7 +245,7 @@ public class cmdFind extends javax.swing.JPanel {
 					new DefaultComboBoxModel(
 							new String[] {"converse", "compose", "kstar", "kplus", "or", "and", "not",
 									"relative-complement", "irreflexive-restrict", "exception", "domain-restrict", 
-									"range-restrict", "unitpath", "unitpath-"});
+									"range-restrict", "unitpath", "unitpath-", "!"});
 				
 				pathComboBox = new JComboBox();
 				this.add(pathComboBox);
@@ -323,8 +343,9 @@ public class cmdFind extends javax.swing.JPanel {
 			{
 				pathButton = new JButton();
 				this.add(pathButton);
-				pathButton.setBounds(314, 53, 23, 19);
+				pathButton.setBounds(314, 53, 16, 18);
 				pathButton.setName("pathButton");
+				pathButton.setAction(getAppActionMap().get("path"));
 				pathButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						pathButtonActionPerformed(evt);
@@ -332,9 +353,7 @@ public class cmdFind extends javax.swing.JPanel {
 				});
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void buildButtonActionPerformed(ActionEvent evt) {
@@ -371,29 +390,31 @@ public class cmdFind extends javax.swing.JPanel {
 		
 					//Add Path
 					String pathType = pathComboBox.getSelectedItem().toString();
+					LinkedList<Path> currentPaths = paths;
+					
 					if (pathType.equals("converse")) {
-						Path path = new ConversePath(paths.getFirst());
+						Path path = new ConversePath(currentPaths.getFirst());
 						listModelPaths.add(path);
 					} else if (pathType.equals("compose")) {
-						Path path = new ComposePath(paths);
+						Path path = new ComposePath(currentPaths);
 						listModelPaths.add(path);
 					} else if (pathType.equals("kstar")) {
-						Path path = new KStarPath(paths.getFirst());
+						Path path = new KStarPath(currentPaths.getFirst());
 						listModelPaths.add(path);
 					} else if (pathType.equals("kplus")) {
-						Path path = new KPlusPath(paths.getFirst());
+						Path path = new KPlusPath(currentPaths.getFirst());
 						listModelPaths.add(path);
 					} else if (pathType.equals("or")) {
-						Path path = new OrPath(paths);
+						Path path = new OrPath(currentPaths);
 						listModelPaths.add(path);
 					} else if (pathType.equals("and")) {
-						Path path = new AndPath(paths);
+						Path path = new AndPath(currentPaths);
 						listModelPaths.add(path);
 					} else if (pathType.equals("relative-complement")) {
-						Path path = new RelativeComplementPath(paths.get(0), paths.get(1));
+						Path path = new RelativeComplementPath(currentPaths.get(0), currentPaths.get(1));
 						listModelPaths.add(path);
 					} else if (pathType.equals("irreflexive-restrict")) {
-						Path path = new IrreflexiveRestrictPath(paths.getFirst());
+						Path path = new IrreflexiveRestrictPath(currentPaths.getFirst());
 						listModelPaths.add(path);
 					} else if (pathType.equals("domain-restrict")) {
 						//Path path = new DomainRestrictPath(q, node, p);
@@ -409,11 +430,6 @@ public class cmdFind extends javax.swing.JPanel {
 					
 					//Reset TestField
 					pathTextField.setText("");
-					
-					//Delete previous paths
-					for(int i = 0; i < paths.size(); i++) {
-						paths.remove(i);
-					}
 				}
 			}
 			
@@ -494,9 +510,7 @@ public class cmdFind extends javax.swing.JPanel {
 						String previousPath = pathTextField.getText();
 						pathTextField.setText(previousPath + ", " + relation);
 					}
-				} catch (CustomException e) {
-					e.printStackTrace();
-				}
+				} catch (CustomException e) {}
 			} else if (pathComboBox.getSelectedItem().toString().equals("unitpath-")) {
 				try {
 					Path path = new BUnitPath(network.getRelation(relation).getName());
@@ -508,9 +522,17 @@ public class cmdFind extends javax.swing.JPanel {
 						String previousPath = pathTextField.getText();
 						pathTextField.setText(previousPath + ", " + relation + "-");
 					}
-				} catch (CustomException e) {
-					e.printStackTrace();
-				}
+				} catch (CustomException e) {}
+			}
+		} else if (pathComboBox.getSelectedItem().toString().equals("!")) {
+			Path path = new BangPath();
+			paths.add(path);
+			
+			if(pathTextField.getText().isEmpty()) {
+				pathTextField.setText("!");
+			} else {
+				String previousPath = pathTextField.getText();
+				pathTextField.setText(previousPath + ", " + "!");
 			}
 		} else {
 			return;
@@ -551,18 +573,31 @@ public class cmdFind extends javax.swing.JPanel {
 				array[i][1] = nodeset;
 			}
 			
-//			NodeSet resultNodeSet = network.find(array);
-//			LinkedList<Node> resultnodes = resultNodeSet.getNodes();
-//			if(resultnodes.isEmpty()) {
-//				JOptionPane.showMessageDialog(this, "No nodes were found");
-//			} else {
-//				frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(resultnodes);
-//			}
+			Hashtable<Node, LinkedList<Support>> resultNodes = network.find(array, new Context());
+			Set<Node> resultNodesSet = resultNodes.keySet();
+			Iterator<Node> resultNodesItr = resultNodesSet.iterator();
+			Node node;
+			LinkedList<Node> nodes = new LinkedList<Node>();
+			LinkedList<LinkedList<Support>> supports = new LinkedList<LinkedList<Support>>();
+			
+			if(!resultNodesItr.hasNext()) {
+				JOptionPane.showMessageDialog(this, "No nodes were found");
+			} else {
+				while (resultNodesItr.hasNext()) {
+					node = resultNodesItr.next();
+					nodes.add(node);
+					supports.add(resultNodes.get(node));
+			    }
+				
+				frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(nodes, supports);
+			}
 			
 			pathModel.removeAllElements();
 			nodesetModel.removeAllElements();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			
+			if(windowFrame!=null) {
+				windowFrame.dispose();
+			}
+		} catch (Exception e) {}
 	}
 }

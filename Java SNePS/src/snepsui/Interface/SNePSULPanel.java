@@ -19,6 +19,10 @@ import sneps.Network;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class SNePSULPanel extends javax.swing.JPanel {
 	private JTabbedPane jTabbedPane1;
 	private MenuDrivenCommands menuDrivenCommands;
@@ -53,9 +57,7 @@ public class SNePSULPanel extends javax.swing.JPanel {
 					jTabbedPane1.addTab("View Network", null, visualizeNetworks, null);
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 
 	public JTabbedPane getjTabbedPane1() {

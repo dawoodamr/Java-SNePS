@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,6 +53,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdAssert extends javax.swing.JPanel {
 	private JLabel assertLabel;
 	private JButton doneButton;
@@ -89,8 +94,7 @@ public class cmdAssert extends javax.swing.JPanel {
 	}
 
 	@Action
-	public void info() {
-	}
+	public void info() {}
 
 	private ActionMap getAppActionMap() {
 		return Application.getInstance().getContext().getActionMap(this);
@@ -167,6 +171,10 @@ public class cmdAssert extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -213,9 +221,7 @@ public class cmdAssert extends javax.swing.JPanel {
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void optionsComboBoxActionPerformed(ActionEvent e) {
@@ -242,7 +248,7 @@ public class cmdAssert extends javax.swing.JPanel {
 				
 				JFrame popupFrame = new JFrame("build");
 				popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				final cmdBuild buildPanel = new cmdBuild(network, frame);
+				final cmdBuild buildPanel = new cmdBuild(network, frame, popupFrame);
 				popupFrame.getContentPane().add(buildPanel);
 				popupFrame.pack();
 				popupFrame.setVisible(true);
@@ -255,7 +261,6 @@ public class cmdAssert extends javax.swing.JPanel {
 					public void windowClosed(WindowEvent e) {
 						LinkedList<Node> nodes = buildPanel.getNodes();
 					    for(Node item : nodes) {
-					    	System.out.println(item.getIdentifier());
 					    	
 					    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
 					    	
@@ -273,7 +278,7 @@ public class cmdAssert extends javax.swing.JPanel {
 			} else if (cell.getCellEditorValue().equals("assert")) {
 				JFrame popupFrame = new JFrame("assert");
 				popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				final cmdAssert assertPanel = new cmdAssert(network, frame);
+				final cmdAssert assertPanel = new cmdAssert(network, frame, popupFrame);
 				popupFrame.getContentPane().add(assertPanel);
 				popupFrame.pack();
 				popupFrame.setVisible(true);
@@ -286,7 +291,6 @@ public class cmdAssert extends javax.swing.JPanel {
 					public void windowClosed(WindowEvent e) {
 						LinkedList<Node> nodes = assertPanel.getNodes();
 					    for(Node item : nodes) {
-					    	System.out.println(item.getIdentifier());
 					    	
 					    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
 					    	
@@ -304,7 +308,7 @@ public class cmdAssert extends javax.swing.JPanel {
 			} else if (cell.getCellEditorValue().equals("find")) {
 				JFrame popupFrame = new JFrame("find");
 				popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				final cmdFind findPanel = new cmdFind(network, frame);
+				final cmdFind findPanel = new cmdFind(network, frame, popupFrame);
 				popupFrame.getContentPane().add(findPanel);
 				popupFrame.pack();
 				popupFrame.setVisible(true);
@@ -317,7 +321,6 @@ public class cmdAssert extends javax.swing.JPanel {
 					public void windowClosed(WindowEvent e) {
 						LinkedList<Node> nodes = findPanel.getNodes();
 					    for(Node item : nodes) {
-					    	System.out.println(item.getIdentifier());
 					    	
 					    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
 					    	
@@ -353,79 +356,51 @@ public class cmdAssert extends javax.swing.JPanel {
 				relationNodesetTableModel.addRow(rowData);
 			}
 			relationNodesetTable.setRowSelectionInterval(0, 0);
-		} catch (CustomException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private boolean checkConsistency() {
-		System.out.println("Entered Check Consistency 1");
-		for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
-			try {
-				Vector< Object> currentDataVector = (Vector<Object>) relationNodesetTableModel.getDataVector().elementAt(i);
-				Relation relation = network.getRelation(currentDataVector.get(0).toString());
-				
-				
-				String [] nodesetArray = currentDataVector.get(1).toString().split(",");
-				
-				for (int j = 0; j < nodesetArray.length; j++) {
-					Node node = network.getNode(nodesetArray[j]);
-				}
-			} catch (CustomException e) {
-				e.printStackTrace();
-			}	
-		}
-		return false;
+		} catch (CustomException e) {}
 	}
 	
 	private void doneButtonMouseClicked(MouseEvent evt) {
 		LinkedList<Relation> relationlist = new LinkedList<Relation>();
 		LinkedList<Object> nodelist = new LinkedList<Object>();
 		
-		//if(checkConsistency()) {
-			try {
-				for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
-					Vector< Object> currentDataVector = (Vector<Object>) relationNodesetTableModel.getDataVector().elementAt(i);
-					Relation relation = network.getRelation(currentDataVector.get(0).toString());
-					
-					String [] nodesetArray = currentDataVector.get(1).toString().split(",");
-					System.out.println("Index: " + i);
-					System.out.println("Array Length: " + nodesetArray.length);
-					System.out.println(nodesetArray[0]);
-					if(!nodesetArray[0].isEmpty()) {
-						for (int j = 0; j < nodesetArray.length; j++) {
-							try {
-								System.out.println(nodesetArray[j]);
-								Node node = network.build(nodesetArray[j]);
-								if (node != null) {
-									nodelist.add(node);
-									relationlist.add(relation);
-									JOptionPane.showMessageDialog(this,
-									"The node " + node.getIdentifier() + " was created successfully");
-								}
-							} catch (CustomException e) {
-								JOptionPane.showMessageDialog(this,
-						    			  "The node " + nodesetArray[j].toString() + "already exits",
-						    			  "Error",
-						    			  JOptionPane.ERROR_MESSAGE);
-								nodelist.add(network.getNode(nodesetArray[j]));
-								relationlist.add(relation);
-								e.printStackTrace();
-							}
-						}
-					} else if(nodesetArray.length == 1 && nodesetArray[0].isEmpty() && relation.getLimit() == 0){
-						System.out.println("Adding an empty nodeset");
-						nodelist.add(new NodeSet());
-						relationlist.add(relation);
-					} else {
-						JOptionPane.showMessageDialog(this,
-				    			  "The relation " + relation.getName() + "has to have a node, its limit is not 0",
-				    			  "Error",
-				    			  JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-				}
+		try {
+			for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
+				Vector< Object> currentDataVector = (Vector<Object>) relationNodesetTableModel.getDataVector().elementAt(i);
+				Relation relation = network.getRelation(currentDataVector.get(0).toString());
 				
+				String [] nodesetArray = currentDataVector.get(1).toString().split(",");
+				if(!nodesetArray[0].isEmpty()) {
+					for (int j = 0; j < nodesetArray.length; j++) {
+						try {
+							Node node = network.build(nodesetArray[j]);
+							if (node != null) {
+								nodelist.add(node);
+								relationlist.add(relation);
+								JOptionPane.showMessageDialog(this,
+								"The node " + node.getIdentifier() + " was created successfully");
+							}
+						} catch (CustomException e) {
+							JOptionPane.showMessageDialog(this,
+					    			  "The node " + nodesetArray[j].toString() + "already exits",
+					    			  "Error",
+					    			  JOptionPane.ERROR_MESSAGE);
+							nodelist.add(network.getNode(nodesetArray[j]));
+							relationlist.add(relation);
+						}
+					}
+				} else if(nodesetArray.length == 1 && nodesetArray[0].isEmpty() && relation.getLimit() == 0){
+					nodelist.add(new NodeSet());
+					relationlist.add(relation);
+				} else {
+					JOptionPane.showMessageDialog(this,
+			    			  "The relation " + relation.getName() + "has to have a node, its limit is not 0",
+			    			  "Error",
+			    			  JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+			}
+			
+			if(frame.getsNePSULPanel1().getMenuDrivenCommands().checkConsistency(relationlist, nodelist)) {
 				try {
 					Object[][] cableset = new Object[relationlist.size()][2];
 					
@@ -435,31 +410,45 @@ public class cmdAssert extends javax.swing.JPanel {
 					}
 					
 					CaseFrame caseframe = network.getCaseFrame(caseframeComboBox.getSelectedItem().toString());
-					System.out.println("Case Frame: " + caseframe.getId());
 					Node node = network.build(cableset, caseframe);
-					System.out.println("Created Node: "+ node.getIdentifier());
 					nodes.add(node);
 				} catch (CustomException e) {
 					JOptionPane.showMessageDialog(this,
-			    			  "The semantic type of the relation does not match the semantic type of the corresponding node in the array",
+			    			  e.getMessage(),
 			    			  "Error",
 			    			  JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} else {
+				JOptionPane.showMessageDialog(this,
+		    			  "The semantic classes of the given relations and nodes are inconsistent",
+		    			  "Error",
+		    			  JOptionPane.ERROR_MESSAGE);
+				
+				for(int i = 0; i < nodelist.size(); i++) {
+					Object object = nodelist.get(i);
+					if(object instanceof Node) {
+						Node node = (Node) object;
+						if(node.getUpCableSet().getUpCables().isEmpty()) {
+							network.removeNode(node);
+						}
+					} else if (object instanceof NodeSet) {
+						break;
+					}
+				}
+				return;
 			}
 			
-			relationNodesetTableModel.getDataVector().clear();
-			
-			frame.getNodesTreePanel1().initGUI();
-			frame.getNodesTreePanel1().validate();
-			frame.getNodesTreePanel1().repaint();
-			
-			if(windowFrame != null) {
-				windowFrame.dispose();
-			}
-		//}
+		} catch (Exception e) {}
+		
+		relationNodesetTableModel.getDataVector().clear();
+		
+		frame.getNodesTreePanel1().initGUI();
+		frame.getNodesTreePanel1().validate();
+		frame.getNodesTreePanel1().repaint();
+		
+		if(windowFrame != null) {
+			windowFrame.dispose();
+		}
 	}
 	
 	public LinkedList<Node> getNodes() {

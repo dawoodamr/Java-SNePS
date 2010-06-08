@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,6 +51,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdBuild extends javax.swing.JPanel {
 	private JLabel assertLabel;
 	private JButton doneButton;
@@ -162,6 +167,10 @@ public class cmdBuild extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -195,9 +204,7 @@ public class cmdBuild extends javax.swing.JPanel {
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void optionsComboBoxActionPerformed(ActionEvent e) {
@@ -316,9 +323,7 @@ public class cmdBuild extends javax.swing.JPanel {
 			}
 			relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
 			validate();
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+		} catch (Exception e1) {}
 	}
 
 	private void caseframeComboBoxActionPerformed(ActionEvent evt) {
@@ -335,9 +340,7 @@ public class cmdBuild extends javax.swing.JPanel {
 				relationNodesetTableModel.addRow(rowData);
 			}
 			relationNodesetTable.setRowSelectionInterval(0, 0);
-		} catch (CustomException e) {
-			e.printStackTrace();
-		}
+		} catch (CustomException e) {}
 	}
 	
 	private boolean checkConsistency() {
@@ -358,9 +361,7 @@ public class cmdBuild extends javax.swing.JPanel {
 //					System.out.println(Class.forName(relation.getType()).getSimpleName());
 					
 				}
-			} catch (CustomException e) {
-				
-			}
+			} catch (CustomException e) {}
 		}
 		return false;
 	}
@@ -393,7 +394,6 @@ public class cmdBuild extends javax.swing.JPanel {
 				    			  JOptionPane.ERROR_MESSAGE);
 						nodelist.add(network.getNode(nodesetArray[j]));
 						relationlist.add(relation);
-						e.printStackTrace();
 					}
 				}
 			}
@@ -416,11 +416,8 @@ public class cmdBuild extends javax.swing.JPanel {
 		    			  "The semantic type of the relation does not match the semantic type of the corresponding node in the array",
 		    			  "Error",
 		    			  JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 		
 		for(int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
 			relationNodesetTableModel.removeRow(i);

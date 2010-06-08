@@ -52,9 +52,7 @@ import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 
 /**
- * 
  * @author Alia Taher
- *
  */
 public class VisualizeNetworks extends javax.swing.JPanel {
 
@@ -92,9 +90,7 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 			this.removeAll();
 			setPreferredSize(new Dimension(800, 800));
 			drawNetwork();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void drawNetwork() {
@@ -111,8 +107,6 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 		    	nodeString = itr1.next();
 		    	Node node = nodes.get(nodeString);
 		    	String nodeName = node.getIdentifier();
-		    	//System.out.println(node.getIdentifier());
-		    	//System.out.println(nodeName);
 		    	graph.addVertex(nodeName);
 		    	nodesList.add(node);
 		    }
@@ -127,9 +121,6 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 			    	LinkedList<Node> nodeset = upCableSet.getUpCables().get(i).getNodeSet().getNodes();
 			    	for(Node item : nodeset) {
 			    		graph.addEdge(new RelationEdge(relation.getName()).toString(),item.getIdentifier(),node.getIdentifier());
-//			    		System.out.println("Relation Name: " + relation.getName());
-//			    		System.out.println("Node Name: " + node.getIdentifier());
-//			    		System.out.println("Upcable Node: "+ item.getIdentifier());
 			    	}
 		    	}
 		    }
@@ -249,7 +240,7 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 	        this.validate();
 	        this.repaint();
 		} catch (Exception e) {
-			
+			JOptionPane.showMessageDialog(this, "There is no network to display");
 		}
 		
 	}

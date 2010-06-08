@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -11,7 +12,6 @@ import java.util.Set;
 
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -44,6 +44,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdSetContext extends javax.swing.JPanel {
 	private JLabel setContextLabel;
 	private JLabel symbolLabel;
@@ -71,20 +75,16 @@ public class cmdSetContext extends javax.swing.JPanel {
     }
 	
 	@Action
-    public void build() {
-    }
+    public void build() {}
 	
 	@Action
-    public void info() {
-    }
+    public void info() {}
 	
 	@Action
-	public void find() {
-	}
+	public void find() {}
 	
 	@Action
-	public void assertAction() {
-	}
+	public void assertAction() {}
 	
 	private ActionMap getAppActionMap() {
         return Application.getInstance().getContext().getActionMap(this);
@@ -130,6 +130,10 @@ public class cmdSetContext extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -259,9 +263,7 @@ public class cmdSetContext extends javax.swing.JPanel {
 				});
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void symbolRadioButton2MouseClicked(MouseEvent evt) {

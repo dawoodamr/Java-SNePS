@@ -6,7 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -15,26 +17,41 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.jdesktop.application.Action;
+
+import snactor.Act;
+import snebr.Proposition;
+import snebr.Support;
 import snepsui.Commands.*;
 
 import sneps.AndPath;
 import sneps.BUnitPath;
+import sneps.BangPath;
 import sneps.Cable;
 import sneps.ComposePath;
 import sneps.ConversePath;
 import sneps.DomainRestrictPath;
+import sneps.Entity;
 import sneps.FUnitPath;
+import sneps.Individual;
 import sneps.IrreflexiveRestrictPath;
 import sneps.KPlusPath;
 import sneps.KStarPath;
 import sneps.MolecularNode;
 import sneps.Network;
 import sneps.Node;
+import sneps.NodeSet;
 import sneps.OrPath;
 import sneps.Path;
 import sneps.RangeRestrictPath;
+import sneps.Relation;
 import sneps.RelativeComplementPath;
 import sneps.UpCable;
+import snip.fns.AndEntailment;
+import snip.fns.AndOr;
+import snip.fns.NumericalEntailment;
+import snip.fns.OrEntailment;
+import snip.fns.Thresh;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -48,6 +65,10 @@ import sneps.UpCable;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class MenuDrivenCommands extends javax.swing.JPanel {
 	private JComboBox commandsComboBox;
 	private JComboBox commandMenusComboBox;
@@ -59,14 +80,6 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	private String endLine = "----------------------------------------" + "\n";
 	private Point point;
 
-	public Network getNetwork() {
-		return network;
-	}
-
-	public void setNetwork(Network network) {
-		this.network = network;
-	}
-
 	public MenuDrivenCommands(SNePSInterface frame) {
 		super();
 		this.network = null;
@@ -75,6 +88,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		initGUI();
 	}
 	
+	/**
+	 * Initializes the components in the MenuDrivenCommands panel
+	 */
 	private void initGUI() {
 		try {
 			setPreferredSize(new Dimension(400, 300));
@@ -129,11 +145,14 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			{
 
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
+	/**
+	 * Lists the commands of the chosen command menu in the commands drop-down list and sets the first
+	 * command to the commands panel
+	 * @param evt he event that triggered the item event
+	 */
 	private void commandMenusComboBoxActionPerformed(ActionEvent evt) {
 		if(network == null) {
 			int result = JOptionPane.showConfirmDialog(this, 
@@ -217,7 +236,7 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			commandsPanel.removeAll();
 			commandsPanel.add(new cmdFind(network, frame));
 		}
-		else if (commandMenusComboBox.getSelectedItem().equals("Wire-based Inference")) {
+		else if (commandMenusComboBox.getSelectedItem().equals("Node-based Inference")) {
 			DefaultComboBoxModel dcbm = new DefaultComboBoxModel();
 			dcbm.addElement("deduce");
 			dcbm.addElement("deducetrue");
@@ -320,7 +339,12 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.repaint();
 		this.validate();
 	}
-
+	
+	/**
+	 * Sets the command to the commands panel based on the chosen command from the commands drop-down
+	 * list
+	 * @param evt the event that triggered the item event
+	 */
 	private void commandsComboBoxItemStateChanged(ItemEvent evt) {
 		
 		//define
@@ -642,6 +666,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to assert
+	 */
 	public void assertMenuButton() {
 		commandsComboBox.setSelectedItem("assert");
 		commandMenusComboBox.setSelectedItem("Building Networks");
@@ -651,6 +678,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to define
+	 */
 	public void defineMenuButton() {
 		commandsComboBox.setSelectedItem("define");
 		commandMenusComboBox.setSelectedItem("Relations");
@@ -660,6 +690,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to find
+	 */
 	public void findMenuButton() {
 		commandsComboBox.setSelectedItem("find");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
@@ -669,6 +702,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 
+	/**
+	 * Sets the command panel to erase
+	 */
 	public void eraseMenuButton() {
 		commandsComboBox.setSelectedItem("erase");
 		commandMenusComboBox.setSelectedItem("Deleting Information");
@@ -678,6 +714,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 
+	/**
+	 * Sets the command panel to silent-erase
+	 */
 	public void silentEraseMenuButton() {
 		commandsComboBox.setSelectedItem("silent-erase");
 		commandMenusComboBox.setSelectedItem("Deleting Information");
@@ -687,6 +726,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 
+	/**
+	 * Sets the command panel to dump
+	 */
 	public void dumpMenuButton() {
 		commandsComboBox.setSelectedItem("dump");
 		commandMenusComboBox.setSelectedItem("Displaying Information");
@@ -696,6 +738,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 
+	/**
+	 * Sets the command panel to describe
+	 */
 	public void describeMenuButton() {
 		commandsComboBox.setSelectedItem("describe");
 		commandMenusComboBox.setSelectedItem("Displaying Information");
@@ -704,7 +749,10 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.repaint();
 		this.validate();
 	}
-
+	
+	/**
+	 * Sets the command panel to full-describe
+	 */
 	public void fullDescribeMenuButton() {
 		commandsComboBox.setSelectedItem("full-describe");
 		commandMenusComboBox.setSelectedItem("Displaying Information");
@@ -713,7 +761,10 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.repaint();
 		this.validate();
 	}
-
+	
+	/**
+	 * Sets the command panel to undefine
+	 */
 	public void undefineMenuButton() {
 		commandsComboBox.setSelectedItem("undefine");
 		commandMenusComboBox.setSelectedItem("Relations");
@@ -723,6 +774,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 
+	/**
+	 * Sets the command panel to add
+	 */
 	public void addMenuButton() {
 		commandsComboBox.setSelectedItem("add");
 		commandMenusComboBox.setSelectedItem("Building Networks");
@@ -732,6 +786,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 
+	/**
+	 * Sets the command panel to activate
+	 */
 	public void activateMenuButton() {
 		commandsComboBox.setSelectedItem("activate");
 		commandMenusComboBox.setSelectedItem("Building Networks");
@@ -741,6 +798,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to define-path
+	 */
 	public void definePathMenuButton() {
 		commandsComboBox.setSelectedItem("define-path");
 		commandMenusComboBox.setSelectedItem("Path-Based Inference");
@@ -750,6 +810,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to undefine-path
+	 */
 	public void undefinePathMenuButton() {
 		commandsComboBox.setSelectedItem("undefine-path");
 		commandMenusComboBox.setSelectedItem("Path-Based Inference");
@@ -759,6 +822,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 
+	/**
+	 * Sets the command panel to set-context
+	 */
 	public void setContextMenuButton() {
 		commandsComboBox.setSelectedItem("set-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
@@ -767,7 +833,10 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.repaint();
 		this.validate();
 	}
-
+	
+	/**
+	 * Sets the command panel to set-default-context
+	 */
 	public void setDefaultContextMenuButton() {
 		commandsComboBox.setSelectedItem("set-default-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
@@ -776,7 +845,10 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.repaint();
 		this.validate();
 	}
-
+	
+	/**
+	 * Sets the command panel to set-to-context
+	 */
 	public void addToContextMenuButton() {
 		commandsComboBox.setSelectedItem("set-to-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
@@ -785,7 +857,10 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.repaint();
 		this.validate();
 	}
-
+	
+	/**
+	 * Sets the command panel to remove-from-context
+	 */
 	public void removeFromContextMenuButton() {
 		commandsComboBox.setSelectedItem("remove-from-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
@@ -794,7 +869,10 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.repaint();
 		this.validate();
 	}
-
+	
+	/**
+	 * Sets the command panel to describe-context
+	 */
 	public void describeContextMenuButton() {
 		commandsComboBox.setSelectedItem("describe-context");
 		commandMenusComboBox.setSelectedItem("Contexts");
@@ -803,9 +881,12 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.repaint();
 		this.validate();
 	}
-
+	
+	/**
+	 * Sets the command panel to list-hypotheses
+	 */
 	public void listHypothesesMenuButton() {
-		commandsComboBox.setSelectedItem("list-hypothese");
+		commandsComboBox.setSelectedItem("list-hypotheses");
 		commandMenusComboBox.setSelectedItem("Contexts");
 		commandsPanel.removeAll();
 		commandsPanel.add(new cmdListHypotheses(network, frame));
@@ -813,6 +894,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to list-nodes
+	 */
 	public void listNodesMenuButton() {
 		commandsComboBox.setSelectedItem("list-nodes");
 		commandMenusComboBox.setSelectedItem("Contexts");
@@ -822,6 +906,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to define-caseframe
+	 */
 	public void defineCaseFrameMenuButton() {
 		commandsComboBox.setSelectedItem("define-caseframe");
 		commandMenusComboBox.setSelectedItem("Case Frames");
@@ -831,6 +918,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to undefine-caseframe
+	 */
 	public void undefineCaseFrameMenuButton() {
 		commandsComboBox.setSelectedItem("undefine-caseframe");
 		commandMenusComboBox.setSelectedItem("Case Frames");
@@ -840,6 +930,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to findassert
+	 */
 	public void findassertMenuButton() {
 		commandsComboBox.setSelectedItem("findassert");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
@@ -849,6 +942,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to findpattern
+	 */
 	public void findpatternMenuButton() {
 		commandsComboBox.setSelectedItem("findpattern");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
@@ -858,6 +954,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to findbase
+	 */
 	public void findbaseMenuButton() {
 		commandsComboBox.setSelectedItem("findbase");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
@@ -867,6 +966,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to findconstant
+	 */
 	public void findconstantMenuButton() {
 		commandsComboBox.setSelectedItem("findconstant");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
@@ -876,6 +978,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to findvariable
+	 */
 	public void findvariableMenuButton() {
 		commandsComboBox.setSelectedItem("findvariable");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
@@ -885,6 +990,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to deduce
+	 */
 	public void deduceMenuButton() {
 		commandsComboBox.setSelectedItem("deduce");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
@@ -894,6 +1002,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to deducetrue
+	 */
 	public void deducetrueMenuButton() {
 		commandsComboBox.setSelectedItem("deducetrue");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
@@ -903,6 +1014,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to deducefalse
+	 */
 	public void deducefalseMenuButton() {
 		commandsComboBox.setSelectedItem("deducefalse");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
@@ -912,6 +1026,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to deducewh
+	 */
 	public void deducewhMenuButton() {
 		commandsComboBox.setSelectedItem("deducewh");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
@@ -921,6 +1038,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to deducewhnot
+	 */
 	public void deducewhnotMenuButton() {
 		commandsComboBox.setSelectedItem("deducewhnot");
 		commandMenusComboBox.setSelectedItem("Retrieving Information");
@@ -930,6 +1050,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to And-Entailment
+	 */
 	public void andEntailmentMenuButton() {
 		commandsComboBox.setSelectedItem("And-Entailment");
 		commandMenusComboBox.setSelectedItem("Connectives");
@@ -939,6 +1062,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to Or-Entailment
+	 */
 	public void orEntailmentMenuButton() {
 		commandsComboBox.setSelectedItem("Or-Entailment");
 		commandMenusComboBox.setSelectedItem("Connectives");
@@ -948,6 +1074,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to Numerical Entailment
+	 */
 	public void numericalEntailmentMenuButton() {
 		commandsComboBox.setSelectedItem("Numerical Entailment");
 		commandMenusComboBox.setSelectedItem("Connectives");
@@ -957,6 +1086,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to AndOr
+	 */
 	public void andOrMenuButton() {
 		commandsComboBox.setSelectedItem("AndOr");
 		commandMenusComboBox.setSelectedItem("Connectives");
@@ -966,6 +1098,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to Thresh
+	 */
 	public void threshMenuButton() {
 		commandsComboBox.setSelectedItem("Thresh");
 		commandMenusComboBox.setSelectedItem("Connectives");
@@ -975,6 +1110,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to Numerical Quantifier
+	 */
 	public void numericalQuantifierMenuButton() {
 		commandsComboBox.setSelectedItem("Numerical Quantifier");
 		commandMenusComboBox.setSelectedItem("Quantifiers");
@@ -984,8 +1122,11 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to Universal Quantifier
+	 */
 	public void universalQunatifierMenuButton() {
-		commandsComboBox.setSelectedItem("Universal Qunatifier");
+		commandsComboBox.setSelectedItem("Universal Quantifier");
 		commandMenusComboBox.setSelectedItem("Quantifiers");
 		commandsPanel.removeAll();
 		commandsPanel.add(new cmdUniversalQunatifier(network, frame));
@@ -993,6 +1134,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to unev-trace
+	 */
 	public void unevTraceMenuButton() {
 		commandsComboBox.setSelectedItem("unev-trace");
 		commandMenusComboBox.setSelectedItem("Tracing Inference");
@@ -1002,6 +1146,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to unin-trace
+	 */
 	public void uninTraceMenuButton() {
 		commandsComboBox.setSelectedItem("unin-trace");
 		commandMenusComboBox.setSelectedItem("Tracing Inference");
@@ -1011,6 +1158,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to in-trace
+	 */
 	public void inTraceMenuButton() {
 		commandsComboBox.setSelectedItem("in-trace");
 		commandMenusComboBox.setSelectedItem("Tracing Inference");
@@ -1020,8 +1170,11 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to in-trace
+	 */
 	public void evTraceMenuButton() {
-		commandsComboBox.setSelectedItem("in-trace");
+		commandsComboBox.setSelectedItem("ev-trace");
 		commandMenusComboBox.setSelectedItem("Tracing Inference");
 		commandsPanel.removeAll();
 		commandsPanel.add(new cmdEVTrace(network, frame));
@@ -1029,6 +1182,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to multi::print-regs
+	 */
 	public void multiPrintRegsMenuButton() {
 		commandsComboBox.setSelectedItem("multi::print-regs");
 		commandMenusComboBox.setSelectedItem("Tracing Inference");
@@ -1038,6 +1194,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to perform
+	 */
 	public void performMenuButton() {
 		commandsComboBox.setSelectedItem("perform");
 		commandMenusComboBox.setSelectedItem("Acting");
@@ -1047,6 +1206,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to {<whenever, p>,<do, a>}
+	 */
 	public void wheneverDoMenuButton() {
 		commandsComboBox.setSelectedItem("{<whenever, p>,<do, a>}");
 		commandMenusComboBox.setSelectedItem("Acting");
@@ -1056,6 +1218,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to {<when, p>,<do, a>}
+	 */
 	public void whenDoMenuButton() {
 		commandsComboBox.setSelectedItem("{<when, p>,<do, a>}");
 		commandMenusComboBox.setSelectedItem("Acting");
@@ -1065,6 +1230,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to {<if, p>,<do, a>}
+	 */
 	public void ifDoMenuButton() {
 		commandsComboBox.setSelectedItem("{<if, p>,<do, a>}");
 		commandMenusComboBox.setSelectedItem("Acting");
@@ -1074,6 +1242,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to attach-primaction
+	 */
 	public void definePrimactionMenuButton() {
 		commandsComboBox.setSelectedItem("attach-primaction");
 		commandMenusComboBox.setSelectedItem("Primitive Acts");
@@ -1083,6 +1254,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to define-primaction
+	 */
 	public void attachPrimactionMenuButton() {
 		commandsComboBox.setSelectedItem("define-primaction");
 		commandMenusComboBox.setSelectedItem("Primitive Acts");
@@ -1092,6 +1266,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to believe
+	 */
 	public void believeMenuButton() {
 		commandsComboBox.setSelectedItem("believe");
 		commandMenusComboBox.setSelectedItem("Mental Acts");
@@ -1101,6 +1278,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to disbelive
+	 */
 	public void disbeliveMenuButton() {
 		commandsComboBox.setSelectedItem("disbelive");
 		commandMenusComboBox.setSelectedItem("Mental Acts");
@@ -1110,6 +1290,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to do-one
+	 */
 	public void doAllMenuButton() {
 		commandsComboBox.setSelectedItem("do-one");
 		commandMenusComboBox.setSelectedItem("Control Acts");
@@ -1119,6 +1302,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to do-all
+	 */
 	public void doOneMenuButton() {
 		commandsComboBox.setSelectedItem("do-all");
 		commandMenusComboBox.setSelectedItem("Control Acts");
@@ -1128,6 +1314,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to snsequence
+	 */
 	public void snsequenceMenuButton() {
 		commandsComboBox.setSelectedItem("snsequence");
 		commandMenusComboBox.setSelectedItem("Control Acts");
@@ -1137,6 +1326,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to snif
+	 */
 	public void snifMenuButton() {
 		commandsComboBox.setSelectedItem("snif");
 		commandMenusComboBox.setSelectedItem("Control Acts");
@@ -1146,6 +1338,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to sniterate
+	 */
 	public void sniterateMenuButton() {
 		commandsComboBox.setSelectedItem("sniterate");
 		commandMenusComboBox.setSelectedItem("Control Acts");
@@ -1155,6 +1350,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to withall
+	 */
 	public void withallMenuButton() {
 		commandsComboBox.setSelectedItem("withall");
 		commandMenusComboBox.setSelectedItem("Control Acts");
@@ -1164,6 +1362,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to withsome
+	 */
 	public void withsomeMenuButton() {
 		commandsComboBox.setSelectedItem("withsome");
 		commandMenusComboBox.setSelectedItem("Control Acts");
@@ -1173,6 +1374,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to {<plan, p>,<act, a>}
+	 */
 	public void actPlanMenuButton() {
 		commandsComboBox.setSelectedItem("{<plan, p>,<act, a>}");
 		commandMenusComboBox.setSelectedItem("Complex Acts");
@@ -1182,6 +1386,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to achieve
+	 */
 	public void achieveMenuButton() {
 		commandsComboBox.setSelectedItem("achieve");
 		commandMenusComboBox.setSelectedItem("Goals");
@@ -1191,6 +1398,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to {<act, a>,<precondition, p>}
+	 */
 	public void actPreconditionMenuButton() {
 		commandsComboBox.setSelectedItem("{<act, a>,<precondition, p>}");
 		commandMenusComboBox.setSelectedItem("Preconditions and Effects");
@@ -1200,6 +1410,9 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		this.validate();
 	}
 	
+	/**
+	 * Sets the command panel to {<act, a>,<effect, p>}
+	 */
 	public void actEffectMenuButton() {
 		commandsComboBox.setSelectedItem("{<act, a>,<effect, p>}");
 		commandMenusComboBox.setSelectedItem("Preconditions and Effects");
@@ -1210,8 +1423,8 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	}
 	
 	/**
-	 * Displays all the information of a node
-	 * @param node the node that its information will be displayed
+	 * Displays all the information of the given nodes in the LinkedList
+	 * @param nodes the LinkedList of nodes for which the information of each node will be displayed
 	 */
 	public void nodeInfo(LinkedList<Node> nodes) {
 		LinkedList<Node> connectedNodes = new LinkedList<Node>();
@@ -1263,16 +1476,83 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		frame.getNodesResult().addNodes(connectedNodes);
 	}
 	
+	public void nodeInfo(LinkedList<Node> nodes, LinkedList<LinkedList<Support>> supports) {
+		LinkedList<Node> connectedNodes = new LinkedList<Node>();
+		for(int i = 0; i < nodes.size(); i++) {
+			Node node = nodes.get(i);
+			LinkedList<Support> support = supports.get(i);
+			
+			/*Print out node name*/
+			frame.getOutputPanel1().writeToTextArea("Node Name: " + node.getIdentifier() + newLine);
+			
+			/*Print out semantic class*/
+			node.getEntity();
+			
+			/*Print out cable*/
+			if(node instanceof MolecularNode) {
+				MolecularNode molNode = (MolecularNode) node;
+				LinkedList<Cable> cables = molNode.getCableSet().getCables();
+				
+				if(!cables.isEmpty()) {
+					frame.getOutputPanel1().writeToTextArea("Cable Set (Nodes pointing from " + node.getIdentifier() + "):" + newLine);
+					for(Cable item1 : cables) {
+						item1.getRelation();
+						LinkedList<Node> cableNodes = item1.getNodeSet().getNodes();
+						
+						for(Node item2 : cableNodes) {
+							frame.getOutputPanel1().writeToTextArea(item2.getIdentifier() + newLine);
+							connectedNodes.add(item2);
+						}
+					}
+				}
+			}
+			
+			/*Print out up cable*/
+			LinkedList<UpCable> nodeUpCables = node.getUpCableSet().getUpCables();
+			
+			if(!nodeUpCables.isEmpty()) {
+				frame.getOutputPanel1().writeToTextArea("Up Cable Set (Nodes pointing to " + node.getIdentifier() + "): " + newLine);
+				for(UpCable item3 : nodeUpCables) {
+					item3.getRelation();
+					LinkedList<Node> upCableNodes = item3.getNodeSet().getNodes();
+					
+					for(Node item4 : upCableNodes) {
+						frame.getOutputPanel1().writeToTextArea(item4.getIdentifier() + newLine);
+						connectedNodes.add(item4);
+					}
+				}
+			}
+			
+			for (Support s : support) {
+				frame.getOutputPanel1().writeToTextArea("Support Type: " + s.getSupporttype() + newLine);
+				Set<Proposition> ps = s.getOrginSet().getPropositionSet();
+				Iterator<Proposition> psItr = ps.iterator();
+				Proposition proposition;
+				while(psItr.hasNext()){
+					proposition = psItr.next();
+				}
+				s.getRestrictionSet();
+				s.getRestrictionSetsSize();
+			}
+			
+			frame.getOutputPanel1().writeToTextArea(endLine);
+		}
+		
+		frame.getNodesResult().addNodes(connectedNodes);
+	}
+	
+	/**
+	 * Writes the information of the given node in the OutputPanel
+	 * @param node the node to print its corresponding information
+	 */
 	public void nodeInfo(Node node) {
 		LinkedList<Node> connectedNodes = new LinkedList<Node>();
 		
 		/*Print out node name*/
 		frame.getOutputPanel1().writeToTextArea("Node Name: " + node.getIdentifier() + newLine);
-		//System.out.println("Node Name: " + node.getIdentifier());
 		
 		/*Print out semantic class*/
 		frame.getOutputPanel1().writeToTextArea("Semantic Class: "+ node.getEntity().getClass().getSimpleName() + newLine);
-		//System.out.println("Semantic Class: "+ node.getEntity().getClass().getSimpleName());
 		
 		/*Print out cable*/
 		if(node instanceof MolecularNode) {
@@ -1310,8 +1590,96 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		}
 		
 		frame.getOutputPanel1().writeToTextArea(endLine);
-		//System.out.println(endLine);
 		frame.getNodesResult().addNodes(connectedNodes);
+	}
+	
+	/**
+	 * Checks the consistency of the semantic classes of the given nodes with each corresponding
+	 * relation
+	 * @param relations the LinkedList of relations to be checked for consistency
+	 * @param nodes the LinkeList of nodes to be checked for consistency
+	 * @return true if the semantic classes of the nodes and relations are consistent and false
+	 * otherwise
+	 */
+	public boolean checkConsistency(LinkedList<Relation> relations, LinkedList<Object> nodes) {
+		int consistencyCounter = 0;
+		
+		for(int i = 0 ; i < relations.size(); i++) {
+			Relation relation = relations.get(i);
+			Object object = nodes.get(i);
+			
+			if(object instanceof Node) {
+				Node node = (Node) object;
+				
+				Entity entity = node.getEntity();
+				System.out.println("Node Semantic Type: " + entity.getClass().getSimpleName());
+				String semanticType = relation.getType();
+				System.out.println("Relation Semantic Type: " + semanticType);
+				
+				if (semanticType.equals("Entity")) {
+					if (entity instanceof Entity) {
+						consistencyCounter++;
+						System.out.println(entity.getClass().getSimpleName() + "instanceof Entity");
+					}
+				} else if (semanticType.equals("Proposition")) {
+					if (entity instanceof Proposition) {
+						consistencyCounter++;
+						System.out.println(entity.getClass().getSimpleName() + "instanceof Proposition");
+					}
+				} else if (semanticType.equals("Individual")) {
+					if(entity instanceof Individual) {
+						consistencyCounter++;
+						System.out.println(entity.getClass().getSimpleName() + "instanceof Individual");
+					}
+				} else if (semanticType.equals("AndEntailment")) {
+					if (entity instanceof AndEntailment) {
+						consistencyCounter++;
+						System.out.println(entity.getClass().getSimpleName() + "instanceof AndEntailment");
+					}
+				} else if (semanticType.equals("AndOr")) {
+					if (entity instanceof AndOr) {
+						consistencyCounter++;
+						System.out.println(entity.getClass().getSimpleName() + "instanceof AndOr");
+					}
+				} else if (semanticType.equals("NumericalEntailment")) {
+					if (entity instanceof NumericalEntailment) {
+						consistencyCounter++;
+						System.out.println(entity.getClass().getSimpleName() + "instanceof NumericalEntailment");
+					}
+				} else if (semanticType.equals("OrEntailment")) {
+					if (entity instanceof OrEntailment) {
+						consistencyCounter++;
+						System.out.println(entity.getClass().getSimpleName() + "instanceof OrEntailment");
+					}
+				} else if (semanticType.equals("Thresh")) {
+					if (entity instanceof Thresh) {
+						consistencyCounter++;
+						System.out.println(entity.getClass().getSimpleName() + "instanceof Thresh");
+					}
+				} else if (semanticType.equals("Act")) {
+					if (entity instanceof Act) {
+						consistencyCounter++;
+						System.out.println(entity.getClass().getSimpleName() + "instanceof Act");
+					}
+				} else if (semanticType.equals("Action")) {
+					if (entity instanceof Action) {
+						consistencyCounter++;
+						System.out.println(entity.getClass().getSimpleName() + "instanceof Action");
+					}
+				}
+			} else if (object instanceof NodeSet) {
+				consistencyCounter++;
+			}
+		}
+		
+		System.out.println("Consistency Counter: " + consistencyCounter);
+		System.out.println("Relation Size: " + relations.size());
+		
+		if(consistencyCounter == relations.size()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -1321,13 +1689,17 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 	 */
 	public String createPath(Path path) {
 		String pathString = "";
+		System.out.println("Path Type: " + path.getClass().getSimpleName());
+		
 		/*And*/
 		if(path instanceof AndPath) {
 			AndPath currentPath = (AndPath) path;
 			LinkedList<Path> paths = currentPath.getPaths();
+			
+			System.out.println("Number of paths: " + paths.size());
+			
 			pathString = "(and ";
 			
-			//System.out.println(paths.size());
 			for (int i = 0; i < paths.size(); i++) {				
 				pathString += createPath(paths.get(i)) + " ";
 			}
@@ -1337,9 +1709,11 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		} else if (path instanceof ComposePath) {
 			ComposePath currentPath = (ComposePath) path;
 			LinkedList<Path> paths = currentPath.getPaths();
+			
+			System.out.println("Number of paths: " + paths.size());
+			
 			pathString = "(compose ";
 			
-			//System.out.println(paths.size());
 			for (int i = 0; i < paths.size(); i++) {
 				pathString += createPath(paths.get(i)) + " ";
 			}
@@ -1372,7 +1746,8 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 			LinkedList<Path> paths = currentPath.getPaths();
 			pathString = "(or ";
 			
-			//System.out.println(paths.size());
+			System.out.println("Number of paths: " + paths.size());
+			
 			for (int i = 0; i < paths.size(); i++) {
 				pathString += createPath(paths.get(i)) + " ";
 			}
@@ -1395,11 +1770,20 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		} else if (path instanceof BUnitPath) {
 			BUnitPath currentPath = (BUnitPath) path;
 			pathString =  currentPath.getRelationName() + "-";
+		} else if (path instanceof BangPath) {
+			BangPath currentPath = (BangPath) path;
+			pathString = "!";
 		}
-		//System.out.println(pathString);
+		
+		System.out.println(pathString);
+		
 		return pathString;
 	}
 	
+	/**
+	 * Cascades the nested windows so they will not appear at the same position
+	 * @return the point where the location of the nested window will be set to
+	 */
 	public Point cascadePosition() {
 		double x = point.getX() + 5;
 		double y = point.getY() + 10;
@@ -1407,9 +1791,28 @@ public class MenuDrivenCommands extends javax.swing.JPanel {
 		return point;
 	}
 	
+	/**
+	 * Cascades the window position of the nested windows to one position
+	 */
 	public void cascadeBack() {
 		double x = point.getX() - 5;
 		double y = point.getY() - 10;
 		point.setLocation(x, y);
+	}
+	
+	/**
+	 * Gets the current Network
+	 * @return the current Network
+	 */
+	public Network getNetwork() {
+		return network;
+	}
+
+	/**
+	 * Sets the current Network to the given Network
+	 * @param network the network to be set as the current Network
+	 */
+	public void setNetwork(Network network) {
+		this.network = network;
 	}
 }

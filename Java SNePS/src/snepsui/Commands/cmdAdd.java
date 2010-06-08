@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +32,6 @@ import javax.swing.table.TableCellEditor;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
-import org.omg.CORBA.portable.IndirectionException;
 
 import snactor.Act;
 import snebr.Proposition;
@@ -60,6 +60,10 @@ import snip.fns.Thresh;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdAdd extends javax.swing.JPanel {
 	private JLabel addLabel;
 	private JButton doneButton;
@@ -164,6 +168,10 @@ public class cmdAdd extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -210,9 +218,7 @@ public class cmdAdd extends javax.swing.JPanel {
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void optionsComboBoxActionPerformed(ActionEvent e) {
@@ -349,9 +355,7 @@ public class cmdAdd extends javax.swing.JPanel {
 				rowData.add("Choose Node Type");
 				relationNodesetTableModel.addRow(rowData);
 			}
-		} catch (CustomException e) {
-			e.printStackTrace();
-		}
+		} catch (CustomException e) {}
 	}
 	
 	private boolean checkConsistency(Node node, Relation relation) {
@@ -448,7 +452,6 @@ public class cmdAdd extends javax.swing.JPanel {
 				    			  JOptionPane.ERROR_MESSAGE);
 						nodelist.add(network.getNode(nodesetArray[j]));
 						relationlist.add(relation);
-						e.printStackTrace();
 					}
 				}
 			}
@@ -471,11 +474,8 @@ public class cmdAdd extends javax.swing.JPanel {
 		    			  "The semantic type of the relation does not match the semantic type of the corresponding node in the array",
 		    			  "Error",
 		    			  JOptionPane.ERROR_MESSAGE);
-				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 		
 		relationNodesetTableModel.getDataVector().clear();
 		

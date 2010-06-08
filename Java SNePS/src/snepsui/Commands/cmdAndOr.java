@@ -1,8 +1,11 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.Vector;
 
@@ -23,8 +26,12 @@ import javax.swing.table.TableCellEditor;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import sneps.CaseFrame;
+import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
+import sneps.NodeSet;
+import sneps.Relation;
 import snepsui.Interface.SNePSInterface;
 
 /**
@@ -39,12 +46,15 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdAndOr extends javax.swing.JPanel {
 	private JLabel assertLabel;
 	private JButton doneButton;
 	private JScrollPane jScrollPane1;
 	private JComboBox contextNameComboBox;
-	private JLabel buildLabel;
 	private JTable relationNodesetTable;
 	private JLabel contextNameLabel;
 	private JButton infoButton;
@@ -87,6 +97,11 @@ public class cmdAndOr extends javax.swing.JPanel {
 				this.add(doneButton);
 				doneButton.setBounds(314, 185, 77, 29);
 				doneButton.setName("doneButton");
+				doneButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						doneButtonMouseClicked(evt);
+					}
+				});
 			}
 			{
 				options = new JComboBox();
@@ -111,18 +126,22 @@ public class cmdAndOr extends javax.swing.JPanel {
 			}
 			{
 				nodesetTextField = new JTextField();
-				nodesetTextField.setEditable(false);
 			}
 			{
 				jScrollPane1 = new JScrollPane();
 				this.add(jScrollPane1);
-				jScrollPane1.setBounds(80, 58, 440, 103);
+				jScrollPane1.setBounds(80, 28, 440, 133);
 				{
 					relationNodesetTableModel = new DefaultTableModel();
 					relationNodesetTableModel.addColumn("Relation");
 					relationNodesetTableModel.addColumn("Nodeset");
 					relationNodesetTableModel.addColumn("");
-					relationNodesetTable = new JTable();
+					relationNodesetTable = new JTable() {
+                        public boolean isCellEditable(int row, int column){  
+                            if((row == 0 && column == 2) || (row == 1 && column == 2)) return false;  
+                            return true;  
+                          }
+					};
 					jScrollPane1.setViewportView(relationNodesetTable);
 					relationNodesetTable.setModel(relationNodesetTableModel);
 					relationNodesetTable.setEditingRow(0);
@@ -134,13 +153,11 @@ public class cmdAndOr extends javax.swing.JPanel {
 					Vector<Object> minData = new Vector<Object>();
 					minData.add("min");
 					minData.add("");
-					minData.add("Choose Node Type");
 					relationNodesetTableModel.addRow(minData);
 					
 					Vector<Object> maxData = new Vector<Object>();
 					maxData.add("max");
 					maxData.add("");
-					maxData.add("Choose Node Type");
 					relationNodesetTableModel.addRow(maxData);
 					
 					Vector<Object> argData = new Vector<Object>();
@@ -156,6 +173,10 @@ public class cmdAndOr extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -163,12 +184,6 @@ public class cmdAndOr extends javax.swing.JPanel {
 				this.add(contextNameLabel);
 				contextNameLabel.setName("contextNameLabel");
 				contextNameLabel.setBounds(532, 25, 123, 21);
-			}
-			{
-				buildLabel = new JLabel();
-				this.add(buildLabel);
-				buildLabel.setBounds(80, 28, 49, 15);
-				buildLabel.setName("buildLabel");
 			}
 			{
 				ComboBoxModel contextNameComboBoxModel = new DefaultComboBoxModel();
@@ -179,9 +194,7 @@ public class cmdAndOr extends javax.swing.JPanel {
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void optionsComboBoxActionPerformed(ActionEvent e) {
@@ -283,5 +296,109 @@ public class cmdAndOr extends javax.swing.JPanel {
 
 	public void setNodes(LinkedList<Node> nodes) {
 		this.nodes = nodes;
+	}
+	
+	private void doneButtonMouseClicked(MouseEvent evt) {
+		LinkedList<Relation> relationlist = new LinkedList<Relation>();
+		LinkedList<Object> nodelist = new LinkedList<Object>();
+		
+		try {
+			for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
+				Vector< Object> currentDataVector = (Vector<Object>) relationNodesetTableModel.getDataVector().elementAt(i);
+				Relation relation = network.getRelation(currentDataVector.get(0).toString());
+				
+				String [] nodesetArray = currentDataVector.get(1).toString().split(",");
+				if(!nodesetArray[0].isEmpty()) {
+					for (int j = 0; j < nodesetArray.length; j++) {
+						try {
+							System.out.println(nodesetArray[j]);
+							Node node = network.build(nodesetArray[j]);
+							if (node != null) {
+								nodelist.add(node);
+								relationlist.add(relation);
+								JOptionPane.showMessageDialog(this,
+								"The node " + node.getIdentifier() + " was created successfully");
+							}
+						} catch (CustomException e) {
+							JOptionPane.showMessageDialog(this,
+					    			  "The node " + nodesetArray[j].toString() + "already exits",
+					    			  "Error",
+					    			  JOptionPane.ERROR_MESSAGE);
+							nodelist.add(network.getNode(nodesetArray[j]));
+							relationlist.add(relation);
+						}
+					}
+				} else if(nodesetArray.length == 1 && nodesetArray[0].isEmpty() && relation.getLimit() == 0){
+					nodelist.add(new NodeSet());
+					relationlist.add(relation);
+				} else {
+					JOptionPane.showMessageDialog(this,
+			    			  "The relation " + relation.getName() + "has to have a node, its limit is not 0",
+			    			  "Error",
+			    			  JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+			}
+			
+			if(frame.getsNePSULPanel1().getMenuDrivenCommands().checkConsistency(relationlist, nodelist)) {
+				try {
+					Object[][] cableset = new Object[relationlist.size()][2];
+					
+					for(int i = 0; i < relationlist.size(); i++) {
+						cableset[i][0] = relationlist.get(i);
+						cableset[i][1] = nodelist.get(i);
+					}
+					
+					CaseFrame caseframe = network.getCaseFrame("arg,max,min");
+					Node node = network.build(cableset, caseframe);
+					nodes.add(node);
+				} catch (CustomException e) {
+					JOptionPane.showMessageDialog(this,
+			    			  "The semantic type of the relation does not match the semantic type of the corresponding node in the array",
+			    			  "Error",
+			    			  JOptionPane.ERROR_MESSAGE);
+				}
+			} else {
+				JOptionPane.showMessageDialog(this,
+		    			  "The semantic classes of the given relations and nodes are inconsistent",
+		    			  "Error",
+		    			  JOptionPane.ERROR_MESSAGE);
+				
+				for(int i = 0; i < nodelist.size(); i++) {
+					Object object = nodelist.get(i);
+					if(object instanceof Node) {
+						Node node = (Node) object;
+						if(node.getUpCableSet().getUpCables().isEmpty()) {
+							network.removeNode(node);
+						}
+					} else if (object instanceof NodeSet) {
+						break;
+					}
+				}
+				return;
+			}
+		} catch (Exception e) {}
+		
+		relationNodesetTableModel.getDataVector().clear();
+		
+		Vector<Object> minData = new Vector<Object>();
+		minData.add("min");
+		minData.add("");
+		relationNodesetTableModel.addRow(minData);
+		
+		Vector<Object> maxData = new Vector<Object>();
+		maxData.add("max");
+		maxData.add("");
+		relationNodesetTableModel.addRow(maxData);
+		
+		Vector<Object> argData = new Vector<Object>();
+		argData.add("arg");
+		argData.add("");
+		argData.add("Choose Node Type");
+		relationNodesetTableModel.addRow(argData);
+		
+		frame.getNodesTreePanel1().initGUI();
+		frame.getNodesTreePanel1().validate();
+		frame.getNodesTreePanel1().repaint();
 	}
 }

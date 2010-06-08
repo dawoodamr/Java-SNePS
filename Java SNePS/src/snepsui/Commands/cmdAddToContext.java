@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -38,6 +39,10 @@ import snepsui.Interface.SNePSInterface;
  * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
  * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
+ */
+
+/**
+ * @author Alia Taher
  */
 public class cmdAddToContext extends javax.swing.JPanel {
 	private JLabel addToContextLabel;
@@ -155,6 +160,10 @@ public class cmdAddToContext extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -223,9 +232,7 @@ public class cmdAddToContext extends javax.swing.JPanel {
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void buildButtonActionPerformed(ActionEvent evt) {

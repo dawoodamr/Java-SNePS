@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -39,6 +40,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdDoAll extends javax.swing.JPanel {
 	private JLabel assertLabel;
 	private JButton doneButton;
@@ -92,10 +97,7 @@ public class cmdDoAll extends javax.swing.JPanel {
 				options = new JComboBox();
 				DefaultComboBoxModel optionsComboBoxModel = new DefaultComboBoxModel();
 				optionsComboBoxModel.addElement("Choose Node Type");
-				optionsComboBoxModel.addElement("Base Node");
-				optionsComboBoxModel.addElement("build");
-				optionsComboBoxModel.addElement("find");
-				optionsComboBoxModel.addElement("assert");
+				optionsComboBoxModel.addElement("Act Node");
 				options.setModel(optionsComboBoxModel);
 				options.addActionListener(new ActionListener() {
 					
@@ -154,6 +156,10 @@ public class cmdDoAll extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -177,9 +183,7 @@ public class cmdDoAll extends javax.swing.JPanel {
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void optionsComboBoxActionPerformed(ActionEvent e) {
@@ -187,7 +191,7 @@ public class cmdDoAll extends javax.swing.JPanel {
 			int rowNumber = relationNodesetTable.getSelectedRow();
 			TableCellEditor cell = relationNodesetTable.getCellEditor(rowNumber, 2);
 			
-			if (cell.getCellEditorValue().equals("Base Node")) {
+			if (cell.getCellEditorValue().equals("Act Node")) {
 				String nodeName = (String) JOptionPane.showInputDialog(
 						getRootPane(),
 						"Enter the name of the node:",
@@ -211,50 +215,6 @@ public class cmdDoAll extends javax.swing.JPanel {
 			    
 			    if (result == JOptionPane.OK_OPTION) {
 			    	LinkedList<Node> nodes = build.getNodes();
-				    for(Node item : nodes) {
-				    	System.out.println(item.getIdentifier());
-				    	
-				    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
-				    	
-				    	if(currentNodesetValue.isEmpty()) {
-				    		relationNodesetTableModel.setValueAt(item.getIdentifier(), rowNumber, 1);
-				    	} else {
-				    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + item.getIdentifier(), rowNumber, 1);
-				    	}
-				    }
-			    }
-			    relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
-			} else if (cell.getCellEditorValue().equals("assert")) {
-				cmdAssert assertPanel = new cmdAssert(network, frame);
-				
-			    int result = JOptionPane.showConfirmDialog(  
-			    	    this, assertPanel, "title", JOptionPane.PLAIN_MESSAGE
-			    	);
-			    
-			    if (result == JOptionPane.OK_OPTION) {
-			    	LinkedList<Node> nodes = assertPanel.getNodes();
-				    for(Node item : nodes) {
-				    	System.out.println(item.getIdentifier());
-				    	
-				    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
-				    	
-				    	if(currentNodesetValue.toString().isEmpty()) {
-				    		relationNodesetTableModel.setValueAt(item.getIdentifier(), rowNumber, 1);
-				    	} else {
-				    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + item.getIdentifier(), rowNumber, 1);
-				    	}
-				    }
-			    }
-			    relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
-			} else if (cell.getCellEditorValue().equals("find")) {
-				cmdFind assertPanel = new cmdFind(network, frame);
-				
-			    int result = JOptionPane.showConfirmDialog(  
-			    	    this, assertPanel, "title", JOptionPane.PLAIN_MESSAGE
-			    	);
-			    
-			    if (result == JOptionPane.OK_OPTION) {
-			    	LinkedList<Node> nodes = assertPanel.getNodes();
 				    for(Node item : nodes) {
 				    	System.out.println(item.getIdentifier());
 				    	

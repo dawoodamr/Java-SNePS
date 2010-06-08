@@ -2,6 +2,7 @@ package snepsui.Commands;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Insets;
 
 import javax.swing.ActionMap;
 import javax.swing.JButton;
@@ -27,6 +28,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdMultiPrintRegs extends javax.swing.JPanel {
 	private JLabel jLabel1;
 	private JTextField jTextField1;
@@ -90,11 +95,13 @@ public class cmdMultiPrintRegs extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 }

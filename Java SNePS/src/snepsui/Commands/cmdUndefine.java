@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Hashtable;
@@ -16,6 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
@@ -38,8 +41,13 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdUndefine extends javax.swing.JPanel {
 	private JLabel undefineLabel;
+	private JButton removeButton;
 	private JComboBox relationsComboBox;
 	private JLabel relationsLabel;
 	private JList relationsList;
@@ -52,12 +60,13 @@ public class cmdUndefine extends javax.swing.JPanel {
 	private SNePSInterface frame;
 	
 	@Action
-    public void add() {
-    }
+    public void add() {}
 	
 	@Action
-    public void info() {
-    }
+    public void remove() {}
+	
+	@Action
+    public void info() {}
 	
 	private ActionMap getAppActionMap() {
         return Application.getInstance().getContext().getActionMap(this);
@@ -86,12 +95,23 @@ public class cmdUndefine extends javax.swing.JPanel {
 				addButton.setBounds(465, 34, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
+				addButton.setFocusPainted(false);
+				addButton.setBorderPainted(false);
+				addButton.setContentAreaFilled(false);
+				addButton.setMargin(new Insets(0,0,0,0));
 				addButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent evt) {
-						listModel.addElement(relationsComboBox.getSelectedItem().toString());
-						relationsComboBox.setSelectedIndex(0);
-						validate();
+						if(listModel.contains(relationsComboBox.getSelectedItem())) {
+							JOptionPane.showMessageDialog(getRootPane(),
+									"The relation is already included in the list",
+									"Warning",
+									JOptionPane.WARNING_MESSAGE);
+						} else {
+							listModel.addElement(relationsComboBox.getSelectedItem().toString());
+							relationsComboBox.setSelectedIndex(0);
+							validate();
+						}
 					}
 				});
 			}
@@ -124,6 +144,10 @@ public class cmdUndefine extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -149,10 +173,24 @@ public class cmdUndefine extends javax.swing.JPanel {
 				relationsComboBox.setModel(relationsComboBoxModel);
 				relationsComboBox.setBounds(255, 31, 193, 22);
 			}
+			{
+				removeButton = new JButton();
+				this.add(removeButton);
+				removeButton.setAction(getAppActionMap().get("remove"));
+				removeButton.setBounds(465, 66, 16, 18);
+				removeButton.setName("removeButton");
+				removeButton.setFocusPainted(false);
+				removeButton.setBorderPainted(false);
+				removeButton.setContentAreaFilled(false);
+				removeButton.setMargin(new Insets(0,0,0,0));
+				removeButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						removeButtonMouseClicked(evt);
+					}
+				});
+			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void doneButtonMouseClicked(MouseEvent evt) {
@@ -188,5 +226,12 @@ public class cmdUndefine extends javax.swing.JPanel {
 		frame.getNodesTreePanel1().addTreeInfo();
 		frame.getMainFrame().validate();
 		frame.getMainFrame().repaint();
+	}
+	
+	private void removeButtonMouseClicked(MouseEvent evt) {
+		try {
+			int seleceted = relationsList.getSelectedIndex();
+			listModel.remove(seleceted);
+		} catch (Exception e) {}	
 	}
 }

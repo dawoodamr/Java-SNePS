@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Hashtable;
@@ -39,11 +40,16 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdUndefinePath extends javax.swing.JPanel {
 	private JLabel definePathLabel;
 	private JLabel pathLabel;
 	private JScrollPane jScrollPane1;
 	private JComboBox pathsComboBox;
+	private JButton removeButton;
 	private JList pathsList;
 	private JButton addButton;
 	private JButton doneButton;
@@ -53,14 +59,13 @@ public class cmdUndefinePath extends javax.swing.JPanel {
 	private SNePSInterface frame;
 	
 	@Action
-    public void add() {
-    	
-    }
+    public void add() {}
 	
 	@Action
-    public void info() {
-    	
-    }
+    public void remove() {}
+	
+	@Action
+    public void info() {}
 	
 	private ActionMap getAppActionMap() {
         return Application.getInstance().getContext().getActionMap(this);
@@ -129,6 +134,10 @@ public class cmdUndefinePath extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -153,10 +162,20 @@ public class cmdUndefinePath extends javax.swing.JPanel {
 				pathsComboBox.setModel(pathsComboBoxModel);
 				pathsComboBox.setBounds(231, 32, 234, 22);
 			}
+			{
+				removeButton = new JButton();
+				this.add(removeButton);
+				removeButton.setAction(getAppActionMap().get("remove"));
+				removeButton.setBounds(477, 58, 16, 18);
+				removeButton.setName("removeButton");
+				removeButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						removeButtonMouseClicked(evt);
+					}
+				});
+			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	private void addButtonMouseClicked(MouseEvent evt) {
@@ -169,9 +188,7 @@ public class cmdUndefinePath extends javax.swing.JPanel {
 			try {
 				String relation = pathsListModel.get(i).toString();
 				network.undefinePath( network.getRelation(relation.substring(0, relation.indexOf(":"))));
-			} catch (CustomException e) {
-				e.printStackTrace();
-			}
+			} catch (CustomException e) {}
 		}
 		
 		if(pathsListModel.size() == 1) {
@@ -200,5 +217,10 @@ public class cmdUndefinePath extends javax.swing.JPanel {
 	    pathsComboBox.setModel(pathsComboBoxModel);
 	    
 	    pathsListModel.removeAllElements();
+	}
+	
+	private void removeButtonMouseClicked(MouseEvent evt) {
+		int selected = pathsList.getSelectedIndex();
+		pathsListModel.remove(selected);
 	}
 }

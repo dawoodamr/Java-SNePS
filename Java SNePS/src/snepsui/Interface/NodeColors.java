@@ -7,6 +7,9 @@ import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/**
+ * @author Alia Taher
+ */
 public class NodeColors extends JPanel {
 	private JLabel patternNodeText;
 	private JLabel baseNodeText;

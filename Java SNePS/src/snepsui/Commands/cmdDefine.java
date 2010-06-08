@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Hashtable;
@@ -18,6 +19,8 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
@@ -41,6 +44,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdDefine extends javax.swing.JPanel {
 	private JLabel defineLabel;
 	private JLabel limitLabel;
@@ -68,16 +75,18 @@ public class cmdDefine extends javax.swing.JPanel {
 	private JButton doneButton;
 	private Network network;
 	private ComboBoxModel typeComboBoxModel;
+	private JButton removeButton;
 	private ComboBoxModel adjustComboBoxModel;
 	private SNePSInterface frame;
 
 	@Action
-    public void add() {
-    }
+    public void add() {}
 	
 	@Action
-    public void info() {
-    }
+    public void remove() {}
+	
+	@Action
+    public void info() {}
 	
 	private ActionMap getAppActionMap() {
         return Application.getInstance().getContext().getActionMap(this);
@@ -111,6 +120,10 @@ public class cmdDefine extends javax.swing.JPanel {
 				addButton.setBounds(668, 34, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.setFocusable(false);
+				addButton.setFocusPainted(false);
+				addButton.setBorderPainted(false);
+				addButton.setContentAreaFilled(false);
+				addButton.setMargin(new Insets(0,0,0,0));
 				addButton.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent evt) {
 						addButtonMouseClicked(evt);
@@ -139,6 +152,14 @@ public class cmdDefine extends javax.swing.JPanel {
 					relationsList.setModel(relationModel);
 					relationsList.setBounds(-14, 131, 156, 100);
 					relationsList.setPreferredSize(new java.awt.Dimension(96, 60));
+					relationsList.addListSelectionListener(new ListSelectionListener() {
+						public void valueChanged(ListSelectionEvent evt) {
+							int selected = relationsList.getSelectedIndex();
+							typeList.setSelectedIndex(selected);
+							limitList.setSelectedIndex(selected);
+							adjustList.setSelectedIndex(selected);
+						}
+					});
 				}
 			}
 			{
@@ -146,7 +167,10 @@ public class cmdDefine extends javax.swing.JPanel {
 				this.add(infoButton);
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
-				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -173,6 +197,14 @@ public class cmdDefine extends javax.swing.JPanel {
 					jScrollPane2.setViewportView(typeList);
 					typeList.setModel(typeModel);
 					typeList.setBounds(179, 177, 130, 97);
+					typeList.addListSelectionListener(new ListSelectionListener() {
+						public void valueChanged(ListSelectionEvent evt) {
+							int selected = typeList.getSelectedIndex();
+							relationsList.setSelectedIndex(selected);
+							limitList.setSelectedIndex(selected);
+							adjustList.setSelectedIndex(selected);
+						}
+					});
 				}
 			}
 			{
@@ -198,6 +230,14 @@ public class cmdDefine extends javax.swing.JPanel {
 					jScrollPane3.setViewportView(adjustList);
 					adjustList.setModel(adjustModel);
 					adjustList.setBounds(383, 131, 143, 100);
+					adjustList.addListSelectionListener(new ListSelectionListener() {
+						public void valueChanged(ListSelectionEvent evt) {
+							int selected = adjustList.getSelectedIndex();
+							relationsList.setSelectedIndex(selected);
+							limitList.setSelectedIndex(selected);
+							typeList.setSelectedIndex(selected);
+						}
+					});
 				}
 			}
 			{
@@ -227,12 +267,34 @@ public class cmdDefine extends javax.swing.JPanel {
 					jScrollPane4.setViewportView(limitList);
 					limitList.setModel(limitModel);
 					limitList.setBounds(526, 190, 143, 100);
+					limitList.addListSelectionListener(new ListSelectionListener() {
+						public void valueChanged(ListSelectionEvent evt) {
+							int selected = limitList.getSelectedIndex();
+							relationsList.setSelectedIndex(selected);
+							typeList.setSelectedIndex(selected);
+							adjustList.setSelectedIndex(selected);
+						}
+					});
 				}
 			}
+			{
+				removeButton = new JButton();
+				this.add(removeButton);
+				removeButton.setBounds(668, 63, 16, 18);
+				removeButton.setAction(getAppActionMap().get("remove"));
+				removeButton.setToolTipText("remove");
+				removeButton.setFocusPainted(false);
+				removeButton.setBorderPainted(false);
+				removeButton.setContentAreaFilled(false);
+				removeButton.setMargin(new Insets(0,0,0,0));
+				removeButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						removeButtonMouseClicked(evt);
+					}
+				});
+			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 
 	private void addButtonMouseClicked(MouseEvent evt) {
@@ -265,9 +327,7 @@ public class cmdDefine extends javax.swing.JPanel {
 		    	  return;
 		      }
 		    }
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-		}
+		} catch (NullPointerException e) {}
 		
 	    
 	    //Check for the relation in the relation list
@@ -351,11 +411,22 @@ public class cmdDefine extends javax.swing.JPanel {
 	    			  "The relation already exits",
 	    			  "Error",
 	    			  JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
 		}
 		
 		frame.getNodesTreePanel1().initGUI();
 		frame.getNodesTreePanel1().validate();
 		frame.getNodesTreePanel1().repaint();
+	}
+	
+	private void removeButtonMouseClicked(MouseEvent evt) {
+		try {
+			int selected = relationsList.getSelectedIndex();
+			
+			relationModel.remove(selected);
+			typeModel.remove(selected);
+			adjustModel.remove(selected);
+			limitModel.remove(selected);
+		} catch (Exception e) {}
+		
 	}
 }

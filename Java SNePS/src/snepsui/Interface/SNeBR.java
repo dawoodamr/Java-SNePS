@@ -27,6 +27,10 @@ import org.jdesktop.application.Application;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class SNeBR extends javax.swing.JPanel {
 
 	private JTextArea jTextArea1;
@@ -101,9 +105,7 @@ public class SNeBR extends javax.swing.JPanel {
 				jButton2.setName("jButton2");
 			}
 			Application.getInstance().getContext().getResourceMap(getClass()).injectComponents(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 
 }

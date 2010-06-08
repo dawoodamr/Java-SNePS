@@ -28,6 +28,10 @@ import sneps.UpCable;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class ResultNodes extends javax.swing.JPanel {
 	private JScrollPane jScrollPane1;
 	private JList nodeList;
@@ -63,9 +67,7 @@ public class ResultNodes extends javax.swing.JPanel {
 					});
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 	}
 	
 	public void addNodes(LinkedList<Node> nodes) {
@@ -91,7 +93,7 @@ public class ResultNodes extends javax.swing.JPanel {
 			frame.getOutputPanel1().writeToTextArea("Node Name: " + node.getIdentifier() + newLine);
 			
 			//Print out semantic class
-			node.getEntity();
+			frame.getOutputPanel1().writeToTextArea("Semantic Class: "+ node.getEntity().getClass().getSimpleName() + newLine);
 			
 			//Print out cable
 			if(node instanceof MolecularNode) {
@@ -128,8 +130,6 @@ public class ResultNodes extends javax.swing.JPanel {
 			
 			frame.getOutputPanel1().writeToTextArea(endLine);
 			
-		} catch (CustomException e) {
-			e.printStackTrace();
-		}
+		} catch (CustomException e) {}
 	}
 }

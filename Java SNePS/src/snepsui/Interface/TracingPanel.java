@@ -23,6 +23,10 @@ import org.jdesktop.application.Application;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class TracingPanel extends javax.swing.JPanel {
 	private JScrollPane jScrollPane1;
 	private JTextArea jTextArea1;

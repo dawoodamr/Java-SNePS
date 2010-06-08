@@ -1,6 +1,7 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -44,6 +45,10 @@ import snepsui.Interface.SNePSInterface;
 * THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
 * LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
 */
+
+/**
+ * @author Alia Taher
+ */
 public class cmdAchieve extends javax.swing.JPanel {
 	private JLabel addLabel;
 	private JButton doneButton;
@@ -164,6 +169,10 @@ public class cmdAchieve extends javax.swing.JPanel {
 				infoButton.setBounds(668, 196, 16, 18);
 				infoButton.setAction(getAppActionMap().get("info"));
 				infoButton.setFocusable(false);
+				infoButton.setFocusPainted(false);
+				infoButton.setBorderPainted(false);
+				infoButton.setContentAreaFilled(false);
+				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
 			}
 			{
@@ -379,7 +388,6 @@ public class cmdAchieve extends javax.swing.JPanel {
 			Node actNode = network.build(cableset, caseframe2);
 		} catch (CustomException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage());
-			e.printStackTrace();
 		}
 		relationNodesetTableModel.getDataVector().removeAllElements();
 		//objectNumberComboBox.setSelectedIndex(0);
