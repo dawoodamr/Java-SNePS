@@ -8,7 +8,11 @@
 
 package snip.fns;
 
+import java.util.LinkedList;
+
 import snebr.Proposition;
+import sneps.MolecularNode;
+import sneps.Network;
 import sneps.Node;
 import sneps.NodeSet;
 import sneps.UpCable;
@@ -85,7 +89,11 @@ public class NonRule extends Proposition
 			Channel c=r.getChannel();
 			if(requestCounter==0)
 			{
-				//get list of nodes from matching and send requests to them
+				Network net=Network.getInstance();
+				LinkedList<Object[]> nodes=net.match((MolecularNode)getProcess()
+						.getNode());
+				getProcess().sendRequests(nodes,c.getContext());
+				
 				UpCable up1=getProcess().getNode().getUpCableSet().getUpCable("cq");
 				UpCable up2=getProcess().getNode().getUpCableSet().getUpCable("arg");
 				if(up1!=null)
