@@ -44,8 +44,8 @@ public class AndEntailment extends Rule
 		requestCounter=0;
 		patternNodes =getProcess().getNodeSet("&ant");
 		shareVars=getProcess().allShareVars(patternNodes);
-		patternsNumber=patternNodes.getNodes().size();
-		PatternNode n =(PatternNode)patternNodes.getNodes().get(0);
+		patternsNumber=patternNodes.size();
+		PatternNode n =(PatternNode)patternNodes.getNode(0);
 		if(shareVars)
 		{
 			LinkedList<VariableNode> varsll=n.getFreeVariables();

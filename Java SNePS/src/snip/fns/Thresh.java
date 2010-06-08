@@ -47,18 +47,17 @@ public class Thresh extends Rule
 		reportCounter = 0;
 		requestCounter=0;
 		NodeSet minNode = getProcess().getNodeSet("thresh");
-		min = Integer.parseInt(minNode.getNodes().get(0).getIdentifier());
+		min = Integer.parseInt(minNode.getNode(0).getIdentifier());
 		NodeSet maxNode = getProcess().getNodeSet("threshmax");
-		max = Integer.parseInt(maxNode.getNodes().get(0).getIdentifier());
+		max = Integer.parseInt(maxNode.getNode(0).getIdentifier());
 		patternNodes = getProcess().getNodeSet("arg");
-		total = patternNodes.getNodes().size();
-		LinkedList<Node> nodes=patternNodes.getNodes();
+		total = patternNodes.size();
 		pns=new PatternNode[total]; 
 		for(int i=0;i<total;i++)
 		{
-			pns[i]=(PatternNode)nodes.get(i);
+			pns[i]=(PatternNode)patternNodes.getNode(i);
 		}
-		PatternNode n =(PatternNode)patternNodes.getNodes().get(0);
+		PatternNode n =(PatternNode)patternNodes.getNode(0);
 		shareVars = getProcess().allShareVars(patternNodes);
 		if (shareVars) 
 		{
