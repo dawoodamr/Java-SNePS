@@ -21,10 +21,10 @@ public class QueuesProcessor
 	 * @param low LowQueue
 	 * @param high HighQueue
 	 */
-	public QueuesProcessor(LowQueue low,HighQueue high)
+	public QueuesProcessor()
 	{
-		l=low;
-		high=h;
+		l=new LowQueue();
+		h=new HighQueue();
 	}
 	
 	/**
