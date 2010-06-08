@@ -32,6 +32,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class cmdDescribeContext extends javax.swing.JPanel {
 	private JLabel describeContextLabel;
 	private JComboBox contextNameComboBox;

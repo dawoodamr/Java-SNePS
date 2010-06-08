@@ -1,7 +1,6 @@
 package snepsui.Commands;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Insets;
 
 import javax.swing.ActionMap;
@@ -32,6 +31,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class cmdMultiPrintRegs extends javax.swing.JPanel {
 	private JLabel jLabel1;
 	private JTextField jTextField1;

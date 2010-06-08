@@ -43,6 +43,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class cmdPerform extends javax.swing.JPanel {
 	private JLabel performLabel;
 	private JScrollPane jScrollPane1;

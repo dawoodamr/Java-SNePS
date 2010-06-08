@@ -17,8 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
@@ -26,8 +24,6 @@ import org.jdesktop.application.Application;
 import sneps.Network;
 import sneps.Relation;
 import snepsui.Interface.SNePSInterface;
-
-
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo

@@ -42,6 +42,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class cmdDeduce extends javax.swing.JPanel {
 	private JLabel deduceLabel;
 	private JTextField nodesetTextField;

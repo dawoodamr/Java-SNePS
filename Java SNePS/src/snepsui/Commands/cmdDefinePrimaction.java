@@ -53,6 +53,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings({ "unused", "unchecked" })
 public class cmdDefinePrimaction extends javax.swing.JPanel {
 	private JLabel definePrimactionLabel;
 	private JScrollPane jScrollPane1;
@@ -236,8 +237,7 @@ public class cmdDefinePrimaction extends javax.swing.JPanel {
 
 	    } catch(Exception e) {}  
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	static Class reloadTheClass(String reloadableClass,File dir)
 	{
 		URL[] theUrl = null;

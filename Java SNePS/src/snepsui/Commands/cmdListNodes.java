@@ -33,6 +33,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class cmdListNodes extends javax.swing.JPanel {
 	private JLabel listNodesLabel;
 	private JButton doneButton;

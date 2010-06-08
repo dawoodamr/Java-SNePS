@@ -48,6 +48,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings({ "unused"})
 public class cmdIfDo extends javax.swing.JPanel {
 	private JLabel assertLabel;
 	private JButton doneButton;

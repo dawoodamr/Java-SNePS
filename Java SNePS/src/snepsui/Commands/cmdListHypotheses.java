@@ -32,6 +32,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class cmdListHypotheses extends javax.swing.JPanel {
 	private JLabel listHypotheseLabel;
 	private JComboBox contextNameComboBox;

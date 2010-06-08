@@ -47,10 +47,6 @@ import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
 import sneps.Relation;
-import snepsui.Commands.cmdCaseFrame;
-import snepsui.Commands.cmdDefine;
-import snepsui.Commands.cmdUndefine;
-import snepsui.Commands.cmdUndefineCaseFrame;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
@@ -86,6 +82,7 @@ import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings({ "unused", "unchecked", "hiding" })
 public class TestDraw extends javax.swing.JPanel {
 
     private DirectedGraph<String, String> graph;
@@ -624,7 +621,6 @@ public class TestDraw extends javax.swing.JPanel {
             this.edgeFactory = edgeFactory;
         }
         
-    	@SuppressWarnings({ "unchecked", "serial" })
     	protected void handlePopup(MouseEvent e) {
             final VisualizationViewer<String,String> vv =
                 (VisualizationViewer<String,String>)e.getSource();
@@ -824,9 +820,7 @@ public class TestDraw extends javax.swing.JPanel {
 			CaseFrame caseframe3 = network.defineCaseFrame("Entity", relations3);
 			CaseFrame caseframe4 = network.defineCaseFrame("Entity", relations4);
 			
-		} catch (CustomException e) {
-			// TODO: handle exception
-		}
+		} catch (CustomException e) {}
 		
 		JFrame popupFrame = new JFrame("Draw");
 		popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

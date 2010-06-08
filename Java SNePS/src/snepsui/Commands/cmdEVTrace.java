@@ -36,6 +36,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class cmdEVTrace extends javax.swing.JPanel {
 	private JLabel jLabel1;
 	private JTextField jTextField1;

@@ -31,6 +31,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class cmdSetDefaultContext extends javax.swing.JPanel {
 	private JLabel setDefaultContextNameLabel;
 	private JLabel contextNameLabel;

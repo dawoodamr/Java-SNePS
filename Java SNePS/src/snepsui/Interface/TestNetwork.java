@@ -3,7 +3,6 @@ package snepsui.Interface;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Paint;
 import java.awt.Shape;
@@ -18,7 +17,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.apache.commons.collections15.Transformer;
@@ -30,8 +28,6 @@ import sneps.Network;
 import sneps.Node;
 import sneps.Relation;
 import sneps.UpCableSet;
-import snepsui.Commands.cmdBuild;
-import snepsui.Interface.VisualizeNetworks.RelationEdge;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -47,6 +43,7 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 
+@SuppressWarnings({"unchecked", "hiding"})
 public class TestNetwork extends JPanel{
 	private Network network;
     private int id = 0;

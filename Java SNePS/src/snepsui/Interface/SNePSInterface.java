@@ -60,6 +60,7 @@ import sneps.Relation;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class SNePSInterface extends SingleFrameApplication {
 
     private JPanel topPanel;

@@ -72,6 +72,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class cmdFindVariable extends javax.swing.JPanel {
 	private JLabel findLabel;
 	private JButton addButton;

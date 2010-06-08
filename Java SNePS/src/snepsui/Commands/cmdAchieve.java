@@ -49,6 +49,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings({ "unused", "unchecked" })
 public class cmdAchieve extends javax.swing.JPanel {
 	private JLabel addLabel;
 	private JButton doneButton;

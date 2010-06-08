@@ -12,7 +12,6 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.ActionMap;
-import javax.swing.ButtonGroup;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;

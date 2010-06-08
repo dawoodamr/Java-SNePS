@@ -87,6 +87,7 @@ import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings({ "unused", "unchecked", "hiding" })
 public class DrawNetwork extends javax.swing.JPanel {
 
     private DirectedGraph<String, String> graph;
@@ -701,7 +702,6 @@ public class DrawNetwork extends javax.swing.JPanel {
             this.edgeFactory = edgeFactory;
         }
         
-    	@SuppressWarnings({ "unchecked", "serial" })
     	protected void handlePopup(MouseEvent e) {
             final VisualizationViewer<String,String> vv =
                 (VisualizationViewer<String,String>)e.getSource();

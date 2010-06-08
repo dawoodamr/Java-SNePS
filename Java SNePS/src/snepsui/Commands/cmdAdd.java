@@ -64,6 +64,7 @@ import snip.fns.Thresh;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings({ "unused", "unchecked" })
 public class cmdAdd extends javax.swing.JPanel {
 	private JLabel addLabel;
 	private JButton doneButton;

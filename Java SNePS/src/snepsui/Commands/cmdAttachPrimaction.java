@@ -39,6 +39,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class cmdAttachPrimaction extends javax.swing.JPanel {
 	private JLabel buildLabel2;
 	private JLabel wheneverLabel;

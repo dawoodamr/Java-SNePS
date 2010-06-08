@@ -43,6 +43,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class cmdActivate extends javax.swing.JPanel {
 	private JLabel activateLabel;
 	private JButton doneButton;

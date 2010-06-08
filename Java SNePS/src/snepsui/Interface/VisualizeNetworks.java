@@ -54,6 +54,7 @@ import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings({"unchecked", "hiding"})
 public class VisualizeNetworks extends javax.swing.JPanel {
 
     private Network network;

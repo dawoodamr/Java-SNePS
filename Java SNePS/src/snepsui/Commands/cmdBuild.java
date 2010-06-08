@@ -55,6 +55,7 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings({ "unused", "unchecked" })
 public class cmdBuild extends javax.swing.JPanel {
 	private JLabel assertLabel;
 	private JButton doneButton;

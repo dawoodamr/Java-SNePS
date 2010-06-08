@@ -69,6 +69,7 @@ import snip.fns.Thresh;
 /**
  * @author Alia Taher
  */
+@SuppressWarnings("unused")
 public class MenuDrivenCommands extends javax.swing.JPanel {
 	private JComboBox commandsComboBox;
 	private JComboBox commandMenusComboBox;
