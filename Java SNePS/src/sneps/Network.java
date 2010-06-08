@@ -9,6 +9,10 @@ import java.util.Stack;
 
 import snebr.Context;
 import snebr.Support;
+import snip.ds.Channel;
+import snip.ds.ReportSet;
+import snip.ds.Request;
+import snip.fns.*;
 
 import match.ds.*;
 
@@ -663,16 +667,16 @@ public class Network implements Serializable
 						NodeSet ns1 = t1.getCableSet().getCable(r.getName()).getNodeSet();
 						NodeSet ns2 = t2.getCableSet().getCable(r.getName()).getNodeSet();
 						if(rightOrder && ((r.getAdjust().equals("reduce") &&
-							ns1.size() > ns2.size()) ||
+							ns2.size() > ns1.size()) ||
 							(r.getAdjust().equals("expand") &&
-							ns1.size() < ns2.size()) ||
+							ns2.size() < ns1.size()) ||
 							(r.getAdjust().equals("none") &&
 							ns1.size() != ns2.size())))
 							return false;
 						if((!rightOrder) && ((r.getAdjust().equals("expand") &&
-								ns1.size() > ns2.size()) ||
+								ns2.size() > ns1.size()) ||
 								(r.getAdjust().equals("reduce") &&
-								ns1.size() < ns2.size()) ||
+								ns2.size() < ns1.size()) ||
 								(r.getAdjust().equals("none") &&
 								ns1.size() != ns2.size())))
 								return false;
@@ -1135,6 +1139,28 @@ public class Network implements Serializable
 		
 		return molNode;
 	}
+	
+	/**
+	 * Added by Mohamed K. Gabr
+	 * 
+	 * Do the deduction process on the node n in the context c and return the 
+	 * resulting reports set. 
+	 * @param n MolecularNode
+	 * @param c Context
+	 * @return ReportSet 
+	 */
+	public ReportSet deduce(MolecularNode n,Context c)
+	{
+		QueuesProcessor qp=new QueuesProcessor();
+		Request r=new Request(new Channel(null,null,c,null,true));
+		n.getEntity().getProcess().setFirst(true);
+		qp.addToLow(n.getEntity());
+		n.getEntity().getProcess().setQueuesProcessor(qp);
+		n.getEntity().getProcess().receiveRequest(r);
+		qp.process();
+		return n.getEntity().getProcess().getSentReports();
+	}
+
 	
 	/**
 	 * @param array the array that contains pairs of paths and node sets
@@ -1735,7 +1761,7 @@ public class Network implements Serializable
 		o4[2][1] = g2;
 		o4[3][1] = x5;
 		PatternNode tdash = (PatternNode) n.build(o4,caseFrame4);
-		LinkedList<Object[]> l = n.match(tdash);
+		/*LinkedList<Object[]> l = n.match(tdash);
 		for(int i=0;i<l.size();i++)
 		{
 			Object[] o = l.get(i);
@@ -1750,8 +1776,11 @@ public class Network implements Serializable
 				Binding b = ((Substitutions)o[2]).getBinding(j);
 				System.out.println(b.getVariable().getIdentifier()+" "+b.getNode().getIdentifier());
 			}
-		}
+		}*/
 		t.getClass();
+		tdash.getClass();
+		
+		
 		/*Substitutions r = new Substitutions();
 		LinkedList<Substitutions> rr = new LinkedList<Substitutions>();
 		rr.add(r);
@@ -1786,10 +1815,11 @@ public class Network implements Serializable
 				}
 			}
 		}*/
+		
 		/*Path f = new FUnitPath("r3");
 		Path b = new BUnitPath("r1");
 		Path kf = new KStarPath(f);
-		Path kb = new KPlusPath(b);
+		Path kb = new KStarPath(b);
 		LinkedList<Path> l = new LinkedList<Path>();
 		l.add(kb);
 		l.add(kf);
@@ -1798,7 +1828,12 @@ public class Network implements Serializable
 		l1.add(c);
 		l1.add(f);
 		Path or = new AndPath(l1);
-		Hashtable<Node,LinkedList<Support>> h = c.follow(x1,new LinkedList<Support>(),null);
+		Object[][] o = new Object[1][2];
+		o[0][0] = kb;
+		NodeSet ns = new NodeSet();
+		ns.addNode(h1);
+		o[0][1] = ns;
+		Hashtable<Node,LinkedList<Support>> h = n.find(o,null);
 		for(Enumeration<Node> e = h.keys();e.hasMoreElements();)
 			System.out.println(e.nextElement().getIdentifier());*/
 		/*Hashtable<String,LinkedList<String>> h = new Hashtable<String, LinkedList<String>>();

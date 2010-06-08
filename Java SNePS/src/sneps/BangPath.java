@@ -45,8 +45,8 @@ public class BangPath extends Path
 	{
 		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
 		Entity e = node.getEntity();
-		if((e.getClass().getSimpleName().equals("Proposition") || 
-				e.getClass().getSuperclass().getSimpleName().equals("Proposition")) &&
+		if((getSuperClasses(e.getClass()).contains("Proposition") || 
+				(e.getClass().getSimpleName().equals("Proposition"))) &&
 				context.getHypSet().getPropositionSet().contains(e))
 		{
 			for(int i=0;i<supports.size();i++)
@@ -56,5 +56,38 @@ public class BangPath extends Path
 		
 		return result;
 	}
-
+	
+	/**
+	 * gets a list of super classes' simple names for a given class
+	 * 
+	 * @param c a Class to get the super classes for
+	 * @return a LinkedList of Strings representing the simple names of the super classes 
+	 * of the given class
+	 */
+	@SuppressWarnings("unchecked")
+	private LinkedList<String> getSuperClasses(Class c)
+	{
+		LinkedList<String> list = new LinkedList<String>();
+		updateSuperClasses(c,list);
+		return list;
+	}
+	
+	/**
+	 * updates a list of strings by adding the simple names of super classes of a given class
+	 * 
+	 * @param c a Class to get super classes for
+	 * @param list a LinkedList of Strings representing the names of super classes
+	 */
+	@SuppressWarnings("unchecked")
+	private void updateSuperClasses(Class c,LinkedList<String> list)
+	{
+		Class superClass = c.getSuperclass();
+		if(superClass == null)
+			return;
+		else
+		{
+			list.add(superClass.getSimpleName());
+			updateSuperClasses(superClass,list);
+		}
+	}
 }

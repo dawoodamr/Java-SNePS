@@ -119,6 +119,8 @@ public class ComposePath extends Path
 	 */
 	private Hashtable<Node,LinkedList<Support>> followConverse(Hashtable<Node,LinkedList<Support>> temp,Context context,Path path)
 	{
+		if(((ComposePath) path).getPaths().isEmpty())
+			return temp;
 		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
 		Enumeration<LinkedList<Support>> lists = temp.elements();
 		for(Enumeration<Node> tn = temp.keys();tn.hasMoreElements();)
