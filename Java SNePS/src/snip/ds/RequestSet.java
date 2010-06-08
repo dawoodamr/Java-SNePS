@@ -38,4 +38,13 @@ public class RequestSet
 	{
 		return rs.size();
 	}
+	
+	/**
+	 * Insert the request r in the request set
+	 * @param r Request
+	 */
+	public void putIn(Request r)
+	{
+		rs.add(r);
+	}
 }

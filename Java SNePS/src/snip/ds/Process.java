@@ -7,6 +7,8 @@
  */
 package snip.ds;
 
+import java.util.LinkedList;
+
 import match.ds.Substitutions;
 import snebr.Context;
 import sneps.MolecularNode;
@@ -206,6 +208,15 @@ public class Process
 	}
 	
 	/**
+	 * When report is received put it in the report list
+	 * @param r Report
+	 */
+	public void receiveRequest(Request r)
+	{
+		reqs.putIn(r);
+	}
+	
+	/**
 	 * Return the request set
 	 * @return RequestSet
 	 */
@@ -263,18 +274,16 @@ public class Process
 		for(int i=0;i<ns.size();i++)
 		{
 			Node to=ns.getNode(i);
-			Substitutions sub=match(node,to);
-			Substitutions[] sp=sub.split();
-			Filter f=new Filter(sp[0]);
-			Switch s=new Switch(sp[1]);
+			Filter f=new Filter(new Substitutions());
+			Switch s=new Switch(new Substitutions());
 			Destination d=new Destination(node);
 			Channel ch=new Channel(f,s,c,d,true);
 			System.out.println(ch);
 			inComing.putIn(ch);
 			qp.addToLow(to.getEntity());
-			//to.getEntity().getProcess().setQueuesProcessor(qp);
-			//Request r=new Request(ch);
-			//to.getEntity().getProcess().addRequest(r);
+			to.getEntity().getProcess().setQueuesProcessor(qp);
+			Request r=new Request(ch);
+			to.getEntity().getProcess().receiveRequest(r);
 		}
 	}
 	
@@ -305,8 +314,33 @@ public class Process
 		first=f;
 	}
 	
-	public Substitutions match(Node n1,Node n2)
+	/**
+	 * Send requests to the nodes in the nodes list.
+	 * nodes list is the result from matching, and it is 
+	 * {<Node> <Substitutions> <Substitutions>} where the node is the matched node,
+	 * the first substitution list is the source binding, and the other substitution
+	 * list is the target binding.
+	 * @param nodes LinkedList<Object[]>
+	 * @param c Context
+	 */
+	public void sendRequests(LinkedList<Object[]> nodes,Context c)
 	{
-		return null;
+		for(int i=0;i<nodes.size();i++)
+		{
+			Node to=(Node)nodes.get(i)[0];
+			Substitutions sub=(Substitutions)nodes.get(i)[1];
+			Substitutions[] sp=sub.split();
+			Filter f=new Filter(sp[0]);
+			Switch s=new Switch(sp[1]);
+			Destination d=new Destination(node);
+			Channel ch=new Channel(f,s,c,d,true);
+			System.out.println(ch);
+			inComing.putIn(ch);
+			qp.addToLow(to.getEntity());
+			to.getEntity().getProcess().setQueuesProcessor(qp);
+			Request r=new Request(ch);
+			to.getEntity().getProcess().receiveRequest(r);
+		}
 	}
+	
 }
