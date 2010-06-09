@@ -443,6 +443,7 @@ public class Network implements Serializable
 	public Node buildVariableNode()
 	{
 		VariableNode node = new VariableNode(getNextVarName());
+		this.nodes.put(node.getIdentifier(),node);
 		return node;
 	}
 	
@@ -1140,15 +1141,15 @@ public class Network implements Serializable
 		return molNode;
 	}
 	
-	/**
-	 * Added by Mohamed K. Gabr
-	 * 
-	 * Do the deduction process on the node n in the context c and return the 
-	 * resulting reports set. 
-	 * @param n MolecularNode
-	 * @param c Context
-	 * @return ReportSet 
-	 */
+   /**
+	* Added by Mohamed K. Gabr
+	* 
+	* Do the deduction process on the node n in the context c and return the 
+	* resulting reports set. 
+	* @param n MolecularNode
+	* @param c Context
+	* @return ReportSet 
+	*/
 	public ReportSet deduce(MolecularNode n,Context c)
 	{
 		QueuesProcessor qp=new QueuesProcessor();
@@ -1158,6 +1159,7 @@ public class Network implements Serializable
 		n.getEntity().getProcess().setQueuesProcessor(qp);
 		n.getEntity().getProcess().receiveRequest(r);
 		qp.process();
+		n.getEntity().getProcess().setFirst(false);
 		return n.getEntity().getProcess().getSentReports();
 	}
 
@@ -1430,6 +1432,7 @@ public class Network implements Serializable
 	 * of this node
 	 * @return the node that was just created
 	 */
+	@SuppressWarnings("unchecked")
 	private PatternNode createPatNode(Object[][] array,CaseFrame caseFrame)
 	{
 		// creating the node
@@ -1442,6 +1445,15 @@ public class Network implements Serializable
 		CableSet cableSet = new CableSet(cables,caseFrame);
 		String patName = getNextPatName();
 		PatternNode patternNode = new PatternNode(patName,cableSet);
+		try {
+			Class c = Class.forName("sneps."+caseFrame.getSemanticClass());
+			Constructor con = c.getConstructor(new Class[] {Node.class});
+			Entity e = (Entity) con.newInstance(patternNode);
+			patternNode.setEntity(e);
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
 		this.nodes.put(patName,patternNode);
 		this.molecularNodes.get(caseFrame.getId()).addNode(patternNode);
 		
@@ -1816,7 +1828,7 @@ public class Network implements Serializable
 			}
 		}*/
 		
-		Path f = new FUnitPath("r3");
+		/*Path f = new FUnitPath("r3");
 		Path b = new BUnitPath("r1");
 		Path kf = new KStarPath(f);
 		Path kb = new KStarPath(b);
@@ -1824,14 +1836,18 @@ public class Network implements Serializable
 		l.add(kb);
 		l.add(kf);
 		Path c = new ComposePath(l);
+		LinkedList<Path> l1 = new LinkedList<Path>();
+		l1.add(c);
+		l1.add(f);
+		Path or = new AndPath(l1);
 		Object[][] o = new Object[1][2];
-		o[0][0] = c;
+		o[0][0] = kb;
 		NodeSet ns = new NodeSet();
-		ns.addNode(x3);
+		ns.addNode(h1);
 		o[0][1] = ns;
 		Hashtable<Node,LinkedList<Support>> h = n.find(o,null);
 		for(Enumeration<Node> e = h.keys();e.hasMoreElements();)
-			System.out.println(e.nextElement().getIdentifier());
+			System.out.println(e.nextElement().getIdentifier());*/
 		/*Hashtable<String,LinkedList<String>> h = new Hashtable<String, LinkedList<String>>();
 		LinkedList<String> l = new LinkedList<String>();
 		h.put("amr",l);
