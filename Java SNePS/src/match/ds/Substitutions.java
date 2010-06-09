@@ -248,6 +248,21 @@ public class Substitutions
     }
     
     /**
+     * Union the substitution list s with this substitution list in this
+     * @param s substitutions list
+     */
+    public void unionIn (Substitutions s)
+    {
+    	for(int i=0;i<s.sub.size();i++)
+    	{
+    		if(!this.isMember(s.sub.get(i)))
+    		{
+    			this.putIn(s.sub.get(i));
+    		}
+    	}
+    }
+    
+    /**
      * returns a substitutions list consisting of only those bindings 
      * whose variable node are in ns
      * @param ns array of variable node nodes
