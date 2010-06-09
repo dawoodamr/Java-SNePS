@@ -34,7 +34,7 @@ public class Switch
 	 * Switch the substitutions list of the report r
 	 * @param r Report
 	 */
-	public void switchReport(Report r)
+	public void switchReport(Report r,Substitutions s)
 	{
 		for(int i=0;i<this.s.cardinality();i++)
 		{
@@ -42,6 +42,7 @@ public class Switch
 					.getVariable()).setvariable((VariableNode)this.s.getBinding(i)
 							.getNode());
 		}
+		r.getSubstitutions().unionIn(s);
 	}
 	
 	/**

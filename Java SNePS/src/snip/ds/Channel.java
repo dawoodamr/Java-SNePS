@@ -7,6 +7,7 @@
  */
 package snip.ds;
 
+import match.ds.Substitutions;
 import snebr.Context;
 import sneps.MolecularNode;
 import sneps.Network;
@@ -18,6 +19,7 @@ public class Channel
 	private Context con;
 	private Destination des;
 	private boolean valve;
+	private Substitutions tar;
 	
 	/**
 	 * Create a new channel with the given arguments
@@ -34,6 +36,7 @@ public class Channel
 		con=c;
 		des=d;
 		valve=v;
+		tar=null;
 	}
 	
 	/**
@@ -135,13 +138,32 @@ public class Channel
 	{
 		if(fil.canPass(r))
 		{
-			swi.switchReport(r);
+			swi.switchReport(r,tar);
 			Network n=Network.getInstance();
 			MolecularNode res=n.termVERe((MolecularNode)des.getNode()
 					,r.getSubstitutions(),r.getSubstitutions());
 			r.setNode(res);
 			des.getNode().getEntity().getProcess().receiveReport(r);
 		}
+	}
+	
+	/**
+	 * Set the target substitution to s
+	 * @param s Substitutions
+	 */
+	public void setTarget(Substitutions s)
+	{
+		tar=s;
+	}
+	
+	
+	/**
+	 * Return the target substitution
+	 * @return
+	 */
+	public Substitutions getTarget()
+	{
+		return tar;
 	}
 	
 	public String toString()

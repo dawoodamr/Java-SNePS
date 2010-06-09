@@ -332,11 +332,14 @@ public class Process
 		{
 			Node to=(Node)nodes.get(i)[0];
 			Substitutions sub=(Substitutions)nodes.get(i)[1];
+			Substitutions t=(Substitutions)nodes.get(i)[2];
 			Substitutions[] sp=sub.split();
 			Filter f=new Filter(sp[0]);
 			Switch s=new Switch(sp[1]);
 			Destination d=new Destination(node);
 			Channel ch=new Channel(f,s,c,d,true);
+			Substitutions[] sp1=t.split();
+			ch.setTarget(sp1[0]);
 			System.out.println(ch);
 			inComing.putIn(ch);
 			qp.addToLow(to.getEntity());
