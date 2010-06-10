@@ -31,8 +31,9 @@ public class Switch
 	}
 	
 	/**
-	 * Switch the substitutions list of the report r
+	 * Switch the substitutions list of the report r and union it with s
 	 * @param r Report
+	 * @param s Substitutions
 	 */
 	public void switchReport(Report r,Substitutions s)
 	{
