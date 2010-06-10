@@ -10,6 +10,8 @@ package sneps;
 
 import java.util.LinkedList;
 
+import match.ds.Substitutions;
+
 import snebr.Proposition;
 import sneps.MolecularNode;
 import sneps.Network;
@@ -89,27 +91,41 @@ public class NonRule extends Proposition
 			Channel c=r.getChannel();
 			if(requestCounter==0)
 			{
-				Network net=Network.getInstance();
-				LinkedList<Object[]> nodes=net.match((MolecularNode)getProcess()
-						.getNode());
-				getProcess().sendRequests(nodes,c.getContext());
-				
-				UpCable up1=getProcess().getNode().getUpCableSet().getUpCable("cq");
-				UpCable up2=getProcess().getNode().getUpCableSet().getUpCable("arg");
-				if(up1!=null)
+				if(getProcess().getNode().getClass().getSimpleName()
+						.equals("ClosedNode"))
 				{
-					NodeSet n=up1.getNodeSet();
-					getProcess().sendRequests(n,c.getContext());
+					//Check if this node is asserted in this context
+					Report reply=new Report(new Substitutions(),null,true
+							,getProcess().getNode(),null,c.getContext());
+					ChannelsSet ctemp=new ChannelsSet();
+					ctemp.putIn(c);
+					getProcess().sendReport(reply,ctemp);
 				}
-				if(up2!=null)
+				else
 				{
-					NodeSet n=up2.getNodeSet();
-					getProcess().sendRequests(n,c.getContext());
-				}	
+					Network net=Network.getInstance();
+					LinkedList<Object[]> nodes=net.match((MolecularNode)getProcess()
+							.getNode());
+					getProcess().sendRequests(nodes,c.getContext());
+				
+					UpCable up1=getProcess().getNode().getUpCableSet()
+						.getUpCable("cq");
+					UpCable up2=getProcess().getNode().getUpCableSet()
+						.getUpCable("arg");
+					if(up1!=null)
+					{
+						NodeSet n=up1.getNodeSet();
+						getProcess().sendRequests(n,c.getContext());
+					}
+					if(up2!=null)
+					{
+						NodeSet n=up2.getNodeSet();
+						getProcess().sendRequests(n,c.getContext());
+					}
+				}
 			}
 			else
 				getProcess().addOutGoing(c);
-		
 		}
 	}
 	

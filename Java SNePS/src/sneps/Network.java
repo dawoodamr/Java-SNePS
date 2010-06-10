@@ -1142,7 +1142,7 @@ public class Network implements Serializable
 	}
 	
    /**
-	* Added by Mohamed K. Gabr
+	* Added by Mohamed Karam Gabr
 	* 
 	* Do the deduction process on the node n in the context c and return the 
 	* resulting reports set. 
