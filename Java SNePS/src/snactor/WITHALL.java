@@ -32,7 +32,7 @@ public class WITHALL extends Action
 	{
 		n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNode(0);
 		suchThat = ((MolecularNode) n).getCableSet().getCable("suchthat").getNodeSet().getNode(0);
-		vars = ((MolecularNode) n).getCableSet().getCable("vars").getNodeSet().getNodes();
+		vars.add(((MolecularNode) n).getCableSet().getCable("vars").getNodeSet().getNode(0));
 		doAct = ((MolecularNode) n).getCableSet().getCable("do").getNodeSet().getNode(0);
 		
 		
