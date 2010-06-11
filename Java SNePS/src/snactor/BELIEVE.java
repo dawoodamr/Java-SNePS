@@ -2,7 +2,7 @@ package snactor;
 
 import java.util.LinkedList;
 
-import sneps.Node;
+import sneps.*;
 
 public class BELIEVE extends Action
 {
@@ -19,7 +19,7 @@ public class BELIEVE extends Action
 	public void Perform()
 	{
 		
-		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
+		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNode(0);
 		LinkedList<Node> nodes = ((Act) n.getEntity()).getArrangedObjects();
 		
 		

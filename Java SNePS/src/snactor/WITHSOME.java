@@ -30,10 +30,10 @@ public class WITHSOME extends Action
 	
 	public void Perform()
 	{
-		n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
-		suchThat = ((MolecularNode) n).getCableSet().getCable("suchthat").getNodeSet().getNodes().getFirst();
+		n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNode(0);
+		suchThat = ((MolecularNode) n).getCableSet().getCable("suchthat").getNodeSet().getNode(0);
 		vars = ((MolecularNode) n).getCableSet().getCable("vars").getNodeSet().getNodes();
-		doAct = ((MolecularNode) n).getCableSet().getCable("do").getNodeSet().getNodes().getFirst();
+		doAct = ((MolecularNode) n).getCableSet().getCable("do").getNodeSet().getNode(0);
 		
 		
 	
@@ -66,11 +66,11 @@ public class WITHSOME extends Action
    				if(((MolecularNode) test.conditions.get(i)).getCableSet().contains("property")&&
    					  ((MolecularNode)test.conditions.get(i)).getCableSet().contains("object"))
    				   {
-   				//	System.out.println(((MolecularNode) test.conditions.get(i)).getCableSet().getCable("property").getNodeSet().getNodes().getFirst().getIdentifier());
-   			//		System.out.println(((MolecularNode) suchThat).getCableSet().getCable("property").getNodeSet().getNodes().getFirst().getIdentifier());
-   					if(((MolecularNode) test.conditions.get(i)).getCableSet().getCable("property").getNodeSet().getNodes().getFirst().getIdentifier().equals(((MolecularNode) suchThat).getCableSet().getCable("property").getNodeSet().getNodes().getFirst().getIdentifier()))
+   				//	System.out.println(((MolecularNode) test.conditions.get(i)).getCableSet().getCable("property").getNodeSet().getNode(0).getIdentifier());
+   			//		System.out.println(((MolecularNode) suchThat).getCableSet().getCable("property").getNodeSet().getNode(0).getIdentifier());
+   					if(((MolecularNode) test.conditions.get(i)).getCableSet().getCable("property").getNodeSet().getNode(0).getIdentifier().equals(((MolecularNode) suchThat).getCableSet().getCable("property").getNodeSet().getNode(0).getIdentifier()))
    					   {	
-   					   	reports.add(((MolecularNode) test.conditions.get(i)).getCableSet().getCable("object").getNodeSet().getNodes().getFirst());
+   					   	reports.add(((MolecularNode) test.conditions.get(i)).getCableSet().getCable("object").getNodeSet().getNode(0));
   					   }
        			   }
    			}

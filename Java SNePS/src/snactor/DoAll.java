@@ -19,7 +19,7 @@ public class DoAll extends Action
 	@SuppressWarnings({ "static-access" })
 	public void Perform()
 	{
-		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
+		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNode(0);
 		LinkedList<Node> nodes = ((Act) n.getEntity()).getArrangedObjects();
 		
 		for(int i=0;i<nodes.size();i++)

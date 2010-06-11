@@ -2,8 +2,7 @@ package snactor;
 
 import java.util.LinkedList;
 
-import sneps.Node;
-
+import sneps.*;
 public class DISBELIEVE extends Action
 {
 	Condition test = new Condition();
@@ -19,7 +18,7 @@ public class DISBELIEVE extends Action
 	public void Perform()
 	{
 		
-		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
+		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNode(0);
 		LinkedList<Node> nodes = ((Act) n.getEntity()).getArrangedObjects();
 		
 		

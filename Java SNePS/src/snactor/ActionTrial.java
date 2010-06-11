@@ -16,7 +16,7 @@ public abstract class ActionTrial extends Entity
 	
 	public Act getActNode(BaseNode node)
 	{
-		Node n = node.getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
+		Node n = node.getUpCableSet().getUpCable("action").getNodeSet().getNode(0);
 		return (Act) n.getEntity();
 	}
 

@@ -22,7 +22,7 @@ public class Achieve extends Action
 	public void Perform()
 	{
 		
-		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
+		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNode(0);
 		LinkedList<Node> nodes = ((Act) n.getEntity()).getArrangedObjects();
 		
 		
@@ -92,9 +92,9 @@ public class Achieve extends Action
     	   if(((MolecularNode) nodess.getLast()).getCableSet().contains("plan")&&
 			  ((MolecularNode)nodess.getLast()).getCableSet().contains("goal"))
     	   		{
-    		   if(((MolecularNode) nodess.getLast()).getCableSet().getCable("goal").getNodeSet().getNodes().getFirst().getIdentifier().equals(prop.getIdentifier()))
+    		   if(((MolecularNode) nodess.getLast()).getCableSet().getCable("goal").getNodeSet().getNode(0).getIdentifier().equals(prop.getIdentifier()))
     		   {
-	        	   reports.add(((MolecularNode) nodess.getLast()).getCableSet().getCable("plan").getNodeSet().getNodes().getFirst());
+	        	   reports.add(((MolecularNode) nodess.getLast()).getCableSet().getCable("plan").getNodeSet().getNode(0));
     		   } 
     	   		}
 	        	}

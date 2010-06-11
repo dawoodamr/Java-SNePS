@@ -19,7 +19,7 @@ public class DoOne extends Action
 	@SuppressWarnings({ "static-access" })
 	public void Perform()
 	{
-		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
+		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNode(0);
 		LinkedList<Node> nodes = ((Act) n.getEntity()).getArrangedObjects();
 		
 		((Act) nodes.getFirst().getEntity()).setAgenda("start");

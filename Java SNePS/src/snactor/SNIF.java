@@ -2,9 +2,7 @@ package snactor;
 
 import java.util.LinkedList;
 
-import sneps.MolecularNode;
-
-import sneps.Node;
+import sneps.*;
 
 public class SNIF extends Action
 {
@@ -27,7 +25,7 @@ public class SNIF extends Action
 	public void Perform()
 	{
 		
-		n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
+		n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNode(0);
 		LinkedList nodes = ((Act) n.getEntity()).getArrangedObjects();
 		
 	
@@ -36,7 +34,7 @@ public class SNIF extends Action
 			
 			for(int i=0;i<nodes.size();i++)
 			{
-				x =((MolecularNode) nodes.get(i)).getCableSet().getCable("condition").getNodeSet().getNodes().getFirst();
+				x =((MolecularNode) nodes.get(i)).getCableSet().getCable("condition").getNodeSet().getNode(0);
 				testConditions(x);
 				
 			}
@@ -54,9 +52,8 @@ public class SNIF extends Action
 	private void queueThenActs(LinkedList<Node> nodes)
 	{
 		y = ((MolecularNode) nodes.getFirst().getUpCableSet()
-				.getUpCable("condition").getNodeSet().getNodes()
-				.getFirst()).getCableSet().getCable("act")
-				.getNodeSet().getNodes().getFirst();
+				.getUpCable("condition").getNodeSet().getNode(0)).getCableSet().getCable("act")
+				.getNodeSet().getNode(0);
 		
 		((Act) y.getEntity()).setAgenda("start");
 		((Act) y.getEntity()).setPrimaction(true);

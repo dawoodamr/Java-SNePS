@@ -17,79 +17,78 @@ public class TestCase2
 		
 		Network m = new Network();
 		
-		Relation r1 = m.defineRelation("action", "single", null, 1);
-		Relation r2 = m.defineRelation("actObject", "single", null, 0);
-		Relation r3 = m.defineRelation("object1", "single", null, 1);
-		Relation r4 = m.defineRelation("object2", "single", null, 1);
-		Relation r5 = m.defineRelation("act", "single", null, 1);
-		Relation r6 = m.defineRelation("condition", "single", null, 1);
-		Relation r7 = m.defineRelation("plan", "single", null, 1);
-		Relation r8 = m.defineRelation("precondition", "single", null, 1);
-		Relation r9 = m.defineRelation("effect", "single", null, 1);
-		Relation r10 = m.defineRelation("goal", "single", null, 1);
-		Relation r11 = m.defineRelation("do", "single", null, 1);
-		Relation r12 = m.defineRelation("vars", "single", null, 1);
-		Relation r13 = m.defineRelation("suchthat", "single", null, 1);
-		Relation r14 = m.defineRelation("property", "single", null, 1);
-		Relation r15 = m.defineRelation("object", "single", null, 1);
+		Relation r1 = m.defineRelation("action", "Action", "none", 1);
+		Relation r2 = m.defineRelation("actObject", "Entity", "none", 0);
+		Relation r3 = m.defineRelation("object1", "Entity", "none", 1);
+		Relation r4 = m.defineRelation("object2", "Entity", "none", 1);
+		Relation r5 = m.defineRelation("act", "Act", "none", 1);
+		Relation r6 = m.defineRelation("condition", "Entity", "none", 1);
+		Relation r7 = m.defineRelation("plan", "Entity", "none", 1);
+		Relation r8 = m.defineRelation("precondition", "Entity", "none", 1);
+		Relation r9 = m.defineRelation("effect", "Entity", "none", 1);
+		Relation r10 = m.defineRelation("goal", "Entity", "none", 1);
+		Relation r11 = m.defineRelation("do", "Entity", "none", 1);
+		Relation r12 = m.defineRelation("vars", "Entity", "none", 1);
+		Relation r13 = m.defineRelation("suchthat", "Entity", "none", 1);
+		Relation r14 = m.defineRelation("property", "Entity", null, 1);
+		Relation r15 = m.defineRelation("object", "Entity", null, 1);
 		
 		LinkedList<Relation> l = new LinkedList<Relation>();
 		l.add(r1);
 		l.add(r2);
 		
-		CaseFrame cf1 = m.defineCaseFrame("act", l);
+		CaseFrame cf1 = m.defineCaseFrame("Act", l);
 		
 		LinkedList<Relation> l2 = new LinkedList<Relation>();
 		l2.add(r3);
 		l2.add(r4);
 		
-		CaseFrame cf2 = m.defineCaseFrame("object", l2);
+		CaseFrame cf2 = m.defineCaseFrame("Entity", l2);
 		
 		LinkedList<Relation> l3 = new LinkedList<Relation>();
 		l3.add(r7);
 		l3.add(r5);
 		
-		CaseFrame plancf = m.defineCaseFrame("plan", l3);
+		CaseFrame plancf = m.defineCaseFrame("Entity", l3);
 		
 		LinkedList<Relation> l4 = new LinkedList<Relation>();
 		l4.add(r8);
 		l4.add(r5);
 		
-		CaseFrame precf = m.defineCaseFrame("precondition", l4);
+		CaseFrame precf = m.defineCaseFrame("Entity", l4);
 		
 		LinkedList<Relation> l5 = new LinkedList<Relation>();
 		l5.add(r9);
 		l5.add(r5);
 		
-		CaseFrame effectcf = m.defineCaseFrame("effect", l5);
+		CaseFrame effectcf = m.defineCaseFrame("Entity", l5);
 		
 		LinkedList<Relation> l6 = new LinkedList<Relation>();
 		l6.add(r7);
 		l6.add(r10);
 		
-		CaseFrame planGoal = m.defineCaseFrame("goal", l6);
+		CaseFrame planGoal = m.defineCaseFrame("Entity", l6);
 		
 		LinkedList<Relation> l7 = new LinkedList<Relation>();
-		l7.add(r1);
 		l7.add(r11);
 		l7.add(r12);
 		l7.add(r13);
 		
-		CaseFrame with = m.defineCaseFrame("with", l7);
+		CaseFrame with = m.defineCaseFrame("Entity", l7);
 		
 		LinkedList<Relation> l8 = new LinkedList<Relation>();
 		l8.add(r5);
 		l8.add(r6);
 		
 		
-		CaseFrame guarded = m.defineCaseFrame("guardedact", l8);
+		CaseFrame guarded = m.defineCaseFrame("Entity", l8);
 		
 		LinkedList<Relation> l9 = new LinkedList<Relation>();
 		l9.add(r14);
 		l9.add(r15);
 		
 		
-		CaseFrame property = m.defineCaseFrame("propertyobject", l9);
+		CaseFrame property = m.defineCaseFrame("Entity", l9);
 		
 	/*
 	 * Start Network

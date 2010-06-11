@@ -19,7 +19,7 @@ public class dummy extends Action
 	public void Perform()
 	{
 		
-		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
+		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNode(0);
 		LinkedList objs = ((Act) n.getEntity()).getArrangedObjects();
 		for(int i=0;i<objs.size();i++)
 		{

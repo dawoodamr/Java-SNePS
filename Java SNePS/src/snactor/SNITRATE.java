@@ -2,9 +2,7 @@ package snactor;
 
 import java.util.LinkedList;
 
-import sneps.MolecularNode;
-
-import sneps.Node;
+import sneps.*;
 
 public class SNITRATE extends Action
 {
@@ -26,7 +24,7 @@ public class SNITRATE extends Action
 	@SuppressWarnings({ "static-access", "unchecked" })
 	public void Perform()
 	{
-		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNodes().getFirst();
+		Node n = getNode().getUpCableSet().getUpCable("action").getNodeSet().getNode(0);
 		LinkedList nodes = ((Act) n.getEntity()).getArrangedObjects();
 		
 		
@@ -36,7 +34,7 @@ public class SNITRATE extends Action
 			queue.stackPush(n);
 			for(int i=0;i<nodes.size();i++)
 			{
-				x =((MolecularNode) nodes.get(i)).getCableSet().getCable("condition").getNodeSet().getNodes().getFirst();
+				x =((MolecularNode) nodes.get(i)).getCableSet().getCable("condition").getNodeSet().getNode(0);
 				testConditions(x);
 			}
 			
@@ -68,7 +66,7 @@ public class SNITRATE extends Action
 	@SuppressWarnings("static-access")
 	private void queueThenActs(LinkedList<Node> nodes)
 	{
-		y = ((MolecularNode) nodes.getFirst().getUpCableSet().getUpCable("condition").getNodeSet().getNodes().getFirst()).getCableSet().getCable("then").getNodeSet().getNodes().getFirst();
+		y = ((MolecularNode) nodes.getFirst().getUpCableSet().getUpCable("condition").getNodeSet().getNode(0)).getCableSet().getCable("then").getNodeSet().getNode(0);
 		Act a = new Act((MolecularNode) y);
 		y.setEntity(a);
 		a.setAgenda("start");
