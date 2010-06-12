@@ -45,6 +45,7 @@ import org.apache.commons.collections15.map.LazyMap;
 
 import sneps.CaseFrame;
 import sneps.CustomException;
+import sneps.Entity;
 import sneps.Network;
 import sneps.Node;
 import sneps.Relation;
@@ -479,6 +480,7 @@ public class DrawNetwork extends javax.swing.JPanel {
 						
 				} else if (s.equals("Variable Node")) {
 					Node node = network.buildVariableNode();
+					nodeName = node.getIdentifier();
 					nodesList.add(node);
 				}
 			} catch (NullPointerException e) {}
@@ -532,7 +534,7 @@ public class DrawNetwork extends javax.swing.JPanel {
 							JOptionPane.YES_NO_OPTION);
 					
 					if(result == JOptionPane.YES_OPTION) {
-						builMolNode(endVertex);
+						buildMolNode(endVertex);
 					} else if(result == JOptionPane.NO_OPTION) {
 						return "";
 					}
@@ -557,6 +559,15 @@ public class DrawNetwork extends javax.swing.JPanel {
 					icon,
 					relationsPossibilities,
 					relationsPossibilities[0]);
+					
+					try {
+						Relation rel = network.getRelation(relation);
+						Node node = network.getNode(endVertex);
+						
+						frame.getsNePSULPanel1().getMenuDrivenCommands().checkConsistency(rel, node);
+						
+					} catch (CustomException e) {}
+					
 					
 					return relation +":"+ id++;
 				//A node connected to itself
@@ -700,7 +711,7 @@ public class DrawNetwork extends javax.swing.JPanel {
             	if(molNodes.containsKey(vertex) && (!builtMolNodes.containsKey(vertex)) && graph.outDegree(vertex) > 0) {
             		 popup.add(new AbstractAction("Build Molecular Node") {
                          public void actionPerformed(ActionEvent e) {
-                        	 builMolNode((java.lang.String)vertex);
+                        	 buildMolNode((java.lang.String)vertex);
                          }});
                 	}
             		if(builtMolNodes.containsKey(vertex)) {
@@ -764,7 +775,7 @@ public class DrawNetwork extends javax.swing.JPanel {
         }
     }
     
-    private void builMolNode(String vertex) {
+    private void buildMolNode(String vertex) {
     	Collection<String> relations = graph.getOutEdges(vertex);
 	   	 int cablecounter = 0;
 	   	 Object[][] cableset = new Object[relations.size()][2];
@@ -807,6 +818,10 @@ public class DrawNetwork extends javax.swing.JPanel {
 				 }
 			 }
 		} catch (CustomException e1) {}
+		
+		frame.getNodesTreePanel1().initGUI();
+		frame.getNodesTreePanel1().validate();
+		frame.getNodesTreePanel1().repaint();
     }
     
     /**

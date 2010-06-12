@@ -163,7 +163,17 @@ public class cmdUndefineCaseFrame extends javax.swing.JPanel {
 			    Iterator<String> itr = set.iterator();
 			    while (itr.hasNext()) {
 			      str = itr.next();
-			      caseframeComboBoxModel.addElement(caseframes.get(str).getId()) ;
+			      CaseFrame caseframe = caseframes.get(str);
+			      if(!(caseframe.getId().equals("&ant,cq") || caseframe.getId().equals("arg,thresh,threshmax") 
+			    	  || caseframe.getId().equals("arg,max,min") || caseframe.getId().equals("object1,object2")
+			    	  || caseframe.getId().equals("actObject,action") || caseframe.getId().equals("ant,cq")
+			    	  || caseframe.getId().equals("&ant,cq,thresh") || caseframe.getId().equals("act,precondition")
+			    	  || caseframe.getId().equals("goal,plan") || caseframe.getId().equals("&ant,cq,emax,emin,etot,pevb")
+			    	  || caseframe.getId().equals("&ant,cq,forall") || caseframe.getId().equals("action,do,suchthat,vars")
+			    	  || caseframe.getId().equals("act,condition") || caseframe.getId().equals("act,effect")
+			    	  || caseframe.getId().equals("act,plan"))) {
+			    	  caseframeComboBoxModel.addElement(caseframe.getId()) ;
+			      }	  
 			    }
 				
 				caseframeComboBox = new JComboBox();
@@ -212,8 +222,18 @@ public class cmdUndefineCaseFrame extends javax.swing.JPanel {
 
 	    Iterator<String> itr = set.iterator();
 	    while (itr.hasNext()) {
-	      str = itr.next();
-	      caseframeComboBoxModel.addElement(caseframes.get(str).getId()) ;
+	    	str = itr.next();
+	    	CaseFrame caseframe = caseframes.get(str);
+	    	if(!(caseframe.getId().equals("&ant,cq") || caseframe.getId().equals("arg,thresh,threshmax") 
+			    	  || caseframe.getId().equals("arg,max,min") || caseframe.getId().equals("object1,object2")
+			    	  || caseframe.getId().equals("actObject,action") || caseframe.getId().equals("ant,cq")
+			    	  || caseframe.getId().equals("&ant,cq,thresh") || caseframe.getId().equals("act,precondition")
+			    	  || caseframe.getId().equals("goal,plan") || caseframe.getId().equals("&ant,cq,emax,emin,etot,pevb")
+			    	  || caseframe.getId().equals("&ant,cq,forall") || caseframe.getId().equals("action,do,suchthat,vars")
+			    	  || caseframe.getId().equals("act,condition") || caseframe.getId().equals("act,effect")
+			    	  || caseframe.getId().equals("act,plan"))) {
+		    	  caseframeComboBoxModel.addElement(caseframe.getId()) ;
+		      }	
 	    }
 	    caseframeComboBox.setModel(caseframeComboBoxModel);
 	    

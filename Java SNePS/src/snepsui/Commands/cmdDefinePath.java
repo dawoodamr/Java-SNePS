@@ -310,12 +310,12 @@ public class cmdDefinePath extends javax.swing.JPanel {
 			
 			@Override
 			public void windowClosed(WindowEvent e) {
-				System.out.println("Path Type: " + pathPanel.getResultPath().getClass().getSimpleName());
+//				System.out.println("Path Type: " + pathPanel.getResultPath().getClass().getSimpleName());
 				paths.add(pathPanel.getResultPath());
 				
 				String currentPath = frame.getsNePSULPanel1().getMenuDrivenCommands().createPath(pathPanel.getResultPath());
 				
-				System.out.println("Current Path: " + currentPath);
+//				System.out.println("Current Path: " + currentPath);
 				
 				if(pathTextField.getText().isEmpty()) {
 					pathTextField.setText(currentPath);
@@ -450,30 +450,54 @@ public class cmdDefinePath extends javax.swing.JPanel {
 						relationPossibilities,
 						relationPossibilities[0]);
 			
-			if (pathComboBox.getSelectedItem().toString().equals("unitpath")) {
-				try {
-					Path path = new FUnitPath(network.getRelation(relation).getName());
-					paths.add(path);
-					
-					if(pathTextField.getText().isEmpty()) {
-						pathTextField.setText(relation);
-					} else {
-						String previousPath = pathTextField.getText();
-						pathTextField.setText(previousPath + ", " + relation);
-					}
-				} catch (CustomException e) {}
-			} else if (pathComboBox.getSelectedItem().toString().equals("unitpath-")) {
-				try {
-					Path path = new BUnitPath(network.getRelation(relation).getName());
-					paths.add(path);
-					
-					if(pathTextField.getText().isEmpty()) {
-						pathTextField.setText(relation + "-");
-					} else {
-						String previousPath = pathTextField.getText();
-						pathTextField.setText(previousPath + ", " + relation + "-");
-					}
-				} catch (CustomException e) {}
+			if(relation != null) {
+				if (pathComboBox.getSelectedItem().toString().equals("unitpath")) {
+					try {
+						boolean contained = false;
+						if(pathTextField.getText().contains(relation)) {
+							if(pathTextField.getText().contains(relation+"-") && (!pathTextField.getText().contains(relation))) {
+								contained = false;
+							} else {
+								contained = true;
+							}
+						}
+						if(!contained) {
+							Path path = new FUnitPath(network.getRelation(relation).getName());
+							paths.add(path);
+							
+							if(pathTextField.getText().isEmpty()) {
+								pathTextField.setText(relation);
+							} else {
+								String previousPath = pathTextField.getText();
+								pathTextField.setText(previousPath + ", " + relation);
+							}
+						} else {
+							JOptionPane.showMessageDialog(this,
+									"The path is already included in the list",
+									"Warning",
+									JOptionPane.WARNING_MESSAGE);
+						}
+					} catch (CustomException e) {}
+				} else if (pathComboBox.getSelectedItem().toString().equals("unitpath-")) {
+					try {
+						if(!pathTextField.getText().contains(relation+"-")) {
+							Path path = new BUnitPath(network.getRelation(relation).getName());
+							paths.add(path);
+							
+							if(pathTextField.getText().isEmpty()) {
+								pathTextField.setText(relation + "-");
+							} else {
+								String previousPath = pathTextField.getText();
+								pathTextField.setText(previousPath + ", " + relation + "-");
+							}
+						} else {
+							JOptionPane.showMessageDialog(this,
+									"The path is already included in the list",
+									"Warning",
+									JOptionPane.WARNING_MESSAGE);
+						}
+					} catch (CustomException e) {}
+				}
 			}
 		} else if (pathComboBox.getSelectedItem().toString().equals("!")) {
 			Path path = new BangPath();
@@ -491,10 +515,12 @@ public class cmdDefinePath extends javax.swing.JPanel {
 	}
 	
 	private void removeButtonMouseClicked(MouseEvent evt) {
-		int selected = relationList.getSelectedIndex();
-		
-		relationModel.remove(selected);
-		pathModel.remove(selected);
-		listModelPaths.remove(selected);
+		try{
+			int selected = relationList.getSelectedIndex();
+			
+			relationModel.remove(selected);
+			pathModel.remove(selected);
+			listModelPaths.remove(selected);
+		} catch (Exception e) {}	
 	}
 }

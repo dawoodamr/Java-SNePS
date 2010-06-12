@@ -168,6 +168,8 @@ public class VisualizeNetworks extends javax.swing.JPanel {
 	    						return Color.blue;
 	    					} else if (node.getClass().getSimpleName().equals("ClosedNode")) {
 	    						return Color.yellow;
+	    					} else if (node.getClass().getSimpleName().equals("MolecularNode")) {
+	    						return Color.orange;
 	    					}
 	    				}
 	        		}

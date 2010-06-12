@@ -33,7 +33,6 @@ import javax.swing.table.TableCellEditor;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import snactor.Act;
 import snebr.Proposition;
 import sneps.CaseFrame;
 import sneps.CustomException;
@@ -357,73 +356,6 @@ public class cmdAdd extends javax.swing.JPanel {
 				relationNodesetTableModel.addRow(rowData);
 			}
 		} catch (CustomException e) {}
-	}
-	
-	private boolean checkConsistency(Node node, Relation relation) {
-//		for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
-//			try{
-//				
-//			} catch (Exception e) {
-//				
-//			} catch (CustomException e) {
-//				e.printStackTrace();
-//			}
-//			Vector< Object> currentDataVector = (Vector<Object>) relationNodesetTableModel.getDataVector().elementAt(i);
-//			Relation relation;
-//			
-//			relation = network.getRelation(currentDataVector.get(0).toString());
-//			
-//			
-//			
-//			String [] nodesetArray = currentDataVector.get(1).toString().split(",");
-//			
-////			for (int j = 0; j < nodesetArray.length; j++) {
-//				Node node = network.getNode(nodesetArray[j]);
-				Entity entity = node.getEntity();
-				String type = relation.getType();
-				
-				if (type.equals("Entity")) {
-					if (entity instanceof Entity) {
-						return true;
-					}
-				} else if (type.equals("Proposition")) {
-					if (entity instanceof Proposition) {
-						return true;
-					}
-				} else if (type.equals("Individual")) {
-					
-				} else if (type.equals("AndEntailment")) {
-					if (entity instanceof AndEntailment) {
-						return true;
-					}
-				} else if (type.equals("AndOr")) {
-					if (entity instanceof AndOr) {
-						return true;
-					}
-				} else if (type.equals("NumericalEntailment")) {
-					if (entity instanceof NumericalEntailment) {
-						return true;
-					}
-				} else if (type.equals("OrEntailment")) {
-					if (entity instanceof OrEntailment) {
-						
-					}
-				} else if (type.equals("Thresh")) {
-					if (entity instanceof Thresh) {
-						return true;
-					}
-				} else if (type.equals("Act")) {
-					if (entity instanceof Act) {
-						return true;
-					}
-				} else if (type.equals("Action")) {
-					if (entity instanceof snactor.Action) {
-						
-					}
-				}
-//			}
-//		}
-		return true;
 	}
 	
 	private void doneButtonMouseClicked(MouseEvent evt) {

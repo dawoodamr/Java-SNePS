@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.ActionMap;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -36,6 +37,7 @@ import sneps.CaseFrame;
 import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
+import sneps.NodeSet;
 import sneps.Relation;
 import snepsui.Interface.SNePSInterface;
 
@@ -55,14 +57,16 @@ import snepsui.Interface.SNePSInterface;
 /**
  * @author Alia Taher
  */
-@SuppressWarnings({ "unused", "unchecked" })
+@SuppressWarnings("unchecked")
 public class cmdBuild extends javax.swing.JPanel {
 	private JLabel assertLabel;
 	private JButton doneButton;
 	private JScrollPane jScrollPane1;
+	private JComboBox contextComboBox;
 	private JTable relationNodesetTable;
 	private JComboBox caseframeComboBox;
 	private JLabel caseframeLabel;
+	private JLabel contextNameLabel;
 	private JButton infoButton;
 	private Network network;
 	private DefaultTableModel relationNodesetTableModel;
@@ -91,8 +95,7 @@ public class cmdBuild extends javax.swing.JPanel {
 	}
 
 	@Action
-	public void info() {
-	}
+	public void info() {}
 
 	private ActionMap getAppActionMap() {
 		return Application.getInstance().getContext().getActionMap(this);
@@ -106,7 +109,7 @@ public class cmdBuild extends javax.swing.JPanel {
 				assertLabel = new JLabel();
 				this.add(assertLabel);
 				assertLabel.setName("assertLabel");
-				assertLabel.setBounds(66, 28, 59, 15);
+				assertLabel.setBounds(12, 28, 59, 15);
 			}
 			{
 				doneButton = new JButton();
@@ -124,6 +127,7 @@ public class cmdBuild extends javax.swing.JPanel {
 				DefaultComboBoxModel optionsComboBoxModel = new DefaultComboBoxModel();
 				optionsComboBoxModel.addElement("Choose Node Type");
 				optionsComboBoxModel.addElement("Base Node");
+				optionsComboBoxModel.addElement("Variable Node");
 				optionsComboBoxModel.addElement("build");
 				optionsComboBoxModel.addElement("find");
 				optionsComboBoxModel.addElement("assert");
@@ -147,7 +151,7 @@ public class cmdBuild extends javax.swing.JPanel {
 			{
 				jScrollPane1 = new JScrollPane();
 				this.add(jScrollPane1);
-				jScrollPane1.setBounds(130, 58, 440, 103);
+				jScrollPane1.setBounds(80, 58, 440, 103);
 				{
 					relationNodesetTableModel = new DefaultTableModel();
 					relationNodesetTableModel.addColumn("Relation");
@@ -156,6 +160,7 @@ public class cmdBuild extends javax.swing.JPanel {
 					relationNodesetTable = new JTable();
 					jScrollPane1.setViewportView(relationNodesetTable);
 					relationNodesetTable.setModel(relationNodesetTableModel);
+					relationNodesetTable.setEditingRow(0);
 					
 					relationNodesetTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(relationTextField));
 					relationNodesetTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(nodesetTextField));
@@ -175,9 +180,15 @@ public class cmdBuild extends javax.swing.JPanel {
 				infoButton.setToolTipText("info");
 			}
 			{
+				contextNameLabel = new JLabel();
+				this.add(contextNameLabel);
+				contextNameLabel.setName("contextNameLabel");
+				contextNameLabel.setBounds(532, 25, 123, 21);
+			}
+			{
 				caseframeLabel = new JLabel();
 				this.add(caseframeLabel);
-				caseframeLabel.setBounds(131, 28, 90, 15);
+				caseframeLabel.setBounds(80, 28, 90, 15);
 				caseframeLabel.setName("caseframeLabel");
 			}
 			{
@@ -196,12 +207,19 @@ public class cmdBuild extends javax.swing.JPanel {
 				caseframeComboBox = new JComboBox();
 				this.add(caseframeComboBox);
 				caseframeComboBox.setModel(caseframeComboBoxModel);
-				caseframeComboBox.setBounds(233, 24, 157, 22);
+				caseframeComboBox.setBounds(176, 24, 157, 22);
 				caseframeComboBox.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
 						caseframeComboBoxActionPerformed(evt);
 					}
 				});
+			}
+			{
+				ComboBoxModel contextComboBoxModel = new DefaultComboBoxModel();
+				contextComboBox = new JComboBox();
+				this.add(contextComboBox);
+				contextComboBox.setModel(contextComboBoxModel);
+				contextComboBox.setBounds(532, 58, 136, 22);
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
@@ -228,11 +246,21 @@ public class cmdBuild extends javax.swing.JPanel {
 		    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + nodeName, rowNumber, 1);
 		    	}
 				
-			} else if (cell.getCellEditorValue().equals("build")) {
+			} else if(cell.getCellEditorValue().equals("Variable Node")) {
+				Node varNode = network.buildVariableNode();
+				
+				String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
+				
+				if(currentNodesetValue.isEmpty()) {
+					relationNodesetTableModel.setValueAt(varNode.getIdentifier(), rowNumber, 1);
+		    	} else {
+		    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + varNode.getIdentifier(), rowNumber, 1);
+		    	}
+			}else if (cell.getCellEditorValue().equals("build")) {
 				
 				JFrame popupFrame = new JFrame("build");
 				popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				final cmdBuild buildPanel = new cmdBuild(network, frame);
+				final cmdBuild buildPanel = new cmdBuild(network, frame, popupFrame);
 				popupFrame.getContentPane().add(buildPanel);
 				popupFrame.pack();
 				popupFrame.setVisible(true);
@@ -245,7 +273,6 @@ public class cmdBuild extends javax.swing.JPanel {
 					public void windowClosed(WindowEvent e) {
 						LinkedList<Node> nodes = buildPanel.getNodes();
 					    for(Node item : nodes) {
-					    	System.out.println(item.getIdentifier());
 					    	
 					    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
 					    	
@@ -263,7 +290,7 @@ public class cmdBuild extends javax.swing.JPanel {
 			} else if (cell.getCellEditorValue().equals("assert")) {
 				JFrame popupFrame = new JFrame("assert");
 				popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				final cmdAssert assertPanel = new cmdAssert(network, frame);
+				final cmdAssert assertPanel = new cmdAssert(network, frame, popupFrame);
 				popupFrame.getContentPane().add(assertPanel);
 				popupFrame.pack();
 				popupFrame.setVisible(true);
@@ -276,7 +303,6 @@ public class cmdBuild extends javax.swing.JPanel {
 					public void windowClosed(WindowEvent e) {
 						LinkedList<Node> nodes = assertPanel.getNodes();
 					    for(Node item : nodes) {
-					    	System.out.println(item.getIdentifier());
 					    	
 					    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
 					    	
@@ -294,7 +320,7 @@ public class cmdBuild extends javax.swing.JPanel {
 			} else if (cell.getCellEditorValue().equals("find")) {
 				JFrame popupFrame = new JFrame("find");
 				popupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				final cmdFind findPanel = new cmdFind(network, frame);
+				final cmdFind findPanel = new cmdFind(network, frame, popupFrame);
 				popupFrame.getContentPane().add(findPanel);
 				popupFrame.pack();
 				popupFrame.setVisible(true);
@@ -307,7 +333,6 @@ public class cmdBuild extends javax.swing.JPanel {
 					public void windowClosed(WindowEvent e) {
 						LinkedList<Node> nodes = findPanel.getNodes();
 					    for(Node item : nodes) {
-					    	System.out.println(item.getIdentifier());
 					    	
 					    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
 					    	
@@ -324,7 +349,9 @@ public class cmdBuild extends javax.swing.JPanel {
 			}
 			relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
 			validate();
-		} catch (Exception e1) {}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	private void caseframeComboBoxActionPerformed(ActionEvent evt) {
@@ -344,32 +371,9 @@ public class cmdBuild extends javax.swing.JPanel {
 		} catch (CustomException e) {}
 	}
 	
-	private boolean checkConsistency() {
-		for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
-			try {
-				Vector< Object> currentDataVector = (Vector<Object>) relationNodesetTableModel.getDataVector().elementAt(i);
-				Relation relation = network.getRelation(currentDataVector.get(0).toString());
-				
-				
-				String [] nodesetArray = currentDataVector.get(1).toString().split(",");
-				
-				for (int j = 0; j < nodesetArray.length; j++) {
-					Node node = network.getNode(nodesetArray[j]);
-					
-					node.getEntity().getClass().getName();
-					node.getEntity().getClass().getSimpleName();
-//					System.out.println(Class.forName(relation.getType()).getName());
-//					System.out.println(Class.forName(relation.getType()).getSimpleName());
-					
-				}
-			} catch (CustomException e) {}
-		}
-		return false;
-	}
-	
 	private void doneButtonMouseClicked(MouseEvent evt) {
 		LinkedList<Relation> relationlist = new LinkedList<Relation>();
-		LinkedList<Node> nodelist = new LinkedList<Node>();
+		LinkedList<Object> nodelist = new LinkedList<Object>();
 		
 		try {
 			for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
@@ -377,58 +381,82 @@ public class cmdBuild extends javax.swing.JPanel {
 				Relation relation = network.getRelation(currentDataVector.get(0).toString());
 				
 				String [] nodesetArray = currentDataVector.get(1).toString().split(",");
-				
-				for (int j = 0; j < nodesetArray.length; j++) {
-					try {
-						
-						Node node = network.build(nodesetArray[j]);
-						if (node != null) {
-							nodelist.add(node);
+				if(!nodesetArray[0].isEmpty()) {
+					for (int j = 0; j < nodesetArray.length; j++) {
+						try {
+							Node node = network.build(nodesetArray[j]);
+							if (node != null) {
+								nodelist.add(node);
+								relationlist.add(relation);
+//								JOptionPane.showMessageDialog(this,
+//								"The node " + node.getIdentifier() + " was created successfully");
+							}
+						} catch (CustomException e) {
+//							JOptionPane.showMessageDialog(this,
+//					    			  "The node " + nodesetArray[j].toString() + "already exits",
+//					    			  "Error",
+//					    			  JOptionPane.ERROR_MESSAGE);
+							nodelist.add(network.getNode(nodesetArray[j]));
 							relationlist.add(relation);
-							JOptionPane.showMessageDialog(this,
-							"The node " + node.getIdentifier() + " was created successfully");
 						}
-					} catch (CustomException e) {
-						JOptionPane.showMessageDialog(this,
-				    			  "The node " + nodesetArray[j].toString() + "already exits",
-				    			  "Error",
-				    			  JOptionPane.ERROR_MESSAGE);
-						nodelist.add(network.getNode(nodesetArray[j]));
-						relationlist.add(relation);
 					}
+				} else if(nodesetArray.length == 1 && nodesetArray[0].isEmpty() && relation.getLimit() == 0){
+					nodelist.add(new NodeSet());
+					relationlist.add(relation);
+				} else {
+					JOptionPane.showMessageDialog(this,
+			    			  "The relation " + relation.getName() + "has to have a node, its limit is not 0",
+			    			  "Error",
+			    			  JOptionPane.ERROR_MESSAGE);
+					return;
 				}
 			}
 			
-			try {
-				Object[][] cableset = new Object[relationlist.size()][2];
-				
-				for(int i = 0; i < relationlist.size(); i++) {
-					cableset[i][0] = relationlist.get(i);
-					cableset[i][1] = nodelist.get(i);
+			if(frame.getsNePSULPanel1().getMenuDrivenCommands().checkConsistency(relationlist, nodelist)) {
+				try {
+					Object[][] cableset = new Object[relationlist.size()][2];
+					
+					for(int i = 0; i < relationlist.size(); i++) {
+						cableset[i][0] = relationlist.get(i);
+						cableset[i][1] = nodelist.get(i);
+					}
+					
+					CaseFrame caseframe = network.getCaseFrame(caseframeComboBox.getSelectedItem().toString());
+					Node node = network.build(cableset, caseframe);
+					nodes.add(node);
+				} catch (CustomException e) {
+					JOptionPane.showMessageDialog(this,
+			    			  e.getMessage(),
+			    			  "Error",
+			    			  JOptionPane.ERROR_MESSAGE);
 				}
-				
-				CaseFrame caseframe = network.getCaseFrame(caseframeComboBox.getSelectedItem().toString());
-				System.out.println("Case Frame: " + caseframe.getId());
-				Node node = network.build(cableset, caseframe);
-				System.out.println("Created Node: "+ node.getIdentifier());
-				nodes.add(node);
-			} catch (CustomException e) {
+			} else {
 				JOptionPane.showMessageDialog(this,
-		    			  "The semantic type of the relation does not match the semantic type of the corresponding node in the array",
+		    			  "The semantic classes of the given relations and nodes are inconsistent",
 		    			  "Error",
 		    			  JOptionPane.ERROR_MESSAGE);
+				
+				for(int i = 0; i < nodelist.size(); i++) {
+					Object object = nodelist.get(i);
+					if(object instanceof Node) {
+						Node node = (Node) object;
+						if(node.getUpCableSet().size() == 0) {
+							network.removeNode(node);
+						}
+					} else if (object instanceof NodeSet) {
+						break;
+					}
+				}
+				return;
 			}
+			
 		} catch (Exception e) {}
-		
-		for(int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
-			relationNodesetTableModel.removeRow(i);
-		}
 		
 		relationNodesetTableModel.getDataVector().clear();
 		
-		frame.getNodesTreePanel1().addTreeInfo();
-		frame.getMainFrame().validate();
-		frame.getMainFrame().repaint();
+		frame.getNodesTreePanel1().initGUI();
+		frame.getNodesTreePanel1().validate();
+		frame.getNodesTreePanel1().repaint();
 		
 		if(windowFrame != null) {
 			windowFrame.dispose();

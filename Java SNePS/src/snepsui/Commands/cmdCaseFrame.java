@@ -96,7 +96,7 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 			setPreferredSize(new Dimension(690, 225));
 			this.setLayout(null);
 			{
-				ComboBoxModel relationComboBoxModel = new DefaultComboBoxModel(new String [] {"Entity","Proposition","Individual"});
+				ComboBoxModel relationComboBoxModel = new DefaultComboBoxModel(new String [] {"Entity","Proposition","Individual", "NonRule"});
 				semanticClassComboBox = new JComboBox();
 				this.add(semanticClassComboBox);
 				semanticClassComboBox.setModel(relationComboBoxModel);
@@ -274,6 +274,7 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 					"The case frame is already included in the list",
 					"Warning",
 					JOptionPane.WARNING_MESSAGE);
+			relationSetTextField.setText("");
 		} else {
 			semanticClassModel.addElement(semanticClassComboBox.getSelectedItem().toString());
 			semanticClassComboBox.setSelectedIndex(0);
@@ -284,6 +285,8 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 	}
 	
 	private void doneButtonMouseClicked(MouseEvent evt) {
+		int done = 0;
+		
 		for (int i = 0; i<semanticClassModel.size(); i++) {
 			LinkedList<Relation> relationList = new LinkedList<Relation>();
 			
@@ -299,21 +302,32 @@ public class cmdCaseFrame extends javax.swing.JPanel {
 						relationList);
 				if (caseframe == null) {
 					JOptionPane.showMessageDialog(this,
-			    			  "Case frame number " + i + " wasn't created",
+			    			  "Case frame number " + relationsModel.get(i).toString() + " wasn't created",
 			    			  "Error",
 			    			  JOptionPane.ERROR_MESSAGE);
+				} else {
+					done++;
 				}
 			} catch (CustomException e) {
 				JOptionPane.showMessageDialog(this,
-		    			  "Case frame number " + i + " already exists",
+		    			  "Case frame " + relationsModel.get(i).toString() + " already exists",
 		    			  "Error",
 		    			  JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		
-		JOptionPane.showMessageDialog(this,
-		"The Case Frames have been successfully defined");
-		
+		if(done == semanticClassModel.size()) {
+			if(done==1)
+				JOptionPane.showMessageDialog(this,
+				"The Case Frame has been successfully defined");
+			else
+				JOptionPane.showMessageDialog(this,
+				"The Case Frames have been successfully defined");
+		}else if ((done < semanticClassModel.size()) && (done!=0) && (semanticClassModel.size() > 1)) {
+			JOptionPane.showMessageDialog(this,
+			"Some of the Case Frames have been successfully defined");
+		}
+	
 		semanticClassModel.removeAllElements();
 		relationsModel.removeAllElements();
 		

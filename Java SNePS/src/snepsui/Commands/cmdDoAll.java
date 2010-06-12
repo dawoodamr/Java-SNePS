@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.Vector;
 
@@ -13,6 +15,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -24,8 +27,12 @@ import javax.swing.table.TableCellEditor;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import sneps.CaseFrame;
+import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
+import sneps.NodeSet;
+import sneps.Relation;
 import snepsui.Interface.SNePSInterface;
 
 /**
@@ -60,11 +67,21 @@ public class cmdDoAll extends javax.swing.JPanel {
 	private JTextField nodesetTextField;
 	private LinkedList<Node> nodes;
 	private SNePSInterface frame;
+	private JFrame windowFrame;
 
 	public cmdDoAll(Network network, SNePSInterface frame) {
 		super();
 		this.frame = frame;
 		this.network = network;
+		nodes = new LinkedList<Node>();
+		initGUI();
+	}
+	
+	public cmdDoAll(Network network, SNePSInterface frame, JFrame windowFrame) {
+		super();
+		this.frame = frame;
+		this.network = network;
+		this.windowFrame = windowFrame;
 		nodes = new LinkedList<Node>();
 		initGUI();
 	}
@@ -92,6 +109,11 @@ public class cmdDoAll extends javax.swing.JPanel {
 				this.add(doneButton);
 				doneButton.setBounds(314, 185, 77, 29);
 				doneButton.setName("doneButton");
+				doneButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						doneButtonMouseClicked(evt);
+					}
+				});
 			}
 			{
 				options = new JComboBox();
@@ -187,51 +209,114 @@ public class cmdDoAll extends javax.swing.JPanel {
 	}
 	
 	private void optionsComboBoxActionPerformed(ActionEvent e) {
+        try {
+                int rowNumber = relationNodesetTable.getSelectedRow();
+                TableCellEditor cell = relationNodesetTable.getCellEditor(rowNumber, 2);
+                
+                if (cell.getCellEditorValue().equals("Act Node")) {
+                       frame.getsNePSULPanel1().getMenuDrivenCommands().actNodes(this ,relationNodesetTable, doneButton, relationNodesetTableModel);
+                } else {
+                	return;
+                }
+                relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
+                validate();
+        } catch (Exception e1) {}
+	}
+	
+	private void doneButtonMouseClicked(MouseEvent evt) {
+		LinkedList<Relation> relationlist = new LinkedList<Relation>();
+		LinkedList<Object> nodelist = new LinkedList<Object>();
+		
 		try {
-			int rowNumber = relationNodesetTable.getSelectedRow();
-			TableCellEditor cell = relationNodesetTable.getCellEditor(rowNumber, 2);
-			
-			if (cell.getCellEditorValue().equals("Act Node")) {
-				String nodeName = (String) JOptionPane.showInputDialog(
-						getRootPane(),
-						"Enter the name of the node:",
-						"Create a Node",
-						JOptionPane.PLAIN_MESSAGE);
+			for (int i = 0; i < relationNodesetTableModel.getRowCount(); i++) {
+				Vector< Object> currentDataVector = (Vector<Object>) relationNodesetTableModel.getDataVector().elementAt(i);
+				Relation relation = network.getRelation(currentDataVector.get(0).toString());
 				
-				String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
-				
-				if(currentNodesetValue.isEmpty()) {
-					relationNodesetTableModel.setValueAt(nodeName, rowNumber, 1);
-		    	} else {
-		    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + nodeName, rowNumber, 1);
-		    	}
-				relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
-			} else if (cell.getCellEditorValue().equals("build")) {
-			    cmdBuild build = new cmdBuild(network, frame);
-				
-			    int result = JOptionPane.showConfirmDialog(  
-			    	    this, build, "title", JOptionPane.PLAIN_MESSAGE
-			    	);
-			    
-			    if (result == JOptionPane.OK_OPTION) {
-			    	LinkedList<Node> nodes = build.getNodes();
-				    for(Node item : nodes) {
-				    	System.out.println(item.getIdentifier());
-				    	
-				    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
-				    	
-				    	if(currentNodesetValue.isEmpty()) {
-				    		relationNodesetTableModel.setValueAt(item.getIdentifier(), rowNumber, 1);
-				    	} else {
-				    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + item.getIdentifier(), rowNumber, 1);
-				    	}
-				    }
-			    }
-			    relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
+				String [] nodesetArray = currentDataVector.get(1).toString().split(",");
+				if(!nodesetArray[0].isEmpty()) {
+					for (int j = 0; j < nodesetArray.length; j++) {
+						try {
+							Node node = network.build(nodesetArray[j]);
+							if (node != null) {
+								nodelist.add(node);
+								relationlist.add(relation);
+							}
+						} catch (CustomException e) {
+							nodelist.add(network.getNode(nodesetArray[j]));
+							relationlist.add(relation);
+						}
+					}
+				} else if(nodesetArray.length == 1 && nodesetArray[0].isEmpty() && relation.getLimit() == 0){
+					nodelist.add(new NodeSet());
+					relationlist.add(relation);
+				} else {
+					JOptionPane.showMessageDialog(this,
+			    			  "The relation " + relation.getName() + "has to have a node, its limit is not 0",
+			    			  "Error",
+			    			  JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 			}
-			validate();
-		} catch (Exception e1) {
-			e1.printStackTrace();
+			
+			if(frame.getsNePSULPanel1().getMenuDrivenCommands().checkConsistency(relationlist, nodelist)) {
+				try {
+					Object[][] cableset = new Object[relationlist.size()][2];
+					
+					for(int i = 0; i < relationlist.size(); i++) {
+						cableset[i][0] = relationlist.get(i);
+						cableset[i][1] = nodelist.get(i);
+					}
+					
+					CaseFrame caseframe = network.getCaseFrame("actObject,action");
+					Node node = network.build(cableset, caseframe);
+					nodes.add(node);
+				} catch (CustomException e) {
+					JOptionPane.showMessageDialog(this,
+			    			  e.getMessage(),
+			    			  "Error",
+			    			  JOptionPane.ERROR_MESSAGE);
+				}
+			} else {
+				JOptionPane.showMessageDialog(this,
+		    			  "The semantic classes of the given relations and nodes are inconsistent",
+		    			  "Error",
+		    			  JOptionPane.ERROR_MESSAGE);
+				
+				for(int i = 0; i < nodelist.size(); i++) {
+					Object object = nodelist.get(i);
+					if(object instanceof Node) {
+						Node node = (Node) object;
+						if(node.getUpCableSet().size() == 0) {
+							network.removeNode(node);
+						}
+					} else if (object instanceof NodeSet) {
+						break;
+					}
+				}
+				return;
+			}
+			
+		} catch (Exception e) {}
+		
+		relationNodesetTableModel.getDataVector().clear();
+		
+		Vector<Object> actionData = new Vector<Object>();
+		actionData.add("action");
+		actionData.add("do-all");
+		relationNodesetTableModel.addRow(actionData);
+		
+		Vector<Object> objectData = new Vector<Object>();
+		objectData.add("object1");
+		objectData.add("");
+		objectData.add("Choose Node Type");
+		relationNodesetTableModel.addRow(objectData);
+		
+		frame.getNodesTreePanel1().initGUI();
+		frame.getNodesTreePanel1().validate();
+		frame.getNodesTreePanel1().repaint();
+		
+		if(windowFrame != null) {
+			windowFrame.dispose();
 		}
 	}
 	

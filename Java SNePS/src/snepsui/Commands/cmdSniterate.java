@@ -13,6 +13,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -60,11 +61,21 @@ public class cmdSniterate extends javax.swing.JPanel {
 	private JTextField nodesetTextField;
 	private LinkedList<Node> nodes;
 	private SNePSInterface frame;
+	private JFrame windowFrame;
 
 	public cmdSniterate(Network network, SNePSInterface frame) {
 		super();
 		this.frame = frame;
 		this.network = network;
+		nodes = new LinkedList<Node>();
+		initGUI();
+	}
+	
+	public cmdSniterate(Network network, SNePSInterface frame, JFrame windowFrame) {
+		super();
+		this.frame = frame;
+		this.network = network;
+		this.windowFrame = windowFrame;
 		nodes = new LinkedList<Node>();
 		initGUI();
 	}
@@ -97,10 +108,7 @@ public class cmdSniterate extends javax.swing.JPanel {
 				options = new JComboBox();
 				DefaultComboBoxModel optionsComboBoxModel = new DefaultComboBoxModel();
 				optionsComboBoxModel.addElement("Choose Node Type");
-				optionsComboBoxModel.addElement("Base Node");
-				optionsComboBoxModel.addElement("build");
-				optionsComboBoxModel.addElement("find");
-				optionsComboBoxModel.addElement("assert");
+				optionsComboBoxModel.addElement("Guarded Node");
 				options.setModel(optionsComboBoxModel);
 				options.addActionListener(new ActionListener() {
 					
@@ -190,97 +198,19 @@ public class cmdSniterate extends javax.swing.JPanel {
 	}
 	
 	private void optionsComboBoxActionPerformed(ActionEvent e) {
-		try {
-			int rowNumber = relationNodesetTable.getSelectedRow();
-			TableCellEditor cell = relationNodesetTable.getCellEditor(rowNumber, 2);
-			
-			if (cell.getCellEditorValue().equals("Base Node")) {
-				String nodeName = (String) JOptionPane.showInputDialog(
-						getRootPane(),
-						"Enter the name of the node:",
-						"Create a Node",
-						JOptionPane.PLAIN_MESSAGE);
-				
-				String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
-				
-				if(currentNodesetValue.isEmpty()) {
-					relationNodesetTableModel.setValueAt(nodeName, rowNumber, 1);
-		    	} else {
-		    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + nodeName, rowNumber, 1);
-		    	}
-				relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
-			} else if (cell.getCellEditorValue().equals("build")) {
-			    cmdBuild build = new cmdBuild(network, frame);
-				
-			    int result = JOptionPane.showConfirmDialog(  
-			    	    this, build, "title", JOptionPane.PLAIN_MESSAGE
-			    	);
-			    
-			    if (result == JOptionPane.OK_OPTION) {
-			    	LinkedList<Node> nodes = build.getNodes();
-				    for(Node item : nodes) {
-				    	System.out.println(item.getIdentifier());
-				    	
-				    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
-				    	
-				    	if(currentNodesetValue.isEmpty()) {
-				    		relationNodesetTableModel.setValueAt(item.getIdentifier(), rowNumber, 1);
-				    	} else {
-				    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + item.getIdentifier(), rowNumber, 1);
-				    	}
-				    }
-			    }
-			    relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
-			} else if (cell.getCellEditorValue().equals("assert")) {
-				cmdAssert assertPanel = new cmdAssert(network, frame);
-				
-			    int result = JOptionPane.showConfirmDialog(  
-			    	    this, assertPanel, "title", JOptionPane.PLAIN_MESSAGE
-			    	);
-			    
-			    if (result == JOptionPane.OK_OPTION) {
-			    	LinkedList<Node> nodes = assertPanel.getNodes();
-				    for(Node item : nodes) {
-				    	System.out.println(item.getIdentifier());
-				    	
-				    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
-				    	
-				    	if(currentNodesetValue.toString().isEmpty()) {
-				    		relationNodesetTableModel.setValueAt(item.getIdentifier(), rowNumber, 1);
-				    	} else {
-				    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + item.getIdentifier(), rowNumber, 1);
-				    	}
-				    }
-			    }
-			    relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
-			} else if (cell.getCellEditorValue().equals("find")) {
-				cmdFind assertPanel = new cmdFind(network, frame);
-				
-			    int result = JOptionPane.showConfirmDialog(  
-			    	    this, assertPanel, "title", JOptionPane.PLAIN_MESSAGE
-			    	);
-			    
-			    if (result == JOptionPane.OK_OPTION) {
-			    	LinkedList<Node> nodes = assertPanel.getNodes();
-				    for(Node item : nodes) {
-				    	System.out.println(item.getIdentifier());
-				    	
-				    	String currentNodesetValue = relationNodesetTableModel.getValueAt(rowNumber, 1).toString();
-				    	
-				    	if(currentNodesetValue.isEmpty()) {
-				    		relationNodesetTableModel.setValueAt(item.getIdentifier(), rowNumber, 1);
-				    	} else {
-				    		relationNodesetTableModel.setValueAt(currentNodesetValue + ", " + item.getIdentifier(), rowNumber, 1);
-				    	}
-				    }
-			    }
-			    relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
-			}
-			validate();
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-	}
+        try {
+                int rowNumber = relationNodesetTable.getSelectedRow();
+                TableCellEditor cell = relationNodesetTable.getCellEditor(rowNumber, 2);
+                
+                if (cell.getCellEditorValue().equals("Guarded Node")) {
+                       frame.getsNePSULPanel1().getMenuDrivenCommands().actNodes(this ,relationNodesetTable, doneButton, relationNodesetTableModel);
+                } else {
+                	return;
+                }
+                relationNodesetTable.setValueAt(options.getItemAt(0), rowNumber, 2);
+                validate();
+        } catch (Exception e1) {}
+}
 	
 	public LinkedList<Node> getNodes() {
 		return nodes;

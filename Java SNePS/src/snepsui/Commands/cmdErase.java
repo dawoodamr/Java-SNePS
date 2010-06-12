@@ -24,6 +24,7 @@ import org.jdesktop.application.Application;
 import sneps.CustomException;
 import sneps.Network;
 import sneps.Node;
+import snepsui.Interface.SNePSInterface;
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -52,24 +53,22 @@ public class cmdErase extends javax.swing.JPanel {
 	private JLabel nodesetLabel;
 	private JButton infoButton;
 	private Network network;
+	private SNePSInterface frame;
 	
 	@Action
-    public void add() {
-    	
-    }
+    public void add() {}
 	
 	@Action
-    public void info() {
-    	
-    }
+    public void info() {}
 	
 	private ActionMap getAppActionMap() {
         return Application.getInstance().getContext().getActionMap(this);
     }
 	
-	public cmdErase(Network network) {
+	public cmdErase(Network network, SNePSInterface frame) {
 		super();
 		this.network = network;
+		this.frame = frame;
 		initGUI();
 	}
 	
@@ -182,6 +181,10 @@ public class cmdErase extends javax.swing.JPanel {
 	      nodesetComboBoxModel.addElement(nodes.get(str).getIdentifier()) ;
 	    }
 	    nodesetComboBox.setModel(nodesetComboBoxModel);
+	    
+	    frame.getNodesTreePanel1().initGUI();
+		frame.getNodesTreePanel1().validate();
+		frame.getNodesTreePanel1().repaint();
 		
 		this.repaint();
 		this.validate();

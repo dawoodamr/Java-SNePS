@@ -13,6 +13,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -60,11 +61,21 @@ public class cmdSnif extends javax.swing.JPanel {
 	private JTextField nodesetTextField;
 	private LinkedList<Node> nodes;
 	private SNePSInterface frame;
+	private JFrame windowFrame;
 
 	public cmdSnif(Network network, SNePSInterface frame) {
 		super();
 		this.frame = frame;
 		this.network = network;
+		nodes = new LinkedList<Node>();
+		initGUI();
+	}
+	
+	public cmdSnif(Network network, SNePSInterface frame, JFrame windowFrame) {
+		super();
+		this.frame = frame;
+		this.network = network;
+		this.windowFrame = windowFrame;
 		nodes = new LinkedList<Node>();
 		initGUI();
 	}

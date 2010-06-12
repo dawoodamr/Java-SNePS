@@ -13,6 +13,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -24,6 +25,7 @@ import javax.swing.table.TableCellEditor;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import snactor.WITHALL;
 import sneps.Network;
 import sneps.Node;
 import snepsui.Interface.SNePSInterface;
@@ -60,11 +62,21 @@ public class cmdWithAll extends javax.swing.JPanel {
 	private JTextField nodesetTextField;
 	private LinkedList<Node> nodes;
 	private SNePSInterface frame;
+	private JFrame windowFrame;
 
 	public cmdWithAll(Network network, SNePSInterface frame) {
 		super();
 		this.frame = frame;
 		this.network = network;
+		nodes = new LinkedList<Node>();
+		initGUI();
+	}
+	
+	public cmdWithAll(Network network, SNePSInterface frame, JFrame windowFrame) {
+		super();
+		this.frame = frame;
+		this.network = network;
+		this.windowFrame = windowFrame;
 		nodes = new LinkedList<Node>();
 		initGUI();
 	}

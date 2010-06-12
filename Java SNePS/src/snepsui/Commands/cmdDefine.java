@@ -12,6 +12,7 @@ import javax.swing.ActionMap;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -78,6 +79,28 @@ public class cmdDefine extends javax.swing.JPanel {
 	private JButton removeButton;
 	private ComboBoxModel adjustComboBoxModel;
 	private SNePSInterface frame;
+	
+	private String instructions =
+		"<html>"+
+        "<h3>Define a Relation:</h3>"+
+        "<ul>"+
+        "<li>Insert the data needed the name of the relation, type, adjustability and limit, to define " +
+        "the relation." +
+        "<li>Press on the add button, the button with the plus sign,to add the inserted data into the "+
+        "relation to be defined."+
+        "<li> When done with inserting all the data concerning the relations to be define in the network, <br/>" +
+        "click on the \"Done\" button. All the relations included in the list will be defined in the <br/>" +
+        "network a messahe appears either with the success or failure of the operation."+
+
+        "</ul>"+
+        "<h3>Restrictions:</h3>"+
+        "<ul>"+
+        "<li>The relation name cannot be one of an already defined one."+
+        "<li>The limit should be a non-negative number."+
+        "<li>All the fields have to be provided with an input, empty are not allowed."+
+        "</ul>"+
+        
+        "</html>";
 
 	@Action
     public void add() {}
@@ -172,6 +195,15 @@ public class cmdDefine extends javax.swing.JPanel {
 				infoButton.setContentAreaFilled(false);
 				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
+				infoButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						 JOptionPane.showMessageDialog(getRootPane(), 
+			                		instructions, 
+			                		"Instructions", 
+			                		JOptionPane.INFORMATION_MESSAGE,
+			                		new ImageIcon("src/snepsui/Interface/resources/icons/info.png"));
+					}
+				});
 			}
 			{
 				realtionsLabel = new JLabel();
@@ -180,7 +212,7 @@ public class cmdDefine extends javax.swing.JPanel {
 				realtionsLabel.setName("realtionsLabel");
 			}
 			{
-				typeComboBoxModel = new DefaultComboBoxModel(new String [] {"Entity","Proposition","Individual","AndEntailment",
+				typeComboBoxModel = new DefaultComboBoxModel(new String [] {"Entity","Proposition","NonRule", "Individual","AndEntailment",
 						"AndOr","NumericalEntailment","OrEntailment","Thresh","Act","Action"});
 				typeComboBox = new JComboBox();
 				this.add(typeComboBox);
@@ -427,6 +459,5 @@ public class cmdDefine extends javax.swing.JPanel {
 			adjustModel.remove(selected);
 			limitModel.remove(selected);
 		} catch (Exception e) {}
-		
 	}
 }

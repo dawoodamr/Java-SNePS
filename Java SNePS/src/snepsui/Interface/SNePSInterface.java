@@ -21,6 +21,7 @@ import java.util.Set;
 
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -43,6 +44,7 @@ import org.jdesktop.application.SingleFrameApplication;
 import sneps.CaseFrame;
 import sneps.Network;
 import sneps.Node;
+import sneps.PatternNode;
 import sneps.Relation;
 
 /**
@@ -97,7 +99,7 @@ public class SNePSInterface extends SingleFrameApplication {
     private JMenuItem nodesresetMenuItem;
     private JMenu resetmenuMenu;
     private JCheckBoxMenuItem tracingCheckBoxMenuItem;
-    private JMenuItem undefineCaseframeMenuItem;
+	private JMenuItem undefineCaseframeMenuItem;
     private JMenuItem defineCaseframeMenuItem;
     private JMenu caseframesMenu;
     private JMenuItem performMenuItem;
@@ -166,11 +168,6 @@ public class SNePSInterface extends SingleFrameApplication {
     private JMenu deletingInformationMenu;
     private JMenu jMenu2;
     private JLabel jLabel1;
-    private JMenuItem jMenuItem7;
-    private JMenuItem jMenuItem6;
-    private JMenuItem jMenuItem5;
-    private JMenuItem jMenuItem4;
-    private JMenu editMenu;
     private JMenuItem jMenuItem3;
     private JMenuItem jMenuItem2;
     private JMenuItem jMenuItem1;
@@ -187,6 +184,7 @@ public class SNePSInterface extends SingleFrameApplication {
     private JButton showNetworkButton;
     private JToolBar toolBar;
     private ResultNodes nodesResult;
+    private ButtonGroup resetButtonGroup;
     private int previousTab = 0;
     private boolean viewNetworkClickCount;
     private Network network;
@@ -327,6 +325,11 @@ public class SNePSInterface extends SingleFrameApplication {
                         toolBar.add(saveButton);
                         saveButton.setAction(getAppActionMap().get("save"));
                         saveButton.setFocusable(false);
+                    	saveButton.addMouseListener(new MouseAdapter() {
+                    		public void mouseClicked(MouseEvent evt) {
+                    			saveButtonMouseClicked(evt);
+                    		}
+                    	});
                     }
                     {
                     	assertButton = new JButton();
@@ -337,12 +340,7 @@ public class SNePSInterface extends SingleFrameApplication {
                     			assertButtonMouseClicked(evt);
                     		}
                     	});
-                    	saveButton.setFocusable(false);
-                    	saveButton.addMouseListener(new MouseAdapter() {
-                    		public void mouseClicked(MouseEvent evt) {
-                    			saveButtonMouseClicked(evt);
-                    		}
-                    	});
+                    	
                     }
                     {
                     	findButton = new JButton();
@@ -415,41 +413,31 @@ public class SNePSInterface extends SingleFrameApplication {
                 jMenuItem1 = new JMenuItem();
                 fileMenu.add(jMenuItem1);
                 jMenuItem1.setAction(getAppActionMap().get("newFile"));
+                jMenuItem1.addMouseListener(new MouseAdapter() {
+                	public void mouseClicked(MouseEvent evt) {
+                		newButtonActionPerformed();
+                	}
+                });
             }
             {
                 jMenuItem2 = new JMenuItem();
                 fileMenu.add(jMenuItem2);
                 jMenuItem2.setAction(getAppActionMap().get("open"));
+                jMenuItem2.addMouseListener(new MouseAdapter() {
+                	public void mouseClicked(MouseEvent evt) {
+                		openButtonMouseClicked(evt);
+                	}
+                });
             }
             {
                 jMenuItem3 = new JMenuItem();
                 fileMenu.add(jMenuItem3);
                 jMenuItem3.setAction(getAppActionMap().get("save"));
-            }
-        }
-        {
-            editMenu = new JMenu();
-            menuBar.add(editMenu);
-            editMenu.setName("editMenu");
-        {
-                jMenuItem4 = new JMenuItem();
-                editMenu.add(jMenuItem4);
-                jMenuItem4.setAction(getAppActionMap().get("copy"));
-            }
-            {
-                jMenuItem5 = new JMenuItem();
-                editMenu.add(jMenuItem5);
-                jMenuItem5.setAction(getAppActionMap().get("cut"));
-            }
-            {
-                jMenuItem6 = new JMenuItem();
-                editMenu.add(jMenuItem6);
-                jMenuItem6.setAction(getAppActionMap().get("paste"));
-            }
-            {
-                jMenuItem7 = new JMenuItem();
-                editMenu.add(jMenuItem7);
-                jMenuItem7.setAction(getAppActionMap().get("delete"));
+                jMenuItem3.addMouseListener(new MouseAdapter() {
+                	public void mouseClicked(MouseEvent evt) {
+                		saveButtonMouseClicked(evt);
+                	}
+                });
             }
         }
         {
@@ -1215,13 +1203,17 @@ public class SNePSInterface extends SingleFrameApplication {
         		resetnetrelationMenu = new JMenu();
         		jMenu1.add(resetnetrelationMenu);
         		resetnetrelationMenu.setName("resetnetrelationMenu");
+        		resetButtonGroup = new ButtonGroup();
         		{
         			relationresetCheckBoxMenuItem = new JCheckBoxMenuItem();
-        			resetnetrelationMenu.add(relationresetCheckBoxMenuItem);
+        			resetButtonGroup.add(relationresetCheckBoxMenuItem);
+        			relationresetCheckBoxMenuItem.setSelected(true);
         			relationresetCheckBoxMenuItem.setName("relationresetCheckBoxMenuItem");
+        			resetnetrelationMenu.add(relationresetCheckBoxMenuItem);
         		}
         		{
         			keepsomeinforCheckBoxMenuItem = new JCheckBoxMenuItem();
+        			resetButtonGroup.add(keepsomeinforCheckBoxMenuItem);
         			resetnetrelationMenu.add(keepsomeinforCheckBoxMenuItem);
         			keepsomeinforCheckBoxMenuItem.setName("keepsomeinforCheckBoxMenuItem");
         		}
@@ -1567,6 +1559,9 @@ public class SNePSInterface extends SingleFrameApplication {
 		sNePSULPanel1.getMenuDrivenCommands().undefineCaseFrameMenuButton();
 	}
     
+	/**
+	 * 
+	 */
 	private void switchToCommandsTab() {
 		sNePSULPanel1.getjTabbedPane1().setSelectedIndex(0);
 		
@@ -1592,6 +1587,9 @@ public class SNePSInterface extends SingleFrameApplication {
 		previousTab = 0;
 	}
 	
+	/**
+	 * 
+	 */
 	private void switchToVisualizeNetwork() {
 		outputPanel1.setVisible(false);
 		tracingPanel1.setVisible(false);
@@ -1626,11 +1624,11 @@ public class SNePSInterface extends SingleFrameApplication {
     	this.network = network;
     	try {
     		/*Connectives*/
-    		Relation relation1 = network.defineRelation("&ant", "Entity", "none", 1);
-    		Relation relation2 = network.defineRelation("cq", "Entity", "none", 1);
-    		Relation relation3 = network.defineRelation("ant", "Entity", "none", 1);
+    		Relation relation1 = network.defineRelation("&ant", "Entity", "expand",2);
+    		Relation relation2 = network.defineRelation("cq", "Entity", "expand", 1);
+    		Relation relation3 = network.defineRelation("ant", "Entity", "expand", 1);
     		Relation relation4 = network.defineRelation("thresh", "Entity", "none", 1);
-    		Relation relation5 = network.defineRelation("arg", "Entity", "none", 1);
+    		Relation relation5 = network.defineRelation("arg", "Entity", "expand", 1);
     		Relation relation6 = network.defineRelation("min", "Entity", "none", 1);
     		Relation relation7 = network.defineRelation("max", "Entity", "none", 1);
     		Relation relation8 = network.defineRelation("threshmax", "Entity", "none", 1);
@@ -1669,12 +1667,20 @@ public class SNePSInterface extends SingleFrameApplication {
     		CaseFrame caseframe5 = network.defineCaseFrame("Thresh", relations5);
     		
     		/*Acting*/
-    		Relation relation9 = network.defineRelation("action", "Entity", "none", 1);
+    		Relation relation9 = network.defineRelation("action", "Action", "none", 1);
     		Relation relation10 = network.defineRelation("actObject", "Entity", "none", 0);
     		Relation relation11 = network.defineRelation("object1", "Entity", "none", 1);
     		Relation relation12 = network.defineRelation("object2", "Entity", "none", 0);
     		Relation relation13 = network.defineRelation("condition", "Entity", "none", 1);
     		Relation relation14 = network.defineRelation("then", "Entity", "none", 0);
+    		Relation relation15 = network.defineRelation("act", "Act", "none", 1);
+    		Relation relation16 = network.defineRelation("plan", "Entity", "none", 1);
+    		Relation relation17 = network.defineRelation("precondition", "Entity", "none", 1);
+    		Relation relation18 = network.defineRelation("effect", "Entity", "none", 1);
+    		Relation relation19 = network.defineRelation("goal", "Entity", "none", 1);
+    		Relation relation20 = network.defineRelation("do", "Entity", "none", 1);
+    		Relation relation21 = network.defineRelation("vars", "Entity", "none", 1);
+    		Relation relation22 = network.defineRelation("suchthat", "Entity", "none", 1);
     		
     		//Act
     		LinkedList<Relation> relations6 = new LinkedList<Relation>();
@@ -1686,216 +1692,70 @@ public class SNePSInterface extends SingleFrameApplication {
     		LinkedList<Relation> relations7 = new LinkedList<Relation>();
     		relations7.add(relation11); //object1
     		relations7.add(relation12); //object2
-    		CaseFrame caseframe7 = network.defineCaseFrame("Action", relations7);
+    		CaseFrame caseframe7 = network.defineCaseFrame("Entity", relations7);
     		
-    		//Define the Relations
-        	Relation rr1 = network.defineRelation("member","Entity","reduce",0);
-        	Relation rr2 = network.defineRelation("class","Entity","reduce",0);
-        	Relation rr3 = network.defineRelation("object","Entity","reduce",0);
-        	Relation rr4 = network.defineRelation("isa","Entity","reduce",0);
-        	Relation rr5 = network.defineRelation("has","Entity","reduce",0);
-        	Relation r7 = network.defineRelation("obj", "Entity", "none", 0);
-    		Relation r8 = network.defineRelation("lex", "Entity", "none", 0);
-    		Relation r9 = network.defineRelation("property", "Entity", "none", 0);
-    		Relation r10 = network.defineRelation("name", "Entity", "none", 0);
-        	
-        	//Define the Case Frames
-        	LinkedList<Relation> rs1 = new LinkedList<Relation>();
-        	rs1.add(rr1);
-        	rs1.add(rr2);
-        	CaseFrame cf1 = network.defineCaseFrame("Entity", rs1);
-        	
-        	LinkedList<Relation> rs2 = new LinkedList<Relation>();
-        	rs2.add(rr3);
-        	rs2.add(rr4);
-        	CaseFrame cf2 = network.defineCaseFrame("Entity", rs2);
-        	
-        	LinkedList<Relation> rs3 = new LinkedList<Relation>();
-        	rs3.add(rr3);
-        	rs3.add(rr5);
-        	CaseFrame cf3 = network.defineCaseFrame("Entity", rs3);
-        	
-        	LinkedList<Relation> l4 = new LinkedList<Relation>();
-    		l4.add(r7);
-    		l4.add(r10);
+    		//Guarded Node
+    		LinkedList<Relation> relations8 = new LinkedList<Relation>();
+    		relations8.add(relation13); //condition
+    		relations8.add(relation15); //act
+    		CaseFrame caseframe8 = network.defineCaseFrame("Entity", relations8);
     		
-    		LinkedList<Relation> l5 = new LinkedList<Relation>();
-    		l5.add(r7);
-    		l5.add(r9);
+    		//Withall and Withsome
+    		LinkedList<Relation> relations9 = new LinkedList<Relation>();
+    		relations9.add(relation9);  //action
+    		relations9.add(relation21); //vars
+    		relations9.add(relation22); //suchthat
+    		relations9.add(relation20); //do
+    		//relations9.add();			//else
+    		CaseFrame caseframe9 = network.defineCaseFrame("Entity", relations9);
     		
-    		LinkedList<Relation> l6 = new LinkedList<Relation>();
-    		l6.add(r8);
+    		//Complex Act
+    		LinkedList<Relation> relations10 = new LinkedList<Relation>();
+    		relations10.add(relation15); //act
+    		relations10.add(relation16); //plan
+    		CaseFrame caseframe10 = network.defineCaseFrame("Entity", relations10);
     		
-    		network.defineCaseFrame("Entity", l4);
-    		network.defineCaseFrame("Entity", l5);
-    		network.defineCaseFrame("Entity", l6);
-        	
-        	//Build Base Nodes
-        	//Node node = network.build("Clyde");
-        	//Node node1 = network.build("Dumbo");
-        	//Node node2 = network.build("elephant");
-        	//Node node3 = network.build("Tweety");
-        	Node node4 = network.build("canary");
-        	Node node5 = network.build("Opus");
-        	//Node node6 = network.build("bird");
-        	Node node7 = network.build("elephant"); 
-        	Node node8 = network.build("animal");
-        	Node node9 = network.build("circus elephant");
-        	//Node node10 = network.build("elephant");
-        	Node node11 = network.build("Dumbo");
-        	//Node node12 = network.build("circus elephant");
-        	Node node13 = network.build("Clyde");
-        	Node node14 = network.build("bird");
-        	Node node15 = network.build("Tweety");
-        	Node node16 = network.build("head");
-        	Node node17 = network.build("mouth");
-        	Node node18 = network.build("trunk");
-        	Node node19 = network.build("appendage");
-        	
-        	// 1) (assert member (Clyde, Dumbo) class elephant)
-        	Object[][] o1 = new Object[3][2];
-        	o1[0][0] = rr1;
-        	o1[0][1] = node13;
-        	o1[1][0] = rr1;
-        	o1[1][1] = node11;
-        	o1[2][0] = rr2;
-        	o1[2][1] = node7;
-        	
-        	Node res1 = network.build(o1,cf1);
-//        	System.out.println("Created Node: " + res1.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res1.getIdentifier()).getIdentifier());
-        	
-        	// 2)(assert member Tweety class canary)
-        	Object[][] o2 = new Object[2][2];
-        	o2[0][0] = rr1;
-        	o2[0][1] = node15;
-        	o2[1][0] = rr2;
-        	o2[1][1] = node4;
-        	
-        	Node res2 = network.build(o2,cf1);
-//        	System.out.println("Created Node: " + res2.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res2.getIdentifier()).getIdentifier());
-        	
-        	// 3) (assert member Opus class bird)
-        	Object[][] o3 = new Object[2][2];
-        	o3[0][0] = rr1;
-        	o3[0][1] = node5;
-        	o3[1][0] = rr2;
-        	o3[1][1] = node14;
-        	
-        	Node res3 = network.build(o3,cf1);
-//        	System.out.println("Created Node: " + res3.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res3.getIdentifier()).getIdentifier());
-        	
-        	// 4) (assert object elephant isa animal)
-        	Object[][] o4 = new Object[2][2];
-        	o4[0][0] = rr3;
-        	o4[0][1] = node7;
-        	o4[1][0] = rr4;
-        	o4[1][1] = node8;
-        	
-        	Node res4 = network.build(o4,cf2);
-//        	System.out.println("Created Node: " + res4.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res4.getIdentifier()).getIdentifier());
-        	
-        	// 5) (assert object circus\ elephant isa elephant)
-        	Object[][] o5 = new Object[2][2];
-        	o5[0][0] = rr3;
-        	o5[0][1] = node9;
-        	o5[1][0] = rr4;
-        	o5[1][1] = node7;
-        	
-        	Node res5 = network.build(o5,cf2);
-//        	System.out.println("Created Node: " + res5.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res5.getIdentifier()).getIdentifier());
-        	
-        	// 6) (assert object Dumbo isa circus\ elephant)
-        	Object[][] o6 = new Object[2][2];
-        	o6[0][0] = rr3;
-        	o6[0][1] = node11;
-        	o6[1][0] = rr4;
-        	o6[1][1] = node9;
-        	
-        	Node res6 = network.build(o6,cf2);
-//        	System.out.println("Created Node: " + res6.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res6.getIdentifier()).getIdentifier());
-        	
-        	// 7) (assert object Clyde isa animal)
-        	Object[][] o7 = new Object[2][2];
-        	o7[0][0] = rr3;
-        	o7[0][1] = node13;
-        	o7[1][0] = rr4;
-        	o7[1][1] = node8;
-        	
-        	Node res7 = network.build(o7,cf2);
-//        	System.out.println("Created Node: " + res7.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res7.getIdentifier()).getIdentifier());
-        	
-        	// 8) (assert object bird isa animal)
-        	Object[][] o8 = new Object[2][2];
-        	o8[0][0] = rr3;
-        	o8[0][1] = node14;
-        	o8[1][0] = rr4;
-        	o8[1][1] = node8;
-        	
-        	Node res8 = network.build(o8,cf2);
-//        	System.out.println("Created Node: " + res8.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res8.getIdentifier()).getIdentifier());
-        	
-        	// 9) (assert object Tweety isa bird)
-        	Object[][] o9 = new Object[2][2];
-        	o9[0][0] = rr3;
-        	o9[0][1] = node15;
-        	o9[1][0] = rr4;
-        	o9[1][1] = node14;
-        	
-        	Node res9 = network.build(o9,cf2);
-//        	System.out.println("Created Node: " + res9.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res9.getIdentifier()).getIdentifier());
-        	
-        	// 10) (assert object animal has head)
-        	Object[][] o10 = new Object[2][2];
-        	o10[0][0] = rr3;
-        	o10[0][1] = node8;
-        	o10[1][0] = rr5;
-        	o10[1][1] = node16;
-        	
-        	Node res10 = network.build(o10,cf3);
-//        	System.out.println("Created Node: " + res10.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res10.getIdentifier()).getIdentifier());
-        	
-        	// 11) (assert object head has mouth)
-        	Object[][] o11 = new Object[2][2];
-        	o11[0][0] = rr3;
-        	o11[0][1] = node16;
-        	o11[1][0] = rr5;
-        	o11[1][1] = node17;
-        	
-        	Node res11 = network.build(o11,cf3);
-//        	System.out.println("Created Node: " + res11.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res11.getIdentifier()).getIdentifier());
-        	
-        	// 12) (assert object elephant has trunk)
-        	Object[][] o12 = new Object[2][2];
-        	o12[0][0] = rr3;
-        	o12[0][1] = node7;
-        	o12[1][0] = rr5;
-        	o12[1][1] = node18;
-        	
-        	Node res12 = network.build(o12,cf3);
-//        	System.out.println("Created Node: " + res12.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res12.getIdentifier()).getIdentifier());
-        	
-        	// 13) (assert object trunk isa appendage)
-        	Object[][] o13 = new Object[2][2];
-        	o13[0][0] = rr3;
-        	o13[0][1] = node18;
-        	o13[1][0] = rr5;
-        	o13[1][1] = node19;
-        	
-        	Node res13 = network.build(o13,cf2);
-//        	System.out.println("Created Node: " + res13.getIdentifier());
-//        	System.out.println("Network Nodes: " + network.getNodes().get(res13.getIdentifier()).getIdentifier());
+    		//Goals
+    		LinkedList<Relation> relations11 = new LinkedList<Relation>();
+    		relations11.add(relation19); //goal
+    		relations11.add(relation16); //plan
+    		CaseFrame caseframe11 = network.defineCaseFrame("Entity", relations11);
+    		
+    		//Precondition
+    		LinkedList<Relation> relations12 = new LinkedList<Relation>();
+    		relations12.add(relation15); //act
+    		relations12.add(relation17); //precondition
+    		CaseFrame caseframe12 = network.defineCaseFrame("Entity", relations12);
+    		
+    		//Effect
+    		LinkedList<Relation> relations13 = new LinkedList<Relation>();
+    		relations13.add(relation15); //act
+    		relations13.add(relation18); //effect
+    		CaseFrame caseframe13 = network.defineCaseFrame("Entity", relations13);
+    		
+    		/*Quantifiers*/
+    		Relation relation23 = network.defineRelation("forall", "Entity", "expand", 1);
+    		Relation relation24 = network.defineRelation("emin", "Entity", "none", 1);
+    		Relation relation25 = network.defineRelation("emax", "Entity", "none", 1);
+    		Relation relation26 = network.defineRelation("etot", "Entity", "none", 1);
+    		Relation relation27 = network.defineRelation("pevb", "Entity", "expand", 1);
+    		
+    		//Universal Quantifier
+    		LinkedList<Relation> relations14 = new LinkedList<Relation>();
+    		relations14.add(relation23); //forall
+    		relations14.add(relation1);  //&ant
+    		relations14.add(relation2);  //cq
+    		CaseFrame caseframe14 = network.defineCaseFrame("Entity", relations14);
+    		
+    		//Numerical Quantifier
+    		LinkedList<Relation> relations15 = new LinkedList<Relation>();
+    		relations15.add(relation24); //emin
+    		relations15.add(relation25); //emax
+    		relations15.add(relation26); //etot
+    		relations15.add(relation27); //pevb
+    		relations15.add(relation1); //&ant
+    		relations15.add(relation2); //cq
+    		CaseFrame caseframe15 = network.defineCaseFrame("Entity", relations15);
     	} catch (Exception e) {}
     	sNePSULPanel1.getMenuDrivenCommands().setNetwork(network);
     	sNePSULPanel1.getVisualizeNetworks().setNetwork(network);
@@ -2036,6 +1896,10 @@ public class SNePSInterface extends SingleFrameApplication {
 		}
 	}
     
+    /**
+     * 
+     * @param evt
+     */
     private void openButtonMouseClicked(MouseEvent evt) {
 	JFileChooser chooser  = new JFileChooser();
 	int option = chooser.showOpenDialog(this.getMainFrame());
@@ -2062,45 +1926,12 @@ public class SNePSInterface extends SingleFrameApplication {
 	}
     
     /**
-     * @return the panel that includes the tabs with the commands, drawing network and visualizing network panels
+     * 
+     * @param evt
      */
-    public SNePSULPanel getsNePSULPanel1() {
-		return sNePSULPanel1;
-	}
-    
-    /**
-     * @return the panel that any output is displayed in
-     */
-	public OutputPanel getOutputPanel1() {
-		return outputPanel1;
-	}
-	
-	/**
-	 * @return the panel that includes the tree with all the network information such as all the nodes, relations 
-	 * and case frames in the network
-	 */
-	public NodesTreePanel getNodesTreePanel1() {
-		return nodesTreePanel1;
-	}
-    
-	/**
-	 * @return the panels that includes a list of all the nodes that resulted from an output
-	 */
-    public ResultNodes getNodesResult() {
-		return nodesResult;
-	}
-    
-    public TracingPanel getTracingPanel1() {
-		return tracingPanel1;
-	}
-    
-    public Network getNetwork() {
-		return network;
-	}
-	
-	private void resetnetButtonMouseClicked(MouseEvent evt) {
+    private void resetnetButtonMouseClicked(MouseEvent evt) {
 		Icon icon = new ImageIcon();
-		Object[] possibilities = {"Nodes", "Relations", "Case Frames"};
+		Object[] possibilities = {"Network", "Nodes", "Relations", "Case Frames"};
 		
 		String result = (String)JOptionPane.showInputDialog(
 				getMainFrame(),
@@ -2109,7 +1940,7 @@ public class SNePSInterface extends SingleFrameApplication {
 				JOptionPane.OK_OPTION,
 				icon,
 				possibilities,
-				"Nodes");
+				"Network");
 		
 		if(result == "Nodes") {
 			while(true) {
@@ -2158,6 +1989,31 @@ public class SNePSInterface extends SingleFrameApplication {
 			for (CaseFrame caseframe : caseframesList) {
 				network.undefineCaseFrame(caseframe.getId());
 			}
+		} else if(result == "Network") {
+			if(relationresetCheckBoxMenuItem.isSelected()) {
+				newButtonActionPerformed();
+			} else if (keepsomeinforCheckBoxMenuItem.isSelected()) {
+				while(true) {
+					LinkedList<Node> nodesList = new LinkedList<Node>();
+					Hashtable<String, Node> nodes = network.getNodes();
+					
+					if(nodes.isEmpty()) {
+						break;
+					}
+					
+					Set<String> nodesSet = nodes.keySet();
+					Iterator<String> nodesItr = nodesSet.iterator();
+					while (nodesItr.hasNext()) {
+						nodesList.add(nodes.get(nodesItr.next()));
+					}
+					
+					for (Node node : nodesList) {
+						if(node.getUpCableSet().size() == 0) {
+							network.removeNode(node);
+						}
+					}
+				}
+			}
 		} else {
 			return;
 		}
@@ -2165,6 +2021,59 @@ public class SNePSInterface extends SingleFrameApplication {
 		nodesTreePanel1.initGUI();
 		nodesTreePanel1.validate();
 		nodesTreePanel1.repaint();
+	}
+    
+    /**
+     * @return the panel that includes the tabs with the commands, drawing network and visualizing network panels
+     */
+    public SNePSULPanel getsNePSULPanel1() {
+		return sNePSULPanel1;
+	}
+    
+    /**
+     * @return the panel that any output is displayed in
+     */
+	public OutputPanel getOutputPanel1() {
+		return outputPanel1;
+	}
+	
+	/**
+	 * @return the panel that includes the tree with all the network information such as all the nodes, relations 
+	 * and case frames in the network
+	 */
+	public NodesTreePanel getNodesTreePanel1() {
+		return nodesTreePanel1;
+	}
+    
+	/**
+	 * @return the panels that includes a list of all the nodes that resulted from an output
+	 */
+    public ResultNodes getNodesResult() {
+		return nodesResult;
+	}
+    
+    /**
+     * 
+     * @return
+     */
+    public TracingPanel getTracingPanel1() {
+		return tracingPanel1;
+	}
+    
+    /**
+     * 
+     * @return
+     */
+    public Network getNetwork() {
+		return network;
+	}
+    
+    /**
+     * 
+     * @return
+     */
+    public JCheckBoxMenuItem getTracingCheckBoxMenuItem() {
+		return tracingCheckBoxMenuItem;
 	}
 	
 	public static void main(String[] args) {

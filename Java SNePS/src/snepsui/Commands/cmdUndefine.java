@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.swing.ActionMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -54,6 +55,24 @@ public class cmdUndefine extends javax.swing.JPanel {
 	private JButton infoButton;
 	private Network network;
 	private SNePSInterface frame;
+	
+	private String instructions =
+		"<html>"+
+        "<h3>Undefine a Relation:</h3>"+
+        "<ul>"+
+        "<li>Select the relation to be undefined from the drop-down list with all the relations define<br/>" +
+        "in the network), and then press on the \"+\" button." +
+        "<li>Repeat the steps until all the relation to be undefined from the network are chosen and then<br/>" +
+        "click on \"Done\" button, a message will appear to confirm the outcome of the operation."+
+
+        "</ul>"+
+        "<h3>Restrictions:</h3>"+
+        "<ul>"+
+        "<li>No predifined relations can be undefine, they are not included in the list."+
+        "<li>The same relation cannot be added twice to the list."+
+        "</ul>"+
+        
+        "</html>";
 	
 	@Action
     public void add() {}
@@ -145,6 +164,15 @@ public class cmdUndefine extends javax.swing.JPanel {
 				infoButton.setContentAreaFilled(false);
 				infoButton.setMargin(new Insets(0,0,0,0));
 				infoButton.setToolTipText("info");
+				infoButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						JOptionPane.showMessageDialog(getRootPane(), 
+		                		instructions, 
+		                		"Instructions", 
+		                		JOptionPane.INFORMATION_MESSAGE,
+		                		new ImageIcon("src/snepsui/Interface/resources/icons/info.png"));
+					}
+				});
 			}
 			{
 				relationsLabel = new JLabel();
@@ -161,7 +189,23 @@ public class cmdUndefine extends javax.swing.JPanel {
 			    Iterator<String> itr = set.iterator();
 			    while (itr.hasNext()) {
 			      str = itr.next();
-			      relationsComboBoxModel.addElement(relations.get(str).getName()) ;
+			      Relation relation = relations.get(str);
+			      if(!( relation.getName().equals("ant") || relation.getName().equals("cq") ||
+			    		relation.getName().equals("&ant") || relation.getName().equals("min") ||
+			    		relation.getName().equals("max") || relation.getName().equals("thresh") ||
+			    		relation.getName().equals("threshmax") || relation.getName().equals("arg") ||
+			    		relation.getName().equals("object1") || relation.getName().equals("object2") ||
+			    		relation.getName().equals("action") || relation.getName().equals("actObject") ||
+			    		relation.getName().equals("condition") || relation.getName().equals("then") ||
+			    		relation.getName().equals("act") || relation.getName().equals("plan") ||
+			    		relation.getName().equals("precondition") || relation.getName().equals("effect") ||
+			    		relation.getName().equals("goal") || relation.getName().equals("do") ||
+			    		relation.getName().equals("vars") || relation.getName().equals("suchthat") ||
+			    		relation.getName().equals("forall") || relation.getName().equals("emin") ||
+			    		relation.getName().equals("emax") || relation.getName().equals("etot") ||
+			    		relation.getName().equals("pevb"))) {
+			    	  relationsComboBoxModel.addElement(relation.getName());
+			      }
 			    }
 			    
 				relationsComboBox = new JComboBox();
@@ -211,7 +255,23 @@ public class cmdUndefine extends javax.swing.JPanel {
 	    Iterator<String> itr = set.iterator();
 	    while (itr.hasNext()) {
 	      str = itr.next();
-	      relationsComboBoxModel.addElement(relations.get(str).getName()) ;
+	      Relation relation = relations.get(str);
+	      if(!( relation.getName().equals("ant") || relation.getName().equals("cq") ||
+		    		relation.getName().equals("&ant") || relation.getName().equals("min") ||
+		    		relation.getName().equals("max") || relation.getName().equals("thresh") ||
+		    		relation.getName().equals("threshmax") || relation.getName().equals("arg") ||
+		    		relation.getName().equals("object1") || relation.getName().equals("object2") ||
+		    		relation.getName().equals("action") || relation.getName().equals("actObject") ||
+		    		relation.getName().equals("condition") || relation.getName().equals("then") ||
+		    		relation.getName().equals("act") || relation.getName().equals("plan") ||
+		    		relation.getName().equals("precondition") || relation.getName().equals("effect") ||
+		    		relation.getName().equals("goal") || relation.getName().equals("do") ||
+		    		relation.getName().equals("vars") || relation.getName().equals("suchthat") ||
+		    		relation.getName().equals("forall") || relation.getName().equals("emin") ||
+		    		relation.getName().equals("emax") || relation.getName().equals("etot") ||
+		    		relation.getName().equals("pevb"))) {
+	    	  relationsComboBoxModel.addElement(relation.getName());
+	      }
 	    }
 	    relationsComboBox.setModel(relationsComboBoxModel);
 		listModel.removeAllElements();

@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.ActionMap;
 import javax.swing.ButtonGroup;
@@ -21,11 +24,19 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import match.ds.Substitutions;
+
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
+import snebr.Context;
+import sneps.CustomException;
+import sneps.MolecularNode;
 import sneps.Network;
+import sneps.Node;
 import snepsui.Interface.SNePSInterface;
+import snip.ds.Report;
+import snip.ds.ReportSet;
 
 
 /**
@@ -45,33 +56,19 @@ import snepsui.Interface.SNePSInterface;
 @SuppressWarnings("unused")
 public class cmdDeduce extends javax.swing.JPanel {
 	private JLabel deduceLabel;
-	private JTextField nodesetTextField;
 	private JButton addButton;
 	private JList nodesetList;
 	private JButton doneButton;
 	private DefaultListModel relationListModel;
 	private DefaultListModel nodesetListModel;
-	private JTextField nnegTextField;
-	private JLabel nnegLabel;
 	private JScrollPane jScrollPane1;
-	private JScrollPane jScrollPane2;
-	private JLabel numbLabel;
-	private JTextField nposTextField;
-	private JLabel nposLabel;
-	private JTextField numbTextField;
-	private JRadioButton numbRadioButton3;
 	private JButton assertButton;
 	private JButton findButton;
 	private JComboBox contextNameComboBox;
-	private JComboBox relationComboBox;
 	private JComboBox nodesComboBox;
-	private JRadioButton numbRadioButton2;
-	private JRadioButton numbRadioButton1;
 	private JLabel contextNameLabel;
 	private JButton infoButton;
-	private JList relationList;
 	private JLabel nodesetLabel;
-	private JLabel relationLabel;
 	private ButtonGroup group;
 	private JButton buildButton;
 	private Network network;
@@ -114,23 +111,14 @@ public class cmdDeduce extends javax.swing.JPanel {
 				deduceLabel.setBounds(12, 28, 63, 15);
 			}
 			{
-				nodesetTextField = new JTextField();
-				this.add(nodesetTextField);
-				nodesetTextField.setBounds(385, 25, 88, 22);
-			}
-			{
 				addButton = new JButton();
 				this.add(addButton);
-				addButton.setBounds(475, 27, 16, 18);
+				addButton.setBounds(364, 24, 16, 18);
 				addButton.setAction(getAppActionMap().get("add"));
 				addButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent evt) {
-						relationListModel.addElement(relationComboBox.getSelectedItem().toString());
-						nodesetListModel.addElement(nodesetTextField.getText());
-						relationComboBox.setSelectedIndex(0);
-						nodesComboBox.setSelectedIndex(0);
-						nodesetTextField.setText("");
+						nodesetListModel.addElement(nodesComboBox.getSelectedItem().toString());
 						validate();
 					}
 				});
@@ -140,47 +128,34 @@ public class cmdDeduce extends javax.swing.JPanel {
 				this.add(doneButton);
 				doneButton.setBounds(314, 185, 77, 29);
 				doneButton.setName("doneButton");
+				doneButton.addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent evt) {
+						doneButtonMouseClicked(evt);
+					}
+				});
 			}
 			{
 				jScrollPane1 = new JScrollPane();
 				this.add(jScrollPane1);
-				jScrollPane1.setBounds(280, 58, 190, 103);
+				jScrollPane1.setBounds(113, 56, 242, 103);
 				{
 					nodesetListModel = new DefaultListModel();
 					nodesetList = new JList();
 					jScrollPane1.setViewportView(nodesetList);
 					nodesetList.setModel(nodesetListModel);
-					nodesetList.setBounds(195, 138, 187, 100);
+					nodesetList.setBounds(391, 67, 239, 100);
 				}
-			}
-			{
-				relationLabel = new JLabel();
-				this.add(relationLabel);
-				relationLabel.setBounds(80, 4, 70, 15);
-				relationLabel.setName("relationLabel");
 			}
 			{
 				nodesetLabel = new JLabel();
 				this.add(nodesetLabel);
-				nodesetLabel.setBounds(281, 4, 95, 15);
+				nodesetLabel.setBounds(113, 4, 95, 15);
 				nodesetLabel.setName("nodesetLabel");
-			}
-			{
-				jScrollPane2 = new JScrollPane();
-				this.add(jScrollPane2);
-				jScrollPane2.setBounds(79, 59, 189, 103);
-				{
-					relationListModel = new DefaultListModel();
-					relationList = new JList();
-					jScrollPane2.setViewportView(relationList);
-					relationList.setModel(relationListModel);
-					relationList.setBounds(185, 73, 186, 100);
-				}
 			}
 			{
 				buildButton = new JButton();
 				this.add(buildButton);
-				buildButton.setBounds(496, 26, 18, 20);
+				buildButton.setBounds(385, 23, 18, 20);
 				buildButton.setAction(getAppActionMap().get("build"));
 				buildButton.setToolTipText("build");
 				buildButton.addActionListener(new ActionListener() {
@@ -204,151 +179,61 @@ public class cmdDeduce extends javax.swing.JPanel {
 				contextNameLabel = new JLabel();
 				this.add(contextNameLabel);
 				contextNameLabel.setName("contextNameLabel");
-				contextNameLabel.setBounds(533, 45, 107, 19);
+				contextNameLabel.setBounds(472, 2, 107, 19);
 			}
 			{
-				group = new ButtonGroup();
-				{
-					numbLabel = new JLabel();
-					this.add(numbLabel);
-					numbLabel.setBounds(533, 92, 69, 15);
-					numbLabel.setName("numbLabel");
-				}
-				{
-					numbRadioButton1 = new JRadioButton();
-					this.add(numbRadioButton1);
-					numbRadioButton1.setBounds(533, 111, 135, 19);
-					numbRadioButton1.setName("numbRadioButton1");
-					numbRadioButton1.setSelected(true);
-					numbRadioButton1.addMouseListener(new MouseAdapter() {
-						public void mouseClicked(MouseEvent evt) {
-							numbRadioButton1MouseClicked(evt);
-						}
-					});
-				}
-				{
-					numbRadioButton2 = new JRadioButton();
-					this.add(numbRadioButton2);
-					numbRadioButton2.setBounds(533, 131, 26, 17);
-					numbRadioButton2.addMouseListener(new MouseAdapter() {
-						public void mouseClicked(MouseEvent evt) {
-							numbRadioButton2MouseClicked(evt);
-						}
-					});
-				}
-				{
-					numbRadioButton3 = new JRadioButton();
-					this.add(numbRadioButton3);
-					numbRadioButton3.setBounds(533, 155, 23, 17);
-					numbRadioButton3.addMouseListener(new MouseAdapter() {
-						public void mouseClicked(MouseEvent evt) {
-							numbRadioButton3MouseClicked(evt);
-						}
-					});
-				}
-				{
-					numbTextField = new JTextField();
-					this.add(numbTextField);
-					numbTextField.setBounds(570, 132, 43, 16);
-					numbTextField.setEditable(false);
-				}
-				{
-					nposLabel = new JLabel();
-					this.add(nposLabel);
-					nposLabel.setBounds(567, 155, 40, 15);
-					nposLabel.setName("nposLabel");
-				}
-				{
-					nposTextField = new JTextField();
-					this.add(nposTextField);
-					nposTextField.setBounds(614, 154, 28, 18);
-					nposTextField.setEditable(false);
-				}
-				{
-					nnegLabel = new JLabel();
-					this.add(nnegLabel);
-					nnegLabel.setBounds(566, 180, 41, 15);
-					nnegLabel.setName("nnegLabel");
-				}
-				{
-					nnegTextField = new JTextField();
-					this.add(nnegTextField);
-					nnegTextField.setBounds(614, 179, 28, 18);
-					nnegTextField.setEditable(false);
-				}
-				{
-					ComboBoxModel nodesComboBoxModel = new DefaultComboBoxModel();
-					nodesComboBox = new JComboBox();
-					this.add(nodesComboBox);
-					nodesComboBox.setModel(nodesComboBoxModel);
-					nodesComboBox.setBounds(281, 24, 98, 22);
-				}
-				{
-					ComboBoxModel relationComboBoxModel = new DefaultComboBoxModel();
-					relationComboBox = new JComboBox();
-					this.add(relationComboBox);
-					relationComboBox.setModel(relationComboBoxModel);
-					relationComboBox.setBounds(80, 24, 188, 22);
-				}
-				{
-					ComboBoxModel contextNameComboBoxModel = new DefaultComboBoxModel();
-					contextNameComboBox = new JComboBox();
-					this.add(contextNameComboBox);
-					contextNameComboBox.setModel(contextNameComboBoxModel);
-					contextNameComboBox.setBounds(533, 64, 151, 22);
-				}
-				{
-					findButton = new JButton();
-					this.add(findButton);
-					findButton.setAction(getAppActionMap().get("find"));
-					findButton.setName("findButton");
-					findButton.setBounds(540, 26, 18, 20);
-					findButton.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent evt) {
-							findButtonActionPerformed(evt);
-						}
-					});
-				}
-				{
-					assertButton = new JButton();
-					this.add(assertButton);
-					assertButton.setAction(getAppActionMap().get("assertAction"));
-					assertButton.setName("assertButton");
-					assertButton.setBounds(519, 26, 18, 20);
-					assertButton.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent evt) {
-							assertButtonActionPerformed(evt);
-						}
-					});
-				}
+				DefaultComboBoxModel nodesetComboBoxModel = new DefaultComboBoxModel();
+				
+				String str = "";
+				Hashtable<String, Node> nodes = network.getNodes();
+				Set<String> set = nodes.keySet();
+
+			    Iterator<String> itr = set.iterator();
+			    while (itr.hasNext()) {
+			      str = itr.next();
+			      Node node = nodes.get(str);
+			      if(node instanceof MolecularNode)
+			    	  nodesetComboBoxModel.addElement(node.getIdentifier()) ;
+			    }
+				nodesComboBox = new JComboBox();
+				this.add(nodesComboBox);
+				nodesComboBox.setModel(nodesetComboBoxModel);
+				nodesComboBox.setBounds(113, 21, 239, 22);
+			}
+			{
+				ComboBoxModel contextNameComboBoxModel = new DefaultComboBoxModel();
+				contextNameComboBox = new JComboBox();
+				this.add(contextNameComboBox);
+				contextNameComboBox.setModel(contextNameComboBoxModel);
+				contextNameComboBox.setBounds(472, 21, 151, 22);
+			}
+			{
+				findButton = new JButton();
+				this.add(findButton);
+				findButton.setAction(getAppActionMap().get("find"));
+				findButton.setName("findButton");
+				findButton.setBounds(431, 23, 18, 20);
+				findButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						findButtonActionPerformed(evt);
+					}
+				});
+			}
+			{
+				assertButton = new JButton();
+				this.add(assertButton);
+				assertButton.setAction(getAppActionMap().get("assertAction"));
+				assertButton.setName("assertButton");
+				assertButton.setBounds(408, 23, 18, 20);
+				assertButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent evt) {
+						assertButtonActionPerformed(evt);
+					}
+				});
 			}
 			Application.getInstance().getContext().getResourceMap(getClass())
 					.injectComponents(this);
 		} catch (Exception e) {}
-	}
-	
-	private void numbRadioButton1MouseClicked(MouseEvent evt) {
-		if(numbRadioButton1.isSelected()) {
-			numbTextField.setEnabled(false);
-			nposTextField.setEnabled(false);
-			nnegTextField.setEnabled(false);
-		}
-	}
-	
-	private void numbRadioButton2MouseClicked(MouseEvent evt) {
-		if(numbRadioButton2.isSelected()) {
-			numbTextField.setEnabled(true);
-			nposTextField.setEnabled(false);
-			nnegTextField.setEnabled(false);
-		}
-	}
-	
-	private void numbRadioButton3MouseClicked(MouseEvent evt) {
-		if(numbRadioButton3.isSelected()) {
-			nposTextField.setEnabled(true);
-			nnegTextField.setEnabled(true);
-			numbTextField.setEnabled(false);
-		}
 	}
 	
 	private void buildButtonActionPerformed(ActionEvent evt) {
@@ -374,5 +259,25 @@ public class cmdDeduce extends javax.swing.JPanel {
 		popupFrame.getContentPane().add(new cmdFind(network, frame));
 		popupFrame.pack();
 		popupFrame.setVisible(true);
+	}
+	
+	private void doneButtonMouseClicked(MouseEvent evt) {
+		for (int i = 0; i < nodesetListModel.size(); i++) {
+			try {
+				MolecularNode molNode = (MolecularNode) network.getNode(nodesetListModel.get(i).toString());
+				ReportSet reportSet = network.deduce(molNode,new Context());
+				if(reportSet == null) {
+					break;
+				}
+				
+				for (int j = 0; j < reportSet.cardinality(); j++) {
+					Report report = reportSet.getReport(j);
+					frame.getsNePSULPanel1().getMenuDrivenCommands().nodeInfo(report.getNode());
+					Substitutions sub = report.getSubstitutions();
+					frame.getOutputPanel1().writeToTextArea(sub.toString());
+				}
+				
+			} catch (CustomException e) {}
+		}
 	}
 }

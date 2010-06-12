@@ -436,6 +436,7 @@ public class TestDraw extends javax.swing.JPanel {
 						
 				} else if (s.equals("Variable Node")) {
 					Node node = network.buildVariableNode();
+					nodeName = node.getIdentifier();
 					nodesList.add(node);
 				}
 			} catch (NullPointerException e) {}
@@ -773,6 +774,13 @@ public class TestDraw extends javax.swing.JPanel {
 			Relation relation6 = network.defineRelation("suchthat", "Entity", "none", 0);
 			Relation relation7 = network.defineRelation("do", "Entity", "none", 0);
 			Relation relation8 = network.defineRelation("else", "Entity", "none", 0);
+			Relation relation9 = network.defineRelation("member", "Entity", "none", 1);
+			Relation relation10 = network.defineRelation("class", "Entity", "none", 1);
+			Relation relation11 = network.defineRelation("forall", "Entity", "none", 1);
+			Relation relation12 = network.defineRelation("ant", "Entity", "none", 1);
+			Relation relation13 = network.defineRelation("cq", "Entity", "none", 1);
+			Relation relation14 = network.defineRelation("superclass", "Entity", "none", 1);
+			Relation relation15 = network.defineRelation("subclass", "Entity", "none", 1);
 			
 			LinkedList<Relation> relations1 = new LinkedList<Relation>();
 			relations1.add(relation1);
@@ -793,10 +801,26 @@ public class TestDraw extends javax.swing.JPanel {
 			relations4.add(relation7);
 			relations4.add(relation8);
 			
+			LinkedList<Relation> relations5 = new LinkedList<Relation>();
+			relations5.add(relation9);
+			relations5.add(relation10);
+			
+			LinkedList<Relation> relations6 = new LinkedList<Relation>();
+			relations6.add(relation11);
+			relations6.add(relation12);
+			relations6.add(relation13);
+			
+			LinkedList<Relation> relations7 = new LinkedList<Relation>();
+			relations7.add(relation14);
+			relations7.add(relation15);
+			
 			CaseFrame caseframe1 = network.defineCaseFrame("Entity", relations1);
 			CaseFrame caseframe2 = network.defineCaseFrame("Entity", relations2);
 			CaseFrame caseframe3 = network.defineCaseFrame("Entity", relations3);
 			CaseFrame caseframe4 = network.defineCaseFrame("Entity", relations4);
+			CaseFrame caseframe5 = network.defineCaseFrame("Entity", relations5);
+			CaseFrame caseframe6 = network.defineCaseFrame("Entity", relations6);
+			CaseFrame caseframe7 = network.defineCaseFrame("Entity", relations7);
 			
 		} catch (CustomException e) {}
 		

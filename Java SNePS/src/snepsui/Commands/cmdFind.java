@@ -34,7 +34,6 @@ import javax.swing.JTextField;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import snebr.Context;
 import snebr.Support;
 import sneps.AndPath;
 import sneps.BUnitPath;
@@ -124,6 +123,7 @@ public class cmdFind extends javax.swing.JPanel {
 		super();
 		listModelPaths = new LinkedList<Path>();
 		paths = new LinkedList<Path>();
+		nodes = new LinkedList<Node>();
 		this.frame = frame;
 		this.network = network;
 		initGUI();
@@ -133,6 +133,7 @@ public class cmdFind extends javax.swing.JPanel {
 		super();
 		listModelPaths = new LinkedList<Path>();
 		paths = new LinkedList<Path>();
+		nodes = new LinkedList<Node>();
 		this.frame = frame;
 		this.network = network;
 		this.windowFrame = windowFrame;
@@ -571,19 +572,19 @@ public class cmdFind extends javax.swing.JPanel {
 				array[i][0] = path;
 				array[i][1] = nodeset;
 			}
-			
-			Hashtable<Node, LinkedList<Support>> resultNodes = network.find(array, new Context());
+			System.out.println("Before Find");
+			Hashtable<Node, LinkedList<Support>> resultNodes = network.find(array, null);
 			Set<Node> resultNodesSet = resultNodes.keySet();
 			Iterator<Node> resultNodesItr = resultNodesSet.iterator();
-			Node node;
-			LinkedList<Node> nodes = new LinkedList<Node>();
 			LinkedList<LinkedList<Support>> supports = new LinkedList<LinkedList<Support>>();
+			System.out.println("After Find");
 			
 			if(!resultNodesItr.hasNext()) {
 				JOptionPane.showMessageDialog(this, "No nodes were found");
 			} else {
 				while (resultNodesItr.hasNext()) {
-					node = resultNodesItr.next();
+					Node node = resultNodesItr.next();
+					System.out.println("Node Info"+node.getIdentifier());
 					nodes.add(node);
 					supports.add(resultNodes.get(node));
 			    }

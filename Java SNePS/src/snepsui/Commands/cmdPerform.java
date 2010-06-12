@@ -21,7 +21,7 @@ import javax.swing.JScrollPane;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 
-import snactor.Act;
+import sneps.Act;
 import sneps.Entity;
 import sneps.Network;
 import sneps.Node;
