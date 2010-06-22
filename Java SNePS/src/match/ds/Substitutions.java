@@ -257,7 +257,7 @@ public class Substitutions
     	{
     		if(!this.isMember(s.sub.get(i)))
     		{
-    			this.putIn(s.sub.get(i));
+    			this.putIn(s.sub.get(i).clone());
     		}
     	}
     }
@@ -373,10 +373,16 @@ public class Substitutions
 	{
 		for(int i=0;i<this.sub.size();i++)
 		{
-			Binding m1=s.getBindingByNode(this.sub.get(i).getNode());
-			Binding m2=s.getBindingByVariable(this.sub.get(i).getVariable());
-			if(!this.sub.get(i).isEqual(m1)||!this.sub.get(i).isEqual(m2))
-				return false;
+			for(int j=0;j<s.sub.size();j++)
+			{
+				if(s.sub.get(j).getVariable()==this.sub.get(i).getVariable())
+					if(s.sub.get(j).getNode()!=this.sub.get(i).getNode())
+						return false;
+					else if(s.sub.get(j).getNode()==this.sub.get(i).getNode())
+						if(s.sub.get(j).getVariable()!=
+							this.sub.get(i).getVariable())
+								return false;
+			}
 		}
 		return true;
 	}
@@ -400,12 +406,14 @@ public class Substitutions
 	public Substitutions[] split()
 	{
 		Substitutions []res=new Substitutions[2];
+		res[0]=new Substitutions();
+		res[1]=new Substitutions();
 		for(int i=0;i<sub.size();i++)
 		{
 			Binding x=sub.get(i);
 			Node n=x.getNode();
 			String name=n.getClass().getName();
-			if(name.equals("BaseNode"))
+			if(sub(name,"sneps.BaseNode"))
 				res[0].putIn(x);
 			else
 				res[1].putIn(x);
@@ -433,6 +441,22 @@ public class Substitutions
 			if(!isMember(b))
 				putIn(b);
 		}
+	}
+	
+	/**
+	 * String checking.
+	 * @param x String
+	 * @param y String
+	 * @return true or false
+	 */
+	public boolean sub(String x, String y)
+	{
+		for(int i=0;i<y.length();i++)
+		{
+			if(y.charAt(i)!=x.charAt(i))
+				return false;
+		}
+		return true;
 	}
 	
 	/**

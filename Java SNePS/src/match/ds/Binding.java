@@ -74,4 +74,12 @@ public class Binding
     {
     	node=m;
     }
+    
+    /**
+     * Create a copy of this binding
+     */
+    public Binding clone()
+    {
+    	return new Binding(variable,node);
+    }
 }
