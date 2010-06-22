@@ -26,7 +26,7 @@ public class OrEntailment extends Rule
 	 */
 	public OrEntailment(Node node)
 	{
-		super(node,"OrEntailment");
+		super(node);
 		reportCounter=0;
 		requestCounter=0;
 		patternNodes =getProcess().getNodeSet("ant");

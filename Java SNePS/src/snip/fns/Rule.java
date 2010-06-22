@@ -22,10 +22,10 @@ public abstract class Rule extends Proposition
 	 * @param node Node
 	 * @param name inference rule name
 	 */
-	public Rule(Node node,String name)
+	public Rule(Node node)
 	{
 		super(node);
-		p=new Process(node,'r',name);
+		p=new Process(node,'r');
 	}
 	
 	/**

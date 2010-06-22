@@ -45,7 +45,7 @@ public class Thresh extends Rule
 	 */
 	public Thresh(Node node) 
 	{
-		super(node,"Thresh");
+		super(node);
 		reportCounter = 0;
 		requestCounter=0;
 		NodeSet minNode = getProcess().getNodeSet("thresh");

@@ -40,7 +40,7 @@ public class NumericalEntailment extends Rule
 	 */
 	public NumericalEntailment(Node node)
 	{
-		super(node,"NumericalEntailment");
+		super(node);
 		reportCounter=0;
 		requestCounter=0;
 		NodeSet minNode =getProcess().getNodeSet("thresh");

@@ -45,7 +45,7 @@ public class AndOr extends Rule
 	 */
 	public AndOr(Node node)
 	{
-		super(node,"AndOr");
+		super(node);
 		reportCounter=0;
 		requestCounter=0;
 		NodeSet minNode = getProcess().getNodeSet("min");

@@ -39,7 +39,7 @@ public class NonRule extends Proposition
 		super(n);
 		reportCounter=0;
 		requestCounter=0;
-		p=new Process(n,'r',null);
+		p=new Process(n,'n');
 	}
 	
 	/**

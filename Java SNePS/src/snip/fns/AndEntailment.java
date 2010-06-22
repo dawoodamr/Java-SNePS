@@ -39,7 +39,7 @@ public class AndEntailment extends Rule
 	 */
 	public AndEntailment(Node node)
 	{
-		super(node,"AndEntailment");
+		super(node);
 		reportCounter=0;
 		requestCounter=0;
 		patternNodes =getProcess().getNodeSet("&ant");
