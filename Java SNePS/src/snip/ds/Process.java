@@ -20,7 +20,6 @@ import snip.fns.QueuesProcessor;
 public class Process
 {
 	private char name;
-	private String type;
 	private Node node;
 	private ReportSet knownInstances;
 	private ReportSet reps;
@@ -28,8 +27,6 @@ public class Process
 	private ChannelsSet outGoing;
 	private ChannelsSet inComing;
 	private ChannelsSet consequentChannel;
-	private boolean priority;//true for high false for low
-	private boolean uasbility;
 	private ContextRUISSet crs;
 	private QueuesProcessor qp;
 	private boolean first;
@@ -38,13 +35,11 @@ public class Process
 	 * Create a new process
 	 * @param node Node
 	 * @param n 'r' for "RULE" or 'n' for "NON-RULE"
-	 * @param t if it is a rule node then type will be the name of the inference rule
 	 * null otherwise
 	 */
-	public Process(Node node, char n, String t)
+	public Process(Node node, char n)
 	{
 		name =n;
-		type=t;
 		this.node=node;
 		knownInstances=new ReportSet();
 		reps=new ReportSet();
@@ -52,8 +47,6 @@ public class Process
 		outGoing=new ChannelsSet();
 		inComing=new ChannelsSet();
 		consequentChannel=new ChannelsSet();
-		priority=false;
-		uasbility=false;
 		crs=new ContextRUISSet();
 		first=false;
 	}
@@ -195,7 +188,11 @@ public class Process
 		{
 			for(int i=0;i<c.cardinality();i++)
 			{
-				qp.addToHigh(c.getChannel(i).getDestination().getNode().getEntity());
+				System.out.println("Sending report from "+ node.getIdentifier()+
+						" to "+c.getChannel(i).getDestination().getNode()
+							.getIdentifier());
+				qp.addToHigh(c.getChannel(i).getDestination().getNode()
+						.getEntity());
 				c.getChannel(i).send(r);
 			}
 		}
@@ -259,11 +256,21 @@ public class Process
 	 */
 	public void sendKnown(Channel c)
 	{
+		System.out.println("Sending all known instances to " + 
+				c.getDestination().getNode().getIdentifier());
+		boolean set=false;
 		for(int i=0;i<knownInstances.cardinality();i++)
 		{
 			Report r=knownInstances.getReport(i);
 			if(r.getContext()==c.getContext())
-			c.send(r);
+			{
+				if(!set)
+				{
+					qp.addToHigh(c.getDestination().getNode().getEntity());
+					set=true;
+				}
+				c.send(r);
+			}
 		}
 	}
 	
@@ -277,6 +284,8 @@ public class Process
 		for(int i=0;i<ns.size();i++)
 		{
 			Node to=ns.getNode(i);
+			System.out.println("Sending request from "+ node.getIdentifier()+
+					" to "+to.getIdentifier());
 			Filter f=new Filter(new Substitutions());
 			Switch s=new Switch(new Substitutions());
 			Destination d=new Destination(node);
@@ -331,6 +340,8 @@ public class Process
 		for(int i=0;i<nodes.size();i++)
 		{
 			Node to=(Node)nodes.get(i)[0];
+			System.out.println("Sending request from "+ node.getIdentifier()+
+					" to "+to.getIdentifier());
 			Substitutions sub=(Substitutions)nodes.get(i)[1];
 			Substitutions t=(Substitutions)nodes.get(i)[2];
 			Substitutions[] sp=sub.split();

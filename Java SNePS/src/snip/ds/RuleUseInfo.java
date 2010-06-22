@@ -107,10 +107,12 @@ public class RuleUseInfo
 	{
 		for(int i=0;i<fns.cardinality();i++)
 		{
-			if(r.fns.getFlagNode(i).getFlag()!=0
-					&&this.fns.getFlagNode(i).getFlag()!=0)
+			for(int j=0;j<r.getFlagNodeSet().cardinality();j++)
 			{
-				return false;
+				if(fns.getFlagNode(i).getNode().getIdentifier().equals
+						(r.getFlagNodeSet().getFlagNode(j).getNode()
+								.getIdentifier()))
+					return false;
 			}
 		}
 		return true;

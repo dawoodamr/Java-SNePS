@@ -9,8 +9,6 @@ package snip.ds;
 
 import match.ds.Substitutions;
 import snebr.Context;
-import sneps.MolecularNode;
-import sneps.Network;
 
 public class Channel
 {
@@ -36,7 +34,7 @@ public class Channel
 		con=c;
 		des=d;
 		valve=v;
-		tar=null;
+		tar=new Substitutions();
 	}
 	
 	/**
@@ -139,10 +137,14 @@ public class Channel
 		if(fil.canPass(r))
 		{
 			swi.switchReport(r,tar);
-			Network n=Network.getInstance();
-			MolecularNode res=n.termVERe((MolecularNode)des.getNode()
-					,r.getSubstitutions(),r.getSubstitutions());
-			r.setNode(res);
+			Substitutions s=new Substitutions();
+			s.unionIn(r.getSubstitutions());
+			/*if(s.cardinality()!=0)
+			{
+				Network n=Network.getInstance();
+				MolecularNode res=n.termVERe((MolecularNode)des.getNode(),s,s);
+				r.setNode(res);
+			}*/
 			des.getNode().getEntity().getProcess().receiveReport(r);
 		}
 	}
@@ -168,8 +170,8 @@ public class Channel
 	
 	public String toString()
 	{
-		String res="Channel opened to "+des.getNode().getIdentifier()+
-		" with the filter:\n"+ fil.toString()+"And the switch:\n"+swi.toString();
+		String res="Channel opened with the filter:\n"+ fil.toString()
+			+"And the switch:\n"+swi.toString();
 		return res;
 	}
 }

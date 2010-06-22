@@ -33,6 +33,11 @@ public class Sindexing
 	{
 		RuleUseInfoSet res=new RuleUseInfoSet();
 		RuleUseInfoSet ruis=map.get(x);
+		if(ruis==null)
+		{
+			ruis=new RuleUseInfoSet();
+			map.put(x, ruis);
+		}
 		int pos=ruis.getIndex(rui);
 		if(pos==-1)
 		{

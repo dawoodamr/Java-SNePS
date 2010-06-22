@@ -158,4 +158,30 @@ public class ReportSet
 	{
 		return rs.get(x);
 	}
+	
+	/**
+	 * display the report set.
+	 */
+	public String toString()
+	{
+		String res="";
+		if(rs.size()==1)
+			res+="The report is:\n";
+		else if(rs.size()==0)
+			res+="There are no reports.";
+		else
+			res+="The reports are:\n";
+		for(int i=0;i<rs.size();i++)
+		{
+			if(i!=0)
+				res+="\n------------------------";
+			Report r=rs.get(i);
+			res+=r.getSubstitutions().toString();
+			if(r.getSign())
+				res+="Positive";
+			else
+				res+="Negative";
+		}
+		return res;
+	}
 }

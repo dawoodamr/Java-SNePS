@@ -50,6 +50,6 @@ public class HighQueue
 	{
 		Entity e=q.poll();
 		System.out.println("Now processing "+ e.getNode().getIdentifier());
-		//e.run();
+		e.run();
 	}
 }
