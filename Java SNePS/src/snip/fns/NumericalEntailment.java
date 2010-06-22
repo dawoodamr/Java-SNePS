@@ -113,7 +113,8 @@ public class NumericalEntailment extends Rule
 					{
 						Report reply=new Report(ruitemp.getSub(),null,true
 								,getProcess().getNode(),null,c);
-						ChannelsSet ctemp=crtemp.getChannels();
+						//ChannelsSet ctemp=crtemp.getChannels();
+						ChannelsSet ctemp=getProcess().getOutGoing();
 						getProcess().sendReport(reply,ctemp);
 					}
 				}
@@ -133,6 +134,7 @@ public class NumericalEntailment extends Rule
 			Channel c=r.getChannel();
 			if(requestCounter==0)
 			{
+				getProcess().getOutGoing().putIn(c);
 				getProcess().sendRequests(patternNodes,c.getContext());
 			}
 			else

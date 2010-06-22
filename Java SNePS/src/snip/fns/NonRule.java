@@ -67,13 +67,16 @@ public class NonRule extends Proposition
 	{
 		for(;reportCounter<getProcess().getReportSet().cardinality();reportCounter++)
 		{
+			System.out.println("Now processing report number:"+reportCounter);
 			Report r=getProcess().getReportSet().getReport(reportCounter);
+			System.out.println("the substitutions are:\n"+r.getSubstitutions());
 			Report reply=new Report(r.getSubstitutions(),r.getSupport(),r.getSign()
 					,getProcess().getNode(),null,r.getContext());
 			if(!getProcess().getSentReports().isMember(reply))
 			{
-				ChannelsSet ctemp=getProcess().getOutGoing()
-					.getConChannelsSet(r.getContext());
+				//ChannelsSet ctemp=getProcess().getOutGoing()
+					//.getConChannelsSet(r.getContext());
+				ChannelsSet ctemp=getProcess().getOutGoing();
 				getProcess().sendReport(reply,ctemp);
 			}
 		}
@@ -87,6 +90,7 @@ public class NonRule extends Proposition
 		for(;requestCounter<getProcess().getRequestSet().cardinality()
 		;requestCounter++)
 		{
+			System.out.println("Now processing request number:"+requestCounter);
 			Request r=getProcess().getRequestSet().getRequest(requestCounter);
 			Channel c=r.getChannel();
 			if(requestCounter==0)
@@ -94,6 +98,7 @@ public class NonRule extends Proposition
 				if(getProcess().getNode().getClass().getSimpleName()
 						.equals("ClosedNode"))
 				{
+					System.out.println("ClosedNode");
 					//Check if this node is asserted in this context
 					Report reply=new Report(new Substitutions(),null,true
 							,getProcess().getNode(),null,c.getContext());
@@ -103,9 +108,12 @@ public class NonRule extends Proposition
 				}
 				else
 				{
+					System.out.println("Not a ClosedNode");
+					getProcess().getOutGoing().putIn(c);
 					Network net=Network.getInstance();
 					LinkedList<Object[]> nodes=net.match((MolecularNode)getProcess()
 							.getNode());
+					System.out.println("\n"+nodes.size()+" matches");
 					getProcess().sendRequests(nodes,c.getContext());
 				
 					UpCable up1=getProcess().getNode().getUpCableSet()
@@ -120,7 +128,30 @@ public class NonRule extends Proposition
 					if(up2!=null)
 					{
 						NodeSet n=up2.getNodeSet();
-						getProcess().sendRequests(n,c.getContext());
+						NodeSet nn=new NodeSet();
+						ChannelsSet cstemp=getProcess().getOutGoing();
+						for(int i=0;i<n.size();i++)
+						{
+							Node ntemp=n.getNode(i);
+							boolean here=false;
+							int j=0;
+							if(getProcess().getFirst())
+								j++;
+							for(;j<cstemp.cardinality();j++)
+							{
+								Channel ctemp=cstemp.getChannel(j);
+								if(ntemp==ctemp.getDestination().getNode())
+								{
+									here=true;	
+									break;
+								}
+							}
+							if(!here)
+							{
+								nn.addNode(ntemp);
+							}
+						}
+						getProcess().sendRequests(nn,c.getContext());
 					}
 				}
 			}

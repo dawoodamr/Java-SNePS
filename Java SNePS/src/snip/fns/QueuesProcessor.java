@@ -42,6 +42,8 @@ public class QueuesProcessor
 			l.dequeue();
 			process();
 		}
+		else if(h.isEmpty()&&l.isEmpty())
+		System.out.println("Inference Done");
 	}
 	
 	/**

@@ -63,6 +63,7 @@ public class OrEntailment extends Rule
 			Channel c=r.getChannel();
 			if(requestCounter==0)
 			{
+				getProcess().getOutGoing().putIn(c);
 				getProcess().sendRequests(patternNodes,c.getContext());
 			}
 			else
