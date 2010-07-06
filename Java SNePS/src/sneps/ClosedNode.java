@@ -1,19 +1,19 @@
 package sneps;
 
 /**
- * A ClosedNode is a MolecularNode that does not dominate any free variables, that is 
- * if there are VariableNodes in the subtree that this ClosedNode is considered to be 
- * its root then these VariableNodes must be quantified using quantifier in this subtree.
- * A quantifier is a relation whose name is a quantifier(forall,..etc).
+ * A ClosedNode is a MolecularNode that does not dominate any free variables. A variable dominated
+ * by a molecular node is quantified (not free) if each down path from this molecular node to that
+ * variable contains a node  that quantifies that variable
  * 
  * @author Amr Khaled Dawood 
  */
+@SuppressWarnings("serial")
 public class ClosedNode extends MolecularNode
 {
 
 	/**
-	 * @param identifier the name of the ClosedNode
-	 * @param cableSet the CableSet that contains all outgoing arcs and their destination Nodes
+	 * @param identifier a String representing the name of the ClosedNode
+	 * @param cableSet a CableSet that contains all outgoing arcs and their destination Nodes
 	 */
 	public ClosedNode(String identifier,CableSet cableSet)
 	{

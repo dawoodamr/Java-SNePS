@@ -1,10 +1,8 @@
 package sneps;
 
-import java.util.Hashtable;
 import java.util.LinkedList;
 
 import snebr.Context;
-import snebr.Support;
 
 /**
  * The converse path is a path that is reversed. It can be followed by following the converse
@@ -12,6 +10,7 @@ import snebr.Support;
  * 
  * @author Amr Khaled Dawood
  */
+@SuppressWarnings("serial")
 public class ConversePath extends Path
 {
 	
@@ -37,21 +36,53 @@ public class ConversePath extends Path
 	}
 	
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#follow(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> follow(Node node,PathTrace trace,Context context)
 	{
-		return path.followConverse(node,supports,context);
+		return path.followConverse(node,trace,context);
 	}
 	
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#followConverse(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> followConverse(Node node,PathTrace trace,Context context)
 	{
-		return path.follow(node,supports,context);
+		return path.follow(node,trace,context);
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#clone()
+	 */
+	@Override
+	public ConversePath clone()
+	{
+		return new ConversePath(path.clone());
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#isEqual(sneps.Path)
+	 */
+	@Override
+	public boolean isEqualTo(Path path)
+	{
+		if(! path.getClass().getSimpleName().equals("ConversePath"))
+			return false;
+		ConversePath con = (ConversePath) path;
+		if(! con.path.isEqualTo(this.path))
+			return false;
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "converse("+this.path.toString()+")";
 	}
 
 }

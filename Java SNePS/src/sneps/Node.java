@@ -1,5 +1,7 @@
 package sneps;
 
+import java.io.Serializable;
+
 /**
  * The Node is the main unit used in building the network of the knowledge base.
  * Each Node has an id, an identifier, an upCableSet and  an entity.
@@ -8,7 +10,8 @@ package sneps;
  * 
  * @author Amr Khaled Dawood
  */
-public abstract class Node
+@SuppressWarnings("serial")
+public abstract class Node implements Serializable
 {
 	
 	/**
@@ -17,12 +20,12 @@ public abstract class Node
 	private static int count = 1;
 	
 	/**
-	 * The id is like an index of the node
+	 * The id is an index of the node
 	 */
 	private int id;
 	
 	/**
-	 * The identifier - name - of the node
+	 * The identifier (name) of the node
 	 */
 	private String identifier;
 
@@ -83,7 +86,7 @@ public abstract class Node
 	/**
 	 * sets the entity of this node to the specified entity
 	 * 
-	 * @param entity the new instance of the semantic class to replace the older one
+	 * @param entity an Entity representing the instance of the semantic class to replace the older one
 	 */
 	public void setEntity(Entity entity)
 	{

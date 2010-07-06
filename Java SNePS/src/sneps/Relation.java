@@ -1,12 +1,15 @@
 package sneps;
 
+import java.io.Serializable;
+
 /**
- * A relation is a five-tuple: name, type, adjust, limit, and path.A relation represents the 
+ * A relation is a five-tuple: name, type, adjust, limit, and path. A relation represents the 
  * arc connecting two nodes in the knowledge base.
  * 
  * @author Amr Khaled Dawood.
  */
-public class Relation
+@SuppressWarnings("serial")
+public class Relation implements Serializable
 {
 	
 	/**
@@ -29,7 +32,7 @@ public class Relation
 	private String adjust;
 	
 	/**
-	 * The limit that this Relation can be reduced to or expanded from. 
+	 * The minimum size of the node set of nodes pointed to by this relation from a given node 
 	 */
 	private int limit;
 	
@@ -44,10 +47,12 @@ public class Relation
 	private boolean quantifier;
 	
 	/**
-	 * @param name the name of the relation
-	 * @param type the semantic type of the node pointed to by the relation
-	 * @param adjust the adjustability of the relation: "reduce", "expand", or "none"
-	 * @param limit the minimum number that the Relation can be reduced to or expanded from
+	 * @param name a String representing the name of the relation
+	 * @param type a String representing the semantic type of the node pointed to by the relation
+	 * @param adjust a String representing the adjustability of the relation: 
+	 * "reduce", "expand", or "none"
+	 * @param limit an int representing the minimum size of the node set of nodes pointed to by the relation from
+	 * a given node
 	 */
 	public Relation(String name,String type,String adjust,int limit)
 	{
@@ -60,7 +65,7 @@ public class Relation
 	}
 
 	/**
-	 * @return the name of the relation
+	 * @return the name of this relation
 	 */
 	public String getName()
 	{
@@ -68,7 +73,7 @@ public class Relation
 	}
 
 	/**
-	 * @return the semantic type of the node pointed to by the relation
+	 * @return the semantic type of the node pointed to by this relation
 	 */
 	public String getType()
 	{
@@ -76,7 +81,7 @@ public class Relation
 	}
 
 	/**
-	 * @return the adjustability of the relation: "reduce", "expand", or "none"
+	 * @return the adjustability of this relation: "reduce", "expand", or "none"
 	 */
 	public String getAdjust()
 	{
@@ -84,7 +89,8 @@ public class Relation
 	}
 
 	/**
-	 * @return the minimum number that the relation can be reduced to or expanded from
+	 * @return the limit on the size of the node set of nodes pointed to by this relation
+	 * from a given node
 	 */
 	public int getLimit()
 	{
@@ -100,7 +106,7 @@ public class Relation
 	}
 
 	/**
-	 * @param path the path that is to be defined for this relation
+	 * @param path a Path that is to be defined for this relation
 	 */
 	public void setPath(Path path)
 	{
@@ -110,7 +116,7 @@ public class Relation
 	/**
 	 * determines whether this relation is a quantifier or not
 	 * 
-	 * @return true if the relation is a quantifier and false if not
+	 * @return true if this relation is a quantifier and false if not
 	 */
 	public boolean isQuantifier()
 	{
@@ -118,16 +124,25 @@ public class Relation
 	}
 
 	/**
-	 * updates the quantifier boolean according to the name
+	 * updates the quantifier boolean according to the name of this relation
 	 */
 	public void setQuantifier()
 	{
 		if(name.equals("forall") || name.equals("min") || name.equals("max") || name.equals("thresh")
 				 || name.equals("threshmax") || name.equals("emin") || name.equals("emax")
-				 || name.equals("etot"))
+				 || name.equals("etot") || name.equals("pevb"))
 		{
 			this.quantifier = true;
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return this.name;
 	}
 	
 }

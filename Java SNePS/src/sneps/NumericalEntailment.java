@@ -26,6 +26,7 @@ import snip.ds.RuleUseInfo;
 import snip.ds.RuleUseInfoSet;
 import snip.fns.*;
 
+@SuppressWarnings("serial")
 public class NumericalEntailment extends Rule
 {
 	private int thresh;

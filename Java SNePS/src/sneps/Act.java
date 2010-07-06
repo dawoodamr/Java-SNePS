@@ -6,7 +6,7 @@ import java.lang.reflect.*;
 
 import snactor.*;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "serial" })
 public class Act extends Entity {
 
 	private LinkedList<Node> arrangedObjects;

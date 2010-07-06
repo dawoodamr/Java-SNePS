@@ -3,6 +3,7 @@ package sneps;
 
 import snactor.*;
 
+@SuppressWarnings("serial")
 public class Action extends Entity
 {
  

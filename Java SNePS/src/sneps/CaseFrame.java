@@ -1,17 +1,19 @@
 package sneps;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
- * A case frame describes the skeleton of the node by specifying the semantic 
+ * A case frame describes the skeleton of the molecular node by specifying the semantic 
  * class along with the Relations going out of it. No two case frames may contain 
- * exactly the same list of Relations in a knowledge base but they might have the 
+ * exactly the same set of Relations in a knowledge base but they might have the 
  * same semantic class.
  * Once a case frame is created it can never be changed.
  * 
  * @author Amr Khaled Dawood
  */
-public class CaseFrame
+@SuppressWarnings("serial")
+public class CaseFrame implements Serializable
 {
 
 	/**
@@ -20,12 +22,12 @@ public class CaseFrame
 	private String semanticClass;
 	
 	/**
-	 * a list of Relations labeling arcs going out of the node implementing the case frame.
+	 * the set of Relations going out of the node implementing the case frame.
 	 */
 	private LinkedList<Relation> relations;
 	
 	/**
-	 * A String obtained by concatenating all relations names in the case frame ordered
+	 * A String obtained by concatenating all relations' names in the case frame ordered
 	 * in lexicographic order and separated by commas. No two case frames may have the same id.
 	 */
 	private String id;
@@ -36,13 +38,26 @@ public class CaseFrame
 	 */
 	public CaseFrame(String semanticClass,LinkedList<Relation> relations)
 	{
+		LinkedList<Relation> temp = new LinkedList<Relation>(relations);
+		for(int i=0;i<temp.size()-1;i++)
+		{
+			Relation r = temp.get(i);
+			for(int j=i+1;j<temp.size();j++)
+			{
+				if(r.equals(temp.get(j)))
+				{
+					temp.remove(j);
+					j--;
+				}
+			}
+		}
 		this.semanticClass = semanticClass;
-		this.relations = relations;
-		this.id = orderToString(relations);
+		this.relations = temp;
+		this.id = orderToString(temp);
 	}
 
 	/**
-	 * @return the semantic class of this case frame
+	 * @return a String representing the semantic class of this case frame
 	 */
 	public String getSemanticClass()
 	{
@@ -50,7 +65,7 @@ public class CaseFrame
 	}
 
 	/**
-	 * @return the list of Relations of this case frame
+	 * @return a LinkedList representing the set of Relations of this case frame
 	 */
 	public LinkedList<Relation> getRelations()
 	{
@@ -58,7 +73,7 @@ public class CaseFrame
 	}
 	
 	/**
-	 * @return the id of this case frame 
+	 * @return a String representing the id of this case frame 
 	 */
 	public String getId()
 	{
@@ -67,10 +82,10 @@ public class CaseFrame
 	
 	/**
 	 * A case frame is adjustable to another case frame if the both have the same semantic 
-	 * class, the difference between the list of Relations in the first one and the list 
+	 * class, the difference between the set of Relations in the first one and the set 
 	 * of Relations in the second one is a list of Relations that are reducible with limit=0
-	 * , and the difference between the list of Relations in the second one and the first one 
-	 * is a list of Relations that are expandable with limit=0
+	 * , and the difference between the set of Relations in the second one and the first one 
+	 * is a set of Relations that are all expandable with limit=0
 	 * 
 	 * @param caseFrame another case frame
 	 * @return true if this case frame is adjustable to the specified case frame 
@@ -108,13 +123,14 @@ public class CaseFrame
 	}
 	
 	/**
-	 * sorts the names of the relations in the list given as a parameter for the 
-	 * method using quick-sort algorithm and returns them as a String resulting
-	 * from concatenating these names separated by commas
+	 * sorts the names of the relations in the list given as a parameter, using quick-sort 
+	 * algorithm and returns them as a String resulting from concatenating these names 
+	 * separated by commas.
 	 *  
-	 * @param r a linked list of relations that its relation names are to be sorted and
-	 * put them concatenated in a String
-	 * @return a String of the result of sorting the names of the relations in the list
+	 * @param r a linked list of relations that their names are to be sorted and
+	 * put concatenated in a String
+	 * @return a String representing the names of the relations in r concatenated together
+	 * in lexicographic order and separated by commas
 	 */
 	private String orderToString(LinkedList<Relation> r)
 	{
@@ -149,8 +165,8 @@ public class CaseFrame
 	/**
 	 * Sorts the items in the String array in lexicographic order and puts them
 	 * after sorting in a String separated by commas
-	 * @param r an array of Relations that we want to sort in lexicographic order by their
-	 * names
+	 * @param r an array of Relations that are to be sorted in lexicographic order 
+	 * according to their names
 	 * @return a sorted array of the Relations given in the parameter
 	 */
 	private Relation[] quickSortLexicographically(Relation[] r)
@@ -162,7 +178,7 @@ public class CaseFrame
 	}
 	
 	/**
-	 * @param arr the array of Relations that is to be sorted by quick sort algorithm
+	 * @param arr the array of Relations that are to be sorted by quick sort algorithm
 	 * @param left the starting position of the items that are to be sorted
 	 * @param right the ending position of the items that are to be sorted
 	 */

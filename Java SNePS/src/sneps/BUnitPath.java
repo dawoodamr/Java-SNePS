@@ -1,81 +1,104 @@
 package sneps;
 
-import java.util.Hashtable;
 import java.util.LinkedList;
 
 import snebr.Context;
-import snebr.Support;
 
 /**
  * The BUnitPath (backward unit path) class represents the reverse of a path of only one relation. 
  * 
  * @author Amr Khaled Dawood
  */
+@SuppressWarnings("serial")
 public class BUnitPath extends Path
 {
 
 	/**
-	 * the name of the relation that identifies this path
+	 * the relation that identifies this path
 	 */
-	private String relationName;
+	private Relation relation;
 
 	/**
-	 * @param relationName a Strgin representing the name of the relation that specifies this path
+	 * @param relation a Relation for the BUnitPath
 	 */
-	public BUnitPath(String relationName)
+	public BUnitPath(Relation relation)
 	{
-		this.relationName = relationName;
+		this.relation = relation;
 	}
 	
 	/**
-	 * @return a String representing the name of the relation that this BUnitPath is defined for
+	 * @return the relation of this path
 	 */
-	public String getRelationName()
+	public Relation getRelation()
 	{
-		return relationName;
+		return relation;
 	}
 	
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#follow(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> follow(Node node,PathTrace trace,Context context)
 	{
-		Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node,LinkedList<Support>>();
-		UpCableSet upCableSet = node.getUpCableSet();
-		UpCable upCable = upCableSet.getUpCable(relationName);
-		if(upCable != null)
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		UpCableSet ucs = node.getUpCableSet();
+		UpCable uc = ucs.getUpCable(this.relation.getName());
+		if(uc != null)
 		{
-			for(int i=0;i<upCable.getNodeSet().size();i++)
+			NodeSet ns = uc.getNodeSet();
+			for(int i=0;i<ns.size();i++)
 			{
-					h.put(upCable.getNodeSet().getNode(i),supports);
+				Node n = ns.getNode(i);
+				PathTrace t = trace.clone();
+				t.compose(new BUnitPath(relation));
+				Object[] o = new Object[2];
+				o[0] = n;
+				o[1] = t;
+				result.add(o);
 			}
 		}
 		
-		return h;
+		return result;
 	}
 	
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#followConverse(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> followConverse(Node node,PathTrace trace,Context context)
 	{
-			Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node,LinkedList<Support>>();
-		if(node.getClass().getSuperclass().getSimpleName().equals("MolecularNode"))
-		{
-			MolecularNode mNode = (MolecularNode) node;
-			CableSet cableSet = mNode.getCableSet();
-			Cable cable = cableSet.getCable(relationName);
-			if(cable != null)
-			{
-				for(int i=0;i<cable.getNodeSet().size();i++)
-				{
-						h.put(cable.getNodeSet().getNode(i),supports);
-				}
-			}
-		}
-		return h;
+		return new FUnitPath(relation).follow(node,trace,context);
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#clone()
+	 */
+	@Override
+	public Path clone()
+	{
+		return new BUnitPath(this.relation);
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#isEqual(sneps.Path)
+	 */
+	@Override
+	public boolean isEqualTo(Path path)
+	{
+		if(! path.getClass().getSimpleName().equals("BUnitPath"))
+			return false;
+		if(! ((BUnitPath)path).getRelation().equals(this.relation))
+			return false;
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return this.relation.toString() +"-";  
 	}
 
 }

@@ -26,6 +26,7 @@ import snip.ds.RuleUseInfo;
 import snip.ds.RuleUseInfoSet;
 import snip.fns.*;
 
+@SuppressWarnings("serial")
 public class AndOr extends Rule
 {
 	private int min;

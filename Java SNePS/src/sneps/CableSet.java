@@ -1,5 +1,6 @@
 package sneps;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
@@ -8,7 +9,8 @@ import java.util.LinkedList;
  * 
  * @author Amr Khaled Dawood 
  */
-public class CableSet
+@SuppressWarnings("serial")
+public class CableSet implements Serializable
 {
 	
 	/**
@@ -22,8 +24,8 @@ public class CableSet
 	private CaseFrame caseFrame;
 
 	/**
-	 * @param cables the list of Cables for this CableSet
-	 * @param caseFrame the CaseFrame used for this CableSet
+	 * @param cables is a list of Cables
+	 * @param caseFrame is a CaseFrame
 	 */
 	public CableSet(LinkedList<Cable> cables,CaseFrame caseFrame)
 	{
@@ -40,8 +42,8 @@ public class CableSet
 	}
 	
 	/**
-	 * @param relationName the name of the relation of the cable we need to retrieve
-	 * @return the cable with the relation of this relation name
+	 * @param relationName the name of the relation of the cable that is to be retrieved
+	 * @return the cable with the relation of this relation name, or null if it does not exist
 	 */
 	public Cable getCable(String relationName)
 	{
@@ -57,22 +59,13 @@ public class CableSet
 	/**
 	 * gets the cable at the specified position
 	 * 
-	 * @param index the position of the Cable in the list of cables in this cable set
+	 * @param index an int representing the position of the Cable in the list of cables in 
+	 * this cable set
 	 * @return the cable at the specified position
 	 */
 	public Cable getCable(int index)
 	{
 		return this.cables.get(index); 
-	}
-	
-	/**
-	 * determines whether the cable set is empty or not
-	 * 
-	 * @return true if the list is empty and false if not
-	 */
-	public boolean isEmpty()
-	{
-		return this.cables.size() == 0;
 	}
 	
 	/**
@@ -89,7 +82,7 @@ public class CableSet
 	 * determines whether a cable with the relation having the specified name 
 	 * exists in this cable set or not
 	 * 
-	 * @param relationName the name of the relation
+	 * @param relationName a String representing the name of the relation
 	 * @return true if the cable with the specified relation exists in the cable set,
 	 *  and false otherwise
 	 */
@@ -104,4 +97,20 @@ public class CableSet
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		String s = "";
+		for(int i=0;i<this.cables.size();i++)
+		{
+			s += this.cables.get(i).toString();
+			if(i<this.cables.size()-1)
+				s += " ";
+		}
+		return s;
+	}
+	
 }

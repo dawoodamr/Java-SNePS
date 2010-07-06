@@ -1,11 +1,8 @@
 package sneps;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.LinkedList;
 
 import snebr.Context;
-import snebr.Support;
 
 /**
  * A domain restrict path is a path that is restricted by another path that should lead to 
@@ -13,6 +10,7 @@ import snebr.Support;
  * 
  * @author Amr Khaled Dawood
  */
+@SuppressWarnings("serial")
 public class DomainRestrictPath extends Path
 {
 	
@@ -68,34 +66,72 @@ public class DomainRestrictPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#follow(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> follow(Node node,PathTrace trace,Context context)
 	{
-		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
-		Hashtable<Node,LinkedList<Support>> h = q.follow(node,supports,context);
-		LinkedList<Support> sup = new LinkedList<Support>();
-		if(h.containsKey(this.node))
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		
+		LinkedList<Object[]> temp = q.follow(node,trace,context);
+		for(int i=0;i<temp.size();i++)
 		{
-			result = p.follow(node,supports,context);
-			sup = h.get(this.node);
+			Object[] o = temp.get(i);
+			Node n = (Node) o[0];
+			PathTrace pt = (PathTrace) o[1];
+			if(n.equals(this.node))
+			{
+				trace.addAllSupports(pt.getSupports());
+				result = p.follow(node,trace,context);
+			}
 		}
-		Enumeration<Node> nodes = result.keys();
-		for(;nodes.hasMoreElements();)
-		{
-			permute(sup,result.get(nodes.nextElement()));
-		}
+		
 		return result;
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#followConverse(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> followConverse(Node node,PathTrace trace,Context context)
 	{
-		return new RangeRestrictPath(this.p,this.q,this.node).follow(node,supports,context);
+		return new RangeRestrictPath(new ConversePath(this.p),this.q,this.node).follow(node,trace,context);
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#clone()
+	 */
+	@Override
+	public RangeRestrictPath clone()
+	{
+		return new RangeRestrictPath(p.clone(),q.clone(),node);
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#isEqual(sneps.Path)
+	 */
+	@Override
+	public boolean isEqualTo(Path path)
+	{
+		if(! path.getClass().getSimpleName().equals("DomainRestrictPath"))
+			return false;
+		DomainRestrictPath d = (DomainRestrictPath) path;
+		if(! this.node.equals(d.getNode()))
+			return false;
+		if(! this.p.isEqualTo(d.getP()))
+			return false;
+		if(! this.q.isEqualTo(d.getQ()))
+			return false;
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "domain-restrict("+this.q.toString()+" "+this.node.toString()+" "+this.p.toString()+")";
 	}
 
 }

@@ -1,11 +1,8 @@
 package sneps;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.LinkedList;
 
 import snebr.Context;
-import snebr.Support;
 
 /**
  * A relative complement path is a path that consists of two paths where a destination node 
@@ -14,6 +11,7 @@ import snebr.Support;
  * 
  * @author Amr Khaled Dawood
  */
+@SuppressWarnings("serial")
 public class RelativeComplementPath extends Path
 {
 	
@@ -55,43 +53,89 @@ public class RelativeComplementPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#follow(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> follow(Node node,PathTrace trace,Context context)
 	{
-		Hashtable<Node,LinkedList<Support>> h1 = p.follow(node,supports,context);
-		Hashtable<Node,LinkedList<Support>> h2 = q.follow(node,supports,context);
-		Hashtable<Node,LinkedList<Support>> temp = new Hashtable<Node,LinkedList<Support>>();
-		temp.putAll(h1);
-		Enumeration<Node> nodes = h1.keys();
-		for(;nodes.hasMoreElements();)
+		LinkedList<Object[]> result = this.p.follow(node,trace,context);
+		LinkedList<Object[]> temp = this.q.follow(node,trace,context);
+		for(int i=0;i<temp.size();i++)
 		{
-			Node n = nodes.nextElement();
-			if(h2.containsKey(n))
-				temp.remove(n);
+			Object[] ob1 = temp.get(i);
+			Node n1 = (Node) ob1[0];
+			for(int j=0;j<result.size();j++)
+			{
+				Object[] ob2 = result.get(j);
+				Node n2 = (Node) ob2[0];
+				if(n1.equals(n2))
+				{
+					result.remove(j);
+					j--;
+				}
+			}
 		}
-		return temp;
+		return result;
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#followConverse(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> followConverse(Node node,PathTrace trace,Context context)
 	{
-		Hashtable<Node,LinkedList<Support>> h1 = p.followConverse(node,supports,context);
-		Hashtable<Node,LinkedList<Support>> h2 = q.followConverse(node,supports,context);
-		Hashtable<Node,LinkedList<Support>> temp = new Hashtable<Node, LinkedList<Support>>();
-		temp.putAll(h1);
-		Enumeration<Node> nodes = h1.keys();
-		for(;nodes.hasMoreElements();)
+		LinkedList<Object[]> result = this.p.followConverse(node,trace,context);
+		LinkedList<Object[]> temp = this.q.followConverse(node,trace,context);
+		for(int i=0;i<temp.size();i++)
 		{
-			Node n = nodes.nextElement();
-			if(h2.containsKey(n))
-				temp.remove(n);
+			Object[] ob1 = temp.get(i);
+			Node n1 = (Node) ob1[0];
+			for(int j=0;j<result.size();j++)
+			{
+				Object[] ob2 = result.get(j);
+				Node n2 = (Node) ob2[0];
+				if(n1.equals(n2))
+				{
+					result.remove(j);
+					j--;
+				}
+			}
 		}
-		return temp;
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#clone()
+	 */
+	@Override
+	public RelativeComplementPath clone()
+	{
+		return new RelativeComplementPath(this.p,this.q);
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#isEqual(sneps.Path)
+	 */
+	@Override
+	public boolean isEqualTo(Path path)
+	{
+		if(! path.getClass().getSimpleName().equals("RelativeComplementPath"))
+			return false;
+		RelativeComplementPath d = (RelativeComplementPath) path;
+		if(! this.p.isEqualTo(d.getP()))
+			return false;
+		if(! this.q.isEqualTo(d.getQ()))
+			return false;
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "relative-complement("+this.p.toString()+" "+this.q.toString()+")";
 	}
 
 }

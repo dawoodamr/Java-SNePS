@@ -1,12 +1,15 @@
 package sneps;
 
+import java.io.Serializable;
+
 /**
  * An UpCable is a cable that contains the information needed about a node's parents 
- * and the arcs coming into it from them. It contains a Relation and a NodeSet of parent nodes.
+ * and the arcs coming into that node from them. It contains a Relation and a NodeSet of parent nodes.
  * 
  * @author Amr Khaled Dawood
  */
-public class UpCable
+@SuppressWarnings("serial")
+public class UpCable implements Serializable
 { 
 	
 	/**
@@ -21,7 +24,7 @@ public class UpCable
 	private NodeSet nodeSet;
 
 	/**
-	 * @param relation the Relation that labels the arcs of the UpCable.
+	 * @param relation a Relation that labels the arcs of the UpCable.
 	 */
 	public UpCable(Relation relation)
 	{
@@ -30,7 +33,7 @@ public class UpCable
 	}
 
 	/**
-	 * @return the relation of this UpCable.
+	 * @return the Relation of this UpCable.
 	 */
 	public Relation getRelation()
 	{
@@ -48,7 +51,7 @@ public class UpCable
 	/**
 	 * adds the specified node to the node set of this up cable
 	 * 
-	 * @param node a Node to be added to the list of nodes in the UpCable.
+	 * @param node a Node to be added to the set of nodes in this UpCable.
 	 */
 	public void addNode(Node node)
 	{
@@ -63,6 +66,15 @@ public class UpCable
 	public void removeNode(Node node)
 	{
 		this.nodeSet.removeNode(node);
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return this.relation.toString()+" "+this.nodeSet.toString();
 	}
 
 }

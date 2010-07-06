@@ -1,11 +1,8 @@
 package sneps;
 
-import java.util.Hashtable;
 import java.util.LinkedList;
 
 import snebr.Context;
-import snebr.Proposition;
-import snebr.Support;
 
 /**
  * This class is used to create a special instance of Path that requires the proposition to be asserted
@@ -14,80 +11,82 @@ import snebr.Support;
  * 
  * @author Amr Khaled Dawood
  */
+@SuppressWarnings("serial")
 public class BangPath extends Path
 {
 	
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#follow(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> follow(Node node,PathTrace trace,Context context)
 	{
-		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
-		Entity e = node.getEntity();
-		if((e.getClass().getSimpleName().equals("Proposition") || 
-				e.getClass().getSuperclass().getSimpleName().equals("Proposition")) &&
-				context.getHypSet().getPropositionSet().contains(e))
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		// if asserted
+		if((node.getEntity().getSuperClasses().contains("Proposition") ||
+				node.getEntity().getClass().getSimpleName().equals("Proposition")) &&
+				context.getHypSet().getPropositionSet().contains(node.getEntity()))
 		{
-			for(int i=0;i<supports.size();i++)
-				supports.get(i).addToOriginSet((Proposition) e);
-			result.put(node,supports);
+			PathTrace pt = trace.clone();
+			pt.addSupport(node);
+			// add the pair to the result
+			Object[] o = new Object[2];
+			o[0] = node;
+			o[1] = pt;
+			result.add(o);
 		}
 		
 		return result;
 	}
 	
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#followConverse(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> followConverse(Node node,PathTrace trace,Context context)
 	{
-		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
-		Entity e = node.getEntity();
-		if((getSuperClasses(e.getClass()).contains("Proposition") || 
-				(e.getClass().getSimpleName().equals("Proposition"))) &&
-				context.getHypSet().getPropositionSet().contains(e))
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		// if asserted
+		if((node.getEntity().getSuperClasses().contains("Proposition") ||
+				node.getEntity().getClass().getSimpleName().equals("Proposition")) &&
+				context.getHypSet().getPropositionSet().contains(node.getEntity()))
 		{
-			for(int i=0;i<supports.size();i++)
-				supports.get(i).addToOriginSet((Proposition) e);
-			result.put(node,supports);
+			PathTrace pt = trace.clone();
+			pt.addSupport(node);
+			// add the pair to the result
+			Object[] o = new Object[2];
+			o[0] = node;
+			o[1] = pt;
+			result.add(o);
 		}
 		
 		return result;
 	}
 	
-	/**
-	 * gets a list of super classes' simple names for a given class
-	 * 
-	 * @param c a Class to get the super classes for
-	 * @return a LinkedList of Strings representing the simple names of the super classes 
-	 * of the given class
+	/* (non-Javadoc)
+	 * @see sneps.Path#clone()
 	 */
-	@SuppressWarnings("unchecked")
-	private LinkedList<String> getSuperClasses(Class c)
+	@Override
+	public Path clone()
 	{
-		LinkedList<String> list = new LinkedList<String>();
-		updateSuperClasses(c,list);
-		return list;
+		return new BangPath();
 	}
 	
-	/**
-	 * updates a list of strings by adding the simple names of super classes of a given class
-	 * 
-	 * @param c a Class to get super classes for
-	 * @param list a LinkedList of Strings representing the names of super classes
+	/* (non-Javadoc)
+	 * @see sneps.Path#isEqual(sneps.Path)
 	 */
-	@SuppressWarnings("unchecked")
-	private void updateSuperClasses(Class c,LinkedList<String> list)
+	@Override
+	public boolean isEqualTo(Path path)
 	{
-		Class superClass = c.getSuperclass();
-		if(superClass == null)
-			return;
-		else
-		{
-			list.add(superClass.getSimpleName());
-			updateSuperClasses(superClass,list);
-		}
+		return path.getClass().getSimpleName().equals("BangPath");
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "!";
 	}
 }

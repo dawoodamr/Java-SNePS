@@ -25,6 +25,7 @@ import snip.ds.RuleUseInfo;
 import snip.ds.RuleUseInfoSet;
 import snip.fns.*;
 
+@SuppressWarnings("serial")
 public class AndEntailment extends Rule
 {
 	private boolean shareVars;

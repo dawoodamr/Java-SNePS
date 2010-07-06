@@ -8,6 +8,7 @@ import sneps.Entity;
 import sneps.Node;
 import snebr.*;
 
+@SuppressWarnings("serial")
 public class Proposition extends Entity {
 	
 	private Set<Support> support ; //set of support 

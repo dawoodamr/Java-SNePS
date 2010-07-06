@@ -6,6 +6,7 @@ package sneps;
  * 
  * @author Amr Khaled Dawood
  */
+@SuppressWarnings("serial")
 public class Individual extends Entity
 {
 

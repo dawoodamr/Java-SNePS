@@ -7,6 +7,7 @@ package sneps;
  * 
  * @author Amr Khaled Dawood
  */
+@SuppressWarnings("serial")
 public class VariableNode extends Node
 {
 	
@@ -21,7 +22,7 @@ public class VariableNode extends Node
 	private boolean sLoop;
 
 	/**
-	 * @param identifier the name of the VariableNode
+	 * @param identifier a String representing the name of the VariableNode
 	 */
 	public VariableNode(String identifier)
 	{
@@ -31,7 +32,7 @@ public class VariableNode extends Node
 	}
 
 	/**
-	 * @return the flag loop that is used in the unification for r-pointer
+	 * @return the boolean flag: loop that is used in the unification for r-pointer
 	 */
 	public boolean isRLoop()
 	{
@@ -41,7 +42,7 @@ public class VariableNode extends Node
 	/**
 	 * sets the rLoop to the value specified
 	 * 
-	 * @param loop the value that the flag is set to
+	 * @param loop a boolean which is the value that the flag is set to
 	 */
 	public void setRLoop(boolean rloop)
 	{
@@ -49,7 +50,7 @@ public class VariableNode extends Node
 	}
 	
 	/** 
-	 * @return the flag loop that is used in the unification for s-pointer
+	 * @return the boolean flag: loop that is used in the unification for s-pointer
 	 */
 	public boolean isSLoop()
 	{
@@ -57,13 +58,22 @@ public class VariableNode extends Node
 	}
 
 	/**
-	 * sets the sLoop tp the value specified
+	 * sets the sLoop to the value specified
 	 * 
-	 * @param loop the value that the flag is set to
+	 * @param loop a boolean which is the value that the flag is set to
 	 */
 	public void setSLoop(boolean sloop)
 	{
 		this.sLoop = sloop;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return this.getIdentifier();
 	}
 	
 }

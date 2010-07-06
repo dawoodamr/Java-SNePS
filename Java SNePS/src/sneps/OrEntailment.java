@@ -15,6 +15,7 @@ import snip.ds.Report;
 import snip.ds.Request;
 import snip.fns.*;
 
+@SuppressWarnings("serial")
 public class OrEntailment extends Rule
 {
 	private int reportCounter;

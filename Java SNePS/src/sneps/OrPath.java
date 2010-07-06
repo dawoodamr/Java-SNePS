@@ -1,18 +1,16 @@
 package sneps;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.LinkedList;
 
 import snebr.Context;
-import snebr.Support;
 
 /**
- * An OrPath is a path that contains list of paths. An OrPath will lead to a destination 
- * node if one of the paths it contains will lead to this node
+ * An OrPath is a path that contains set of paths. An OrPath will lead to a destination 
+ * node if one of the paths it contains can lead to this node
  * 
  * @author Amr Khaled Dawood
  */
+@SuppressWarnings("serial")
 public class OrPath extends Path
 {
 	
@@ -26,11 +24,25 @@ public class OrPath extends Path
 	 */
 	public OrPath(LinkedList<Path> paths)
 	{
-		this.paths = paths;
+		LinkedList<Path> list = new LinkedList<Path>();
+		list.addAll(paths);
+		for(int i=0;i<list.size()-1;i++)
+		{
+			Path p = list.get(i);
+			for(int j=i+1;j<list.size();j++)
+			{
+				if(list.get(j).isEqualTo(p))
+				{
+					list.remove(j);
+					j--;
+				}
+			}
+		}
+		this.paths = list;
 	}
 
 	/**
-	 * @return the LinkedList of Paths that are used to create this OrPath
+	 * @return the LinkedList of Paths that were used to create this OrPath
 	 */
 	public LinkedList<Path> getPaths()
 	{
@@ -38,61 +50,110 @@ public class OrPath extends Path
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#follow(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> follow(Node node,PathTrace trace,Context context)
 	{
-		if(paths.isEmpty())
-			return new Hashtable<Node, LinkedList<Support>>();
+		if(this.paths.isEmpty())
+			return new LinkedList<Object[]>();
 		LinkedList<Path> rest = new LinkedList<Path>();
-		rest.addAll(paths);
+		rest.addAll(this.paths);
 		Path p = rest.removeFirst();
 		OrPath orPath = new OrPath(rest);
-		return UnionOr(p.follow(node,supports,context),orPath.follow(node,supports,context));
+		return UnionOr(p.follow(node,trace,context),orPath.follow(node,trace,context));
 	}
 
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#followConverse(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> followConverse(Node node,PathTrace trace,Context context)
 	{
-		if(paths.isEmpty())
-			return new Hashtable<Node, LinkedList<Support>>();
+		if(this.paths.isEmpty())
+			return new LinkedList<Object[]>();
 		LinkedList<Path> rest = new LinkedList<Path>();
-		rest.addAll(paths);
+		rest.addAll(this.paths);
 		Path p = rest.removeFirst();
 		OrPath orPath = new OrPath(rest);
-		return UnionOr(p.followConverse(node,supports,context),orPath.followConverse(node,supports,context));
+		return UnionOr(p.followConverse(node,trace,context),orPath.followConverse(node,trace,context));
 	}
 	
 	/**
-	 * gets the union of two Hashtables
+	 * gets the union of two lists of Node-PathTrace pairs
 	 * 
-	 * @param h1 the first Hashtable
-	 * @param h2 the second Hashtable
-	 * @return a Hashtable that is the union of the two Hashtables
+	 * @param list1 a LinkedList of Node-PathTrace pairs
+	 * @param list2 a LinkedList of Node-PathTrace pairs
+	 * @return a LinkedList of Node-PathTrace pairs resulted from getting the union of the two 
+	 * given lists
 	 */
-	private Hashtable<Node,LinkedList<Support>> UnionOr(Hashtable<Node,LinkedList<Support>> h1,Hashtable<Node,LinkedList<Support>> h2)
+	private LinkedList<Object[]> UnionOr(LinkedList<Object[]> list1,LinkedList<Object[]> list2)
 	{
-		Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node,LinkedList<Support>>();
-		Enumeration<LinkedList<Support>> list1 = h1.elements();
-		Enumeration<Node> nodes1 = h1.keys();
-		for(;nodes1.hasMoreElements();)
-			h.put(nodes1.nextElement(),list1.nextElement());
-		Enumeration<LinkedList<Support>> list2 = h2.elements();
-		Enumeration<Node> nodes2 = h2.keys();
-		for(;nodes2.hasMoreElements();)
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		result.addAll(list1);
+		result.addAll(list2);
+		
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#clone()
+	 */
+	@Override
+	public OrPath clone()
+	{
+		LinkedList<Path> list = new LinkedList<Path>();
+		for(int i=0;i<this.paths.size();i++)
 		{
-			LinkedList<Support> l = list2.nextElement();
-			Node node = nodes2.nextElement();
-			if(! h.containsKey(node))
-				h.put(node,l);
-			else
-				h.get(node).addAll(l);
+			list.add(this.paths.get(i).clone());
 		}
-		return h;
+		return new OrPath(list);
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#isEqual(sneps.Path)
+	 */
+	@Override
+	public boolean isEqualTo(Path path)
+	{
+		if(! path.getClass().getSimpleName().equals("OrPath"))
+			return false;
+		OrPath and = (OrPath) path;
+		if(this.paths.size() != and.getPaths().size())
+			return false;
+		for(int i=0;i<this.paths.size();i++)
+		{
+			Path p = this.paths.get(i);
+			boolean flag = false;
+			for(int j=0;j<and.getPaths().size();j++)
+			{
+				Path q = and.getPaths().get(j);
+				if(p.isEqualTo(q))
+					flag = true;
+			}
+			if(! flag)
+				return false;
+			else
+				flag = false;
+		}
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		String s = "or(";
+		for(int i=0;i<this.paths.size();i++)
+		{
+			s += this.paths.get(i).toString();
+			if(i<this.paths.size()-1)
+				s += " ";
+		}
+		s += ")";
+		return s;
 	}
 
 }

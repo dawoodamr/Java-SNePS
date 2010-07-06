@@ -3,14 +3,14 @@ package sneps;
 import java.util.LinkedList;
 
 /**
- * A PatternNode is a MolecularNode that dominates free variables, that is if there are 
- * VariableNodes in the subtree that this Node is considered to be its root, then at least
- * one of these VariableNodes is not quantified by any quantifier Relation(forall,...etc)
- * in this subtree.
+ * A PatternNode is a MolecularNode that dominates free variables. A molecular node dominates 
+ * a free variable if there is at least one down path from this molecular node to that variable
+ * that does not contain any nodes that quantifies that variable.
  * It contains a list of those free variables.
  * 
  * @author Amr Khaled Dawood
  */
+@SuppressWarnings("serial")
 public class PatternNode extends MolecularNode
 {
 	
@@ -20,8 +20,8 @@ public class PatternNode extends MolecularNode
 	private LinkedList<VariableNode> freeVariables;
 
 	/**
-	 * @param identifier the name of the PatternNode
-	 * @param cableSet the CableSet of this PatternNode
+	 * @param identifier a String representing the name of the PatternNode
+	 * @param cableSet a CableSet of this PatternNode
 	 */
 	public PatternNode(String identifier,CableSet cableSet)
 	{
@@ -39,7 +39,7 @@ public class PatternNode extends MolecularNode
 	}
 	
 	/**
-	 * Updates the list of free variables while creating the pattern node
+	 * Updates the list of free variables
 	 */
 	public void updateFreeVariables()
 	{
@@ -87,10 +87,11 @@ public class PatternNode extends MolecularNode
 	/**
 	 * compares the free variables dominated by this node and the specified node
 	 * 
-	 * @param node the pattern node that will be compared to this one
-	 * @return true if it shares the same free variables with this given pattern node, and false otherwise
+	 * @param node a pattern node that will be compared to this one
+	 * @return true if this pattern node dominates the same free variables as the specified 
+	 * pattern node, and false otherwise
 	 */
-	public boolean haveSameFreeVariables(PatternNode patternNode)
+	public boolean hasSameFreeVariablesAs(PatternNode patternNode)
 	{
 		LinkedList<VariableNode> l1 = patternNode.getFreeVariables();
 		if(l1.size() != this.freeVariables.size())

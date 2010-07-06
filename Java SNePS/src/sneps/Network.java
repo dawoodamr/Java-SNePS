@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 import snebr.Context;
-import snebr.Support;
 import snip.ds.Channel;
 import snip.ds.ReportSet;
 import snip.ds.Request;
@@ -27,37 +26,34 @@ public class Network implements Serializable
 {
 
 	/**
-	 * the hash table containing nodes of the network indexed by the names.
+	 * a hash table containing nodes of the network indexed by their identifiers.
 	 */
 	private Hashtable<String,Node> nodes;
 	
 	/**
-	 * the hash table containing molecular nodes in the network indexed by the id's
+	 * a hash table containing sets of molecular nodes in the network indexed by the id's
 	 * of their case frames
 	 */
 	private Hashtable<String,NodeSet> molecularNodes;
 	
 	/**
-	 * the hash table containing case frames that the user defined to use in this network
-	 * indexed by a string resulted from concatenating the names of relations of the case
-	 * frame ordered in lexicographic order.
+	 * a hash table containing case frames indexed by their id's
 	 */
 	private Hashtable<String,CaseFrame> caseFrames;
 	
 	/**
-	 * the hash table containing the relations that the user defined for using in building 
-	 * this network indexed by their names.
+	 * a hash table containing the relations indexed by their names.
 	 */
 	private Hashtable<String,Relation> relations;
 	
 	/**
-	 * the counter used for the names of closed molecular nodes.each closed molecular node is 
+	 * the counter used for the names of closed molecular nodes. Each closed molecular node is 
 	 * named by 'M' followed by a positive number, for example: "M12".
 	 */
 	private int molCounter;
 	
 	/**
-	 * the counter used for names of pattern molecular nodes. each pattern molecular node is
+	 * the counter used for names of pattern molecular nodes. Each pattern molecular node is
 	 * named by 'P' followed by a positive number, for example: "P10" 
 	 */
 	private int patCounter;
@@ -70,24 +66,21 @@ public class Network implements Serializable
 	
 	/**
 	 * a list of numbers that the user used in naming nodes he created that look like 
-	 * names of closed molecular nodes' names.this list is important in order to avoid 
-	 * using them again.
+	 * names of closed molecular nodes' names.
 	 */
-	private LinkedList<Integer> userDefinedMolPostfix;
+	private LinkedList<Integer> userDefinedMolSuffix;
 	
 	/**
 	 * a list of numbers that the user used in naming nodes he created that look like 
-	 * names of pattern molecular nodes' names.this list is important in order to avoid 
-	 * using them again.
+	 * names of pattern molecular nodes' names.
 	 */
-	private LinkedList<Integer> userDefinedPatPostfix;
+	private LinkedList<Integer> userDefinedPatSuffix;
 	
 	/**
 	 * a list of numbers that the user used in naming nodes he created that look like 
-	 * names of variable nodes' names.this list is important in order to avoid 
-	 * using them again.
+	 * names of variable nodes' names.
 	 */
-	private LinkedList<Integer> userDefinedVarPostfix;
+	private LinkedList<Integer> userDefinedVarSuffix;
 	
 	/**
 	 * the instance of the class Network(assuming a Network may have only one instance).
@@ -103,9 +96,9 @@ public class Network implements Serializable
 		molecularNodes = new Hashtable<String,NodeSet>();
 		caseFrames = new Hashtable<String, CaseFrame>();
 		relations = new Hashtable<String, Relation>();
-		userDefinedMolPostfix = new LinkedList<Integer>();
-		userDefinedPatPostfix = new LinkedList<Integer>();
-		userDefinedVarPostfix = new LinkedList<Integer>();
+		userDefinedMolSuffix = new LinkedList<Integer>();
+		userDefinedPatSuffix = new LinkedList<Integer>();
+		userDefinedVarSuffix = new LinkedList<Integer>();
 		molCounter = 0;
 		patCounter = 0;
 		varCounter = 0;
@@ -113,6 +106,8 @@ public class Network implements Serializable
 	}
 
 	/**
+	 * gets the instance of the network class
+	 * 
 	 * @return the instance of the class Network.
 	 */
 	public static Network getInstance()
@@ -121,6 +116,8 @@ public class Network implements Serializable
 	}
 
 	/**
+	 * gets the hash table of nodes
+	 * 
 	 * @return that hash table of the nodes
 	 */
 	public Hashtable<String,Node> getNodes()
@@ -129,6 +126,8 @@ public class Network implements Serializable
 	}
 
 	/**
+	 * gets the hash table of node sets of molecular nodes
+	 * 
 	 * @return the hash table of molecular nodes
 	 */
 	public Hashtable<String,NodeSet> getMolecularNodes()
@@ -137,6 +136,8 @@ public class Network implements Serializable
 	}
 
 	/**
+	 * gets the hash table of case frames
+	 * 
 	 * @return the hash table of the case frames
 	 */
 	public Hashtable<String,CaseFrame> getCaseFrames()
@@ -145,7 +146,9 @@ public class Network implements Serializable
 	}
 
 	/**
-	 * @return the hash table of the relations in this network
+	 * gets the hash table of relations
+	 * 
+	 * @return the hash table of the relations
 	 */
 	public Hashtable<String,Relation> getRelations()
 	{
@@ -153,33 +156,41 @@ public class Network implements Serializable
 	}
 	
 	/**
-	 * @return this method returns a list of numbers that the user used them as a 
-	 * suffix to 'm' for naming the nodes he created 
+	 * gets the list of suffices of nodes' names that look like closed nodes' names
+	 * 
+	 * @return a LinkedList of numbers that the user used them as suffices to 'M' 
+	 * for naming the nodes he created 
 	 */
-	public LinkedList<Integer> getUserDefinedMolPostfix()
+	public LinkedList<Integer> getUserDefinedMolSuffix()
 	{
-		return userDefinedMolPostfix;
+		return userDefinedMolSuffix;
 	}
 
 	/**
-	 * @return this method returns a list of numbers that the user used them as a 
-	 * suffix to 'p' for naming the nodes he created
+	 * gets the list of suffices of nodes' names that look like the pattern nodes' names
+	 * 
+	 * @return a LinkedList of numbers that the user used them as suffices to 'P' 
+	 * for naming the nodes he created
 	 */
-	public LinkedList<Integer> getUserDefinedPatPostfix()
+	public LinkedList<Integer> getUserDefinedPatSuffix()
 	{
-		return userDefinedPatPostfix;
+		return userDefinedPatSuffix;
 	}
 	
 	/**
+	 * gets the list of suffices of nodes' names that look like the variable nodes' names
+	 * 
 	 * @return a LinkedList of Integers that the user used to name nodes that 
 	 * look like variable nodes' names
 	 */
-	public LinkedList<Integer> getUserDefinedVarPostfix()
+	public LinkedList<Integer> getUserDefinedVarSuffix()
 	{
-		return userDefinedVarPostfix;
+		return userDefinedVarSuffix;
 	}
 	
 	/**
+	 * gets the relation with the given name
+	 * 
 	 * @param name the name of the relation 
 	 * @return the Relation with the specified name
 	 * @throws CustomException an exception is thrown if there is no relation with
@@ -194,22 +205,26 @@ public class Network implements Serializable
 	}
 
 	/**
+	 * gets the case frame with the given id
+	 * 
 	 * @param relString the id of the case frame
-	 * @return the case frame with the relation set specified
+	 * @return the case frame with the given id
 	 * @throws CustomException an exception is thrown if there is no case frame
-	 * with the specified relation set
+	 * with the given id
 	 */
-	public CaseFrame getCaseFrame(String relString)throws CustomException
+	public CaseFrame getCaseFrame(String id)throws CustomException
 	{
-		if(! caseFrames.containsKey(relString))
+		if(! caseFrames.containsKey(id))
 			throw new CustomException("there is no case frame with such set of relations");
 		else
-			return caseFrames.get(relString);
+			return caseFrames.get(id);
 	}
 	
 	/**
-	 * @param identifier the name of the node 
-	 * @return the node with the specified name
+	 * gets the node with the given identifier
+	 * 
+	 * @param identifier the identifier of the node 
+	 * @return the node with the given identifier
 	 * @throws CustomException an exception is thrown if there is no nodes
 	 * with such a name
 	 */
@@ -222,7 +237,9 @@ public class Network implements Serializable
 	}
 	
 	/**
-	 * @param array the 2D array of Objects that represents relation-node pairs for the cable set
+	 * gets the molecular node with the given cable set
+	 * 
+	 * @param array a 2D array of Objects that represents relation-node pairs for the cable set
 	 * @return the molecular node that have such a cable set
 	 * @throws CustomException if the node does not exist
 	 */
@@ -253,7 +270,7 @@ public class Network implements Serializable
 				else
 				{
 					Relation r1 = (Relation) array[i][0];
-					NodeSet ns1 = ((Node) array[i][1]).getUpCableSet().getUpCable(r1).getNodeSet();
+					NodeSet ns1 = ((Node) array[i][1]).getUpCableSet().getUpCable(r1.getName()).getNodeSet();
 					intersection = intersection.Intersection(ns1);
 				}
 			}
@@ -262,15 +279,17 @@ public class Network implements Serializable
 	}
 	
 	/**
+	 * defines a relation with the given parameters
+	 * 
 	 * @param name the name of the relation
-	 * @param type the semantic type of the node that the relation could point to
+	 * @param type the semantic type of the node that the relation could point at
 	 * @param adjust the adjustability of the relation "reduce", "expand", or "none"
-	 * @param limit the minimum value that the relation can be reduced to or expanded from
-	 * @return the relation that was just created
+	 * @param limit the minimum size of the node set containing nodes pointed to by this 
+	 * relation
+	 * @return the defined relation
 	 * @throws CustomException an exception is thrown if the relation already exists
 	 */
-	public Relation defineRelation(String name,String type,
-			String adjust,int limit)throws CustomException
+	public Relation defineRelation(String name,String type,String adjust,int limit)throws CustomException
 	{
 		if(relations.containsKey(name))
 			throw new CustomException("the relation already exists");
@@ -281,7 +300,10 @@ public class Network implements Serializable
 	}
 	
 	/**
-	 * @param name the name of the relation that we want to remove
+	 * removes the relation with the given name from the hash table of relations,
+	 * and removes case frame containing this relation from the hash table of case frames
+	 * 
+	 * @param name the name of the relation to be removed
 	 */
 	public void undefineRelation(String name)
 	{
@@ -300,18 +322,21 @@ public class Network implements Serializable
 	}
 	
 	/**
+	 * defines a case frame with the given parameters
+	 * 
 	 * @param semanticType the semantic type of the node that can have such a case frame
-	 * @param relationSet a list of relations that could connect the node containing 
-	 * this relation to other child nodes
+	 * @param relationSet a list of relations representing out-going arcs from the node 
+	 * containing such a case frame
 	 * @return the case frame that was just created
-	 * @throws CustomException 
+	 * @throws CustomException a CustomException is thrown if there is a case frame with
+	 * the same set of relations
 	 */
 	public CaseFrame defineCaseFrame(String semanticType,
 			LinkedList<Relation> relationSet)throws CustomException
 	{
 		CaseFrame caseFrame = new CaseFrame(semanticType,relationSet);
 		if(caseFrames.containsKey(caseFrame.getId()))
-			throw new CustomException("the case frame already exists");
+			throw new CustomException("case frame already exists");
 		else
 		{
 			caseFrames.put(caseFrame.getId(),caseFrame);
@@ -323,7 +348,9 @@ public class Network implements Serializable
 	}
 	
 	/**
-	 * @param id the id of the case frame that we want to remove
+	 * removes the case frame with the given id from the hash table of case frames
+	 * 
+	 * @param id the id of the case frame to be undefined
 	 */
 	public void undefineCaseFrame(String id)
 	{
@@ -331,8 +358,10 @@ public class Network implements Serializable
 	}
 
 	/**
-	 * @param relation the relation that we need to define the path for
-	 * @param path the path that we need to define
+	 * defines the given path for the given relation
+	 * 
+	 * @param relation a Relation to define the path for
+	 * @param path a Path to be defined for the given relation
 	 */
 	public void definePath(Relation relation,Path path)
 	{
@@ -340,7 +369,9 @@ public class Network implements Serializable
 	}
 	
 	/**
-	 * @param relation the relation that we need to undefine its path
+	 * sets the path in the given relation to null
+	 * 
+	 * @param relation a relation to undefine the path defined for it
 	 */
 	public void undefinePath(Relation relation)
 	{
@@ -348,10 +379,17 @@ public class Network implements Serializable
 	}
 	
 	/**
-	 * @param node the node that we want to remove from the network
+	 * removes the given node from the hash table of nodes as well as the nodes dominated only
+	 * by this node
+	 * 
+	 * @param node a node to be removed from the network
+	 * @throws CustomException a CustomException is thrown if the node is not isolated
 	 */
-	public void removeNode(Node node)
+	public void removeNode(Node node)throws CustomException
 	{
+		if(! node.getUpCableSet().isEmpty())
+			throw new CustomException("node is not isolated");
+		
 		// removing the node from the hash table
 		nodes.remove(node.getIdentifier());
 		
@@ -379,8 +417,7 @@ public class Network implements Serializable
 							n.getUpCableSet().removeUpCable(upCable);
 					}
 					// removing child nodes
-					if(! n.getClass().getSuperclass().getSimpleName().equals("MolecularNode")
-							&& n.getUpCableSet().isEmpty())
+					if(n.getUpCableSet().isEmpty())
 						removeNode(n);
 				}
 			}
@@ -388,59 +425,11 @@ public class Network implements Serializable
 	}
 	
 	/**
-	 * this method checks whether a CableSet was build before in the network or not
+	 * builds a new variable node
 	 * 
-	 * @param array a 2D array of relations and nodes that we want to check it it represents
-	 * a cable set that already exists in the network
-	 * @return true if the CableSet exists and false otherwise
+	 * @return the variable node that was just built
 	 */
-	public boolean cableSetExists(Object[][] array)
-	{
-		int counter = 0;
-		NodeSet result = new NodeSet();
-		while(true)
-		{
-			if(array[counter][1].getClass().getSimpleName().equals("NodeSet"))
-				counter++;
-			else
-			{
-				break;
-			}
-		}
-		Node node = (Node) array[counter][1];
-		UpCableSet upCableSet = node.getUpCableSet();
-		Relation relation = (Relation) array[counter][0];
-		if(! upCableSet.contains(relation))
-			return false;
-		UpCable upCable = upCableSet.getUpCable(relation);
-		NodeSet ns = upCable.getNodeSet();
-		result.addAll(ns);
-		
-		for(int i=counter;i<array.length;i++)
-		{
-			if(array[i][1].getClass().getSimpleName().equals("NodeSet"))
-				continue;
-			node = (Node) array[i][1];
-			upCableSet = node.getUpCableSet();
-			relation = (Relation) array[i][0];
-			if(! upCableSet.contains(relation))
-				return false;
-			upCable = upCableSet.getUpCable(relation);
-			ns = upCable.getNodeSet();
-			result = result.Intersection(ns);
-		}
-		
-		if(result.size() == 1)
-			return true;
-		return false;
-	}
-	
-	/**
-	 * @param identifier the name of the variable node as the user specified
-	 * @return the variable node that was just created
-	 * @throws CustomException an exception is thrown if the node already exists
-	 */
-	public Node buildVariableNode()
+	public VariableNode buildVariableNode()
 	{
 		VariableNode node = new VariableNode(getNextVarName());
 		this.nodes.put(node.getIdentifier(),node);
@@ -448,10 +437,12 @@ public class Network implements Serializable
 	}
 	
 	/**
-	 * @param identifier the name of the base node that the user specified
-	 * @return the base node that was just created
-	 * @throws CustomException an exception is thrown if the node with this name 
-	 * already exists 
+	 * builds a new base node with the given identifier
+	 * 
+	 * @param identifier a String representing the name of the base node
+	 * @return the Node that was just built
+	 * @throws CustomException an exception is thrown if the node with the given 
+	 * identifier already exists 
 	 */
 	public Node build(String identifier)throws CustomException
 	{
@@ -459,11 +450,11 @@ public class Network implements Serializable
 		{
 			nodes.put(identifier,new BaseNode(identifier));
 			if(isMolName(identifier)>-1)
-				userDefinedMolPostfix.add(new Integer(isMolName(identifier)));
+				userDefinedMolSuffix.add(new Integer(isMolName(identifier)));
 			if(isPatName(identifier)>-1)
-				userDefinedPatPostfix.add(new Integer(isPatName(identifier)));
+				userDefinedPatSuffix.add(new Integer(isPatName(identifier)));
 			if(isVarName(identifier)>-1)
-				userDefinedVarPostfix.add(new Integer(isVarName(identifier)));
+				userDefinedVarSuffix.add(new Integer(isVarName(identifier)));
 		}else
 			throw new CustomException("the node with this name already exists");
 		
@@ -471,23 +462,41 @@ public class Network implements Serializable
 	}
 	
 	/**
-	 * @param array an n*2 array of Objects, the first column contains relations and the 
-	 * second column contains the destination nodes.each row contains a relation and the
-	 * destination node for this relation
-	 * @param caseFrame the case frame that should be included in the molecular node that 
-	 * will be built
-	 * @return the node that was just created
-	 * @throws CustomException an exception will be thrown if the semantic type of the 
-	 * relation does not match the semantic type of the corresponding node in the array
+	 * builds a molecular node with the given cable set and case frame
+	 * 
+	 * @param array a 2D array of Relation-Node pairs representing the cable set
+	 * @param caseFrame a case frame to be implemented by the given cable set
+	 * @return the node that was just built
+	 * @throws CustomException an exception is thrown if the cable set already exists, 
+	 * the number of nodes pointed to by a relation is violating the restriction in the
+	 * relation (limit), or if the relations in the array are different from those of 
+	 * the case frame
 	 */
 	public MolecularNode build(Object[][] array,CaseFrame caseFrame)throws CustomException
 	{
 		if(cableSetExists(array))
 			throw new CustomException("cable set already exists");
+
+		// check the size of the node sets
+		if(! validNodeSetSize(turnIntoRelNodeSet(array)))
+			throw new CustomException("wrong node set size");
+		
+		// check the case frame validation
+		if(! followingCaseFrame(turnIntoRelNodeSet(array),caseFrame))
+			throw new CustomException("not following the case frame");
+		
+		// create the molecular node
+		MolecularNode node;
 		if(isToBePattern(array))
-			return createPatNode(array,caseFrame);
+			node = createPatNode(array,caseFrame);
 		else
-			return createMolNode(array,caseFrame);
+			node = createMolNode(array,caseFrame);
+		
+		// add the molecular node to the hash tables
+		this.nodes.put(node.getIdentifier(),node);
+		this.molecularNodes.get(node.getCableSet().getCaseFrame().getId()).addNode(node);
+		
+		return node;
 	}
 	
 	/**
@@ -554,31 +563,7 @@ public class Network implements Serializable
 						o[2] = tb;
 						result.add(o);
 					}
-					/*if(termVERe(m,r,s) != null && termVERe(node,r,s) != null)
-					{
-						for(int k=0;k<s.cardinality();k++)
-						{
-							Binding b = s.getBinding(k);
-							if(ns1.contains(b.getVariable()))
-							{
-								sb.putIn(b);
-							}else
-							{
-								if(ns2.contains(b.getVariable()))
-								{
-									tb.putIn(b);
-								}
-							}
-						}
-						System.out.println("                 amr");
-						Object[] o = new Object[3];
-						o[0] = m;
-						o[1] = sb;
-						o[2] = tb;
-						result.add(o);
-					}*/
 				}
-				// separate and add to list
 			}
 		}
 		
@@ -1163,6 +1148,38 @@ public class Network implements Serializable
 		return n.getEntity().getProcess().getSentReports();
 	}
 
+	/**
+	 * infers nodes by path-based inference to get all nodes that have the given case frame
+	 * in their cable sets
+	 * 
+	 * @param caseFrame a case frame to infer nodes implementing it
+	 * @param context the context that propositions in the inference are asserted in
+	 * @return a node set of all nodes that are inferred by path based inference
+	 */
+	@SuppressWarnings("unchecked")
+	public NodeSet pathBasedInfer(CaseFrame caseFrame,Context context)
+	{
+		NodeSet nodes = new NodeSet();
+		
+		// loop over nodes
+		Hashtable<String,Node> h = (Hashtable<String,Node>) this.nodes.clone();
+		for(Enumeration<Node> e = h.elements();e.hasMoreElements();)
+		{
+			Node node = e.nextElement();
+			
+			// if it is not as asserted proposition
+			if(! node.getEntity().getSuperClasses().contains("Proposition"))
+				if(! node.getEntity().getClass().getSimpleName().equals("Proposition"))
+					continue;
+			
+			Node n = this.pathBasedInfer(node,caseFrame,context);
+			
+			if(n != null)
+				nodes.addNode(n);
+		}
+		
+		return nodes;
+	}
 	
 	/**
 	 * @param array the array that contains pairs of paths and node sets
@@ -1170,7 +1187,7 @@ public class Network implements Serializable
 	 * from, in order to reach at least one node at each node set in all entries of the 
 	 * array 
 	 */
-	public Hashtable<Node,LinkedList<Support>> find(Object[][] array,Context context)
+	public LinkedList<Object[]> find(Object[][] array,Context context)
 	{
 		return findIntersection(array,context,0);
 	}
@@ -1181,18 +1198,17 @@ public class Network implements Serializable
 	 * in the array from, in order to reach at least one node at each node set in all
 	 * entries of the array 
 	 */
-	public Hashtable<Node,LinkedList<Support>> findConstant(Object[][] array,Context context)
+	public LinkedList<Object[]> findConstant(Object[][] array,Context context)
 	{
-		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
-		Hashtable<Node,LinkedList<Support>> h = find(array,context);
-		for(Enumeration<Node> e = h.keys();e.hasMoreElements();)
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		LinkedList<Object[]> h = find(array,context);
+		for(int i=0;i<h.size();i++)
 		{
-			Node n = e.nextElement();
+			Object[] o = h.get(i);
+			Node n = (Node) o[0];
 			if(n.getClass().getSimpleName().equals("BaseNode") || 
 					n.getClass().getSimpleName().equals("ClosedNode"))
-			{
-				result.put(n,h.get(n));
-			}
+				result.add(o);
 		}
 		return result;
 	}
@@ -1203,17 +1219,16 @@ public class Network implements Serializable
 	 * in the array from, in order to reach at least one node at each node set in all
 	 * entries of the array 
 	 */
-	public Hashtable<Node,LinkedList<Support>> findBase(Object[][] array,Context context)
+	public LinkedList<Object[]> findBase(Object[][] array,Context context)
 	{
-		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
-		Hashtable<Node,LinkedList<Support>> h = find(array,context);
-		for(Enumeration<Node> e = h.keys();e.hasMoreElements();)
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		LinkedList<Object[]> h = find(array,context);
+		for(int i=0;i<h.size();i++)
 		{
-			Node n = e.nextElement();
+			Object[] o = h.get(i);
+			Node n = (Node) o[0];
 			if(n.getClass().getSimpleName().equals("BaseNode"))
-			{
-				result.put(n,h.get(n));
-			}
+				result.add(o);
 		}
 		return result;
 	}
@@ -1224,17 +1239,16 @@ public class Network implements Serializable
 	 * in the array from, in order to reach at least one node at each node set in all
 	 * entries of the array 
 	 */
-	public Hashtable<Node,LinkedList<Support>> findVariable(Object[][] array,Context context)
+	public LinkedList<Object[]> findVariable(Object[][] array,Context context)
 	{
-		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
-		Hashtable<Node,LinkedList<Support>> h = find(array,context);
-		for(Enumeration<Node> e = h.keys();e.hasMoreElements();)
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		LinkedList<Object[]> h = find(array,context);
+		for(int i=0;i<h.size();i++)
 		{
-			Node n = e.nextElement();
+			Object[] o = h.get(i);
+			Node n = (Node) o[0];
 			if(n.getClass().getSimpleName().equals("VariableNode"))
-			{
-				result.put(n,h.get(n));
-			}
+				result.add(o);
 		}
 		return result;
 	}
@@ -1245,17 +1259,16 @@ public class Network implements Serializable
 	 * in the array from, in order to reach at least one node at each node set in all
 	 * entries of the array 
 	 */
-	public Hashtable<Node,LinkedList<Support>> findPattern(Object[][] array,Context context)
+	public LinkedList<Object[]> findPattern(Object[][] array,Context context)
 	{
-		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
-		Hashtable<Node,LinkedList<Support>> h = find(array,context);
-		for(Enumeration<Node> e = h.keys();e.hasMoreElements();)
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		LinkedList<Object[]> h = find(array,context);
+		for(int i=0;i<h.size();i++)
 		{
-			Node n = e.nextElement();
+			Object[] o = h.get(i);
+			Node n = (Node) o[0];
 			if(n.getClass().getSimpleName().equals("PatternNode"))
-			{
-				result.put(n,h.get(n));
-			}
+				result.add(o);
 		}
 		return result;
 	}
@@ -1266,34 +1279,15 @@ public class Network implements Serializable
 	 * @return a node set of nodes that we can start following the path from in order to
 	 * get to one of the nodes in the specified node set
 	 */
-	private Hashtable<Node,LinkedList<Support>> findUnion(Path path,NodeSet nodeSet,Context context)
+	private LinkedList<Object[]> findUnion(Path path,NodeSet nodeSet,Context context)
 	{
-		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
-		
-		NodeSet nodeset= new NodeSet();
-		nodeset.addAll(nodeSet);
-		if(nodeset.isEmpty())
-			return new Hashtable<Node,LinkedList<Support>>();
-		
-		Node node = nodeset.getNode(0);
-		nodeset.removeNode(node);
-		NodeSet ns = new NodeSet();
-		ns.addAll(nodeset);
-		
-		Hashtable<Node,LinkedList<Support>> h1 = path.followConverse(node,new LinkedList<Support>(),context);
-		Hashtable<Node,LinkedList<Support>> h2 = findUnion(path,ns,context);
-		
-		result.putAll(h1);
-		for(Enumeration<Node> e = h2.keys();e.hasMoreElements();)
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		for(int i=0;i<nodeSet.size();i++)
 		{
-			Node no = e.nextElement();
-			if(result.containsKey(no))
-			{
-				result.get(no).addAll(h2.get(no));
-			}
-			else
-				result.put(no,h2.get(no));
+			LinkedList<Object[]> temp = path.followConverse(nodeSet.getNode(i),new PathTrace(),context);
+			result.addAll(temp);
 		}
+		
 		return result;
 	}
 	
@@ -1303,33 +1297,652 @@ public class Network implements Serializable
 	 * @return the node set of nodes that we can start following those paths in the array
 	 * from, in order to reach at least one node of node sets at each path-nodeset pair. 
 	 */
-	private Hashtable<Node,LinkedList<Support>> findIntersection(Object[][] array,Context context,int index)
+	private LinkedList<Object[]> findIntersection(Object[][] array,Context context,int index)
 	{
-		Hashtable<Node,LinkedList<Support>> result = new Hashtable<Node,LinkedList<Support>>();
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
 		if(index == array.length)
 			return result;
 		
 		Path path = (Path) array[index][0];
 		NodeSet nodeSet = (NodeSet) array[index][1];
 		
-		
 		if(index < array.length-1)
 		{
-			Hashtable<Node,LinkedList<Support>> h1 = findUnion(path,nodeSet,context);
-			Hashtable<Node,LinkedList<Support>> h2 = findIntersection(array,context,++index);
-			for(Enumeration<Node> e = h1.keys();e.hasMoreElements();)
+			LinkedList<Object[]> list1 = findUnion(path,nodeSet,context);
+			LinkedList<Object[]> list2 = findIntersection(array,context,++index);
+			for(int i=0;i<list1.size();i++)
 			{
-				Node node = e.nextElement();
-				if(h2.containsKey(node))
+				Object[] ob1 = list1.get(i);
+				Node n1 = (Node) ob1[0];
+				PathTrace pt1 = (PathTrace) ob1[1];
+				for(int j=0;j<list2.size();j++)
 				{
-					result.put(node,h1.get(node));
-					result.get(node).addAll(h2.get(node));
+					Object[] ob2 = list2.get(j);
+					Node n2 = (Node) ob2[0];
+					PathTrace pt2 = (PathTrace) ob2[1];
+					if(n1.equals(n2))
+					{
+						PathTrace pt = pt1.clone();
+						pt.and(pt2.getPath());
+						pt.addAllSupports(pt2.getSupports());
+						Object[] o = {n1,pt};
+						result.add(o);
+					}
 				}
 			}
 		}
 		else
-			result = findUnion(path,nodeSet,context);
+		{
+			result.addAll(findUnion(path,nodeSet,context));
+		}
+		
 		return result;
+	}
+	
+	/**
+	 * path-based infers a given case frame for a given node
+	 * 
+	 * @param node a node to path-based infer the given case frame for it
+	 * @param caseFrame a case frame to infer for the given node
+	 * @param context a context for propositions in the paths to be asserted in
+	 * @return a node resulted from inferring the case frame from the given node 
+	 * if succeeded, and null otherwise
+	 */
+	private Node pathBasedInfer(Node node,CaseFrame caseFrame,Context context)
+	{
+		//NodeSet ns = new NodeSet();
+		
+		LinkedList<Relation> relations = caseFrame.getRelations();
+		
+		LinkedList<LinkedList<Object[]>> list = new LinkedList<LinkedList<Object[]>>();
+
+		// loop over relations to update the list of pair-lists
+		for(int i=0;i<relations.size();i++)
+		{
+			// follow the path of the relation
+			Relation r = relations.get(i);
+			Path path;
+			if(r.getPath() == null)
+				path = new FUnitPath(r);
+			else
+				path = r.getPath();
+			LinkedList<Object[]> l = path.follow(node,new PathTrace(),context);
+			if(l.isEmpty() && r.getLimit()>0)
+				break;
+			if(l.size()<r.getLimit())
+				break;
+			list.add(l);
+		}
+		// if one of the resulted lists is not valid
+		if(list.size()<relations.size())
+			return null;
+		
+		if(node.getClass().getSuperclass().getSimpleName().equals("MolecularNode"))
+		{
+			// get all possible combinations of nodes reached by the following
+			/*LinkedList<Object[][]> result = new LinkedList<Object[][]>();
+			if(! list.isEmpty())
+				for(int i=0;i<list.get(0).size();i++)
+				{
+					Object[][] x = new Object[list.size()][2];
+					x[0] = list.get(0).get(i);
+					result.add(x);
+				}
+			
+			for(int i=1;i<list.size();i++)
+			{
+				LinkedList<Object[][]> temp = new LinkedList<Object[][]>(result);
+				for(int j=1;j<list.get(i).size();j++)
+				{
+					for(int k=0;k<temp.size();k++)
+					{
+						result.add(temp.get(k).clone());
+					}
+				}
+				for(int j=0;j<list.get(i).size();j++)
+				{
+					int count = j*temp.size();
+					while(count < (j+1)*temp.size())
+					{
+						result.get(count)[i] = list.get(i).get(j);
+						count++;
+					}
+				}
+			}*/
+			
+			// filter result by removing non-valid cable sets (if the rest are not reducible to 0)
+			/*for(int i=0;i<result.size();i++)
+			{
+				Object[][] x = result.get(i);
+				LinkedList<Relation> cf = (LinkedList<Relation>) ((MolecularNode) node).getCableSet().getCaseFrame().getRelations().clone();
+				LinkedList<Relation> y = new LinkedList<Relation>();
+				for(int j=0;j<x.length;j++)
+				{
+					y.addAll(((PathTrace) x[j][1]).getFirst());
+				}
+				cf.removeAll(y);
+				for(int j=0;j<cf.size();j++)
+				{
+					if(! ((cf.get(j).getLimit() == 0) && (cf.get(j).getAdjust().equals("reduce"))))
+					{
+						result.remove(i);
+						i--;
+						break;
+					}
+				}
+			}*/
+			LinkedList<Relation> cf = new LinkedList<Relation>(((MolecularNode) node).getCableSet().getCaseFrame().getRelations());
+			LinkedList<Relation> y = new LinkedList<Relation>();
+			for(int i=0;i<list.size();i++)
+			{
+				LinkedList<Object[]> l = list.get(i);
+				for(int j=0;j<l.size();j++)
+				{
+					Object[] o = l.get(j);
+					y.addAll(((PathTrace) o[1]).getFirst());
+				}
+			}
+			cf.removeAll(y);
+			for(int i=0;i<cf.size();i++)
+			{
+				if(! ((cf.get(i).getLimit() == 0) && (cf.get(i).getAdjust().equals("reduce"))))
+				{
+					return null;
+				}
+			}
+			
+			// build the result nodes
+			/*for(int i=0;i<result.size();i++)
+			{
+				Object[][] x = result.get(i);
+				Object[][] y = new Object[relations.size()][2];
+				for(int j=0;j<y.length;j++)
+				{
+					y[j][0] = relations.get(j);
+					y[j][1] = x[j][0];
+				}
+				try {
+					Node n = this.build(y,caseFrame);
+					ns.addNode(n);
+					this.simulateParentNodes(n,node);
+				} catch (CustomException e1)
+				{
+					try {
+						ns.addNode(this.getMolecularNode(y));
+					} catch (CustomException e2)
+					{
+						e2.printStackTrace();
+					}
+				}
+			}*/
+			LinkedList<Node> nodes = new LinkedList<Node>();
+			LinkedList<Relation> rels = new LinkedList<Relation>();
+			for(int i=0;i<list.size();i++)
+			{
+				LinkedList<Object[]> l = list.get(i);
+				for(int j=0;j<l.size();j++)
+				{
+					rels.add(relations.get(i));
+					nodes.add((Node) l.get(j)[0]);
+				}
+			}
+			Object[][] array = new Object[rels.size()][2];
+			for(int i=0;i<rels.size();i++)
+			{
+				array[i][0] = rels.get(i);
+				array[i][1] = nodes.get(i);
+			}
+			try {
+				Node n = this.build(array,caseFrame);
+			//	this.simulateParentNodes(n,node);
+				return n;
+			} catch (CustomException e1)
+			{
+				try {
+					return this.getMolecularNode(array);
+				} catch (CustomException e2)
+				{
+					e2.printStackTrace();
+				}
+			}
+		}
+		else
+		{
+			// get all possible combinations of nodes reached by following paths
+			
+			/*LinkedList<Object[][]> result = new LinkedList<Object[][]>();
+			if(! list.isEmpty())
+				for(int i=0;i<list.get(0).size();i++)
+				{
+					Object[][] x = new Object[list.size()][2];
+					x[0] = list.get(0).get(i);
+					result.add(x);
+				}
+			
+			for(int i=1;i<list.size();i++)
+			{
+				LinkedList<Object[][]> temp = new LinkedList<Object[][]>(result);
+				for(int j=1;j<list.get(i).size();j++)
+				{
+					for(int k=0;k<temp.size();k++)
+					{
+						result.add(temp.get(k).clone());
+					}
+				}
+				for(int j=0;j<list.get(i).size();j++)
+				{
+					int count = j*temp.size();
+					while(count < (j+1)*temp.size())
+					{
+						result.get(count)[i] = list.get(i).get(j);
+						count++;
+					}
+				}
+			}*/
+			
+			LinkedList<Relation> cf = new LinkedList<Relation>(((MolecularNode) node).getCableSet().getCaseFrame().getRelations());
+			LinkedList<Relation> y = new LinkedList<Relation>();
+			for(int i=0;i<list.size();i++)
+			{
+				LinkedList<Object[]> l = list.get(i);
+				for(int j=0;j<l.size();j++)
+				{
+					Object[] o = l.get(j);
+					y.addAll(((PathTrace) o[1]).getFirst());
+				}
+			}
+			cf.removeAll(y);
+			for(int i=0;i<cf.size();i++)
+			{
+				if(! ((cf.get(i).getLimit() == 0) && (cf.get(i).getAdjust().equals("reduce"))))
+				{
+					return null;
+				}
+			}
+			
+			// build the result nodes
+			/*for(int i=0;i<result.size();i++)
+			{
+				Object[][] x = result.get(i);
+				Object[][] y = new Object[relations.size()][2];
+				for(int j=0;j<y.length;j++)
+				{
+					y[j][0] = relations.get(j);
+					y[j][1] = x[j][0];
+				}
+				try {
+					Node n = this.build(y,caseFrame);
+					ns.addNode(n);
+					this.simulateParentNodes(n,node);
+				} catch (CustomException e1)
+				{
+					try {
+						ns.addNode(this.getMolecularNode(y));
+					} catch (CustomException e2)
+					{
+						e2.printStackTrace();
+					}
+				}
+			}*/
+			LinkedList<Node> nodes = new LinkedList<Node>();
+			LinkedList<Relation> rels = new LinkedList<Relation>();
+			for(int i=0;i<list.size();i++)
+			{
+				LinkedList<Object[]> l = list.get(i);
+				for(int j=0;j<l.size();j++)
+				{
+					rels.add(relations.get(i));
+					nodes.add((Node) l.get(j)[0]);
+				}
+			}
+			Object[][] array = new Object[rels.size()][2];
+			for(int i=0;i<rels.size();i++)
+			{
+				array[i][0] = rels.get(i);
+				array[i][1] = nodes.get(i);
+			}
+			try {
+				Node n = this.build(array,caseFrame);
+			//	this.simulateParentNodes(n,node);
+				return n;
+			} catch (CustomException e1)
+			{
+				try {
+					return this.getMolecularNode(array);
+				} catch (CustomException e2)
+				{
+					e2.printStackTrace();
+				}
+			}
+			
+		}
+		return null;
+	}
+	
+	/**
+	 * creates copies of parent nodes of the old node, and those parent nodes dominate 
+	 * the given node
+	 * 
+	 * @param node a Node to be dominated by copies of parent nodes of the old node
+	 * @param oldNode a Node to simulate its parent nodes for the given node
+	 */
+	@SuppressWarnings("unused")
+	private void simulateParentNodes(Node node,Node oldNode)
+	{
+		UpCableSet upCableSet = oldNode.getUpCableSet();
+		// loop over up cables
+		for(int i=0;i<upCableSet.size();i++)
+		{
+			UpCable uc = upCableSet.getUpCable(i);
+			NodeSet ucns = uc.getNodeSet();
+			// loop over parent nodes
+			for(int j=0;j<ucns.size();j++)
+			{
+				MolecularNode mn = (MolecularNode) ucns.getNode(j);
+				LinkedList<Relation> relations = new LinkedList<Relation>();
+				LinkedList<Node> nodes = new LinkedList<Node>();
+				CableSet cs = mn.getCableSet();
+				// loop over cables for the parent nodes
+				for(int x=0;x<cs.size();x++)
+				{
+					Cable c = cs.getCable(x);
+					NodeSet cns = c.getNodeSet();
+					// loop over child nodes of parent nodes
+					for(int y=0;y<cns.size();y++)
+					{
+						Node n = cns.getNode(y);
+						relations.add(c.getRelation());
+						if(n.equals(oldNode))
+							nodes.add(node);
+						else
+							nodes.add(n);
+					}
+				}
+				// build the new node
+				Object[][] array = new Object[relations.size()][2];
+				for(int z=0;z<relations.size();z++)
+				{
+					array[z][0] = relations.get(z);
+					array[z][1] = nodes.get(z);
+				}
+				Node newnode = null;
+				try {
+					newnode = this.build(array,cs.getCaseFrame());
+				} catch (CustomException e)
+				{
+					try {
+						newnode = this.getMolecularNode(array);
+					} catch (CustomException e1)
+					{
+						e1.printStackTrace();
+					}
+				}
+				// simulate parent nodes for the new node
+				this.simulateParentNodes(newnode,mn);
+			}
+		}
+	}
+	
+	/**
+	 * creates a copy of the given molecular node in the first parameter with variables 
+	 * that are shared between it and the other node are replace with new ones and returns 
+	 * a substitutions of the replaced variables bound to the new ones along with the new 
+	 * nodes
+	 * 
+	 * @param u a molecular node
+	 * @param t a molecular node
+	 * @return an array of Objects of size 3 where the first cell is the substitutions
+	 * resulted from renaming the variables, the second cell is the copy of u with shared 
+	 * variables replaced by new ones and the third cell is t
+	 */
+	@SuppressWarnings("unused")
+	private Object[] renameSharedVariables(MolecularNode u,MolecularNode t)
+	{
+		Object[] o = new Object[3];
+		o[1] = u;
+		Substitutions result = new Substitutions();
+		
+		NodeSet uVariables = getAllVariables(u);
+		NodeSet tVariables = getAllVariables(t);
+		NodeSet shared = uVariables.Intersection(tVariables);
+		
+		if(! shared.isEmpty())
+		{
+			// rename variables
+			for(int i=0;i<shared.size();i++)
+			{
+				VariableNode v = this.buildVariableNode();
+				result.putIn(new Binding((VariableNode) shared.getNode(i),v));
+			}
+			MolecularNode newu = renameAndCopy(u,result);
+			o[1] = newu;
+		}
+		o[0] = result;
+		o[2] = t;
+		
+		return o;
+	}
+	
+	/**
+	 * creates a copy of the given molecular node by replacing the variables that are 
+	 * bound in the given substitutions by the variables they are bound to
+	 * 
+	 * @param node a molecular node to create a copy for
+	 * @param s a substitutions of shared variables bound to new variables
+	 * @return a molecular node which is the one with variables replaced by the new 
+	 * variables from the given substitutions
+	 */
+	private MolecularNode renameAndCopy(MolecularNode node,Substitutions s)
+	{
+		LinkedList<Relation> r = new LinkedList<Relation>();
+		LinkedList<Node> rn = new LinkedList<Node>();
+		for(int i=0;i<node.getCableSet().size();i++)
+		{
+			Cable c = node.getCableSet().getCable(i);
+			NodeSet ns = c.getNodeSet();
+			for(int j=0;j<ns.size();j++)
+			{
+				Node n = ns.getNode(j);
+				if(n.getClass().getSimpleName().equals("VariableNode"))
+				{
+					if(s.isBound((VariableNode) n))
+					{
+						r.add(c.getRelation());
+						rn.add(s.term((VariableNode) n));
+					}
+					else
+					{
+						r.add(c.getRelation());
+						rn.add(n);
+					}
+				}
+				else
+				{
+					if(n.getClass().getSuperclass().getSimpleName().equals("MolecularNode"))
+					{
+						r.add(c.getRelation());
+						rn.add(renameAndCopy((MolecularNode) n,s));
+					}
+					else
+					{
+						r.add(c.getRelation());
+						rn.add(n);
+					}
+				}
+				
+			}
+		}
+		Object[][] array = new Object[r.size()][2];
+		for(int i=0;i<r.size();i++)
+		{
+			array[i][0] = r.get(i);
+			array[i][1] = rn.get(i);
+		}
+		
+		MolecularNode result = null;
+		try {
+			 result = build(array,node.getCableSet().getCaseFrame());
+		} catch (CustomException e)
+		{
+			if(e.getMessage().equals("cable set already exists"))
+			{
+				try {
+					result = getMolecularNode(array);
+				} catch (CustomException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * gets all the variable nodes dominated by the given molecular node
+	 * 
+	 * @param node a MolecularNode to get variables dominated by it
+	 * @return a node set of variable nodes that are dominated by the given molecular node
+	 */
+	private NodeSet getAllVariables(MolecularNode node)
+	{
+		NodeSet result = new NodeSet();
+		
+		for(int i=0;i<node.getCableSet().size();i++)
+		{
+			Cable c = node.getCableSet().getCable(i);
+			NodeSet ns = c.getNodeSet();
+			for(int j=0;j<ns.size();j++)
+			{
+				Node n = ns.getNode(j);
+				if(n.getClass().getSimpleName().equals("VariableNode"))
+				{
+					result.addNode(n);
+				}
+				if(n.getClass().getSuperclass().getSimpleName().equals("MolecularNode"))
+				{
+					result.addAll(getAllVariables((MolecularNode) n));
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * checks whether the given cable set already exists in the network or not
+	 * 
+	 * @param array a 2D array of Relation-Node pairs representing a cable set
+	 * @return true if the CableSet exists, and false otherwise
+	 */
+	private boolean cableSetExists(Object[][] array)
+	{
+		int size = 0;
+		for(int i=0;i<array.length;i++)
+		{
+			if(! array[i][1].getClass().getSimpleName().equals("NodeSet"))
+				size++;
+		}
+		Object[][] temp = new Object[size][2];
+		int counter = 0;
+		for(int i=0;i<array.length;i++)
+		{
+			if(array[i][1].getClass().getSimpleName().equals("NodeSet"))
+				continue;
+			temp[counter][0] = new FUnitPath((Relation) array[i][0]);
+			NodeSet ns1 = new NodeSet();
+			ns1.addNode((Node) array[i][1]);
+			temp[counter][1] = ns1;
+			counter++;
+		}
+		LinkedList<Object[]> ns = this.find(temp,new Context());
+		
+		for(int j=0;j<ns.size();j++)
+		{
+			Object[] x = ns.get(j);
+			MolecularNode n = (MolecularNode) x[0];
+			for(int i=0;i<array.length;i++)
+			{
+				if(array[i][1].getClass().getSimpleName().equals("NodeSet"))
+				{
+					if(n.getCableSet().contains(((Relation) array[i][0]).getName()) && 
+						n.getCableSet().getCable(((Relation) array[i][0]).getName()).getNodeSet().isEmpty())
+						continue;
+					else
+					{
+						ns.remove(j);
+						j--;
+					}
+				}
+			}
+		}
+		for(int i=0;i<ns.size();i++)
+		{
+			Object[] x = ns.get(i);
+			MolecularNode n = (MolecularNode) x[0];
+			int c = 0;
+			for(int j=0;j<n.getCableSet().size();j++)
+			{
+				Cable cb = n.getCableSet().getCable(j);
+				if(cb.getNodeSet().isEmpty())
+					c++;
+				else
+					c += cb.getNodeSet().size();
+			}
+			if(c != array.length)
+			{
+				ns.remove(i);
+				i--;
+			}
+		}
+		
+		return ns.size()==1;
+	}
+	
+	/**
+	 * checks whether the sizes of the node sets are valid according to the limit of the relations
+	 * pointing to these node sets
+	 * 
+	 * @param array a 2D array of Relation-NodeSet pairs
+	 * @return true if the sizes of the node sets are valid according to the limit of the relations,
+	 * and false otherwise
+	 */
+	private boolean validNodeSetSize(Object[][] array)
+	{
+		for(int i=0;i<array.length;i++)
+		{
+			Relation r = (Relation) array[i][0];
+			NodeSet ns = (NodeSet) array[i][1];
+			if(r.getLimit() > ns.size())
+				return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * checks whether the given cable set is implementing the given case frame or not
+	 * 
+	 * @param array a 2D array of Relation-NodeSet pairs
+	 * @param caseFrame a CaseFrame
+	 * @return true if the cable set represented by the array is implementing the given case frame,
+	 * and false otherwise
+	 */
+	@SuppressWarnings("unchecked")
+	private boolean followingCaseFrame(Object[][] array,CaseFrame caseFrame)
+	{
+		LinkedList<Relation> list = (LinkedList<Relation>) caseFrame.getRelations().clone();
+		for(int i=0;i<array.length;i++)
+		{
+			Relation r = (Relation) array[i][0];
+			if(! list.contains(r))
+				return false;
+			else
+				list.remove(r);
+		}
+		if(! list.isEmpty())
+			return false;
+		
+		return true;
 	}
 	
 	/**
@@ -1405,22 +2018,6 @@ public class Network implements Serializable
 		{
 			e.printStackTrace();
 		}
-		this.nodes.put(molName,closedNode);
-		this.molecularNodes.get(caseFrame.getId()).addNode(closedNode);
-		
-		// adding UpCables
-		for(int i=0;i<cableSet.size();i++)
-		{
-			Relation r = cableSet.getCable(i).getRelation();
-			for(int j=0;j<cableSet.getCable(i).getNodeSet().size();j++)
-			{
-				Node n = cableSet.getCable(i).getNodeSet().getNode(j);
-				if(! n.getUpCableSet().contains(r))
-					n.getUpCableSet().addUpCable(new UpCable(r));
-				n.getUpCableSet().getUpCable(r).addNode(closedNode);
-			}
-		}
-		
 		
 		return closedNode;
 	}
@@ -1453,21 +2050,6 @@ public class Network implements Serializable
 		} catch (Exception e) 
 		{
 			e.printStackTrace();
-		}
-		this.nodes.put(patName,patternNode);
-		this.molecularNodes.get(caseFrame.getId()).addNode(patternNode);
-		
-		// adding UpCables
-		for(int i=0;i<cableSet.size();i++)
-		{
-			Relation r = cableSet.getCable(i).getRelation();
-			for(int j=0;j<cableSet.getCable(i).getNodeSet().size();j++)
-			{
-				Node n = cableSet.getCable(i).getNodeSet().getNode(j);
-				if(! n.getUpCableSet().contains(r))
-					n.getUpCableSet().addUpCable(new UpCable(r));
-				n.getUpCableSet().getUpCable(r).addNode(patternNode);
-			}
 		}
 		
 		return patternNode;
@@ -1531,9 +2113,9 @@ public class Network implements Serializable
 	{
 		molCounter++;
 		String molName = "M";
-		for(int i=0;i<userDefinedMolPostfix.size();i++)
+		for(int i=0;i<userDefinedMolSuffix.size();i++)
 		{
-			if(userDefinedMolPostfix.get(i).intValue() == molCounter)
+			if(userDefinedMolSuffix.get(i).intValue() == molCounter)
 			{
 				molCounter++;
 				i=-1;
@@ -1551,9 +2133,9 @@ public class Network implements Serializable
 	{
 		patCounter++;
 		String patName = "P";
-		for(int i=0;i<userDefinedPatPostfix.size();i++)
+		for(int i=0;i<userDefinedPatSuffix.size();i++)
 		{
-			if(userDefinedPatPostfix.get(i).intValue() == patCounter)
+			if(userDefinedPatSuffix.get(i).intValue() == patCounter)
 			{
 				patCounter++;
 				i=-1;
@@ -1571,9 +2153,9 @@ public class Network implements Serializable
 	{
 		varCounter++;
 		String varName = "V";
-		for(int i=0;i<userDefinedVarPostfix.size();i++)
+		for(int i=0;i<userDefinedVarSuffix.size();i++)
 		{
-			if(userDefinedVarPostfix.get(i).intValue() == varCounter)
+			if(userDefinedVarSuffix.get(i).intValue() == varCounter)
 			{
 				varCounter++;
 				i=-1;
@@ -1671,8 +2253,9 @@ public class Network implements Serializable
 		}
 	}
 	
-	public static void main(String [] args) throws Exception
+	public static void main(String [] args)throws Exception
 	{
+		Network n = new Network();				
 //		Relation r1 = new Relation("member","entity","reduce",0);
 //		Relation r2 = new Relation("class","entity","reduce",0);
 		Object[][] o4 = new Object[4][2];		   // creating the 2D arrays used in building nodes
@@ -1687,8 +2270,7 @@ public class Network implements Serializable
 		o[1][1] = new BaseNode("moh");
 		o[2][1] = new BaseNode("zay");
 		o[0][1] = new BaseNode("amr");
-		o[1][1] = new BaseNode("human");*/
-		Network n = new Network();								    // creating a new network 
+		o[1][1] = new BaseNode("human");*/				    // creating a new network 
 		Node x1 = n.buildVariableNode();                        // building variable nodes
 		Node x2 = n.buildVariableNode();
 		Node x3 = n.buildVariableNode();
@@ -1791,6 +2373,124 @@ public class Network implements Serializable
 		}*/
 		t.getClass();
 		tdash.getClass();
+	//	Object[] array = n.renameSharedVariables((MolecularNode)h1,(MolecularNode)h3);
+	//	System.out.println(array[1]);
+		/*n.simulateParentNodes(n.buildVariableNode(),a);
+		for(Enumeration<Node> e = n.getNodes().elements();e.hasMoreElements();)
+		{
+			System.out.println(e.nextElement());
+		}*/
+		
+		/*System.out.println(t);
+		System.out.println(tdash);*/
+	//	Object[] array = n.renameSharedVariables(t,tdash);
+	//	array.getClass();
+		/*System.out.println(array[0]);
+		System.out.println(array[1]);
+		System.out.println(array[2]);*/
+		/*for(Enumeration<Node> e = n.getNodes().elements();e.hasMoreElements();)
+		{
+			System.out.println(e.nextElement());
+		}
+		System.out.println("-------------");
+		n.removeNode(t);
+		for(Enumeration<Node> e = n.getNodes().elements();e.hasMoreElements();)
+		{
+			System.out.println(e.nextElement());
+		}*/
+		
+		Relation member = n.defineRelation("member","Entity","none",1);
+		Relation clas = n.defineRelation("class","Entity","none",1);
+		Relation sub = n.defineRelation("sub","Entity","none",1);
+		Relation sup = n.defineRelation("super","Entity","none",1);
+		Relation object = n.defineRelation("object","Entity","none",1);
+		Relation sim = n.defineRelation("similarto","Entity","none",1);
+		Relation temp = n.defineRelation("temp","Entity","reduce",0);
+		Path b = new BUnitPath(sub);
+		Path f = new FUnitPath(sup);
+		Path fc = new FUnitPath(clas);
+		LinkedList<Path> list = new LinkedList<Path>();
+		list.add(b);
+		list.add(f);
+		Path c = new ComposePath(list);
+		Path kc = new KStarPath(c);
+		LinkedList<Path> list1 = new LinkedList<Path>();
+		list1.add(fc);
+		list1.add(kc);
+		Path path = new ComposePath(list1);
+		n.definePath(clas,path);
+		Path b1 = new BUnitPath(sim);
+		Path f1 = new FUnitPath(object);
+		Path fc1 = new FUnitPath(member);
+		LinkedList<Path> list2 = new LinkedList<Path>();
+		list2.add(b1);
+		list2.add(f1);
+		Path c1 = new ComposePath(list2);
+		Path kc1 = new KStarPath(c1);
+		LinkedList<Path> list12 = new LinkedList<Path>();
+		list12.add(fc1);
+		list12.add(kc1);
+		Path path1 = new ComposePath(list12);
+		n.definePath(member,path1);
+		LinkedList<Relation> l1 = new LinkedList<Relation>();
+		l1.add(member);
+		l1.add(clas);
+		l1.add(temp);
+		LinkedList<Relation> l21 = new LinkedList<Relation>();
+		l21.add(sub);
+		l21.add(sup);
+		LinkedList<Relation> l211 = new LinkedList<Relation>();
+		l211.add(object);
+		l211.add(sim);
+		LinkedList<Relation> l2111 = new LinkedList<Relation>();
+		l2111.add(member);
+		l2111.add(clas);
+		CaseFrame mct = n.defineCaseFrame("Entity",l1);
+		CaseFrame ss = n.defineCaseFrame("Entity",l21);
+		CaseFrame os = n.defineCaseFrame("Entity",l211);
+		CaseFrame mc = n.defineCaseFrame("Entity",l2111);
+		Node fido = n.build("fido");
+		Node dog = n.build("dog");
+		Node animal = n.build("animal");
+		Node creature = n.build("creature");
+		Node lacy = n.build("lacy");
+		Node marley = n.build("marley");
+		Node tmp = n.build("temp");
+		o3[0][0] = member;
+		o3[1][0] = clas;
+		o3[2][0] = temp;
+		o3[0][1] = fido;
+		o3[1][1] = dog;
+		o3[2][1] = tmp;
+		Node n1 = n.build(o3,mct);
+		n1.getClass();
+		o2[0][0] = sub;
+		o2[1][0] = sup;
+		o2[0][1] = dog;
+		o2[1][1] = animal;
+		Node n2 = n.build(o2,ss);
+		n2.getClass();
+		o2[0][0] = sub;
+		o2[1][0] = sup;
+		o2[0][1] = animal;
+		o2[1][1] = creature;
+		Node n3 = n.build(o2,ss);
+		n3.getClass();
+		o2[0][0] = object;
+		o2[1][0] = sim;
+		o2[0][1] = lacy;
+		o2[1][1] = fido;
+		Node n4 = n.build(o2,os);
+		o2[0][0] = object;
+		o2[1][0] = sim;
+		o2[0][1] = marley;
+		o2[1][1] = fido;
+		Node n5 = n.build(o2,os);
+		n4.getClass();
+		n5.getClass();
+		System.out.println(path1+ " "+path);
+		NodeSet ns = n.pathBasedInfer(mc,new Context());
+		System.out.println(ns);
 		
 		
 		/*Substitutions r = new Substitutions();
@@ -1828,26 +2528,42 @@ public class Network implements Serializable
 			}
 		}*/
 		
-		/*Path f = new FUnitPath("r3");
-		Path b = new BUnitPath("r1");
+		/*Path f = new FUnitPath(rr3);
+		Path f4 = new FUnitPath(rr4);
+		Path b = new BUnitPath(rr1);
 		Path kf = new KStarPath(f);
 		Path kb = new KStarPath(b);
 		LinkedList<Path> l = new LinkedList<Path>();
 		l.add(kb);
 		l.add(kf);
-		Path c = new ComposePath(l);
+	//	Path c = new ComposePath(l);
+		LinkedList<Path> l21 = new LinkedList<Path>();
+		l21.add(f4);
+		l21.add(f);
+		Path and = new AndPath(l21);
 		LinkedList<Path> l1 = new LinkedList<Path>();
-		l1.add(c);
-		l1.add(f);
-		Path or = new AndPath(l1);
-		Object[][] o = new Object[1][2];
-		o[0][0] = kb;
+		l1.add(b);
+		l1.add(and);
+		Path or = new ComposePath(l1);
 		NodeSet ns = new NodeSet();
-		ns.addNode(h1);
-		o[0][1] = ns;
-		Hashtable<Node,LinkedList<Support>> h = n.find(o,null);
-		for(Enumeration<Node> e = h.keys();e.hasMoreElements();)
-			System.out.println(e.nextElement().getIdentifier());*/
+		ns.addNode(x3);
+		Object[][] array = new Object[1][2];
+		array[0][0] = or;
+		array[0][1] = ns;
+	//	LinkedList<Object[]> result = n.find(array,new Context());
+		LinkedList<Object[]> result = and.follow(t,new PathTrace(),new Context());
+		for(int i=0;i<result.size();i++)
+		{
+			Object[] o = result.get(i);
+			PathTrace pt = (PathTrace) o[1];
+			System.out.println(((Node)o[0]).getIdentifier());
+			System.out.println(" "+pt.getPath().toString());
+			for(int j=0;j<pt.getFirst().size();j++)
+			{
+				System.out.println(" "+pt.getFirst().get(j));
+			}
+		}*/
+		
 		/*Hashtable<String,LinkedList<String>> h = new Hashtable<String, LinkedList<String>>();
 		LinkedList<String> l = new LinkedList<String>();
 		h.put("amr",l);

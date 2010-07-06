@@ -1,18 +1,16 @@
 package sneps;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.LinkedList;
 
 import snebr.Context;
-import snebr.Support;
 
 /**
- * An AndPath is a path that contains a list of paths. An AndPath may lead to a node 
- * if and only if all the paths it contains will lead to that node
+ * An AndPath is a path that contains a set of paths. An AndPath may lead to a node 
+ * if and only if all the paths it contains can lead to that node
  * 
  * @author Amr Khaled Dawood
  */
+@SuppressWarnings("serial")
 public class AndPath extends Path
 {
 	
@@ -26,7 +24,21 @@ public class AndPath extends Path
 	 */
 	public AndPath(LinkedList<Path> paths)
 	{
-		this.paths = paths;
+		LinkedList<Path> list = new LinkedList<Path>();
+		list.addAll(paths);
+		for(int i=0;i<list.size()-1;i++)
+		{
+			Path p = list.get(i);
+			for(int j=i+1;j<list.size();j++)
+			{
+				if(list.get(j).isEqualTo(p))
+				{
+					list.remove(j);
+					j--;
+				}
+			}
+		}
+		this.paths = list;
 	}
 
 	/**
@@ -38,67 +50,139 @@ public class AndPath extends Path
 	}
 	
 	/* (non-Javadoc)
-	 * @see sneps.Path#follow(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#follow(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> follow(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> follow(Node node,PathTrace trace,Context context)
 	{
 		if(paths.isEmpty())
-			return new Hashtable<Node, LinkedList<Support>>();
+			return new LinkedList<Object[]>();
 		LinkedList<Path> rest = new LinkedList<Path>();
 		rest.addAll(this.paths);
 		Path p = rest.removeFirst();
 		AndPath andPath = new AndPath(rest);
 		if(rest.size()>0)
-			return intersectionAnd(p.follow(node,supports,context),andPath.follow(node,supports,context));
+			return intersectionAnd(p.follow(node,trace,context),andPath.follow(node,trace,context));
 		else
-			return p.follow(node,supports,context);
+			return p.follow(node,trace,context);
 	}
 	
 	/* (non-Javadoc)
-	 * @see sneps.Path#followConverse(sneps.Node, java.util.LinkedList, snebr.Context)
+	 * @see sneps.Path#followConverse(sneps.Node, sneps.PathTrace, snebr.Context)
 	 */
 	@Override
-	public Hashtable<Node,LinkedList<Support>> followConverse(Node node,LinkedList<Support> supports,Context context)
+	public LinkedList<Object[]> followConverse(Node node,PathTrace trace,Context context)
 	{
 		if(paths.isEmpty())
-			return new Hashtable<Node, LinkedList<Support>>();
+			return new LinkedList<Object[]>();
 		LinkedList<Path> rest = new LinkedList<Path>();
 		rest.addAll(this.paths);
 		Path p = rest.removeFirst();
 		AndPath andPath = new AndPath(rest);
 		if(rest.size()>0)
-			return intersectionAnd(p.followConverse(node,supports,context),andPath.followConverse(node,supports,context));
+			return intersectionAnd(p.followConverse(node,trace,context),andPath.followConverse(node,trace,context));
 		else
-			return p.followConverse(node,supports,context);
+			return p.followConverse(node,trace,context);
 	}
 	
 	/**
-	 * returns the intersection between the two hash tables
+	 * returns the intersection between the two Lists of pairs
 	 * 
-	 * @param ns1 a Hashtable of Nodes and Supports
-	 * @param ns2 a Hashtable of Nodes and Supports
-	 * @return a Hashtable of Nodes and their Supports resulting from the intersection of 
-	 * the two given Hashtables
+	 * @param list1 a LinkedList of Node-PathTrace pairs
+	 * @param list2 a LinkedList of Node-PathTrace pairs
+	 * @return a LinkedList of Node-PathTrace pairs resulted from getting the intersection
+	 * between the two given lists
 	 */
-	private Hashtable<Node,LinkedList<Support>> intersectionAnd(Hashtable<Node,LinkedList<Support>> h1,Hashtable<Node,LinkedList<Support>> h2)
+	private LinkedList<Object[]> intersectionAnd(LinkedList<Object[]> list1,LinkedList<Object[]> list2)
 	{
-		Hashtable<Node,LinkedList<Support>> h = new Hashtable<Node,LinkedList<Support>>();
-		Enumeration<LinkedList<Support>> lists1 = h1.elements();
-		Enumeration<Node> nodes1 = h1.keys();
-		for(;nodes1.hasMoreElements();)
+		LinkedList<Object[]> result = new LinkedList<Object[]>();
+		
+		for(int i=0;i<list1.size();i++)
 		{
-			Node node = nodes1.nextElement();
-			LinkedList<Support> list = lists1.nextElement();
-			if(h2.containsKey(node))
+			Object[] ob1 = list1.get(i);
+			Node n1 = (Node) ob1[0];
+			PathTrace pt1 = (PathTrace) ob1[1];
+			for(int j=0;j<list2.size();j++)
 			{
-				LinkedList<Support> temp = h2.get(node);
-				permute(list,temp);
-				h.put(node,temp);
+				Object[] ob2 = list2.get(j);
+				Node n2 = (Node) ob2[0];
+				PathTrace pt2 = (PathTrace) ob2[1];
+				if(n1.equals(n2))
+				{
+					PathTrace pt = pt1.clone();
+					pt.and(pt2.getPath());
+					pt.addAllSupports(pt2.getSupports());
+					Object[] o = new Object[2];
+					o[0] = n1;
+					o[1] = pt;
+					result.add(o);
+				}
 			}
 		}
 		
-		return h;
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#clone()
+	 */
+	@Override
+	public Path clone()
+	{
+		LinkedList<Path> list = new LinkedList<Path>();
+		for(int i=0;i<this.paths.size();i++)
+		{
+			list.add(this.paths.get(i).clone());
+		}
+		
+		return new AndPath(list);
+	}
+	
+	/* (non-Javadoc)
+	 * @see sneps.Path#isEqual(sneps.Path)
+	 */
+	@Override
+	public boolean isEqualTo(Path path)
+	{
+		if(! path.getClass().getSimpleName().equals("AndPath"))
+			return false;
+		AndPath and = (AndPath) path;
+		if(this.paths.size() != and.getPaths().size())
+			return false;
+		for(int i=0;i<this.paths.size();i++)
+		{
+			Path p = this.paths.get(i);
+			boolean flag = false;
+			for(int j=0;j<and.getPaths().size();j++)
+			{
+				Path q = and.getPaths().get(j);
+				if(p.isEqualTo(q))
+					flag = true;
+			}
+			if(! flag)
+				return false;
+			else
+				flag = false;
+		}
+		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		String s = "";
+		s += "and(";
+		for(int i=0;i<this.paths.size();i++)
+		{
+			s += this.paths.get(i).toString();
+			if(i<this.paths.size()-1)
+				s += " ";
+		}
+		s += ")";
+		return s;
 	}
 
 }

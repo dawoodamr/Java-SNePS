@@ -1,14 +1,16 @@
 package sneps;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 /**
- * An UpCableSet is a set of UpCables that stores information about parents of Nodes.
+ * An UpCableSet is a set of UpCables that stores information about parent nodes.
  * It can be modified after being created if needed.
  * 
  * @author Amr Khaled Dawood
  */
-public class UpCableSet
+@SuppressWarnings("serial")
+public class UpCableSet implements Serializable
 {
 	 
 	/**
@@ -45,28 +47,11 @@ public class UpCableSet
 	}
 	
 	/**
-	 * gets the up cable with the specified relation
-	 * 
-	 * @param relation the Relation that labels the arcs of an UpCable in this UpCableSet
-	 * @return the UpCable that contains this Relation or null if not found.
-	 */
-	public UpCable getUpCable(Relation relation)
-	{
-		for(int i=0;i<this.upCables.size();i++)
-		{
-			UpCable upCable = this.upCables.get(i);
-			if(upCable.getRelation().getName().equals(relation.getName()))
-				return upCable;
-		}
-		return null;
-	}
-	
-	/**
 	 * gets the up cable with the relation that its name is specified
 	 * 
-	 * @param relationName the name of the relation that labels the arcs of the required
-	 * up cable
-	 * @return the up cable of the specified relation name
+	 * @param relationName a String representing the name of the relation that labels the arcs 
+	 * of the requested up cable
+	 * @return the up cable of the specified relation name, or null if not found
 	 */
 	public UpCable getUpCable(String relationName)
 	{
@@ -82,7 +67,7 @@ public class UpCableSet
 	/**
 	 * gets the up cable at the specified position
 	 * 
-	 * @param index the position of the up cable
+	 * @param index an int representing the position of the up cable
 	 * @return the up cable at the specified position
 	 */
 	public UpCable getUpCable(int index)
@@ -93,7 +78,7 @@ public class UpCableSet
 	/**
 	 * checks whether this up cable set is empty or not
 	 * 
-	 * @return true if this cable set is empty
+	 * @return true if this cable set is empty, and false otherwise
 	 */
 	public boolean isEmpty()
 	{
@@ -111,9 +96,9 @@ public class UpCableSet
 	}
 	
 	/**
-	 * checks whether this up cable set contains an up cable with the specified relatin or not
+	 * checks whether this up cable set contains an up cable with the specified relation or not
 	 * 
-	 * @param relation the Relation that labels the arcs of this UpCableSet
+	 * @param relation the Relation that labels the arcs of the requested UpCable in this UpCableSet
 	 * @return true if the UpCableSet contains an UpCable with this Relation, 
 	 * and false if not.
 	 */
@@ -125,6 +110,22 @@ public class UpCableSet
 				return true;
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		String s = "";
+		for(int i=0;i<this.upCables.size();i++)
+		{
+			s += this.upCables.get(i).toString();
+			if(i<this.upCables.size()-1)
+				s += " ";
+		}
+		return s;
 	}
 
 }

@@ -1,5 +1,6 @@
 package sneps;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 
 /**
@@ -8,11 +9,12 @@ import java.lang.reflect.Constructor;
  * 
  * @author Amr Khaled Dawood 
  */
-public class Cable
+@SuppressWarnings("serial")
+public class Cable implements Serializable
 {
 	
 	/**
-	 *  The Relation labeling the arcs connected to nodes in the node set.
+	 *  The Relation labeling the arcs pointing to nodes in the node set.
 	 */
 	private Relation relation;
 	
@@ -23,7 +25,7 @@ public class Cable
 	private NodeSet nodeSet;
 	
 	/**
-	 * @param relation the Relation of this Cable
+	 * @param relation the Relation of the Cable
 	 * @param nodeSet the NodeSet that specifies the Nodes reachable by the cable.
 	 */
 	public Cable(Relation relation,NodeSet nodeSet)
@@ -71,6 +73,15 @@ public class Cable
 				}
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return this.relation.toString()+" "+this.nodeSet.toString();
 	}
 
 }
