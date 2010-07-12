@@ -10,6 +10,8 @@ package sneps;
 
 import java.util.LinkedList;
 
+import match.ds.Substitutions;
+
 import snebr.Proposition;
 import sneps.MolecularNode;
 import sneps.Network;
@@ -38,7 +40,7 @@ public class NonRule extends Proposition
 		super(n);
 		reportCounter=0;
 		requestCounter=0;
-		p=new Process(n,'r',null);
+		p=new Process(n,'n');
 	}
 	
 	/**
@@ -66,13 +68,16 @@ public class NonRule extends Proposition
 	{
 		for(;reportCounter<getProcess().getReportSet().cardinality();reportCounter++)
 		{
+			System.out.println("Now processing report number:"+reportCounter);
 			Report r=getProcess().getReportSet().getReport(reportCounter);
+			System.out.println("the substitutions are:\n"+r.getSubstitutions());
 			Report reply=new Report(r.getSubstitutions(),r.getSupport(),r.getSign()
 					,getProcess().getNode(),null,r.getContext());
 			if(!getProcess().getSentReports().isMember(reply))
 			{
-				ChannelsSet ctemp=getProcess().getOutGoing()
-					.getConChannelsSet(r.getContext());
+				//ChannelsSet ctemp=getProcess().getOutGoing()
+					//.getConChannelsSet(r.getContext());
+				ChannelsSet ctemp=getProcess().getOutGoing();
 				getProcess().sendReport(reply,ctemp);
 			}
 		}
@@ -86,31 +91,73 @@ public class NonRule extends Proposition
 		for(;requestCounter<getProcess().getRequestSet().cardinality()
 		;requestCounter++)
 		{
+			System.out.println("Now processing request number:"+requestCounter);
 			Request r=getProcess().getRequestSet().getRequest(requestCounter);
 			Channel c=r.getChannel();
 			if(requestCounter==0)
 			{
-				Network net=Network.getInstance();
-				LinkedList<Object[]> nodes=net.match((MolecularNode)getProcess()
-						.getNode());
-				getProcess().sendRequests(nodes,c.getContext());
-				
-				UpCable up1=getProcess().getNode().getUpCableSet().getUpCable("cq");
-				UpCable up2=getProcess().getNode().getUpCableSet().getUpCable("arg");
-				if(up1!=null)
+				if(getProcess().getNode().getClass().getSimpleName()
+						.equals("ClosedNode"))
 				{
-					NodeSet n=up1.getNodeSet();
-					getProcess().sendRequests(n,c.getContext());
+					System.out.println("ClosedNode");
+					//Check if this node is asserted in this context
+					Report reply=new Report(new Substitutions(),null,true
+							,getProcess().getNode(),null,c.getContext());
+					ChannelsSet ctemp=new ChannelsSet();
+					ctemp.putIn(c);
+					getProcess().sendReport(reply,ctemp);
 				}
-				if(up2!=null)
+				else
 				{
-					NodeSet n=up2.getNodeSet();
-					getProcess().sendRequests(n,c.getContext());
-				}	
+					System.out.println("Not a ClosedNode");
+					getProcess().getOutGoing().putIn(c);
+					Network net=Network.getInstance();
+					LinkedList<Object[]> nodes=net.match((MolecularNode)getProcess()
+							.getNode());
+					System.out.println("\n"+nodes.size()+" matches");
+					getProcess().sendRequests(nodes,c.getContext());
+				
+					UpCable up1=getProcess().getNode().getUpCableSet()
+						.getUpCable("cq");
+					UpCable up2=getProcess().getNode().getUpCableSet()
+						.getUpCable("arg");
+					if(up1!=null)
+					{
+						NodeSet n=up1.getNodeSet();
+						getProcess().sendRequests(n,c.getContext());
+					}
+					if(up2!=null)
+					{
+						NodeSet n=up2.getNodeSet();
+						NodeSet nn=new NodeSet();
+						ChannelsSet cstemp=getProcess().getOutGoing();
+						for(int i=0;i<n.size();i++)
+						{
+							Node ntemp=n.getNode(i);
+							boolean here=false;
+							int j=0;
+							if(getProcess().getFirst())
+								j++;
+							for(;j<cstemp.cardinality();j++)
+							{
+								Channel ctemp=cstemp.getChannel(j);
+								if(ntemp==ctemp.getDestination().getNode())
+								{
+									here=true;	
+									break;
+								}
+							}
+							if(!here)
+							{
+								nn.addNode(ntemp);
+							}
+						}
+						getProcess().sendRequests(nn,c.getContext());
+					}
+				}
 			}
 			else
 				getProcess().addOutGoing(c);
-		
 		}
 	}
 	

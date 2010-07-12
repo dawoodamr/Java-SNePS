@@ -10,6 +10,8 @@ package sneps;
 
 import java.util.LinkedList;
 
+import match.ds.Substitutions;
+
 import snebr.Context;
 import sneps.Node;
 import sneps.NodeSet;
@@ -24,7 +26,6 @@ import snip.ds.Report;
 import snip.ds.Request;
 import snip.ds.RuleUseInfo;
 import snip.ds.RuleUseInfoSet;
-import snip.fns.*;
 
 @SuppressWarnings("serial")
 public class Thresh extends Rule
@@ -45,7 +46,7 @@ public class Thresh extends Rule
 	 */
 	public Thresh(Node node) 
 	{
-		super(node,"Thresh");
+		super(node);
 		reportCounter = 0;
 		requestCounter=0;
 		NodeSet minNode = getProcess().getNodeSet("thresh");
@@ -197,8 +198,10 @@ public class Thresh extends Rule
 				}
 				if(reply!=null)
 				{
-					ChannelsSet ctemp=getSendIn(ruitemp.getFlagNodeSet(),crtemp);
-					getProcess().sendReport(reply,ctemp.getConChannelsSet(c));
+					//ChannelsSet ctemp=getSendIn(ruitemp.getFlagNodeSet(),crtemp);
+					//getProcess().sendReport(reply,ctemp.getConChannelsSet(c));
+					ChannelsSet ctemp=getProcess().getOutGoing();
+					getProcess().sendReport(reply,ctemp);
 				}
 			}
 		}
@@ -216,7 +219,28 @@ public class Thresh extends Rule
 			Channel c=r.getChannel();
 			if(requestCounter==0)
 			{
-				getProcess().sendRequests(patternNodes,c.getContext());
+				getProcess().getOutGoing().putIn(c);
+				if(min==max&&min==0)
+				{
+					Report reply=new Report(new Substitutions(),null,true,
+							getProcess().getNode(),null,c.getContext());
+					ChannelsSet cs=new ChannelsSet();
+					cs.putIn(c);
+					getProcess().sendReport(reply, cs);
+				}
+				else
+				{
+					NodeSet ns=new NodeSet();
+					for(int i=0;i<patternNodes.size();i++)
+					{
+						Node n=patternNodes.getNode(i);
+						if(n!=c.getDestination().getNode())
+						{
+							ns.addNode(n);
+						}
+					}
+					getProcess().sendRequests(ns,c.getContext());
+				}
 			}
 			else
 			getProcess().addOutGoing(c);

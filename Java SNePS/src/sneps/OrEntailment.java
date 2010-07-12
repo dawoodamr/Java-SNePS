@@ -13,7 +13,6 @@ import snip.ds.Channel;
 import snip.ds.ChannelsSet;
 import snip.ds.Report;
 import snip.ds.Request;
-import snip.fns.*;
 
 @SuppressWarnings("serial")
 public class OrEntailment extends Rule
@@ -28,7 +27,7 @@ public class OrEntailment extends Rule
 	 */
 	public OrEntailment(Node node)
 	{
-		super(node,"OrEntailment");
+		super(node);
 		reportCounter=0;
 		requestCounter=0;
 		patternNodes =getProcess().getNodeSet("ant");
@@ -65,6 +64,7 @@ public class OrEntailment extends Rule
 			Channel c=r.getChannel();
 			if(requestCounter==0)
 			{
+				getProcess().getOutGoing().putIn(c);
 				getProcess().sendRequests(patternNodes,c.getContext());
 			}
 			else

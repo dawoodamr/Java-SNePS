@@ -23,7 +23,6 @@ import snip.ds.Report;
 import snip.ds.Request;
 import snip.ds.RuleUseInfo;
 import snip.ds.RuleUseInfoSet;
-import snip.fns.*;
 
 @SuppressWarnings("serial")
 public class AndEntailment extends Rule
@@ -41,7 +40,7 @@ public class AndEntailment extends Rule
 	 */
 	public AndEntailment(Node node)
 	{
-		super(node,"AndEntailment");
+		super(node);
 		reportCounter=0;
 		requestCounter=0;
 		patternNodes =getProcess().getNodeSet("&ant");
@@ -81,8 +80,10 @@ public class AndEntailment extends Rule
 	 */
 	public void processReports()
 	{
-		for(;reportCounter<getProcess().getReportSet().cardinality();reportCounter++)
+		for(;reportCounter<getProcess().getReportSet().cardinality()
+			;reportCounter++)
 		{
+			System.out.println("now processing report number:"+reportCounter);
 			Report r=getProcess().getReportSet().getReport(reportCounter);
 			Context c=r.getContext();
 			RuleUseInfo rui=null;
@@ -97,9 +98,13 @@ public class AndEntailment extends Rule
 				int pos=getProcess().getCRS().getIndex(c);
 				ContextRUIS crtemp=null;
 				if(pos==-1)
+				{
 					crtemp=addContextRUIS(c);
+				}
 				else
+				{
 					crtemp=getProcess().getCRS().getContextRUIS(pos);
+				}
 				if(shareVars)
 				{
 					res=crtemp.getSindexing().insert(rui, vars);
@@ -117,7 +122,8 @@ public class AndEntailment extends Rule
 					{
 						Report reply=new Report(ruitemp.getSub(),null,true
 								,getProcess().getNode(),null,c);
-						ChannelsSet ctemp=crtemp.getChannels();
+						//ChannelsSet ctemp=crtemp.getChannels();
+						ChannelsSet ctemp=getProcess().getOutGoing();
 						getProcess().sendReport(reply,ctemp);
 					}
 				}
@@ -137,6 +143,7 @@ public class AndEntailment extends Rule
 			Channel c=r.getChannel();
 			if(requestCounter==0)
 			{
+				getProcess().getOutGoing().putIn(c);
 				getProcess().sendRequests(patternNodes,c.getContext());
 			}
 			else

@@ -24,7 +24,6 @@ import snip.ds.Report;
 import snip.ds.Request;
 import snip.ds.RuleUseInfo;
 import snip.ds.RuleUseInfoSet;
-import snip.fns.*;
 
 @SuppressWarnings("serial")
 public class NumericalEntailment extends Rule
@@ -42,12 +41,12 @@ public class NumericalEntailment extends Rule
 	 */
 	public NumericalEntailment(Node node)
 	{
-		super(node,"NumericalEntailment");
+		super(node);
 		reportCounter=0;
 		requestCounter=0;
 		NodeSet minNode =getProcess().getNodeSet("thresh");
 		thresh=Integer.parseInt(minNode.getNode(0).getIdentifier());
-		patternNodes =getProcess().getNodeSet("arg");
+		patternNodes =getProcess().getNodeSet("&ant");
 		shareVars=getProcess().allShareVars(patternNodes);
 		PatternNode n =(PatternNode)patternNodes.getNode(0);
 		if(shareVars)
@@ -115,7 +114,8 @@ public class NumericalEntailment extends Rule
 					{
 						Report reply=new Report(ruitemp.getSub(),null,true
 								,getProcess().getNode(),null,c);
-						ChannelsSet ctemp=crtemp.getChannels();
+						//ChannelsSet ctemp=crtemp.getChannels();
+						ChannelsSet ctemp=getProcess().getOutGoing();
 						getProcess().sendReport(reply,ctemp);
 					}
 				}
@@ -135,6 +135,7 @@ public class NumericalEntailment extends Rule
 			Channel c=r.getChannel();
 			if(requestCounter==0)
 			{
+				getProcess().getOutGoing().putIn(c);
 				getProcess().sendRequests(patternNodes,c.getContext());
 			}
 			else
