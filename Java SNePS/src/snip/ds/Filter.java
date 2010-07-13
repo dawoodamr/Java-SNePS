@@ -29,6 +29,8 @@ public class Filter
 	 */
 	public boolean isEqual(Filter f)
 	{
+		if(f==null)
+			return false;
 		return this.s.isEqual(f.s);
 	}
 	
